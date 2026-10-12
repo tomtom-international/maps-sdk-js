@@ -1,0 +1,80 @@
+name: Public repo docs archive pages
+
+# Builds the GitHub Pages site of the docs from the archive tags `v<version>`, one tag per SDK release: the newest versions
+# that fit in 900 MB, 90% of the 1 GB that Pages takes for a site. Each SDK release starts it after its tag push.
+# It runs on the public repo only: the public sync moves it from public-mirror/ into .github/workflows/.
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: public-repo-docs-archive
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.repository == 'tomtom-international/maps-sdk-js'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    env:
+      D2_VERSION: v0.9.0
+      D2_SHA256: 5669ddc46b99e942cc96078f4a4e36d5e62103348f4c05179ede27802fdd87a9
+    steps:
+      - name: Checkout
+        # actions/checkout v4.4.0
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+
+      - name: Fetch the version tags
+        run: git fetch -q --no-tags "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY.git" 'refs/tags/v*:refs/tags/v*'
+
+      - name: Setup Node
+        # actions/setup-node v4.4.0
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24
+
+      # Corepack runs the pnpm version package.json names.
+      - name: Install the site builder
+        run: |
+          corepack enable
+          pnpm install --frozen-lockfile --prod --ignore-scripts --filter @documentation/public-repo-docs-archive
+
+      # The guides draw their diagrams in d2 code blocks.
+      - name: Install d2
+        run: |
+          curl -fsSL --proto '=https' --proto-redir '=https' -o "$RUNNER_TEMP/d2.tar.gz" \
+            "https://github.com/terrastruct/d2/releases/download/$D2_VERSION/d2-$D2_VERSION-linux-amd64.tar.gz"
+          echo "$D2_SHA256  $RUNNER_TEMP/d2.tar.gz" | sha256sum -c -
+          tar -xzf "$RUNNER_TEMP/d2.tar.gz" -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/d2-$D2_VERSION/bin" >> "$GITHUB_PATH"
+
+      - name: Build the site
+        run: node documentation/public-repo-docs-archive/src/buildSite.ts . "$RUNNER_TEMP/site" 900000000
+
+      - name: Upload the site
+        # actions/upload-pages-artifact v5.0.0
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9
+        with:
+          path: ${{ runner.temp }}/site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - name: Deploy the site
+        id: deploy
+        # actions/deploy-pages v5.0.1
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346
+        with:
+          # The site has about 45,000 files, which can take more than the default 10 minutes.
+          timeout: 1800000
