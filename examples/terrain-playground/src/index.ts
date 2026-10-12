@@ -80,7 +80,7 @@ const focusLabel = (focus: number) => {
     });
 
     const [styling, terrainModule] = await Promise.all([
-        StylingFoundationsModule.get(map, { 'view.sky.visible': true }),
+        StylingFoundationsModule.get(map, { view: { sky: { visible: true } } }),
         // The hillshade shades the same elevation the surface is raised from, which keeps a slope
         // readable where the camera flattens it.
         TerrainModule.get(map, {
@@ -115,9 +115,11 @@ const focusLabel = (focus: number) => {
     // meaning after it: off is simply an intensity of 0.
     const applyDepthOfField = () =>
         effects.updateConfig({
-            'depthOfField.intensity': depthOfField.checked ? Number(blur.value) : 0,
-            'depthOfField.focus': Number(focus.value),
-            'depthOfField.band': Number(band.value),
+            depthOfField: {
+                intensity: depthOfField.checked ? Number(blur.value) : 0,
+                focus: Number(focus.value),
+                band: Number(band.value),
+            },
         });
 
     const applySkyOf = (styleId: StandardStyleID) => {

@@ -4,7 +4,7 @@ Headless conversational agent that gives any LLM tool-based control over a `TomT
 Built on [Vercel AI SDK](https://ai-sdk.dev/) v6 (`ToolLoopAgent`, `DirectChatTransport`).
 No chat UI and no LLM provider are bundled — bring both.
 
-> Public preview — package is `@tomtom-org/maps-sdk-plugin-agent-toolkit`.
+> [Public preview](https://docs.tomtom.com/legal/public-preview) — package is `@tomtom-org/maps-sdk-plugin-agent-toolkit`.
 
 This is the **base reference**: setup, `MapAgentOptions`, the turn lifecycle, and gotchas.
 Subsystems live in `docs/agent-toolkit/` — read the matching file too.

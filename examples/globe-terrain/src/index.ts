@@ -33,7 +33,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     const exaggerationValue = document.querySelector('#ui-exaggerationValue') as HTMLElement;
 
     const [styling, terrainModule] = await Promise.all([
-        StylingFoundationsModule.get(map, { 'view.projection': 'globe', 'view.sky.visible': true }),
+        StylingFoundationsModule.get(map, { view: { projection: 'globe', sky: { visible: true } } }),
         TerrainModule.get(map, { elevation: { exaggeration: Number(exaggeration.value) } }),
     ]);
 

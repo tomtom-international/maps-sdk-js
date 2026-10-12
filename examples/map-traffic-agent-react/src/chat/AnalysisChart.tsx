@@ -184,7 +184,7 @@ const withInteractivityDefaults = (config: ChartConfiguration): ChartConfigurati
     } as ChartConfiguration;
 };
 
-// Read an --sdk design token off the document root, falling back when unset (e.g. in tests).
+// Read a --ui design token off the document root, falling back when unset (e.g. in tests).
 const readToken = (name: string, fallback: string): string => {
     if (typeof document === 'undefined') return fallback;
     const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();

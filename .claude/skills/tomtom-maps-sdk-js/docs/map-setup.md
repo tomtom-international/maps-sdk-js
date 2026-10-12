@@ -5,7 +5,7 @@
 ```ts
 import { bboxFromGeoJSON, TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { TomTomMap, BaseMapModule, TerrainModule, PlacesModule, POIsModule } from '@tomtom-org/maps-sdk/map';
-import { setKnob, baseMapKnobCatalogue, placesKnobCatalogue, terrainKnobCatalogue } from '@tomtom-org/maps-sdk/map';
+import { setKnob, setKnobs, baseMapKnobCatalogue, placesKnobCatalogue, terrainKnobCatalogue } from '@tomtom-org/maps-sdk/map';
 import { calculatePaddedBBox, calculatePaddedCenter, calculateFittingBBox } from '@tomtom-org/maps-sdk/map';
 import { discoverPlaces } from '@tomtom-org/maps-sdk/services';
 ```
@@ -58,6 +58,7 @@ export default defineConfig({
 - when the app already called MapLibre's `setWorkerUrl` before creating the map — its URL is kept;
 - under **webpack**'s default classic workers — set up the worker as MapLibre's docs describe, with `setWorkerUrl`. With ES module output (`output.module: true`, `experiments.outputModule: true`) webpack builds a module worker, which `TomTomMap` registers as it does Vite's;
 - under **Rollup**, **Rolldown** or **esbuild**, which build no worker from `new Worker(new URL(...))` — set it up with `setWorkerUrl` the same way;
+- under **Next.js** with Turbopack, which emits neither the worker nor `maplibre-gl-shared.mjs` beside it. Copy both from `maplibre-gl/dist/` into one directory under `public/`, and call `setWorkerUrl` with the worker's public path before `new TomTomMap`. `registerMapLibreWorker: false` leaves the same failing lookup;
 - when MapLibre loads unbundled from a CDN or an import map — MapLibre finds the worker beside its CDN file;
 - with `registerMapLibreWorker: false`:
 
@@ -213,12 +214,32 @@ placesModule.events.off('click');                     // removes every click han
 - **The map's foundations are never on a per-part module**, and a data-owned module's layers are never styled through the style-owned modules' knobs: those knobs don't reach them.
 - **The knobs compose**: every style-owned module restyles the loaded style through one engine per map, so factors on one layer property multiply (`labels.sizeFactor` × `POIsModule`'s `sizeFactor` on POI labels) and every value lands again after `setStyle`.
 - **Finer settings narrow coarser ones** within a module: `POIsModule`'s `microMarkers.visible` and `BaseMapModule`'s road parts only hide inside what the module and its groups show — `true` never shows a layer they hide, and showing them again keeps a part's `false`. `POIsModule`'s `zoomShift` composes with its `filters.categories`.
+- **Which layers a module owns**: every module's `sourceAndLayerIDs`, style-owned and data-owned, `{ [sourceName]: { sourceID, layerIDs } }`. The source names of the style-owned ones: `BaseMapModule` `vectorTiles`, `POIsModule` `pois`, `TrafficFlowModule` `trafficFlow`, `TrafficIncidentsModule` `trafficIncidents`, `TerrainModule` `hillshade`; `StylingFoundationsModule` owns none (`{}`). `baseMap.getLayerIds(group)` narrows to one group. An app writing `visibility` or paint on module layers from its own state skips these ids to leave them to the module. Re-read after `setStyle` or a config change: a data-owned module can add or remove layers (route sections). A road part (`roads.arrows.visible`, …) has **no** public layer list.
+- **Raw MapLibre writes on those layers are a fallback** for tweaks no knob offers, and don't compose with the modules:
+  - `setStyle` drops every raw write; only the knobs are applied again.
+  - A knob never computes from the app's value: factors and colours start from the style's or the module's own (`map-styling.md` § Gotchas).
+  - Every module, `StylingFoundationsModule` included on the base-map and POI layers it reaches: a knob or any other config change replaces the app's value only on the layers and properties whose value it changes; the rest stays (`GeometriesModule`'s `line.color` keeps a raw `fill-opacity` and label `text-size`). A POI knob writes `text-color` on `POI`, not on the icon-only `POI - Micro`. `CustomGeoJSONModule` replaces the properties the app's new layer specs set differently.
+  - A layer a data-owned module removes and adds back (the `TrafficIncidentDetailsModule` outline after `highlight: false`) loses the raw writes on it.
+  - **Visibility** is the module's: traffic, terrain and data-owned modules set it on all their layers at every config change; `BaseMapModule` only on the groups and road parts a change toggles; `POIsModule` with `visible` unset reads it back from its layers, so hiding **all** of them by hand makes `isVisible()` false and the next change shows them again; `StylingFoundationsModule` never sets it.
 
 ### Changing a setting
 
-- Every change goes through `applyConfig(config)` (replaces), `updateConfig(partial)` (top-level properties, keeps the rest) or `setKnob(module, catalogue, id, value)`.
-- `updateConfig` merges **one level deep**: a nested object passed replaces the one there. To change one nested field, spread the current part or use its knob:
-  `places.updateConfig({ label: { ...places.getConfig()?.label, color } })` · `setKnob(places, placesKnobCatalogue, 'label.color', color)`.
+Two ways in, one configuration (`getConfig()` reads it); a knob id is the setting's path in it, so `'label.color'` is `config.label.color`. Pick by **where the value comes from**:
+
+| | Config methods: `get`/`create(map, config)`, `applyConfig(config)` (replaces), `updateConfig(partial)` | Knob functions: `setKnob(module, catalogue, id, value)`, `setKnobs(module, catalogue, { [id]: value })` |
+|---|---|---|
+| Use for | settings **your code writes**, typed | settings **held as data**: a control, `localStorage`, a URL, an LLM tool call, `JSON.parse` output |
+| Reaches | every setting, incl. `layers` specs, callbacks, MapLibre expressions, `beforeLayerConfig` | only the plain-valued settings in the module's catalogue |
+| Run-time check | **none** (TypeScript only) — an out-of-range or mistyped value is applied as given (on `MapEffects` too) | every value against its entry: `RangeError`, and **nothing** changes (`setKnobs`: not even the valid ones) |
+| Nested settings | `updateConfig` merges **one level deep**: a nested object passed **replaces** the one there | set at the id's path, every sibling kept |
+
+```ts
+places.updateConfig({ label: { ...places.getConfig()?.label, color } });          // code: spread to keep the rest of `label`
+setKnob(places, placesKnobCatalogue, 'label.color', color);                       // data: one, checked, by path
+setKnobs(places, placesKnobCatalogue, JSON.parse(saved));                         // data: several, checked, one change and one config-change
+```
+
+- **Never pass untrusted input to `applyConfig`/`updateConfig`** — it bypasses every check. Save knob values by id and restore them with `setKnobs`.
 - Named setters exist only for visibility (`setVisible`/`isVisible`, `setIconsVisible`, `setHillshadeVisible`, `setElevationVisible`, BaseMap `{ layerGroups }`) and Area Analytics' per-metric `setPalette` / `setColorStops` / `setHeight` / `setFilters`. A named setter is always `set<Setting>`.
 
 ### Appearance vocabulary — one name per concept
@@ -229,8 +250,8 @@ A concept has the same name on every module that has it; a module missing from a
 |---|---|---|
 | Module colour | top-level `color`; unset → the map's accent (`colors.accent`, `map.mapColors.accent`) → module default; part colours override it | Routing `color` (under `layers.*`) · Geometries `color` (under `fill.palette`, `fill.color`, `line.color`, feature `color`) · Places `color` (under `icon.default.style.fillColor`, `label.color`, `layers.*`) |
 | Labels | `LabelConfig`: `size`, `color`, `haloColor`, `haloWidth`, `opacity`, `font`, plus the module's own content and placement, a `distance` or an `offset` | Places `label` (`PlaceLabelConfig`: `title`, `distance` from the icon in ems) · Routing `waypoints.label` (`WaypointLabelConfig`: `title`, `visible`) · Reachable ranges `lineLabel` (`ReachableRangeLineLabelConfig`: `title` function) · Geometries `label` (`GeometryLabelConfig`: optional `title`, string or expression, default the feature's own `title`), and `lineLabel` (`GeometryLineLabelConfig`: the same `title`, `minZoom`, `symbolSpacing`, `offset` `[x, y]` ems) |
-| Multipliers | `*Factor`, clamped to a published range; a `*Preset` (`'s'`/`'m'`/`'l'`) picks the base | Routing `widthPreset` + `widthFactor`, `waypoints.sizePreset` + `waypoints.sizeFactor` (both 0.5–2), `sections.<type>.widthPreset` + `sections.<type>.widthFactor`, `sections.<type>.icon.sizeFactor` (0.25–2), `highlight.outline.widthFactor` (1–1.25), `waypoints.highlight.sizeFactor` (1–1.5) · Geometries `highlight.fill.opacityFactor` (1–4), `highlight.line.widthFactor` (1–3) · TrafficIncidentDetails `highlight.line.widthFactor` (1–1.8) · POIs `sizeFactor` (0.5–1.5) · traffic flow and incidents `widthFactor` (0.5–2) · Styling Foundations `labels.sizeFactor`, `symbols.sizeFactor`, `roads.widthFactor` (0.5–1.5) |
-| Hovered and clicked look | one look for both, once a handler covers the feature or `setEventState` puts a state; `highlight` holds its factors, `1` draws the feature as any other; a MapLibre layer given in its place draws as given | Routing `highlight.outline.widthFactor`, `waypoints.highlight.sizeFactor` · Geometries `highlight.fill.opacityFactor`, `highlight.line.widthFactor` · TrafficIncidentDetails `highlight.outline.color`, `highlight.line.widthFactor` (also the `setFocus` look; `highlight: false` off) · Places `layers.selected` |
+| Multipliers | `*Factor`, clamped to a published range; a `*Preset` (`'s'`/`'m'`/`'l'`) picks the base | Routing `widthPreset` + `widthFactor`, `waypoints.sizePreset` + `waypoints.sizeFactor` (both 0.5–2), `sections.<type>.widthPreset` + `sections.<type>.widthFactor`, `sections.<type>.icon.sizeFactor` (0.25–2), `highlight.outline.widthFactor` (1–1.25), `highlight.section.outline.widthFactor` (0.5–2), `waypoints.highlight.sizeFactor` (1–1.5) · Geometries `highlight.fill.opacityFactor` (1–4), `highlight.line.widthFactor` (1–3) · TrafficIncidentDetails `highlight.line.widthFactor` (1–1.8) · POIs `sizeFactor` (0.5–1.5) · traffic flow and incidents `widthFactor` (0.5–2) · Styling Foundations `labels.sizeFactor`, `symbols.sizeFactor`, `roads.widthFactor` (0.5–1.5) |
+| Hovered and clicked look | one look for both, once a handler covers the feature or `setEventState` puts a state; `highlight` holds its factors, `1` draws the feature as any other; a MapLibre layer given in its place draws as given | Routing `highlight.outline.widthFactor`, `waypoints.highlight.sizeFactor`, and `highlight.section.outline.color` + `highlight.section.outline.widthFactor` on the sections `setSectionFocus` rings · Geometries `highlight.fill.opacityFactor`, `highlight.line.widthFactor` · TrafficIncidentDetails `highlight.outline.color`, `highlight.line.widthFactor` (also the `setFocus` look; `highlight: false` off) · Places `layers.selected` |
 | Absolute units | MapLibre's name, in pixels; other units in the name; opacity 0–1; label offsets in ems | pixels: `LabelConfig.size`/`haloWidth`, Geometries `line.width`, `lineLabel.symbolSpacing` · metres: Area Analytics `height.maxMeters`/`height.minMeters`, per unit of the metric `height.metersPerUnit` · `TerrainModule` `elevation.exaggeration` (surface height) ≠ its `hillshade.intensity` (shading) |
 | Marker type / fill style / theme | *theme* = the map-wide look only | Places `markerType` (`placesMarkerTypes`) · Geometries `fill.style` (`geometryFillStyles`), per feature `properties.fillStyle` · Reachable ranges `fill.style` · Area Analytics `regionPolygon.fill.style` · map theme: `setMapColors` + map-theme plugin `deriveMapColors*` |
 | Fill colour vs palette | a colour field never takes a palette name | Geometries `fill.color` (colour or expression), `fill.palette` (your own CSS colours) · Reachable ranges `fill.palette` (your own CSS colours; unset, an accent-to-land ramp) · Area Analytics `metrics.<metric>.palette` (`areaAnalyticsPalettes`), `metrics.<metric>.colorStops` wins over it |
@@ -269,19 +290,22 @@ static, no map needed. `id` is the setting's path in the config, never into a li
   expression or object the config also takes at the path.
 - A UI switching on `kind` must handle every member: a new kind is a breaking change.
 
-Three functions work a knob by id on every module, `StylingFoundationsModule` and the map-effects plugin's
+These functions work a knob by id on every module, `StylingFoundationsModule` and the map-effects plugin's
 `MapEffects` included — there is no per-module `set` / `get` / `reset`:
 - `setKnob(module, catalogue, id, value)` validates, then applies the config with the value at the
   id's path, the rest kept; the value is typed from the path (any value for an id typed `string`,
   checked at run time).
+- `setKnobs(module, catalogue, values)` validates **every** value first, then applies them all in one
+  config change (one `config-change`, one restyle); one refused value sets none. `values` is
+  `KnobValues<CONFIG, ID>`: `{ [id]: value }`, each value typed from its path.
 - `getKnob(module, catalogue, id)`: the value set, else the module's own (styling reads the loaded
   style), else the entry's `default`.
 - `resetKnob(module, catalogue, id)` unsets it and drops the objects it empties: set then reset
   leaves `getConfig()` as it was. `resetConfig()` unsets every knob.
 
 `knobEntryOf(catalogue, id)` reads one entry (kind, range or options, default). `validateKnobValue(entry, value)`
-is the check alone, for untrusted input (forms, LLM tool calls). It and `setKnob` throw `RangeError` and change
-nothing; the four that take an id throw `Error` for one the catalogue lacks.
+is the check alone, for untrusted input (forms, LLM tool calls). It, `setKnob` and `setKnobs` throw `RangeError` and change
+nothing; the functions that take an id throw `Error` for one the catalogue lacks.
 
 ```ts
 import { getKnob, knobEntryOf, resetKnob, setKnob, trafficFlowKnobCatalogue, validateKnobValue } from '@tomtom-org/maps-sdk/map';

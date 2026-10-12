@@ -2,6 +2,8 @@
 
 Turn *where a look comes from* into the ten semantic map colours (`land`, `water`, `vegetation`, `park`, `artificial`, `roadMajor`, `road`, `roadOutline`, `label`, `labelHalo`) plus `accent`, the colour for what is drawn **on top** of the map, then apply them with `StylingFoundationsModule.setMapColors` (`map-styling.md`). The `@tomtom-org/maps-sdk-plugin-map-theme` plugin: pure functions, no backend, no map needed to derive.
 
+> [Public preview](https://docs.tomtom.com/legal/public-preview) — the map-theme plugin. `setMapColors` and `map.mapColors` are SDK features, not part of it.
+
 ```bash
 npm install @tomtom-org/maps-sdk-plugin-map-theme   # peers: @tomtom-org/maps-sdk, culori
 ```
@@ -100,6 +102,7 @@ map.mapColors.accent;                             // what routes and areas draw 
 
 ## Gotchas
 
+- `mode: 'dark'` takes the darkest colour with an HSL saturation of 0.4 or less as `land`, and a saturated one only when none qualifies. It never invents one. So `['#ffffff', '#140b26']` keeps a white `land`, since `#140b26` is 0.55 saturated, and `mapColorsLightDark` returns `'light'`. Add a dark grey such as `#141414` when the map must stay on `streetDark`.
 - `setMapColors(derived)` sets all ten and the accent; `resetKnob(styling, stylingFoundationsKnobCatalogue, 'colors.water')` returns one role to the style, `styling.resetConfig()` everything.
 - Busy photos average into muted colours; raise `colorCount` (default 6) in `deriveMapColorsFromImage(image, { colorCount })`, or hand-pick from `dominantColors`.
 - A stylesheet whose colours live in theme variables defined elsewhere resolves to nothing: pass the file that defines them too.

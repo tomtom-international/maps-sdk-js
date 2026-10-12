@@ -1,0 +1,24 @@
+/* TOOLTIP: a dark label beside the element it names, with .ui-tooltip-arrow on an SVG arrow */
+
+.ui-tooltip {
+    z-index: 1000;
+    padding: var(--ui-space-1) var(--ui-space-2);
+    border-radius: var(--ui-rounded-5);
+    background: var(--ui-surface-high-em);
+    color: var(--ui-text-white);
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-caption-m);
+    font-weight: var(--ui-font-weight-medium);
+    box-shadow: var(--ui-elevation-e3);
+    animation: ui-tooltip-in 120ms ease-out;
+}
+
+.ui-tooltip-arrow {
+    fill: var(--ui-surface-high-em);
+}
+
+@keyframes ui-tooltip-in {
+    from {
+        opacity: 0;
+    }
+}

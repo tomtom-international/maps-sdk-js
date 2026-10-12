@@ -1,0 +1,118 @@
+/* The button at the top right of the map, and the panel it opens below it */
+
+.ui-map-button.ui-toggle {
+    border-color: transparent;
+    box-shadow: var(--ui-elevation-e3);
+}
+
+.ui-map-panel.ui-customPanel {
+    position: static;
+    width: 360px;
+    max-height: min(680px, var(--radix-popover-content-available-height));
+    box-shadow: var(--ui-elevation-e5);
+    transform-origin: var(--radix-popover-content-transform-origin);
+    animation: ui-map-panel-in 160ms ease-out;
+}
+
+@keyframes ui-map-panel-in {
+    from {
+        opacity: 0;
+        transform: scale(0.96);
+    }
+}
+
+.ui-map-panel .ui-heading {
+    justify-content: space-between;
+}
+
+.ui-map-thumbnail {
+    display: block;
+}
+
+/* MAP TYPE: a thumbnail over its name */
+
+.ui-tile-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--ui-space-3) var(--ui-space-2);
+    margin-bottom: var(--ui-space-3);
+}
+
+.ui-tile {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ui-space-1);
+    padding: 4px 4px var(--ui-space-1);
+    font-size: var(--ui-font-caption-m);
+    line-height: 1.2;
+    color: var(--ui-text-high-em);
+    text-align: center;
+}
+
+.ui-tile.active {
+    font-weight: var(--ui-font-weight-semibold);
+}
+
+.ui-tile-image {
+    display: block;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--ui-rounded-5);
+    overflow: hidden;
+}
+
+.ui-tile-image .ui-map-thumbnail {
+    width: 100%;
+    height: 100%;
+}
+
+.ui-detail-toggles {
+    margin-bottom: var(--ui-space-3);
+}
+
+.ui-fine-tune {
+    margin-bottom: var(--ui-space-4);
+}
+
+.ui-fine-tune summary {
+    margin-bottom: var(--ui-space-2);
+    font-weight: var(--ui-font-weight-semibold);
+    cursor: pointer;
+}
+
+/* LOOKS FOR THE TRIP */
+
+.ui-preset-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--ui-space-2);
+}
+
+.ui-preset {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    padding: var(--ui-space-2) var(--ui-space-3);
+}
+
+.ui-preset .ui-map-thumbnail {
+    width: 100%;
+    height: 40px;
+    margin-bottom: var(--ui-space-1);
+    border-radius: var(--ui-rounded-5);
+}
+
+.ui-preset-label {
+    font-weight: var(--ui-font-weight-semibold);
+}
+
+.ui-preset-description {
+    font-size: var(--ui-font-caption-m);
+    color: var(--ui-text-med-em);
+}
+
+@media (max-width: 768px) {
+    .ui-map-panel.ui-customPanel {
+        width: calc(100vw - 24px);
+    }
+}

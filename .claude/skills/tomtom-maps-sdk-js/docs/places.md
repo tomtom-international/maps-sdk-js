@@ -440,6 +440,8 @@ setKnob(poisModule, poisKnobCatalogue, 'zoomShift', 1);
 
 ## ViewportPlaces — live search as map moves
 
+> [Public preview](https://docs.tomtom.com/legal/public-preview) — package is `@tomtom-org/maps-sdk-plugin-viewport-places`.
+
 ```ts
 const viewportPlaces = new ViewportPlaces(map);
 
@@ -750,6 +752,7 @@ const size: PlacesKnobValueOf<'label.size'> = 14; // the plain value: an express
 | `label.opacity` | number | — |
 | `label.distance` | number, ems from the icon | from the icon size |
 | `label.font` | enums (`mapFonts`), first available wins | `Noto-Bold`, the style's under `base-map` |
+| `label.typeface` | enum (`mapTypefaces`), `font` wins over it | — (the map's typeface) |
 | `cluster.badge.color` | color | `'#000000'` |
 | `cluster.badge.outlineColor` | color | `'#FFFFFF'` |
 | `cluster.badge.outlineWidth` | number | `1.5` |
@@ -966,6 +969,7 @@ if (results.properties) {
 
 ## Gotchas
 
+- Pass `query` as plain text to `geocode`, `discoverPlaces`, `getSearchSuggestions`, along-route search and geometry search. The SDK encodes it. A value you already passed through `encodeURIComponent` is encoded again and can resolve to a different place (`Los Angeles` becomes a street in Gijón).
 - `boundingBox`: `[west, south, east, north]`
 - `place.properties.poi?.categories` — `POICategory[]` (standardized enum, e.g. `'ITALIAN_RESTAURANT'`)
 - `place.properties.poi?.localizedCategories` — `string[]` (human-readable, e.g. `'restaurant'`)

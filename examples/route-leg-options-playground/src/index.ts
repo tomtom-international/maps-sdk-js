@@ -53,6 +53,12 @@ const buildLocations = (places: Place<GeocodingProps>[], costModels: LegPanel['c
         };
     });
 
+let legIDs: string[] = [];
+let pointedLeg: number | null = null;
+
+const focusPointedLeg = (routingModule: RoutingModule): Promise<void> =>
+    routingModule.setSectionFocus(pointedLeg === null ? null : [legIDs[pointedLeg]]);
+
 const calculateAndShow = async (
     routingModule: RoutingModule,
     places: Place<GeocodingProps>[],
@@ -66,6 +72,9 @@ const calculateAndShow = async (
     await routingModule.showWaypoints(locations);
 
     const route = routes.features[0];
+    // A new route clears the focus, and its legs carry new ids, so the leg still pointed at is ringed again.
+    legIDs = route.properties.sections.leg.map((leg) => leg.id);
+    await focusPointedLeg(routingModule);
     const summary = route.properties.summary;
     renderTotals([
         ['Distance', formatDistance(summary.lengthInMeters)],
@@ -126,6 +135,14 @@ const calculateAndShow = async (
         }
     };
 
-    panel = buildLegPanel(legContainer, legNames, () => void recalculate());
+    panel = buildLegPanel(
+        legContainer,
+        legNames,
+        () => void recalculate(),
+        (legIndex) => {
+            pointedLeg = legIndex;
+            void focusPointedLeg(routingModule);
+        },
+    );
     panel.setStats(initialStats);
 })();

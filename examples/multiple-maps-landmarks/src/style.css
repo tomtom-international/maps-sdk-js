@@ -1,0 +1,78 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/form/field.css";
+@import "../../src/templates/css/form/radio.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+
+/* The page fills the viewport rather than scrolling it: a drag on a map pans the map, so a page
+   taller than the screen could not be scrolled back. */
+#ui-app {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--ui-surface-high-em);
+}
+
+.ui-grid-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--ui-space-2) var(--ui-space-6);
+    padding: var(--ui-space-3) var(--ui-space-4);
+    background: var(--ui-surface-0);
+}
+
+.ui-grid-field {
+    margin: 0;
+}
+
+#ui-map-grid {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    gap: var(--ui-space-1);
+    padding: var(--ui-space-1);
+}
+
+/* A phone held upright: one column, each map a landscape strip. */
+@media (max-aspect-ratio: 2 / 3) {
+    #ui-map-grid {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: repeat(4, minmax(0, 1fr));
+    }
+}
+
+/* A phone on its side or an ultrawide screen: one row. */
+@media (min-aspect-ratio: 2 / 1) {
+    #ui-map-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        grid-template-rows: minmax(0, 1fr);
+    }
+}
+
+.ui-map-tile {
+    position: relative;
+    margin: 0;
+    overflow: hidden;
+    border-radius: var(--ui-rounded-5);
+}
+
+.ui-map-tile-map {
+    position: absolute;
+    inset: 0;
+}
+
+/* A caption, not a panel to work in: lighter padding, and drags reach the map under it. */
+.ui-map-tile-label {
+    padding: var(--ui-space-2) var(--ui-space-3);
+    pointer-events: none;
+}
+
+.ui-map-tile-label .ui-note {
+    margin: 0;
+}

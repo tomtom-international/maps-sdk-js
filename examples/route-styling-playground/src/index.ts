@@ -30,7 +30,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         waypointSizeFactor: 1,
         centerDash: false,
         routeOpacity: 1,
-        highlight: { outline: {} },
+        highlight: { outline: {}, section: { outline: {} } },
     };
 
     const buildConfig = () => ({
@@ -43,7 +43,10 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
             sizeFactor: state.waypointSizeFactor,
             label: { color: state.waypointLabelColor },
         },
-        highlight: { outline: { ...state.highlight.outline } },
+        highlight: {
+            outline: { ...state.highlight.outline },
+            section: { outline: { ...state.highlight.section.outline } },
+        },
         layers: {
             mainLines: {
                 routeLine: {
@@ -84,7 +87,9 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
 
     const routingModule = await RoutingModule.create(map, buildConfig());
     routingModule.showWaypoints(waypoints);
-    routingModule.showRoutes(await calculateRoute({ locations: waypoints }));
+    const routes = await calculateRoute({ locations: waypoints });
+    routingModule.showRoutes(routes);
+    const tollRoadIDs = (routes.features[0]?.properties.sections.tollRoad ?? []).map((section) => section.id);
 
     const apply = () => routingModule.applyConfig(buildConfig());
 
@@ -95,5 +100,6 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         (visible) => routingModule.setVisible(visible),
         (clicked) =>
             clicked ? routingModule.setEventState({ index: 0, state: 'click' }) : routingModule.clearEventStates(),
+        (ringed) => routingModule.setSectionFocus(ringed ? tollRoadIDs : null),
     );
 })();

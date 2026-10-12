@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💡 Feature Request or Idea
+    url: https://github.com/tomtom-international/maps-sdk-js/discussions/new?category=ideas
+    about: Suggest new features or improvements through GitHub Discussions
+  - name: ❓ Question or Discussion
+    url: https://github.com/tomtom-international/maps-sdk-js/discussions/new?category=q-a
+    about: Ask questions or discuss topics with the community
+  - name: 📚 Official Documentation
+    url: https://docs.tomtom.com/maps-sdk-js/introduction/overview
+    about: Browse the complete SDK documentation, guides, and examples

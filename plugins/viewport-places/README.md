@@ -1,6 +1,6 @@
 # Viewport Places Plugin
 
-Plugin for the [TomTom Maps SDK for JavaScript](https://docs.tomtom.com/maps-sdk-js/introduction/overview) that keeps places in sync with the current map viewport: each search you add gets its own place module, which searches again whenever the map moves.
+This plugin for the [TomTom Maps SDK for JavaScript](https://docs.tomtom.com/maps-sdk-js/introduction/overview) keeps places in sync with the current map viewport. Each search you add gets its own place module, which searches again whenever the map moves.
 
 ## Docs & examples
 
@@ -9,7 +9,7 @@ Plugin for the [TomTom Maps SDK for JavaScript](https://docs.tomtom.com/maps-sdk
 
 ## Quickstart
 
-Note: this plugin declares `@tomtom-org/maps-sdk` as a peer dependency — ensure the SDK is installed in your project.
+This plugin declares `@tomtom-org/maps-sdk` as a peer dependency, so install the SDK in your project too.
 
 ```bash
 npm install @tomtom-org/maps-sdk maplibre-gl @tomtom-org/maps-sdk-plugin-viewport-places
@@ -43,7 +43,7 @@ await viewportPlaces.update({ id: 'restaurants', searchOptions: { query: 'pizza'
 viewportPlaces.remove('parking');
 ```
 
-Place modules are rendered bottom-up in the order they are added: the first added module appears at the bottom and later modules are stacked on top.
+The plugin renders place modules bottom-up in the order you add them. The first module you add sits at the bottom, and later ones stack on top.
 
 ## License
 

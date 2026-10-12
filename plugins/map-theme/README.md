@@ -1,6 +1,6 @@
 # Map Theme Plugin
 
-Plugin for the [TomTom Maps SDK for JavaScript](https://docs.tomtom.com/maps-sdk-js/introduction/overview) that themes a `TomTomMap` from wherever a look comes from: a brand's colours, a website's, a described mood, an artist's palette, or an image. It assigns them to the SDK's ten map colours plus the accent routes, geometries and pins take; `StylingFoundationsModule.setMapColors` applies them.
+This plugin for the [TomTom Maps SDK for JavaScript](https://docs.tomtom.com/maps-sdk-js/introduction/overview) themes a `TomTomMap` from wherever a look comes from. That's a brand's colours, a website's, a described mood, an artist's palette or an image. It assigns them to the SDK's ten map colours, plus the accent that routes, geometries and pins take. Then `StylingFoundationsModule.setMapColors` applies them.
 
 | Function | From | To |
 | --- | --- | --- |
@@ -9,7 +9,7 @@ Plugin for the [TomTom Maps SDK for JavaScript](https://docs.tomtom.com/maps-sdk
 | `cssColors` | A stylesheet's text | Hex colours, most used first |
 | `deriveMapColorsFromImage` | An image — `File`, `Blob`, `<img>`, `ImageBitmap`, CORS-readable URL or raw pixels | The map colours, through its dominant colours |
 | `dominantColors` | Raw pixels | Hex colours, largest area first |
-| `mapColorsLightDark` | The map colours | `'light'` or `'dark'`: switch to a style of the same (`streetDark` for a dark theme) before applying them |
+| `mapColorsLightDark` | The map colours | `'light'` or `'dark'`. Switch to a style of the same kind (`streetDark` for a dark theme) before you apply them |
 
 ## Docs & examples
 
@@ -18,7 +18,7 @@ Plugin for the [TomTom Maps SDK for JavaScript](https://docs.tomtom.com/maps-sdk
 
 ## Quickstart
 
-Note: this plugin declares `@tomtom-org/maps-sdk` and `culori` as peer dependencies — ensure both are installed in your project.
+This plugin declares `@tomtom-org/maps-sdk` and `culori` as peer dependencies, so install both in your project too.
 
 ```bash
 npm install @tomtom-org/maps-sdk maplibre-gl culori @tomtom-org/maps-sdk-plugin-map-theme

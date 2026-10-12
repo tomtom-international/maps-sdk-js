@@ -114,16 +114,16 @@ mapLibreMap.addLayer(
 );
 ```
 
-| Constant (bottom → top) | Style layer                 | Your layer lands below…                                          |
-| ----------------------- | --------------------------- | ---------------------------------------------------------------- |
-| `lowestRoadLine`        | `Tunnel - Railway outline`  | roads, buildings, labels — the base road network paints over you  |
-| `lowestBuilding`        | `Buildings - Underground`   | 3D buildings and labels (roads stay underneath)                   |
-| `lowestLabel`           | `Borders - Treaty label`    | **every label and icon — the default for lines and polygons**     |
-| `country`               | `Places - Country name`     | country names and the place labels above them                     |
-| `lowestPlaceLabel`      | `Places - Village / Hamlet` | city/town/village names and POIs                                  |
-| `poi`                   | `POI`                       | POI icons only                                                    |
+| Constant (bottom → top) | Style layer                 | Your layer lands below…                                                       |
+| ----------------------- | --------------------------- | ----------------------------------------------------------------------------- |
+| `lowestBuilding`        | `Buildings - Underground`   | the 2D building footprints, the whole road network, 3D buildings and labels    |
+| `lowestRoadLine`        | `Tunnel - Railway outline`  | the road network, 3D buildings and labels; above the 2D building footprints    |
+| `lowestLabel`           | `Borders - Treaty label`    | **every label and icon, and the 3D buildings right above it — the default for lines and polygons** |
+| `poi`                   | `POI`                       | POI icons and every place name                                                |
+| `lowestPlaceLabel`      | `Places - Village / Hamlet` | every place name, from villages to countries; above the POIs                  |
+| `country`               | `Places - Country name`     | country names and traffic incident markers only                               |
 
-Go below `lowestLabel` only for a reason: `lowestRoadLine` to keep the road network drawn over a polygon fill, `lowestBuilding` to sit under 3D buildings.
+`lowestLabel` already keeps your layer above the roads and under the 3D buildings. Go lower only for a reason: `lowestRoadLine` to keep the road network drawn over a polygon fill, `lowestBuilding` to keep the 2D building footprints drawn over it too.
 
 **Gotchas**
 

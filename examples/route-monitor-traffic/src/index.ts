@@ -11,7 +11,8 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
 
 (async () => {
     const searchResults = await Promise.all([
-        discoverOnePlace('Eiffel Tower, Paris, FR'),
+        // The postcode keeps businesses named after the tower, elsewhere in Paris, from matching first.
+        discoverOnePlace('Eiffel Tower, 75007 Paris, FR'),
         discoverOnePlace('Gare du Nord, Paris, FR'),
     ]);
 

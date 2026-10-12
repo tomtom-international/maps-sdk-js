@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Multiple maps: 3D landmarks of one kind</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="ui-app">
+            <header class="ui-grid-header">
+                <h1>3D landmarks</h1>
+                <div class="ui-form-field-inline ui-grid-field">
+                    <span class="ui-form-label" id="ui-landmark-kinds-label">Landmarks:</span>
+                    <div
+                        class="ui-radio-group ui-radio-group-horizontal"
+                        id="ui-landmark-kinds"
+                        role="radiogroup"
+                        aria-labelledby="ui-landmark-kinds-label"
+                    ></div>
+                </div>
+            </header>
+            <main id="ui-map-grid"></main>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

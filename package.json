@@ -9,7 +9,7 @@
     "culori": "catalog:",
     "lodash-es": "catalog:",
     "maplibre-gl": "catalog:",
-    "terser": "^5.44.1",
+    "terser": "^5.51.2",
     "zod": "catalog:"
   },
   "engines": {
@@ -26,7 +26,7 @@
     "url": "git+https://github.com/tomtom-international/maps-sdk-js.git"
   },
   "scripts": {
-    "build:examples": "pnpm -r --filter '@examples/*' build",
-    "type-check:examples": "pnpm -r --filter '@examples/*' type-check"
+    "build:examples": "pnpm -r --filter \"@examples/*\" build",
+    "type-check:examples": "pnpm -r --filter \"@examples/*\" type-check"
   }
 }

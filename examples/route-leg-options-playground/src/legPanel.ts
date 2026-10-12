@@ -86,16 +86,57 @@ const buildLegSection = (legIndex: number, from: string, to: string): HTMLElemen
 
 // The panel is built from the legs of a route that has already been calculated, so the number of
 // legs and their endpoints come from the route rather than being assumed here.
-export const buildLegPanel = (container: HTMLElement, legNames: [string, string][], onChange: () => void): LegPanel => {
+// A leg a control keeps focus in stays pointed at while the pointer roams the other legs.
+const pointedLegTracker = (onPointAtLeg: (legIndex: number | null) => void) => {
+    let hoveredLeg: number | null = null;
+    let focusedLeg: number | null = null;
+    let pointedLeg: number | null = null;
+    const pointAtLeg = (): void => {
+        const leg = focusedLeg ?? hoveredLeg;
+        if (leg === pointedLeg) return;
+
+        pointedLeg = leg;
+        onPointAtLeg(leg);
+    };
+
+    return (section: HTMLElement, legIndex: number): void => {
+        section.addEventListener('pointerenter', () => {
+            hoveredLeg = legIndex;
+            pointAtLeg();
+        });
+        section.addEventListener('pointerleave', () => {
+            hoveredLeg = null;
+            pointAtLeg();
+        });
+        section.addEventListener('focusin', () => {
+            focusedLeg = legIndex;
+            pointAtLeg();
+        });
+        section.addEventListener('focusout', (event) => {
+            if (event.relatedTarget instanceof Node && section.contains(event.relatedTarget)) return;
+
+            focusedLeg = null;
+            pointAtLeg();
+        });
+    };
+};
+
+export const buildLegPanel = (
+    container: HTMLElement,
+    legNames: [string, string][],
+    onChange: () => void,
+    onPointAtLeg: (legIndex: number | null) => void,
+): LegPanel => {
     const costModels: LegCostModel[] = legNames.map(() => ({}));
     const statLabels: HTMLElement[] = [];
     const controls: (HTMLInputElement | HTMLSelectElement)[] = [];
 
+    const trackPointer = pointedLegTracker(onPointAtLeg);
+
     container.innerHTML = '';
 
     legNames.forEach(([from, to], legIndex) => {
-        const section = buildLegSection(legIndex, from, to);
-        container.appendChild(section);
+        const section = container.appendChild(buildLegSection(legIndex, from, to));
 
         statLabels.push(section.querySelector('.ui-leg-stats') as HTMLElement);
         const heading = section.querySelector('.ui-leg-heading') as HTMLElement;
@@ -142,6 +183,8 @@ export const buildLegPanel = (container: HTMLElement, legNames: [string, string]
 
         routeTypeSelect.addEventListener('change', collect);
         for (const box of avoidBoxes) box.addEventListener('change', collect);
+
+        trackPointer(section, legIndex);
 
         renderChoices();
         // Only the first leg starts open: enough to show what the controls are without making the

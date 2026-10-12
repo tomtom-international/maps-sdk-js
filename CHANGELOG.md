@@ -1,5 +1,65 @@
 # Changelog
 
+## 1.0.0-rc.2
+
+### Minor Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** map: a knob id is the path of its setting in the configuration on every module, and `setKnobs` sets several knobs in one checked change
+  - map: `setKnobs(module, catalogue, values)` checks every value against its knob, then applies them all in one change and one `config-change`. If it refuses one value, it sets none. `KnobValues<CONFIG, ID>` types the values by id
+  - map: `StylingFoundationsModuleConfig` nests each setting along its id, as every other module does: `{ labels: { sizeFactor: 1.2 } }` instead of `{ 'labels.sizeFactor': 1.2 }`. `setKnob`, `setKnobs`, `getKnob`, `resetKnob` and `MapPresetSettings` keep the ids
+  - map: `StylingFoundationsModule`'s `updateConfig` merges one level deep, as on every module, so `updateConfig({ colors: { water } })` replaces the colours set before. Set a single colour with `setKnob`. Its `applyConfig` and `updateConfig` no longer check values at run time, as on every module. `setKnob` and `setKnobs` do
+  - map: a `KnobTarget` implements `_setKnobValues(values)` instead of `_setKnobValue(id, value)`, and a subclass of `AbstractMapModule` inherits it. For a plugin's own target, `knobValueIn`, `configWithKnobs` and `configWithoutKnob` implement the hooks
+  - map-effects: `MapEffectsSettings` is `MapEffectsConfig`, and nests each knob along its id: `new MapEffects(map, { bloom: { intensity: 0.5 } })`. `updateConfig` replaces each effect it names, while `setKnob` and `setKnobs` keep the rest of an effect. The constructor, `applyConfig` and `updateConfig` no longer check values at run time, as on a map module. `setKnob` and `setKnobs` do. The plugin needs SDK 1.0.0-rc.2
+  - agent-toolkit: `setMapStyling` reads the styling knobs at their paths, and the plugin needs SDK 1.0.0-rc.2
+  - examples: the map effects playground restores its panel from `localStorage` with `setKnobs`
+
+### Patch Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - map: `TrafficAreaAnalyticsModule` metric filters no longer make MapLibre validate the whole style on each change
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - map: a traffic flow section at a standstill reports `absoluteSpeed: 0` from `TrafficFlowModule.getRenderedFeatures()` and its events, instead of leaving it `undefined`
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - license: the privacy clause of `LICENSE.txt` now links the TomTom Privacy Policy, https://www.tomtom.com/privacy/
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - map: The map fills its container from the first frame on pages whose scrollbars take up layout space, as on Windows
+  - If the page didn't import the MapLibre CSS, the canvas could stay about one scrollbar width short on the right and bottom until the window was resized
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - map: a knob or config change on a data-owned module writes only the layer properties whose value changes, so a value set on its layers with `mapLibreMap` stays until a change sets that property
+  - map: changing a `GeometriesModule`'s `line.color` keeps a fill opacity or label size set on its layers, and the same holds for routes, places, reachable ranges, custom GeoJSON, traffic incident details and area analytics
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - map: Set every label on the map in one typeface, from the style's serif and italic faces or your own font files, and give the labels of a route, places or geometries one of their own
+  
+  - The `labels.typeface` knob of `StylingFoundationsModule` takes `sans`, `sans-italic`, `serif` or `serif-italic` (`mapTypefaces`), each label keeping its weight
+  - `labels.customTypeface` takes your own font file URLs per weight (`CustomTypeface`), which the map downloads itself; characters outside their range are drawn in the style's Noto face
+  - The labels of routes, places, geometries, reachable ranges and incident details follow the map's typeface unless their module sets its own
+  - Each module's label settings take the same `typeface` (a knob: `label.typeface`, `waypoints.label.typeface`, `lineLabel.typeface`) and `customTypeface`, for those labels alone
+  - The waypoint, geometry and reachable-range `font` knobs have no default, so `getKnob` returns `undefined` until you set one. Unset, those labels are in `Noto-Bold` set in their typeface
+  - `exportStyle()` returns labels set in font files in the style's own Noto faces, since only the SDK can draw those files
+  - New `map-typeface` example, with ten open-source font families and a typeface each for the map, the waypoints, the museums and a district
+  - `map-styling-playground` shows the typefaces in its Labels section, beside a route, museums and a district, and its sections now collapse
+  - `themed-map` sets its labels in Fraunces from the first frame
+
+- Thanks [@carlosprietofernandez-tomtom](https://github.com/carlosprietofernandez-tomtom)! - map: `RoutingModule`, `PlacesModule`, `CustomGeoJSONModule` and `TrafficIncidentDetailsModule` keep their events and `sourceAndLayerIDs` in step with the layers a later config change adds or removes
+  - A removed layer, such as a section icon, an `additional` layer, a custom source's layer or the incident highlight halo, used to stop hover and click for every module on the map. An added layer got no events and was missing from `sourceAndLayerIDs`
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - map: `POIsModule`'s `filters.categories` narrows the micro markers too, so the dots of filtered-out categories no longer show from zoom 15.5, nor come back from `getRenderedFeatures()`
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - map: `RoutingModule.setSectionFocus` rings any section or leg of the shown routes, so your UI can point at the stretch it describes
+  
+  - The ring outlines the route clear of its hovered outline and section halos rather than covering them, black on a light style and white on a dark one, as the traffic incident highlight does
+  - `highlight.section.outline.color` and `highlight.section.outline.widthFactor` restyle it, as config or as routing knobs
+  - `getShown().sectionFocus` holds the focused sections, and `showRoutes` clears them
+  - examples: `route-leg-options-playground` rings the leg you point at or focus in its panel
+  - examples: `route-styling-playground` rings the route's toll roads, with a colour and a width control for the ring
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - map: the `maplibre-gl` peer dependency moves up to `^6.13.0`
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - map: a route's speed limit signs draw from zoom 11 by default, one zoom after the tunnel and closed-road signs, so they no longer crowd the overview of a route; `sections.speedLimit.sign.minZoom` still sets it
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - map: a `TerrainModule` change that leaves the 3D surface as it was, such as a hillshade knob, no longer makes MapLibre rebuild the terrain
+
+- Thanks [@JulianChinAFoeng-TomTom](https://github.com/JulianChinAFoeng-TomTom)! - tests: each package's unit test run now fails when its coverage drops below the goals in `TESTING.md`
+
 ## 1.0.0-rc.1
 
 ### Patch Changes

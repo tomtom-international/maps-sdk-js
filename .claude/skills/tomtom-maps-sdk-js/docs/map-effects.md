@@ -1,6 +1,8 @@
 # Map Effects Plugin Reference
 
-Practical post-processing over a `TomTomMap`, computed from the rendered pixels — style-independent, survives style releases. Package `@tomtom-org/maps-sdk-plugin-map-effects`. Use it for **muting the base map under data**, **emphasis on dark/driving styles (bloom)**, **focus (fog, edge blur, vignette)** and **depth on a tilted 3D map (depth of field)** — no knob is an "artistic" look; an app's own stylisation (watercolour, posterise) runs inside the chain through `addPass`.
+Practical post-processing over a `TomTomMap`, computed from the rendered pixels — style-independent, survives style releases. Use it for **muting the base map under data**, **emphasis on dark/driving styles (bloom)**, **focus (fog, edge blur, vignette)** and **depth on a tilted 3D map (depth of field)** — no knob is an "artistic" look; an app's own stylisation (watercolour, posterise) runs inside the chain through `addPass`.
+
+> [Public preview](https://docs.tomtom.com/legal/public-preview) — package is `@tomtom-org/maps-sdk-plugin-map-effects`.
 
 ## Imports
 
@@ -16,7 +18,7 @@ import {
     type EffectKnobValueOf,
     type MapEffectsPass,         // { id, fragment, uniforms?, placement? }
     type MapEffectsPassPlacement,
-    type MapEffectsSettings,     // the knobs set, as getConfig() returns them
+    type MapEffectsConfig,       // the knobs set, nested along their ids ({ bloom: { intensity } }), as getConfig() returns them
     type StyleColorKnobGroup,    // `traffic`, `traffic.incidents`, `colors`, …
 } from '@tomtom-org/maps-sdk-plugin-map-effects';
 ```
@@ -33,31 +35,31 @@ const map = new TomTomMap({
     },
 });
 const effects = new MapEffects(map);                      // everything off
-const effects = new MapEffects(map, { 'tint.opacity': 0.2 }); // with initial settings
+const effects = new MapEffects(map, { tint: { opacity: 0.2 } }); // with an initial config, nested along the knob ids
 ```
 
 ## Set / get / reset
 
-One knob through the SDK's knob functions, as on a map module; several at once through `updateConfig`.
+Same rules as a map module. Values held as data (a panel, storage, an LLM) go through the SDK's knob functions by id: each knob lands at its path, every other knob kept, including the rest of its effect. Typed values your code writes go through the config methods; `updateConfig` **replaces each effect it names** (`updateConfig({ bloom: { threshold } })` drops the bloom's other knobs).
 
 ```ts
-import { getKnob, resetKnob, setKnob } from '@tomtom-org/maps-sdk/map';
+import { getKnob, resetKnob, setKnob, setKnobs } from '@tomtom-org/maps-sdk/map';
 import { effectKnobCatalogue } from '@tomtom-org/maps-sdk-plugin-map-effects';
 
-setKnob(effects, effectKnobCatalogue, 'vignette.intensity', -0.4); // one knob: focus the centre
-// Several at once, the rest kept:
-effects.updateConfig({ 'grade.saturation': 0.4, 'grade.brightness': 0.85, 'tint.opacity': 0.15 }); // mute under data
-effects.updateConfig({ 'bloom.intensity': 0.5, 'bloom.threshold': 0.6 });                         // glow on dark styles
+setKnob(effects, effectKnobCatalogue, 'vignette.intensity', -0.4);                     // one knob: focus the centre
+setKnobs(effects, effectKnobCatalogue, { 'bloom.intensity': 0.5, 'bloom.threshold': 0.6 }); // several, one change, all or none
+// Code: whole effects, the effects not named kept
+effects.updateConfig({ grade: { saturation: 0.4, brightness: 0.85 }, tint: { opacity: 0.15 } }); // mute under data
 
 getKnob(effects, effectKnobCatalogue, 'bloom.intensity');   // current value or default
 resetKnob(effects, effectKnobCatalogue, 'bloom.intensity'); // one knob to default (off)
 effects.resetConfig();                                      // all off
 effects.getConfig();                                        // overridden knobs only — plain JSON
-effects.applyConfig(settings);                              // replace all
+effects.applyConfig(config);                                // replace all
 effects.remove();                                           // detach, remove the layers, release the chain's WebGL context
 ```
 
-`setKnob`, `updateConfig`, `applyConfig` and the constructor check values with the SDK's `validateKnobValue`: a refused value throws `RangeError`, an unknown id `Error`; nothing is touched on a failed call. There is no `set`, `get` or `reset` method. Call `remove()` when a page drops a map: a browser caps the WebGL contexts a page may hold, and the map already holds one.
+`setKnob` and `setKnobs` check every value with the SDK's `validateKnobValue` first: a refused value throws `RangeError`, an unknown id `Error`, and nothing is touched on a failed call. The constructor, `applyConfig` and `updateConfig` check nothing at run time (TypeScript only), as on a map module. There is no `set`, `get` or `reset` method. Call `remove()` when a page drops a map: a browser caps the WebGL contexts a page may hold, and the map already holds one.
 
 ## Knob ids
 
@@ -78,7 +80,7 @@ effects.remove();                                           // detach, remove th
 
 ```ts
 await TerrainModule.get(map, { elevation: { visible: true } }); // the relief to defocus
-effects.updateConfig({ 'depthOfField.intensity': 18, 'depthOfField.focus': 0, 'depthOfField.band': 0.3, 'depthOfField.bokeh': 0.5 });
+effects.updateConfig({ depthOfField: { intensity: 18, focus: 0, band: 0.3, bokeh: 0.5 } });
 ```
 
 - **Needs `preserveDrawingBuffer: true`** on the map, like bloom and `capture()`: the pass reads the rendered map back as a texture.
@@ -92,7 +94,7 @@ effects.updateConfig({ 'depthOfField.intensity': 18, 'depthOfField.focus': 0, 'd
 A list of the colours bloom may light; entries mix freely, and `[]` (the default) lights the whole frame:
 
 ```ts
-effects.updateConfig({ 'bloom.intensity': 0.9, 'bloom.only': ['traffic'] }); // a group: every traffic colour knob
+effects.updateConfig({ bloom: { intensity: 0.9, only: ['traffic'] } }); // a group: every traffic colour knob
 setKnob(effects, effectKnobCatalogue, 'bloom.only', ['traffic.incidents.colors.major', 'traffic.incidents.colors.closed']); // single knobs
 setKnob(effects, effectKnobCatalogue, 'bloom.only', ['traffic', '#1a73e8']); // + a CSS colour, e.g. a route's color
 ```

@@ -43,7 +43,7 @@
     width: 18px;
     height: 18px;
     border-radius: 50%;
-    background: var(--ui-bg-low-em);
+    background: var(--ui-surface-1);
     color: var(--ui-text-med-em);
     font-family: var(--ui-font-gilroy);
     font-size: 11px;
@@ -52,7 +52,7 @@
 }
 
 .ui-step-label {
-    font-family: var(--ui-font-monospace, monospace);
+    font-family: var(--ui-font-fira);
     font-size: var(--ui-font-body-s);
     color: var(--ui-text-high-em);
 }

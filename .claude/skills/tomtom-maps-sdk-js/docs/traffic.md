@@ -72,10 +72,10 @@ for (const segment of segments) {
 }
 ```
 
-- **Available:** `relativeSpeed`, `roadCategory`, `roadSubcategory` (on `street` / `service`), `roadClosure`, `leftHandTraffic`, `displayClass`.
-- **Always `undefined`:** `absoluteSpeed`, `partOfTwoWayRoad`, `openlr` — the standard styles' flow source does not request those tile tags. Do not read `absoluteSpeed` expecting km/h.
+- **Available:** `relativeSpeed`, `absoluteSpeed` (km/h), `openlr` (OpenLR location reference, a map-agnostic key for the section), `roadCategory`, `roadSubcategory` (on `street` / `service`), `roadClosure`, `leftHandTraffic`, `displayClass`. The SDK requests these tile tags on every flow tile.
+- **`partOfTwoWayRoad`:** `true` on a section covering both directions of a two-way road, absent otherwise.
 - **Not available anywhere on Orbis:** free-flow speed, travel time, delay in seconds, confidence. Do not promise them.
-- Viewport-bound and zoom-dependent; a segment crossing a tile boundary comes back once per tile, so de-duplicate on geometry if you export.
+- Viewport-bound and zoom-dependent, and only what is drawn: a hidden module returns none. A segment crossing a tile boundary comes back once per tile, so de-duplicate on geometry if you export.
 - "Export traffic for an area" or "speed per road class" is a **historical** question: use `trafficAreaAnalytics()` (below), not the flow tiles.
 
 ---
@@ -285,7 +285,7 @@ incidents.features.forEach((incident) => {
 
 ## trafficAreaAnalytics — historical metrics for a region
 
-> Gated — unavailable on Freemium and Pay As You Grow (PAYG); the developer requests access from TomTom Sales, and calls it with a Move Portal API key (see [Gotchas](#gotchas)).
+> Unavailable on Freemium and Pay As You Grow (PAYG): it takes a TomTom MOVE Portal API key, not the Maps key (see [Gotchas](#gotchas)). A MOVE account comes with a 30-day free trial — point a developer without that key to https://move.tomtom.com/register?source_app=b2b&source_product=area-analytics, or, with an account already, to https://move.tomtom.com/. The key is in the MOVE Portal menu once logged in. Product overview: https://docs.tomtom.com/area-analytics/documentation/product-information/introduction
 
 ```ts
 // 1. Get city boundary
@@ -566,4 +566,4 @@ Not in it: `colorStops` (set them through `setColorStops` or the config), `befor
 - `trafficAreaAnalytics` `timedData.weekly` entries count `week` in the ISO 8601 year, which `year` holds: the week from Monday 30 December 2024 is `{ year: 2025, week: 1 }`
 - `trafficAreaAnalytics` `anomalies` is keyed by metric (`anomalies.speed`); each anomaly is a run of UTC hours whose `endDate` is the hour after the last one, and its `labels` are the names of the public holidays it overlaps. It is currently always empty: the service detects anomalies only over 35 days or more, beyond a request's 31-day limit
 - `trafficAreaAnalytics` `endDate` and every `days` entry must be at least 2 days before today (e.g., if today is `2024-03-18`, latest valid `endDate` is `'2024-03-16'`); an omitted `endDate` defaults to 3 days before today, the latest date that always has data
-- `trafficAreaAnalytics` requires a **Move Portal API key** (different from standard TomTom API key); a `401`/`403` on this service means the Maps key went out. Keep the Maps key in `TomTomConfig` and override per-call: `trafficAreaAnalytics({ apiKey: MOVE_PORTAL_KEY, ... })` — see `services-config.md` § Per-call overrides
+- `trafficAreaAnalytics` requires a **MOVE Portal API key** (different from standard TomTom API key, 30-day free trial on a new MOVE account); a `401`/`403` on this service means the Maps key went out. Keep the Maps key in `TomTomConfig` and override per-call: `trafficAreaAnalytics({ apiKey: MOVE_PORTAL_KEY, ... })` — see `services-config.md` § Per-call overrides

@@ -32,16 +32,17 @@ const applyKnob = ({ module, catalogue }: LookKnobSource, id: string, value: Sty
     }
 };
 
-// Which groups the reader has collapsed. Kept outside the panel so a rebuild — a reset, a style
-// switch, an agent — leaves the sections as they left them.
-const collapsedGroups = new Set<string>();
+// Which groups the reader has opened: there are too many to show at once, so the rest start
+// collapsed. Kept outside the panel so a rebuild — a reset, a style switch, an agent — leaves the
+// sections as they left them.
+const expandedGroups = new Set<string>(['labels']);
 
 // One collapsible section per knob group, chevron and all, built from the panel header's own
 // classes so it looks and behaves like the panel's own toggle.
 export const sectionFor = (group: string): { element: HTMLElement; controls: HTMLElement } => {
     const element = document.createElement('div');
     element.className = 'ui-section';
-    const collapsed = collapsedGroups.has(group);
+    const collapsed = !expandedGroups.has(group);
     element.innerHTML = `
         <h4 class="ui-subheading ui-sectionHeading">
             <button class="ui-heading-toggle ui-sectionToggle" type="button" aria-expanded="${!collapsed}">
@@ -57,14 +58,23 @@ export const sectionFor = (group: string): { element: HTMLElement; controls: HTM
         const collapsing = toggle.getAttribute('aria-expanded') === 'true';
         toggle.setAttribute('aria-expanded', collapsing ? 'false' : 'true');
         controls.classList.toggle('collapsed', collapsing);
-        if (collapsing) collapsedGroups.add(group);
-        else collapsedGroups.delete(group);
+        if (collapsing) expandedGroups.delete(group);
+        else expandedGroups.add(group);
     });
     return { element, controls };
 };
 
+// Folds a section written in the page into a collapsible one, its controls and all.
+export const collapsibleSection = (selector: string, group: string) => {
+    const section = document.querySelector(selector) as HTMLElement;
+    const { element, controls } = sectionFor(group);
+    controls.append(...section.childNodes);
+    section.replaceWith(element);
+};
+
 // Rebuilds the panel from the catalogues, each control showing the value the loaded style has now.
-const renderPanel = (sources: readonly LookKnobSource[]) => {
+// A group's own controls go first in its section, moved rather than rebuilt so they keep their state.
+const renderPanel = (sources: readonly LookKnobSource[], groupControls: Record<string, HTMLElement>) => {
     const container = document.querySelector('#ui-knobs') as HTMLElement;
     container.innerHTML = '';
     const sections = new Map<string, HTMLElement>();
@@ -87,6 +97,7 @@ const renderPanel = (sources: readonly LookKnobSource[]) => {
             );
         }
     }
+    for (const [group, element] of Object.entries(groupControls)) sections.get(group)?.prepend(element);
 };
 
 // What the panel hands back, so a style switch can rebuild it off the new style's values.
@@ -94,8 +105,15 @@ type StylingPanel = {
     render: () => void;
 };
 
-export const initStylingPanel = (sources: readonly LookKnobSource[]): StylingPanel => {
-    const render = () => renderPanel(sources);
+/**
+ * The panel of every look knob in `sources`, plus `groupControls`: controls written in the page,
+ * shown first in their group's section.
+ */
+export const initStylingPanel = (
+    sources: readonly LookKnobSource[],
+    groupControls: Record<string, HTMLElement> = {},
+): StylingPanel => {
+    const render = () => renderPanel(sources, groupControls);
     render();
     // The panel follows the modules, wherever a change comes from (a reset, a preset, a style switch, an agent).
     for (const { module } of sources) {

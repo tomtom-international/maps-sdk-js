@@ -1,0 +1,57 @@
+/* Each lane's colour, as --ui-lane-color on its blocks and on the section card's icon */
+
+.ui-lane-traffic.is-minor {
+    --ui-lane-color: var(--ui-surface-warning);
+}
+
+.ui-lane-traffic.is-moderate {
+    --ui-lane-color: #f58240;
+}
+
+.ui-lane-traffic.is-major {
+    --ui-lane-color: var(--ui-surface-brand-red);
+}
+
+.ui-lane-traffic.is-indefinite {
+    --ui-lane-color: #7a0e0a;
+}
+
+.ui-lane-motorway {
+    --ui-lane-color: #6f7782;
+}
+
+.ui-lane-toll {
+    --ui-lane-color: var(--ui-surface-info);
+}
+
+.ui-lane-tunnel {
+    --ui-lane-color: var(--ui-surface-high-em);
+}
+
+.ui-lane-ferry {
+    --ui-lane-color: #2a7ab0;
+}
+
+.ui-lane-carTrain {
+    --ui-lane-color: #7a4fb0;
+}
+
+.ui-lane-lowEmissionZone {
+    --ui-lane-color: var(--ui-surface-success);
+}
+
+.ui-lane-urban {
+    --ui-lane-color: var(--ui-border-high-em);
+}
+
+.ui-lane-unpaved {
+    --ui-lane-color: #a5773f;
+}
+
+.ui-lane-country {
+    --ui-lane-color: var(--ui-border-info-low-em);
+}
+
+.ui-lane-country.is-even {
+    --ui-lane-color: var(--ui-border-info-high-em);
+}

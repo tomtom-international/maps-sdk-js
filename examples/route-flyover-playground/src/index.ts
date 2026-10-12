@@ -30,7 +30,7 @@ const durationLabel = (seconds: number) => formatDuration(seconds) ?? '0 min';
 
 // A shallow field: a thin band around the marker stays sharp, the tarmac rushing past and the ridges
 // beyond it soften hard, and lights out of focus open into discs.
-const DEPTH_OF_FIELD = { 'depthOfField.intensity': 20, 'depthOfField.band': 0.08, 'depthOfField.bokeh': 1 } as const;
+const DEPTH_OF_FIELD = { intensity: 20, band: 0.08, bokeh: 1 } as const;
 
 (async () => {
     const originInput = document.querySelector('#ui-origin') as HTMLInputElement;
@@ -100,11 +100,15 @@ const DEPTH_OF_FIELD = { 'depthOfField.intensity': 20, 'depthOfField.band': 0.08
             },
         }),
         StylingFoundationsModule.get(map, {
-            'view.sky.visible': true,
-            // The satellite basemap is a daylit photograph, but its dark labels put the style in
-            // the dark theme, whose night sky sits oddly above sunlit rock.
-            'view.sky.color': '#88c6fc',
-            'view.sky.horizonColor': '#ffffff',
+            view: {
+                sky: {
+                    visible: true,
+                    // The satellite basemap is a daylit photograph, but its dark labels put the style in
+                    // the dark theme, whose night sky sits oddly above sunlit rock.
+                    color: '#88c6fc',
+                    horizonColor: '#ffffff',
+                },
+            },
         }),
         RoutingModule.create(map, { summaryBubbles: { visible: false } }),
     ]);
@@ -282,7 +286,7 @@ const DEPTH_OF_FIELD = { 'depthOfField.intensity': 20, 'depthOfField.band': 0.08
     // anchor down it from the top.
     const applyDepthOfField = () =>
         effects.applyConfig(
-            depthOfField.checked ? { ...DEPTH_OF_FIELD, 'depthOfField.focus': 1 - currentAnchor().y } : {},
+            depthOfField.checked ? { depthOfField: { ...DEPTH_OF_FIELD, focus: 1 - currentAnchor().y } } : {},
         );
 
     pitch.addEventListener('input', () => {

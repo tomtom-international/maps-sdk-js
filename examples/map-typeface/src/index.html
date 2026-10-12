@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Map typeface</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">Map typeface</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+            <div class="ui-panel-content">
+                <!-- Each dropdown lists the open-source families and the style's Noto faces, from index.ts -->
+                <div class="ui-section">
+                    <label class="ui-form-label" for="ui-mapTypeface">Every label on the map</label>
+                    <select class="ui-dropdown" id="ui-mapTypeface"></select>
+                </div>
+                <div class="ui-section">
+                    <label class="ui-form-label" for="ui-waypointTypeface">Waypoint labels</label>
+                    <select class="ui-dropdown" id="ui-waypointTypeface"></select>
+                </div>
+                <div class="ui-section">
+                    <label class="ui-form-label" for="ui-museumTypeface">Museum labels</label>
+                    <select class="ui-dropdown" id="ui-museumTypeface"></select>
+                </div>
+                <div class="ui-section">
+                    <label class="ui-form-label" for="ui-districtTypeface">District labels</label>
+                    <select class="ui-dropdown" id="ui-districtTypeface"></select>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

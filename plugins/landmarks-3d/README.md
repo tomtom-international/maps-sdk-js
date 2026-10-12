@@ -1,8 +1,8 @@
 # Landmarks 3D Plugin
 
-Plugin for the [TomTom Maps SDK for JavaScript](https://docs.tomtom.com/maps-sdk-js/introduction/overview) that renders TomTom Orbis 3D Landmarks — high-detail building meshes streamed as tiles — on a `TomTomMap` using Three.js.
+This plugin for the [TomTom Maps SDK for JavaScript](https://docs.tomtom.com/maps-sdk-js/introduction/overview) renders TomTom Orbis 3D Landmarks on a `TomTomMap` with Three.js. The landmarks are high-detail building meshes, streamed as tiles.
 
-> **Private Preview**: the [Orbis 3D Landmarks API](https://developer.tomtom.com/map-display-api/documentation/tomtom-orbis-maps/3d/landmarks) is in Private Preview. Your API key needs Orbis 3D Landmarks entitlements.
+> **Private Preview.** The [Orbis 3D Landmarks API](https://developer.tomtom.com/map-display-api/documentation/tomtom-orbis-maps/3d/landmarks) is in Private Preview, so your API key needs Orbis 3D Landmarks entitlements.
 
 ## Docs & examples
 
@@ -14,18 +14,18 @@ Plugin for the [TomTom Maps SDK for JavaScript](https://docs.tomtom.com/maps-sdk
 - Streams 3D landmark tiles for the current viewport.
 - Shows the basemap 3D building layer (hidden by default in the standard styles) for full 3D city context.
 - Hides basemap extruded buildings flagged with `has_landmark` so they don't clip through the landmark meshes.
-- Display modes: `inherited` (default, mirrors the basemap building colour/opacity), `dark`, and `light`.
+- Three display modes: `inherited` (the default, mirrors the basemap building colour and opacity), `dark` and `light`.
 - Restores itself automatically across map style changes.
 
 ## Quickstart
 
-Note: this plugin declares `@tomtom-org/maps-sdk`, `maplibre-gl` and `three` as peer dependencies — ensure all three are installed in your project.
+This plugin declares `@tomtom-org/maps-sdk`, `maplibre-gl` and `three` as peer dependencies, so install all three in your project too.
 
 ```bash
 npm install @tomtom-org/maps-sdk maplibre-gl three @tomtom-org/maps-sdk-plugin-landmarks-3d
 ```
 
-1. Follow the SDK [Project setup](https://docs.tomtom.com/maps-sdk-js/introduction/project-setup) or the Map [quickstart](https://docs.tomtom.com/maps-sdk-js/guides/map/quickstart) to create and initialize a `TomTomMap`. Use a pitched camera for the best result; the plugin enables the standard style's 3D building layer automatically.
+1. Follow the SDK [Project setup](https://docs.tomtom.com/maps-sdk-js/introduction/project-setup) or the Map [quickstart](https://docs.tomtom.com/maps-sdk-js/guides/map/quickstart) to create and initialize a `TomTomMap`. For the best result, use a pitched camera. The plugin turns on the standard style's 3D building layer for you.
 
 2. Import and use the plugin (plugin-specific steps only):
 
@@ -42,7 +42,7 @@ await landmarks.setDisplayMode('dark');
 await landmarks.setVisible(false);
 ```
 
-`new Landmarks3D(map, { displayMode, visible, minZoom, maxZoom })` sets the same options up front; the zoom range defaults to that of the base map's 3D building layer.
+`new Landmarks3D(map, { displayMode, visible, minZoom, maxZoom })` sets the same options up front. By default, the zoom range matches that of the base map's 3D building layer.
 
 ## License
 

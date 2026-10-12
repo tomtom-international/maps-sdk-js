@@ -1,0 +1,26 @@
+.ui-search-options {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ui-space-3);
+    margin-bottom: var(--ui-space-4);
+}
+
+.ui-search-scope {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ui-space-2);
+}
+
+.ui-station-filters {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ui-space-2);
+    margin: 0;
+    padding: var(--ui-space-3);
+    border: 1px solid var(--ui-border-low-em);
+    border-radius: var(--ui-rounded-10);
+}
+
+.ui-station-filters legend {
+    padding: 0 var(--ui-space-1);
+}

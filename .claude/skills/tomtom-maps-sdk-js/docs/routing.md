@@ -364,7 +364,8 @@ the ids, `ReachableRangesKnobId` / `ReachableRangesKnobValueOf<ID>` type them.
 | `highlight.fill.opacityFactor`, `highlight.line.widthFactor` | factor, 1–4 and 1–3 | `2`, `1.75` |
 | `lineLabel.size`, `lineLabel.haloWidth`, `lineLabel.opacity` | number | `15`, `2`, `1` |
 | `lineLabel.color`, `lineLabel.haloColor` | color | — (theme-adaptive) |
-| `lineLabel.font` | enums (`mapFonts`) | `['Noto-Bold']` |
+| `lineLabel.font` | enums (`mapFonts`) | — (`Noto-Bold` in the labels' typeface) |
+| `lineLabel.typeface` | enum (`mapTypefaces`) | — (the map's typeface) |
 
 ---
 
@@ -591,6 +592,32 @@ at runtime, for a panel that builds its controls from the type, and narrows `typ
 whether a type starts on, which the map cannot be asked: a route with no ferry sections draws no
 ferry layer, so an absent layer reads the same as a type switched off.
 
+### Focusing sections — `setSectionFocus`
+
+To point at sections from your own UI (the leg a stop row describes, the delay a directions row
+names), ring them by id. Any section of a shown route counts, of any type, drawn or not; an id no
+shown section carries is skipped. The ring runs clear of the widest line the route draws (its hovered
+outline or a section's halo), so the route and the sections drawn on it stay in sight — don't fake it
+with a wider section halo.
+
+```ts
+const [firstLeg] = route.properties.sections.leg;
+await routingModule.setSectionFocus([firstLeg.id]);
+await routingModule.setSectionFocus(null); // clears; showRoutes() clears it too
+
+routingModule.applyConfig({
+    highlight: { section: { outline: { color: '#E63312', widthFactor: 1.5 } } }, // default colour: #000 light, #FFF dark
+});
+```
+
+- `highlight.section.outline.color` defaults to the theme: black on a light style, white on a dark
+  one, as `TrafficIncidentDetailsModule`'s `highlight.outline.color`.
+- `highlight.section.outline.widthFactor` × 2 to 4 px as the zoom grows, default 1, clamped 0.5–2.
+- `getShown().sectionFocus` holds the focused sections; `layers.sectionFocus.routeSectionFocusOutline`
+  overrides the selected route's ring, drawn over every route and section line under the direction
+  arrows, and `routeDeselectedSectionFocusOutline` a deselected route's, drawn under the selected route.
+- A leg of a route calculated without its polyline has no extent, so focusing it draws nothing.
+
 ### Every knob as data — `routingKnobCatalogue`
 
 Every plain-valued `RoutingModuleConfig` display setting, static and readable with no map: kind
@@ -618,6 +645,8 @@ Route-wide knobs first, then each drawn section type's (`<type>` is any of `draw
 | `waypoints.sizePreset` | enum, `'s'` / `'m'` / `'l'` | `'m'` |
 | `waypoints.sizeFactor` | factor, 0.5–2 | `1` |
 | `highlight.outline.widthFactor` | factor, 1–1.25 | `1.2` |
+| `highlight.section.outline.color` | color | — (`#000` light, `#FFF` dark) |
+| `highlight.section.outline.widthFactor` | factor, 0.5–2 | `1` |
 | `waypoints.icon.style.fillColor` | color | the route's |
 | `waypoints.icon.style.outlineColor` | color | — |
 | `waypoints.icon.style.outlineOpacity` | number, 0–1 | — |
@@ -638,7 +667,8 @@ Route-wide knobs first, then each drawn section type's (`<type>` is any of `draw
 | `waypoints.label.size` | number, 6–48 px | 14 to 16 as the zoom grows |
 | `waypoints.label.haloWidth` | number, 0–10 px | `1.5` |
 | `waypoints.label.opacity` | number, 0–1 | `1` |
-| `waypoints.label.font` | enums, `mapFonts` | `['Noto-Bold']` |
+| `waypoints.label.font` | enums, `mapFonts` | — (`Noto-Bold` in the labels' typeface) |
+| `waypoints.label.typeface` | enum, `mapTypefaces` | — (the map's typeface) |
 | `waypoints.entryPoints` | enum, `'main-when-available'` / `'ignore'` | `'ignore'` |
 | `displayUnits.distance.type` | enum, `'metric'` / `'imperial_us'` / `'imperial_uk'` | the global config |
 | `displayUnits.distance.kilometers` | text | the global config, else `km` |
@@ -665,7 +695,7 @@ Route-wide knobs first, then each drawn section type's (`<type>` is any of `draw
 | `sections.<type>.icon.placement` | enum, `'center'` / `'along'` | `'center'` on the generated types |
 | `sections.<type>.icon.sizeFactor` | factor, 0.25–2 | `1` |
 | `sections.speedLimit.sign.placement` | enum, `'atChange'` / `'along'` | `'atChange'` |
-| `sections.speedLimit.sign.minZoom` | number, 0–22 | `10` |
+| `sections.speedLimit.sign.minZoom` | number, 0–22 | `11` |
 | `sections.speedLimit.sign.priority` | enum, `'belowMapLabels'` / `'belowRouteIcons'` / `'aboveRouteIcons'` | follows the placement |
 | `sections.speedLimit.sign.unit` | enum, `'km/h'` / `'mph'` | each sign's country, else the display units |
 
@@ -775,8 +805,8 @@ const routingModule = await RoutingModule.create(map, {
   limit, so every boundary is a change. `'along'` repeats the sign down the stretch instead.
   - A stretch can run 50 km, so use `'along'`, or your own readout, when the limit in force has to
     be on screen at any zoom.
-- **`sign.minZoom` defaults to 10**, where the signs stop shrinking. Further out, a route's changes
-  fall in the same few pixels and the survivors are an arbitrary sample of the drive.
+- **`sign.minZoom` defaults to 11**, one zoom past the tunnel and closed-road signs (10): a route
+  posts many more speed limits, and further out they crowd the route overview.
 - **`sign.priority` decides which symbol survives a collision**, since MapLibre resolves them from
   the topmost layer down and the lower layer gives way. `belowMapLabels` yields to the base map's
   labels as well as the route's icons; `belowRouteIcons` yields to every route icon, section icons
@@ -1086,13 +1116,15 @@ const config: GeometriesModuleConfig = { line: { width: width?.range?.max } };
 | `label.haloColor` | color | theme |
 | `label.haloWidth` | number, pixels | grows with zoom |
 | `label.opacity` | number 0–1 | 1 |
-| `label.font` | enums (`mapFonts`), first available wins | `['Noto-Bold']` |
+| `label.font` | enums (`mapFonts`), first available wins | — (`Noto-Bold` in the labels' typeface) |
+| `label.typeface` | enum (`mapTypefaces`), `font` wins over it | — (the map's typeface) |
 | `lineLabel.size` | number, pixels | 15 |
 | `lineLabel.color` | color | theme |
 | `lineLabel.haloColor` | color | theme |
 | `lineLabel.haloWidth` | number, pixels | 2 |
 | `lineLabel.opacity` | number 0–1 | 1 |
-| `lineLabel.font` | enums (`mapFonts`), first available wins | `['Noto-Bold']` |
+| `lineLabel.font` | enums (`mapFonts`), first available wins | — (`Noto-Bold` in the labels' typeface) |
+| `lineLabel.typeface` | enum (`mapTypefaces`), `font` wins over it | — (the map's typeface) |
 | `lineLabel.minZoom` | number 0–22 | 3 |
 | `lineLabel.symbolSpacing` | number, pixels | 200 |
 | `lineLabel.offset` | offset, ems, −5 to 5 per axis | `[0, 1]` |

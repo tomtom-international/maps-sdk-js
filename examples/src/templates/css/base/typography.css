@@ -107,6 +107,28 @@ h6 {
     color: var(--ui-text-high-em);
 }
 
+/* A <dl> of <div>s, each a term and its value on one line */
+.ui-detail-list {
+    margin: 0;
+}
+
+.ui-detail-list > div {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--ui-space-3);
+    padding: var(--ui-space-1) 0;
+}
+
+.ui-detail-list dt {
+    color: var(--ui-text-med-em);
+}
+
+.ui-detail-list dd {
+    margin: 0;
+    font-weight: var(--ui-font-weight-semibold);
+    text-align: right;
+}
+
 .ui-label {
     display: block;
     margin-bottom: var(--ui-label-margin);

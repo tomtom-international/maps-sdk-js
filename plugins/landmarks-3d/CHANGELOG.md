@@ -1,5 +1,31 @@
 # Changelog
 
+## 0.0.13
+
+### Patch Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - A still map with landmarks loaded stops redrawing every frame.
+  - The layer asks for a frame only when a tile arrives, and works out the tiles in view only when the camera moves or the map's data changes
+  - After writing a `landmarks.layer` field yourself, call `map.mapLibreMap.triggerRepaint()`
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - The `maplibre-gl` peer dependency moves up to `^6.13.0`
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - license: the privacy clause of `LICENSE.txt` now links the TomTom Privacy Policy, https://www.tomtom.com/privacy/
+
+- Thanks [@JulianChinAFoeng-TomTom](https://github.com/JulianChinAFoeng-TomTom)! - tests: each package's unit test run now fails when its coverage drops below the goals in `TESTING.md`
+
+## 0.0.12
+
+### Patch Changes
+
+- Thanks [@AlvaroGraca-TomTom](https://github.com/AlvaroGraca-TomTom)! - No code change: this version is on the `latest` npm tag, which the previous one missed
+
+## 0.0.11
+
+### Patch Changes
+
+- Thanks [@AlvaroGraca-TomTom](https://github.com/AlvaroGraca-TomTom)! - No code change: this version is on the `latest` npm tag, which the previous one missed
+
 ## 0.0.10
 
 ### Patch Changes

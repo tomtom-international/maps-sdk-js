@@ -21,12 +21,20 @@ const FRC_OPTIONS: { value: FunctionalRoadClass; label: string }[] = [
 
 export const ALL_HOURS = Array.from({ length: 24 }, (_, hour) => hour);
 
-const HOUR_PRESETS: { id: string; label: string; hours: number[] }[] = [
-    { id: 'all', label: 'All day', hours: ALL_HOURS },
-    { id: 'rush', label: 'Rush hours', hours: [7, 8, 9, 16, 17, 18, 19] },
-    { id: 'day', label: 'Daytime', hours: [9, 10, 11, 12, 13, 14, 15, 16] },
-    { id: 'night', label: 'Night', hours: [0, 1, 2, 3, 4, 5, 22, 23] },
+// In local time: the filter and the response count hours in UTC, so a preset converts to it when applied.
+const HOUR_PRESETS: { id: string; label: string; localHours: number[] }[] = [
+    { id: 'all', label: 'All day', localHours: ALL_HOURS },
+    { id: 'rush', label: 'Rush hours', localHours: [7, 8, 9, 16, 17, 18, 19] },
+    { id: 'day', label: 'Daytime', localHours: [9, 10, 11, 12, 13, 14, 15, 16] },
+    { id: 'night', label: 'Night', localHours: [0, 1, 2, 3, 4, 5, 22, 23] },
 ];
+
+// The viewer's clock on `day`, as daylight saving shifts it: `getTimezoneOffset` is UTC minus local time in minutes.
+// A half-hour offset rounds to a whole hour, the filter's step. Offsets span -12 to +14, so one +24 keeps it positive.
+const localHoursToUTC = (localHours: number[], day: Date): number[] => {
+    const offsetHours = Math.round(-day.getTimezoneOffset() / 60);
+    return localHours.map((hour) => (hour - offsetHours + 24) % 24);
+};
 
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
 const MAX_RANGE_DAYS = 31;
@@ -138,7 +146,7 @@ export const initFilters = (state: AnalyticsFilters, onChange: () => void): Init
         cell.type = 'button';
         cell.className = 'aa-hour-cell';
         cell.textContent = String(hour);
-        cell.title = `${hour}:00 – ${hour}:59`;
+        cell.title = `${hour}:00 – ${hour}:59 UTC`;
         cell.addEventListener('click', () => {
             if (hourSet.has(hour)) hourSet.delete(hour);
             else hourSet.add(hour);
@@ -158,9 +166,12 @@ export const initFilters = (state: AnalyticsFilters, onChange: () => void): Init
         presetButton.type = 'button';
         presetButton.className = 'aa-preset-button';
         presetButton.textContent = preset.label;
+        presetButton.title = `${preset.label} on your clock, as UTC hours`;
         presetButton.addEventListener('click', () => {
             hourSet.clear();
-            for (const hour of preset.hours) hourSet.add(hour);
+            // Noon on the end day, read on the viewer's clock: the offset of the days analysed, not of today.
+            const endDay = state.endDate ? new Date(`${state.endDate}T12:00`) : new Date();
+            for (const hour of localHoursToUTC(preset.localHours, endDay)) hourSet.add(hour);
             state.hours = [...hourSet].sort((a, b) => a - b);
             for (let hour = 0; hour < 24; hour++) renderHourCell(hour);
             onChange();

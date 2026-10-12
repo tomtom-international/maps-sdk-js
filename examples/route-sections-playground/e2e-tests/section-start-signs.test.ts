@@ -6,8 +6,8 @@ import { EXTRA_SHOT_OPTIONS, loadProdExample } from '../../src/e2e-test-utils/lo
  * The signs this playground posts where a tunnel and a restricted stretch start.
  *
  * @remarks
- * Like the speed limit signs, they draw from zoom 10 and the example opens on a whole country, so
- * each view is asked for through the map's URL hash, in `zoom/lat/lng`, on the Munich-to-Milan route.
+ * They draw from zoom 10, one before the speed limit signs, and the example opens on a whole country,
+ * so each view is asked for through the map's URL hash, in `zoom/lat/lng`, on the Munich-to-Milan route.
  */
 test.describe('section start signs', () => {
     test('a tunnel posts its sign where it starts', { tag: TAG_PROD }, async ({ page }) => {

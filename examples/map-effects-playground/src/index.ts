@@ -1,6 +1,6 @@
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
-import { getKnob, setKnob, TomTomMap, TrafficFlowModule } from '@tomtom-org/maps-sdk/map';
-import { effectKnobCatalogue, MapEffects, type MapEffectsSettings } from '@tomtom-org/maps-sdk-plugin-map-effects';
+import { getKnob, setKnob, setKnobs, TomTomMap, TrafficFlowModule } from '@tomtom-org/maps-sdk/map';
+import { effectKnobCatalogue, MapEffects, type MapEffectsConfig } from '@tomtom-org/maps-sdk-plugin-map-effects';
 import './style.css';
 import { API_KEY } from './config';
 import { initTogglePanel } from './togglePanel';
@@ -8,11 +8,11 @@ import { initTogglePanel } from './togglePanel';
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
 
-// Each use case is a settings object.
-const useCases: Record<string, MapEffectsSettings> = {
-    'data-viz': { 'grade.saturation': 0.35, 'grade.brightness': 0.85, 'tint.color': '#1f2937', 'tint.opacity': 0.2 },
-    'night-driving': { 'bloom.intensity': 0.6, 'bloom.radius': 14, 'bloom.threshold': 0.55 },
-    focus: { 'vignette.intensity': -0.45, 'edgeBlur.intensity': 10, 'edgeBlur.reach': 0.45 },
+// Each use case is a typed config.
+const useCases: Record<string, MapEffectsConfig> = {
+    'data-viz': { grade: { saturation: 0.35, brightness: 0.85 }, tint: { color: '#1f2937', opacity: 0.2 } },
+    'night-driving': { bloom: { intensity: 0.6, radius: 14, threshold: 0.55 } },
+    focus: { vignette: { intensity: -0.45 }, edgeBlur: { intensity: 10, reach: 0.45 } },
 };
 
 const map = new TomTomMap({
@@ -34,6 +34,23 @@ const map = new TomTomMap({
 TrafficFlowModule.get(map, { visible: true });
 
 const effects = new MapEffects(map);
+
+// The panel saves every knob by id, and a reload restores them with setKnobs: values read back from
+// storage are data, so each is checked against its knob and none lands if one is refused.
+const SAVED_KNOBS_KEY = 'map-effects-playground.knobs';
+const saveKnobs = () =>
+    localStorage.setItem(
+        SAVED_KNOBS_KEY,
+        JSON.stringify(
+            Object.fromEntries(effectKnobCatalogue.map(({ id }) => [id, getKnob(effects, effectKnobCatalogue, id)])),
+        ),
+    );
+try {
+    setKnobs(effects, effectKnobCatalogue, JSON.parse(localStorage.getItem(SAVED_KNOBS_KEY) ?? '{}'));
+} catch (error) {
+    console.warn('Dropped the saved effect knobs:', error);
+    localStorage.removeItem(SAVED_KNOBS_KEY);
+}
 
 // One control per knob, grouped by effect, from the catalogue.
 const renderPanel = () => {
@@ -85,15 +102,19 @@ const renderPanel = () => {
     }
 };
 renderPanel();
+// A control's `change` bubbles up here after its own listener has set its knob.
+document.querySelector('#ui-knobs')?.addEventListener('change', saveKnobs);
 
 const useCaseSelector = document.querySelector('#ui-useCase') as HTMLSelectElement;
 useCaseSelector.addEventListener('change', () => {
     effects.applyConfig(useCases[useCaseSelector.value] ?? {});
+    saveKnobs();
     renderPanel();
 });
 
 document.querySelector('#ui-reset')?.addEventListener('click', () => {
     effects.resetConfig();
+    localStorage.removeItem(SAVED_KNOBS_KEY);
     useCaseSelector.value = '';
     renderPanel();
 });

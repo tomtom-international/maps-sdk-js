@@ -1,0 +1,140 @@
+/* The clicked section, over the sections bar's right end */
+
+.ui-section-details.ui-customPanel {
+    position: static;
+    width: 340px;
+    max-height: 42vh;
+    pointer-events: auto;
+}
+
+.ui-section-details > :last-child {
+    padding-bottom: var(--ui-space-3);
+}
+
+.ui-section-details-header {
+    display: flex;
+    align-items: center;
+    gap: var(--ui-space-3);
+    padding-top: var(--ui-space-3);
+}
+
+.ui-section-details-icon {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--ui-rounded-10);
+    background: var(--ui-lane-color);
+    color: var(--ui-text-white);
+}
+
+.ui-section-details-icon svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* A map sign is drawn as the map draws it, in the lane's colour rather than on a tile of it */
+.ui-section-details-icon:has(.ui-map-sign) {
+    background: none;
+    color: var(--ui-lane-color);
+}
+
+.ui-section-details-icon.ui-lane-country:has(.ui-map-sign) {
+    color: var(--ui-border-info-high-em);
+}
+
+.ui-section-details-icon:has(.ui-map-sign) svg {
+    width: 32px;
+    height: 32px;
+}
+
+.ui-section-details-heading {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.ui-section-details-heading .ui-place-card-title {
+    margin: 0;
+    padding-right: 0;
+}
+
+/* START AND END: on a line between two dots, the section's length and time beside it */
+
+.ui-section-ends {
+    margin: var(--ui-space-3) 0;
+    list-style: none;
+}
+
+.ui-section-end {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding-left: var(--ui-space-5);
+    font-size: var(--ui-font-body-s);
+}
+
+.ui-section-end::before {
+    position: absolute;
+    top: 5px;
+    left: 2px;
+    width: 10px;
+    height: 10px;
+    border: 2px solid var(--ui-surface-primary);
+    border-radius: 50%;
+    background: var(--ui-surface-0);
+    box-sizing: border-box;
+    content: "";
+}
+
+.ui-section-end-when {
+    font-variant-numeric: tabular-nums;
+    color: var(--ui-text-med-em);
+}
+
+.ui-section-end-when strong {
+    color: var(--ui-text-high-em);
+}
+
+.ui-section-end-road {
+    font-weight: var(--ui-font-weight-semibold);
+}
+
+.ui-section-end-near {
+    min-height: 1lh;
+    font-size: var(--ui-font-caption-m);
+    color: var(--ui-text-med-em);
+}
+
+.ui-section-span {
+    margin: var(--ui-space-1) 0 var(--ui-space-1) 6px;
+    padding: var(--ui-space-1) 0 var(--ui-space-1) calc(var(--ui-space-5) - 6px);
+    border-left: 2px dashed var(--ui-border-high-em);
+    font-size: var(--ui-font-caption-m);
+    color: var(--ui-text-low-em);
+}
+
+/* INCIDENT: what the traffic report says */
+
+.ui-incident-report {
+    margin-bottom: var(--ui-space-3);
+    padding: var(--ui-space-2) var(--ui-space-3);
+    border-radius: var(--ui-rounded-10);
+    background: var(--ui-surface-1);
+    font-size: var(--ui-font-body-s);
+}
+
+.ui-incident-report p {
+    margin: 0;
+}
+
+.ui-incident-description {
+    font-weight: var(--ui-font-weight-semibold);
+}
+
+.ui-incident-extent {
+    font-size: var(--ui-font-caption-m);
+    color: var(--ui-text-med-em);
+}

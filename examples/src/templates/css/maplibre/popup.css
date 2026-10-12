@@ -18,3 +18,10 @@
     color: var(--ui-text-high-em);
     background: var(--ui-surface-1);
 }
+
+/* A popup holding a card: roomier, rounder and raised */
+.ui-card-popup .maplibregl-popup-content {
+    padding: var(--ui-space-3);
+    border-radius: var(--ui-rounded-15);
+    box-shadow: var(--ui-elevation-e4);
+}

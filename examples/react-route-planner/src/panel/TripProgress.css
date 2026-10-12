@@ -1,0 +1,36 @@
+.ui-trip-progress {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    margin-bottom: 0;
+    padding-bottom: var(--ui-space-2);
+    border-bottom: 1px solid var(--ui-border-low-em);
+    background: var(--ui-surface-0);
+}
+
+.ui-progress-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--ui-space-3);
+    margin-bottom: var(--ui-space-2);
+}
+
+.ui-progress-controls .ui-slider {
+    flex: 1;
+}
+
+.ui-progress-clock {
+    min-width: 5ch;
+    font-weight: var(--ui-font-weight-bold);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+}
+
+.ui-progress-marker {
+    width: 18px;
+    height: 18px;
+    border: 3px solid var(--ui-surface-0);
+    border-radius: var(--ui-rounded-full);
+    background: var(--ui-surface-brand-red);
+    box-shadow: var(--ui-elevation-e3);
+}

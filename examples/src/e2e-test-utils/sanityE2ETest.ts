@@ -3,7 +3,7 @@ import type { Page, TestInfo } from '@playwright/test';
 import { expect } from '@playwright/test';
 import { PROD_TEST_SERVER_PORT } from '../../playwright.config';
 import { DEFAULT_MAP_LOAD_TIMEOUT, DEFAULT_MAP_SELECTOR, WHOLE_PAGE_MAX_DIFF_RATIO } from './e2eTestConstants';
-import { enableMapReadback, waitForMapPainted } from './mapPaint';
+import { enableMapReadback, waitForMapPainted, waitForMapStill } from './mapPaint';
 import { expectNoPageErrors, recordPageErrors } from './pageErrors';
 import { checkTempUiSnapshot } from './tempUiSnapshot';
 
@@ -33,14 +33,22 @@ export type SanityE2ETestOptions = {
      */
     maxDiffPixelRatio?: number;
     /**
-     * Extra time to settle after the network has gone quiet, in milliseconds (default: 0).
+     * How long the map must hold still before the shot, in milliseconds (default: 0, no wait).
      *
      * For the examples whose subject is *built* from what the network delivered rather than drawn
      * by it: 3D terrain meshes its elevation tiles after they arrive, and under SwiftShader that
      * takes seconds — so the shot otherwise lands on a map that is flat, which is the one thing a
-     * terrain example must not be photographed as.
+     * terrain example must not be photographed as. A fixed wait is not enough on a loaded runner,
+     * where the tiles themselves can still be arriving when it ends.
      */
     settleMs?: number;
+    /**
+     * An element the example renders only once its subject has arrived, waited for before the shot.
+     *
+     * For the examples that chain requests, where a quiet network between two of them reads as idle
+     * and the shot lands before the last one has even been sent.
+     */
+    readySelector?: string;
     /** TEMPORARY: selector → fixed value, for elements whose content changes between runs. */
     uiPinnedValues?: Record<string, string>;
     /**
@@ -71,6 +79,7 @@ export const sanityE2ETest = async (options: SanityE2ETestOptions) => {
         mapLoadTimeout = DEFAULT_MAP_LOAD_TIMEOUT,
         maxDiffPixelRatio = WHOLE_PAGE_MAX_DIFF_RATIO,
         settleMs = 0,
+        readySelector,
         uiPinnedValues = {},
         rendersMap = true,
     } = options;
@@ -85,11 +94,12 @@ export const sanityE2ETest = async (options: SanityE2ETestOptions) => {
     await enableMapReadback(page);
     await page.goto(getExampleURL(testInfo));
     await page.waitForSelector(mapSelector, { timeout: mapLoadTimeout });
+    if (readySelector) await page.waitForSelector(readySelector, { timeout: mapLoadTimeout });
     await page.waitForLoadState('networkidle', { timeout: mapLoadTimeout });
     if (rendersMap) await waitForMapPainted(page, mapLoadTimeout);
     // After the paint gate, not instead of it: a map that painted can still be showing a flat
     // mesh, which is what `settleMs` waits out.
-    if (settleMs) await page.waitForTimeout(settleMs);
+    if (settleMs) await waitForMapStill(page, settleMs, mapLoadTimeout, mapLoadTimeout);
 
     await expect(page).toHaveScreenshot('upon-load.png', {
         maxDiffPixelRatio,

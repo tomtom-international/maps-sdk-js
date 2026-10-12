@@ -1,0 +1,31 @@
+/* A stop's badge, name and details, wherever the planner lists it */
+
+.ui-stop-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: var(--ui-rounded-full);
+    background: var(--ui-surface-high-em);
+    color: var(--ui-text-white);
+    font-size: var(--ui-font-caption-m);
+    font-weight: var(--ui-font-weight-bold);
+}
+
+.ui-stop-badge.is-end {
+    background: var(--ui-surface-brand-red);
+}
+
+.ui-stop-title {
+    font-weight: var(--ui-font-weight-semibold);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ui-stop-subtitle {
+    font-size: var(--ui-font-caption-m);
+    color: var(--ui-text-med-em);
+}

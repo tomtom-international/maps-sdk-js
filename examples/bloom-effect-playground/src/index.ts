@@ -32,7 +32,7 @@ const INITIAL_STYLE: StandardStyleID = 'monoDark';
     await TrafficFlowModule.get(map, { visible: true });
     await TrafficIncidentsModule.get(map, { visible: true });
 
-    const effects = new MapEffects(map, { 'bloom.intensity': 0.9, 'bloom.threshold': 0.45, 'bloom.radius': 13 });
+    const effects = new MapEffects(map, { bloom: { intensity: 0.9, threshold: 0.45, radius: 13 } });
     renderKnobPanel(effects);
 
     initStyleSelector(INITIAL_STYLE, (style) => map.setStyle(style));

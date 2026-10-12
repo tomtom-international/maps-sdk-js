@@ -103,6 +103,8 @@ const ids = module.sourceAndLayerIDs;
 // { points: { sourceID: 'custom-geojson-0-points', layerIDs: ['custom-geojson-0-points-layer-0'] } }
 ```
 
+A raw `setPaintProperty` on those layers lasts until a config change sets that property differently in the layer specs, or `setStyle`, which drops it. Put the value in the layer spec instead (`map-setup.md` § Who owns what).
+
 ## Feature IDs (auto-normalized)
 
 `show()` makes `feature.id` and `feature.properties.id` match: an explicit value on either is kept and copied to the other (`feature.id` wins when both are set and differ); with neither, both become the array index. Event lookup reads `properties.id`, else `feature.id`. Needed because MapLibre disables `promoteId` on clustered sources — without it every clustered point has `feature.id === undefined` and every click resolves to the first feature.
@@ -160,7 +162,7 @@ markers: {
 },
 ```
 
-**Every text layer names a `text-font`** from `MAP_REGULAR_FONT`, `MAP_MEDIUM_FONT`, `MAP_BOLD_FONT` or `MAP_ITALIC_FONT` (`mapFonts` lists all four): the TomTom glyph endpoint serves only those. Without one, MapLibre asks for `Open Sans Regular`, gets a 404, warns `Unable to load glyph range` and draws a local browser font.
+**Every text layer names a `text-font`** from `mapFonts`: `MAP_REGULAR_FONT`, `MAP_MEDIUM_FONT`, `MAP_BOLD_FONT`, `MAP_ITALIC_FONT` and the style's `NotoSerif-*` and `NotoSans-*Italic` faces, the only ones the TomTom glyph endpoint serves. The serif faces lack Arabic and the italics cover only Latin, Greek and Cyrillic, so end a stack naming one with the `Noto-*` face of the same weight. Without a `text-font`, MapLibre asks for `Open Sans Regular`, gets a 404, warns `Unable to load glyph range` and draws a local browser font.
 
 ---
 
@@ -170,7 +172,7 @@ Layers go where `beforeLayerConfig` says, as on every other module: `'top'` (the
 
 - **Module-level** `beforeLayerConfig` places every layer; a layer's own wins over it.
 - **`{ layerID }`** (`CustomGeoJSONBeforeLayerConfig`) goes below a layer the style lacks: another layer of this module, or one another module added.
-- **Default for lines and polygons: `'lowestLabel'`**, so labels and icons stay readable above the data; points usually stay on `'top'`. `'lowestRoadLine'` lets the road network paint over a fill; `'lowestBuilding'` sits under 3D buildings.
+- **Default for lines and polygons: `'lowestLabel'`**, so labels and icons stay readable above the data; points usually stay on `'top'`. `'lowestLabel'` also sits under the 3D buildings. `'lowestRoadLine'` lets the road network paint over a fill; `'lowestBuilding'` the 2D building footprints too.
 
 ```ts
 const module = await CustomGeoJSONModule.create(map, {

@@ -1,0 +1,201 @@
+/* The route as a strip along the bottom of the map, one lane per kind of section */
+
+.ui-sections-bar.ui-customPanel {
+    --ui-lane-height: 14px;
+    --ui-lane-gap: 6px;
+    --ui-stops-lane-height: 22px;
+    position: static;
+    align-self: stretch;
+    width: auto;
+    max-height: 45vh;
+    pointer-events: auto;
+}
+
+.ui-sections-header {
+    display: flex;
+    align-items: center;
+    gap: var(--ui-space-3);
+    padding-top: var(--ui-space-3);
+    padding-bottom: var(--ui-space-2);
+}
+
+.ui-sections-header .ui-subheading {
+    margin: 0;
+    white-space: nowrap;
+}
+
+.ui-sections-readout {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    font-size: var(--ui-font-body-s);
+    font-variant-numeric: tabular-nums;
+    color: var(--ui-text-med-em);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ui-sections-chart {
+    display: grid;
+    grid-template-columns: 14px 1fr;
+    column-gap: var(--ui-space-3);
+    padding-bottom: var(--ui-space-2);
+}
+
+.ui-lane-labels {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ui-lane-gap);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--ui-font-caption-m);
+    color: var(--ui-text-med-em);
+}
+
+.ui-lane-labels li {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: var(--ui-lane-height);
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.ui-lane-labels svg {
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+}
+
+.ui-lane-labels li:first-child {
+    height: var(--ui-stops-lane-height);
+}
+
+.ui-lane-tracks {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--ui-lane-gap);
+    cursor: crosshair;
+}
+
+.ui-lane-track {
+    position: relative;
+    height: var(--ui-lane-height);
+    border-radius: var(--ui-rounded-5);
+    background: var(--ui-surface-1);
+}
+
+/* STOPS LANE: the stops on a line, each stay as a bar from its badge */
+
+.ui-lane-track.ui-lane-stops {
+    height: var(--ui-stops-lane-height);
+    background: none;
+}
+
+.ui-lane-stops::before {
+    content: "";
+    position: absolute;
+    inset: 50% 0 auto;
+    height: 2px;
+    margin-top: -1px;
+    background: var(--ui-border-med-em);
+}
+
+.ui-lane-stay {
+    position: absolute;
+    top: 3px;
+    bottom: 3px;
+    overflow: hidden;
+    padding-left: 14px;
+    border-radius: var(--ui-rounded-5);
+    background: var(--ui-surface-high-em);
+    color: var(--ui-text-white);
+    font-size: 10px;
+    font-weight: var(--ui-font-weight-semibold);
+    line-height: 16px;
+    white-space: nowrap;
+}
+
+.ui-stop-badge.ui-lane-stop {
+    position: absolute;
+    top: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 11px;
+    transform: translate(-50%, -50%);
+}
+
+/* BLOCKS: one per section, in its lane's colour */
+
+.ui-lane-block {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    min-width: 3px;
+    padding: 0;
+    border: none;
+    border-radius: 3px;
+    background: var(--ui-lane-color, var(--ui-text-low-em));
+    cursor: pointer;
+    transition: box-shadow var(--ui-transition-fast);
+}
+
+.ui-lane-block:hover,
+.ui-lane-block:focus-visible,
+.ui-lane-block.is-active,
+.ui-lane-block.is-selected {
+    z-index: 1;
+    outline: none;
+    box-shadow:
+        0 0 0 2px var(--ui-surface-0),
+        0 0 0 4px var(--ui-surface-primary);
+}
+
+/* A country's block carries its name */
+.ui-lane-block.ui-lane-country {
+    overflow: hidden;
+    color: var(--ui-text-high-em);
+    font-family: var(--ui-font-gilroy);
+    font-size: 10px;
+    font-weight: var(--ui-font-weight-semibold);
+    line-height: var(--ui-lane-height);
+}
+
+.ui-lane-block.ui-lane-country.is-even {
+    color: var(--ui-text-white);
+}
+
+.ui-lane-cursor {
+    position: absolute;
+    top: 0;
+    bottom: 16px;
+    width: 2px;
+    margin-left: -1px;
+    border-radius: 1px;
+    background: var(--ui-surface-primary);
+    pointer-events: none;
+}
+
+.ui-lane-axis {
+    position: relative;
+    height: 16px;
+    font-size: var(--ui-font-caption-m);
+    font-variant-numeric: tabular-nums;
+    color: var(--ui-text-low-em);
+}
+
+.ui-lane-axis span {
+    position: absolute;
+    transform: translateX(-50%);
+    white-space: nowrap;
+}
+
+.ui-lane-axis span:first-child {
+    transform: none;
+}
+
+.ui-lane-axis span:last-child {
+    transform: translateX(-100%);
+}

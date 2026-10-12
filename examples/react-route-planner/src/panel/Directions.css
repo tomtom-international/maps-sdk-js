@@ -1,0 +1,69 @@
+.ui-directions {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.ui-direction {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--ui-space-3);
+    width: 100%;
+    padding: var(--ui-space-2);
+    border: none;
+    border-bottom: 1px solid var(--ui-border-low-em);
+    background: none;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.ui-direction:hover {
+    background: var(--ui-surface-1);
+}
+
+.ui-direction.is-passed {
+    color: var(--ui-text-low-em);
+}
+
+.ui-direction.is-passed .ui-direction-meta {
+    color: var(--ui-text-low-em);
+}
+
+.ui-direction.is-current {
+    box-shadow: inset 3px 0 var(--ui-surface-brand-red);
+    background: var(--ui-surface-1);
+}
+
+.ui-direction.is-current .ui-direction-icon {
+    background: var(--ui-surface-brand-red);
+    color: var(--ui-text-white);
+}
+
+.ui-direction.is-current .ui-direction-text {
+    font-weight: var(--ui-font-weight-bold);
+}
+
+.ui-direction-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: var(--ui-rounded-full);
+    background: var(--ui-surface-1);
+    color: var(--ui-text-high-em);
+}
+
+.ui-direction-body {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.ui-direction-meta {
+    font-size: var(--ui-font-caption-m);
+    color: var(--ui-text-med-em);
+}

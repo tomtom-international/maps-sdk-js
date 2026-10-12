@@ -1,0 +1,89 @@
+.ui-crossings {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--ui-space-1) var(--ui-space-2);
+}
+
+.ui-crossing {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.ui-crossing svg {
+    width: 14px;
+    height: 14px;
+    color: var(--ui-text-med-em);
+}
+
+/* ALTERNATIVES: one card per route */
+
+.ui-alternatives {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: var(--ui-space-2);
+}
+
+.ui-alternative {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    padding: var(--ui-space-2) var(--ui-space-3);
+}
+
+.ui-alternative-time {
+    font-weight: var(--ui-font-weight-bold);
+}
+
+.ui-alternative-detail {
+    font-size: var(--ui-font-caption-m);
+    color: var(--ui-text-med-em);
+}
+
+/* ITINERARY: the stops' badges joined by a dotted line */
+
+.ui-itinerary {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.ui-itinerary-stop {
+    position: relative;
+    display: flex;
+    gap: var(--ui-space-3);
+    padding-bottom: var(--ui-space-3);
+}
+
+.ui-itinerary-stop:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    top: 24px;
+    bottom: 0;
+    left: 11px;
+    border-left: 2px dotted var(--ui-border-med-em);
+}
+
+/* The drive pointed at, which the map rings */
+.ui-itinerary-stop:not(:last-child):hover::before {
+    border-left: 2px solid var(--ui-surface-primary);
+}
+
+.ui-itinerary-stop:hover .ui-itinerary-leg {
+    color: var(--ui-text-high-em);
+}
+
+.ui-itinerary-body {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.ui-itinerary-leg {
+    margin-top: var(--ui-space-1);
+    font-size: var(--ui-font-caption-m);
+    color: var(--ui-text-low-em);
+}

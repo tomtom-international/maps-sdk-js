@@ -26,6 +26,17 @@
     flex: 1;
 }
 
+/* Fields side by side, sharing the row's width */
+.ui-field-row {
+    display: flex;
+    gap: var(--ui-space-2);
+}
+
+.ui-field-row > * {
+    flex: 1;
+    min-width: 0;
+}
+
 .ui-form-helper {
     margin-top: var(--ui-label-margin);
     font-size: var(--ui-font-caption-s);

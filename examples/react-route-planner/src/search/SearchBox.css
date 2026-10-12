@@ -1,0 +1,19 @@
+.ui-search-field {
+    position: relative;
+}
+
+.ui-search-row {
+    display: flex;
+    gap: var(--ui-space-2);
+}
+
+.ui-search-row .ui-input {
+    flex: 1;
+}
+
+.ui-planner .ui-result-list {
+    width: 100%;
+    max-width: none;
+    max-height: 320px;
+    z-index: 20;
+}

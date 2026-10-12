@@ -1,8 +1,8 @@
 # Flyover Plugin
 
-A camera that flies a route on a [TomTom Maps SDK for JavaScript](https://docs.tomtom.com/maps-sdk-js/introduction/overview)
-map: it follows the line, aims at the junctions ahead, frames them, keeps clear of the terrain it
-crosses, and parks the followed position — marked with an arrow — where you want it on screen.
+This plugin adds a camera that flies a route on a [TomTom Maps SDK for JavaScript](https://docs.tomtom.com/maps-sdk-js/introduction/overview)
+map. It follows the line, aims at the junctions ahead and frames them. It keeps clear of the terrain
+it crosses, and it parks the followed position, marked with an arrow, where you want it on screen.
 
 ## Docs & examples
 
@@ -11,7 +11,7 @@ crosses, and parks the followed position — marked with an arrow — where you 
 
 ## Quickstart
 
-Note: this plugin declares `@tomtom-org/maps-sdk` and `maplibre-gl` as peer dependencies and bundles neither — ensure both are installed in your project.
+This plugin declares `@tomtom-org/maps-sdk` and `maplibre-gl` as peer dependencies and bundles neither, so install both in your project too.
 
 ```bash
 npm install @tomtom-org/maps-sdk maplibre-gl @tomtom-org/maps-sdk-plugin-flyover
@@ -34,15 +34,15 @@ flyover.start();
 
 ## Features
 
-The route is the only geometry it needs — no camera keyframes to author, and no animation to
-re-time when the route changes. The flight loops: it wraps at the destination and never lands.
+The route is the only geometry it needs. There are no camera keyframes to author and no animation
+to re-time when the route changes. The flight loops. It wraps at the destination and never lands.
 
-- **Aim** — at the next guidance instruction, a fixed distance down the road, or a number of the
+- **Aim** — at the next guidance instruction, a fixed distance down the road or a number of the
   route's own vertices.
-- **Framing** — the zoom that fits the next junctions, one tied to the speed, or a fixed one.
-- **Anchor** — where the followed position sits in the view; absent one, it slides down with the pitch.
-- **Marker** — an arrow on the followed position, facing the road; restyle it, swap in your own
-  image, or hide it.
+- **Framing** — the zoom that fits the next junctions, one tied to the speed or a fixed one.
+- **Anchor** — where the followed position sits in the view. If you don't set one, it slides down with the pitch.
+- **Marker** — an arrow on the followed position, facing the road. You can restyle it, swap in your
+  own image or hide it.
 - **Terrain clearance** — the camera pulls back where a ridge would come between it and the road,
   so a mountain route stays a flight.
 - **Smooth by default** — every value the camera changes moves on a critically damped spring, the

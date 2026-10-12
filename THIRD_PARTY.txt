@@ -152,7 +152,7 @@ terms above.
 ---
 
 Name: maplibre-gl
-Version: 6.12.0
+Version: 6.13.0
 License: BSD-3-Clause
 Bundled: false (peer dependency)
 Required by: map

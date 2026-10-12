@@ -1,0 +1,26 @@
+.ui-place-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ui-space-2);
+    min-width: 200px;
+}
+
+.ui-place-card-label {
+    font-size: var(--ui-font-caption-m);
+    color: var(--ui-text-med-em);
+}
+
+.ui-place-card-title {
+    padding-right: var(--ui-space-4);
+    font-size: var(--ui-font-body-m);
+    font-weight: var(--ui-font-weight-bold);
+}
+
+.ui-place-card-subtitle {
+    font-size: var(--ui-font-caption-m);
+    color: var(--ui-text-med-em);
+}
+
+.ui-place-card .ui-button-group-horizontal .ui-button {
+    flex: 1;
+}

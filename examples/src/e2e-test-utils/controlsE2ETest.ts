@@ -31,6 +31,8 @@ const CONTROL_SELECTOR = [
 export type ControlsE2ETestOptions = {
     page: Page;
     testInfo: TestInfo;
+    /** The element holding the map, or a grid of them (default: #sdk-map). */
+    mapSelector?: string;
     /**
      * Controls left alone, as CSS selectors, for one whose effect leaves the page or that the
      * example's own test drives.
@@ -42,6 +44,8 @@ export type ControlsE2ETestOptions = {
     maxOptionsPerSelect?: number;
     /** Whether to click the middle of the map once the controls are done (default: true). */
     clickMap?: boolean;
+    /** Brings the controls behind a tab or a popover into view, once the map has drawn. */
+    reveal?: (page: Page) => Promise<void>;
 };
 
 /** A control, by the key it is looked up and reported with, and the values to walk it through. */
@@ -65,10 +69,12 @@ export const controlsE2ETest = async (options: ControlsE2ETestOptions): Promise<
     const {
         page,
         testInfo,
+        mapSelector = DEFAULT_MAP_SELECTOR,
         skip = [],
         stepSettleMs = DEFAULT_STEP_SETTLE_MS,
         maxOptionsPerSelect = DEFAULT_MAX_OPTIONS_PER_SELECT,
         clickMap = true,
+        reveal,
     } = options;
     testInfo.setTimeout(Math.max(testInfo.timeout, 180_000));
 
@@ -79,9 +85,13 @@ export const controlsE2ETest = async (options: ControlsE2ETestOptions): Promise<
 
     await enableMapReadback(page);
     await page.goto(getExampleURL(testInfo));
-    await page.waitForSelector(`${DEFAULT_MAP_SELECTOR} canvas`, { timeout: LOAD_TIMEOUT_MS });
+    await page.waitForSelector(`${mapSelector} canvas`, { timeout: LOAD_TIMEOUT_MS });
     await waitForMapPainted(page, LOAD_TIMEOUT_MS);
-    await installControlLookup(page, skip);
+    if (reveal) {
+        beginStep('revealing the controls');
+        await reveal(page);
+    }
+    await installControlLookup(page, skip, mapSelector);
 
     const walked: string[] = [];
     while (walked.length < MAX_CONTROLS) {
@@ -98,7 +108,7 @@ export const controlsE2ETest = async (options: ControlsE2ETestOptions): Promise<
 
     if (clickMap) {
         beginStep('clicking the middle of the map');
-        const box = await page.locator(DEFAULT_MAP_SELECTOR).boundingBox();
+        const box = await page.locator(mapSelector).boundingBox();
         if (box) await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
     }
 
@@ -126,7 +136,7 @@ type ControlLookup = { __exampleControls: () => Map<string, FormControl> };
  * label, numbered when that repeats. Visible means rendered at all: a native input styled away
  * behind a custom switch or swatch counts, a control in a collapsed or not yet shown section does not.
  */
-const installControlLookup = (page: Page, skip: readonly string[]) =>
+const installControlLookup = (page: Page, skip: readonly string[], mapSelector: string) =>
     page.evaluate(
         ({ selector, skip, mapSelector }) => {
             const isWalkable = (control: FormControl): boolean =>
@@ -162,7 +172,7 @@ const installControlLookup = (page: Page, skip: readonly string[]) =>
                 return controls;
             };
         },
-        { selector: CONTROL_SELECTOR, skip: [...skip], mapSelector: DEFAULT_MAP_SELECTOR },
+        { selector: CONTROL_SELECTOR, skip: [...skip], mapSelector },
     );
 
 /** The first control not walked yet, with the values to walk it through, or `null` once all are. */
@@ -211,7 +221,9 @@ const applyControlValue = ({ key, value }: { key: string; value: string }): void
         control.click();
         return;
     }
-    control.value = value;
+    // Through the prototype's setter: React tracks the value on the element's own, and would read
+    // a value set there as no change at all.
+    Object.getOwnPropertyDescriptor(Object.getPrototypeOf(control), 'value')?.set?.call(control, value);
     control.dispatchEvent(new Event('input', { bubbles: true }));
     control.dispatchEvent(new Event('change', { bubbles: true }));
 };

@@ -33,12 +33,9 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     await POIsModule.get(map, { visible: false });
 
     const effects = new MapEffects(map, {
-        'bloom.intensity': 0.85,
-        'bloom.radius': 38,
-        'bloom.threshold': 0.52,
-        'grade.contrast': 1.15,
-        'vignette.intensity': -0.6,
-        'vignette.reach': 0.55,
+        bloom: { intensity: 0.85, radius: 38, threshold: 0.52 },
+        grade: { contrast: 1.15 },
+        vignette: { intensity: -0.6, reach: 0.55 },
     });
 
     // Runs inside the effects chain, before every overlay effect: bloom, the grade and the vignette

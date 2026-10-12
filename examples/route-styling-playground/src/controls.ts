@@ -12,8 +12,10 @@ export type RoutePlaygroundState = {
     waypointSizeFactor: number;
     centerDash: boolean;
     routeOpacity: number;
-    // Unset factors keep the SDK's own, which the sliders start at.
-    highlight: Required<RouteHighlightConfig>;
+    // Unset factors and colours keep the SDK's own, which the controls start at.
+    highlight: Required<Pick<RouteHighlightConfig, 'outline'>> & {
+        section: Required<NonNullable<RouteHighlightConfig['section']>>;
+    };
 };
 
 // The slider spans the range the SDK clamps the factor to.
@@ -40,11 +42,37 @@ const initFactorSlider = (
     });
 };
 
+const initSectionRingControls = (
+    state: RoutePlaygroundState,
+    apply: () => void,
+    setTollRoadsRinged: (ringed: boolean) => void,
+): void => {
+    const ringTollRoadsToggle = document.querySelector<HTMLInputElement>('#toggle-ring-toll-roads');
+    ringTollRoadsToggle?.addEventListener('change', () => setTollRoadsRinged(ringTollRoadsToggle.checked));
+
+    const sectionRingColorPicker = document.getElementById('sectionRingColor-picker') as HTMLInputElement;
+    sectionRingColorPicker?.addEventListener('input', () => {
+        state.highlight.section.outline.color = sectionRingColorPicker.value;
+        apply();
+    });
+
+    initFactorSlider(
+        'highlight-section-outline-width-factor',
+        'highlight.section.outline.widthFactor',
+        undefined,
+        (factor) => {
+            state.highlight.section.outline.widthFactor = factor;
+            apply();
+        },
+    );
+};
+
 export const initControls = (
     state: RoutePlaygroundState,
     apply: () => void,
     setVisible: (visible: boolean) => void,
     setClicked: (clicked: boolean) => void,
+    setTollRoadsRinged: (ringed: boolean) => void,
 ): void => {
     // Panel toggle
     const toggleButton = document.querySelector('.ui-heading-toggle')!;
@@ -115,6 +143,8 @@ export const initControls = (
         state.highlight.outline.widthFactor = factor;
         apply();
     });
+
+    initSectionRingControls(state, apply, setTollRoadsRinged);
 
     // Route opacity slider
     const opacitySlider = document.getElementById('route-opacity') as HTMLInputElement;

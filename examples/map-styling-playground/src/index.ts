@@ -3,10 +3,13 @@ import {
     applyMapPreset,
     BaseMapModule,
     baseMapKnobCatalogue,
+    GeometriesModule,
     type MapPresetId,
     mapPresetCatalogue,
+    PlacesModule,
     POIsModule,
     poisKnobCatalogue,
+    RoutingModule,
     resetKnob,
     StandardStyleID,
     StylingFoundationsModule,
@@ -20,15 +23,49 @@ import {
     trafficFlowKnobCatalogue,
     trafficIncidentsKnobCatalogue,
 } from '@tomtom-org/maps-sdk/map';
+import {
+    calculateRoute,
+    discoverOnePlace,
+    discoverPlaces,
+    geocodeOne,
+    geometryData,
+} from '@tomtom-org/maps-sdk/services';
 import './style.css';
 import { initBaseMapGroupsPanel } from './baseMapGroupsPanel';
 import { API_KEY } from './config';
 import { initLayerEdits } from './layerEdits';
-import { initStylingPanel, type LookKnobSource } from './stylingPanel';
+import { collapsibleSection, initStylingPanel, type LookKnobSource } from './stylingPanel';
 import { initTogglePanel } from './togglePanel';
+import { initTypefacePanel } from './typefacePanel';
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
+
+const showRouteAndPlaces = async (routing: RoutingModule, places: PlacesModule, area: GeometriesModule) => {
+    const waypoints = await Promise.all([
+        discoverOnePlace('Twin Peaks, San Francisco'),
+        discoverOnePlace('Mission Dolores Park, San Francisco'),
+        discoverOnePlace('Alamo Square, San Francisco'),
+    ]);
+    const [routes, museums, district] = await Promise.all([
+        calculateRoute({ locations: waypoints }),
+        discoverPlaces({ filters: { poiCategories: ['MUSEUM'] }, geoBias: { position: [-122.43, 37.775] }, limit: 10 }),
+        geocodeOne('Haight-Ashbury, San Francisco, CA').then((place) =>
+            geometryData({ geometries: [place], zoom: 14 }),
+        ),
+    ]);
+    await routing.showWaypoints(waypoints);
+    await routing.showRoutes(routes);
+    await places.show(museums);
+    // The labels draw each geometry's `title`.
+    await area.show({
+        ...district,
+        features: district.features.map((feature) => ({
+            ...feature,
+            properties: { ...feature.properties, title: 'Haight-Ashbury' },
+        })),
+    });
+};
 
 (async () => {
     // San Francisco: hills for the shading knobs, traffic for the congestion colours, and water,
@@ -44,13 +81,19 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     ]);
     // The standard styles fade the shading out by zoom 13; these keep it at every zoom.
     const terrain = await TerrainModule.get(map, { hillshade: { visible: true, intensity: 0.5, maxZoom: 22 } });
-    const styling = await StylingFoundationsModule.get(map, { 'labels.sizeFactor': 1.2 });
+    const styling = await StylingFoundationsModule.get(map, { labels: { sizeFactor: 1.2 } });
+    // A route, a few places and a district, whose labels follow the map's typeface until given their own.
+    const area = await GeometriesModule.create(map, { fill: { opacity: 0.1 }, lineLabel: {} });
+    const routing = await RoutingModule.create(map);
+    const places = await PlacesModule.create(map);
+    void showRouteAndPlaces(routing, places, area);
 
     // How the map looks is held by the module drawing each part: the foundations by StylingFoundationsModule,
     // road markings by BaseMapModule, and the POI, traffic and hillshade looks by their own modules.
     const isTrafficLook = (id: string) => id.startsWith('colors.') || id === 'widthFactor';
     const lookSources: LookKnobSource[] = [
-        { module: styling, catalogue: stylingFoundationsKnobCatalogue },
+        // The typeface dropdown sets the map's typeface, with font files as well as the style's faces.
+        { module: styling, catalogue: stylingFoundationsKnobCatalogue, isLook: (id) => id !== 'labels.typeface' },
         { module: baseMap, catalogue: baseMapKnobCatalogue, isLook: (id) => id.startsWith('roads.'), section: 'roads' },
         {
             module: pois,
@@ -72,18 +115,22 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
             section: 'hillshade',
         },
     ];
-    const panel = initStylingPanel(lookSources);
+    // The typefaces are label settings, `labels.typeface` beside `labels.sizeFactor`, so they join that section.
+    const panel = initStylingPanel(lookSources, { labels: document.querySelector('#ui-typeface') as HTMLElement });
+    collapsibleSection('#ui-layerEdits', 'layer edits');
     initLayerEdits(styling);
 
     // Showing or hiding a whole layer group is BaseMapModule's, so its toggles are a panel of their own.
     const baseMapGroups = initBaseMapGroupsPanel(baseMap);
+    const resetTypefaces = initTypefacePanel({ styling, routing, places, area });
 
-    // Resets every look knob, keeping traffic and hillshade shown.
+    // Resets every look knob and typeface, keeping traffic and hillshade shown.
     document.querySelector('#ui-reset')?.addEventListener('click', () => {
         for (const { module, catalogue, isLook } of lookSources) {
             for (const { id } of catalogue) if (isLook?.(id) ?? true) resetKnob(module, catalogue, id);
         }
         baseMap.resetConfig();
+        resetTypefaces();
     });
 
     // Map presets are named bundles of knob settings across the modules, listed by their catalogue too.

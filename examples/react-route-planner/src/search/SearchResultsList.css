@@ -1,0 +1,31 @@
+.ui-planner .ui-result-list-inline {
+    position: static;
+    max-height: none;
+    box-shadow: none;
+    border: 1px solid var(--ui-border-low-em);
+    margin-bottom: var(--ui-space-3);
+}
+
+.ui-search-results-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.ui-search-results-header .ui-subheading {
+    margin: 0;
+}
+
+.ui-status {
+    display: flex;
+    align-items: center;
+    gap: var(--ui-space-2);
+    margin: var(--ui-space-2) 0;
+    font-size: var(--ui-font-body-s);
+    color: var(--ui-text-med-em);
+}
+
+.ui-status .ui-spinner {
+    width: 14px;
+    height: 14px;
+}

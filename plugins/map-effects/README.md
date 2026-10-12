@@ -1,20 +1,20 @@
 # Map Effects Plugin
 
-Plugin for the [TomTom Maps SDK for JavaScript](https://docs.tomtom.com/maps-sdk-js/introduction/overview) that adds practical post-processing to a `TomTomMap`: effects computed from the rendered map's own pixels, so they work on every style, survive every style release, and cannot be reproduced by editing the style.
+This plugin for the [TomTom Maps SDK for JavaScript](https://docs.tomtom.com/maps-sdk-js/introduction/overview) adds practical post-processing to a `TomTomMap`. It computes its effects from the rendered map's own pixels, so they work on every style and survive every style release. Editing the style can't reproduce them.
 
-Every effect is named by the problem it solves, and off by default:
+Every effect is off by default. Here is each one, with the problem it solves:
 
 | Effect | Knobs | Solves |
 | --- | --- | --- |
-| Bloom | `bloom.intensity`, `bloom.radius`, `bloom.threshold`, `bloom.only`, `bloom.onlyTolerance` | Emphasis on dark and driving styles — lit roads, traffic tubes, route lines glow, optionally only in the colours `bloom.only` lists |
+| Bloom | `bloom.intensity`, `bloom.radius`, `bloom.threshold`, `bloom.only`, `bloom.onlyTolerance` | Emphasis on dark and driving styles. Lit roads, traffic tubes and route lines glow, optionally only in the colours `bloom.only` lists |
 | Grade | `grade.brightness`, `grade.contrast`, `grade.saturation` | Muting the base map under a data overlay |
-| Tint | `tint.color`, `tint.opacity` | Muting the base map; matching a brand |
+| Tint | `tint.color`, `tint.opacity` | Muting the base map, or matching a brand |
 | Fog | `fog.intensity`, `fog.reach` | Depth cue and de-emphasis of far context |
 | Edge blur | `edgeBlur.intensity`, `edgeBlur.reach` | Focus on the centre of the view |
-| Depth of field | `depthOfField.intensity`, `depthOfField.focus`, `depthOfField.band`, `depthOfField.bokeh` | Depth on a tilted map — a GPU pass whose blur grows with distance, with highlights returning as discs; a flat map has no depth, and the effect ends there |
+| Depth of field | `depthOfField.intensity`, `depthOfField.focus`, `depthOfField.band`, `depthOfField.bokeh` | Depth on a tilted map. A GPU pass blurs more with distance and returns highlights as discs. A flat map has no depth, so the effect ends there |
 | Vignette | `vignette.intensity`, `vignette.reach` | Focus on the centre of the view |
 
-A stylisation of your own — a watercolour, a posterise — runs inside the same GPU chain with `addPass(pass)`, so every effect above then works on your picture.
+Your own stylisation, such as a watercolour or a posterise, runs inside the same GPU chain with `addPass(pass)`. Every effect above then works on your picture.
 
 ## Docs & examples
 
@@ -24,7 +24,7 @@ A stylisation of your own — a watercolour, a posterise — runs inside the sam
 
 ## Quickstart
 
-Note: this plugin declares `@tomtom-org/maps-sdk` and `maplibre-gl` as peer dependencies — ensure both are installed in your project.
+This plugin declares `@tomtom-org/maps-sdk` and `maplibre-gl` as peer dependencies, so install both in your project too.
 
 ```bash
 npm install @tomtom-org/maps-sdk maplibre-gl @tomtom-org/maps-sdk-plugin-map-effects
@@ -35,16 +35,20 @@ npm install @tomtom-org/maps-sdk maplibre-gl @tomtom-org/maps-sdk-plugin-map-eff
 2. Import and use the plugin:
 
 ```ts
-import { MapEffects } from '@tomtom-org/maps-sdk-plugin-map-effects';
+import { setKnob } from '@tomtom-org/maps-sdk/map';
+import { effectKnobCatalogue, MapEffects } from '@tomtom-org/maps-sdk-plugin-map-effects';
 
 // assume `map` is your initialized TomTomMap instance
 const effects = new MapEffects(map);
 
 // A quiet base under your own data layers:
-effects.updateConfig({ 'grade.saturation': 0.4, 'grade.brightness': 0.85, 'tint.opacity': 0.15 });
+effects.updateConfig({ grade: { saturation: 0.4, brightness: 0.85 }, tint: { opacity: 0.15 } });
 
 // Emphasis on a dark style:
-effects.updateConfig({ 'bloom.intensity': 0.5, 'bloom.threshold': 0.6 });
+effects.updateConfig({ bloom: { intensity: 0.5, threshold: 0.6 } });
+
+// One knob by its id, from a control or a language model, the others kept:
+setKnob(effects, effectKnobCatalogue, 'bloom.threshold', 0.4);
 
 effects.resetConfig();                    // everything off
 await effects.capture({ pixelRatio: 3 }); // map + effects as a canvas, for print

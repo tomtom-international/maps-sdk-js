@@ -23,6 +23,16 @@ const CHANNEL_NOISE_BITS = 3;
 const PAINT_TIMEOUT_MS = 30_000;
 
 /**
+ * Share of the sampled pixels that may change between two samples of a map still counted as still.
+ *
+ * A pitched 3D terrain map keeps streaming its far tiles for half a minute on a loaded runner, each
+ * repainting under 1% of the sample, while the swaps that matter repaint far more: a mesh rebuilt
+ * from finer elevation tiles moves 20 to 90% of it, and ground still waiting on its imagery shows a
+ * third of the frame grey.
+ */
+const STILL_CHANGE_RATIO = 0.01;
+
+/**
  * Makes WebGL canvases keep their drawing buffer, so their pixels can be read back after a frame.
  *
  * Must be installed before the page's own script runs, and reaches its iframes too. MapLibre asks
@@ -68,7 +78,7 @@ export const waitForMapPainted = async (
     ceiling = PAINT_TIMEOUT_MS,
 ): Promise<void> => {
     await expect
-        .poll(() => target.evaluate(countColours, { edge: SAMPLE_EDGE, noiseBits: CHANNEL_NOISE_BITS }), {
+        .poll(async () => countColours(await sampleMapCanvases(target)), {
             timeout: Math.min(timeout, ceiling),
             intervals: [250, 500, 1000],
             message:
@@ -77,6 +87,47 @@ export const waitForMapPainted = async (
         })
         .toBeGreaterThan(1);
 };
+
+/**
+ * Waits until the map canvases have held still for `quietMs`, as {@link STILL_CHANGE_RATIO} counts it.
+ *
+ * `toHaveScreenshot` accepts two matching frames 100ms apart, which a map still waiting on its tiles
+ * passes too: between two arrivals it does not change. Holding still for seconds is what tells a
+ * map that finished drawing from one that is still building its picture.
+ *
+ * @param target - The page, or the frame the map lives in.
+ * @param ceiling - Cap on `timeout`, as for {@link waitForMapPainted}.
+ */
+export const waitForMapStill = async (
+    target: Page | Frame,
+    quietMs: number,
+    timeout: number,
+    ceiling = PAINT_TIMEOUT_MS,
+): Promise<void> => {
+    let previous: number[] = [];
+    let stillSince = Date.now();
+    await expect
+        .poll(
+            async () => {
+                const current = (await sampleMapCanvases(target)).flat();
+                if (changedShare(previous, current) > STILL_CHANGE_RATIO) stillSince = Date.now();
+                previous = current;
+                return Date.now() - stillSince;
+            },
+            {
+                timeout: Math.min(timeout, ceiling),
+                intervals: [500],
+                message: `The map never held still for ${quietMs}ms, so there is no settled picture to snapshot.`,
+            },
+        )
+        .toBeGreaterThanOrEqual(quietMs);
+};
+
+/** The share of sampled pixels that differ between two samples; all of them when their sizes differ. */
+const changedShare = (previous: number[], current: number[]): number =>
+    previous.length === current.length && current.length > 0
+        ? current.filter((colour, index) => colour !== previous[index]).length / current.length
+        : 1;
 
 /**
  * How many distinct colours the busiest map canvas on the page carries.
@@ -88,30 +139,32 @@ export const waitForMapPainted = async (
  * A page with several scores its best one, the grid examples already gating their own readiness on
  * the whole grid.
  */
-const countColours = ({ edge, noiseBits }: { edge: number; noiseBits: number }): number => {
-    const canvases = [...document.querySelectorAll<HTMLCanvasElement>('canvas.maplibregl-canvas')];
-    if (canvases.length === 0) return 0;
+const countColours = (samples: number[][]): number => Math.max(0, ...samples.map((sample) => new Set(sample).size));
 
-    const sample = document.createElement('canvas');
-    sample.width = edge;
-    sample.height = edge;
-    const context = sample.getContext('2d', { willReadFrequently: true });
-    if (!context) return 0;
+/** Each map canvas on the page, downsampled and quantised to one colour number per sampled pixel. */
+const sampleMapCanvases = (target: Page | Frame): Promise<number[][]> =>
+    target.evaluate(
+        ({ edge, noiseBits }) => {
+            const sample = document.createElement('canvas');
+            sample.width = edge;
+            sample.height = edge;
+            const context = sample.getContext('2d', { willReadFrequently: true });
+            if (!context) return [];
 
-    const coloursIn = (canvas: HTMLCanvasElement): number => {
-        if (canvas.width === 0 || canvas.height === 0) return 0;
-        context.drawImage(canvas, 0, 0, edge, edge);
-        const { data } = context.getImageData(0, 0, edge, edge);
+            return [...document.querySelectorAll<HTMLCanvasElement>('canvas.maplibregl-canvas')].map((canvas) => {
+                if (canvas.width === 0 || canvas.height === 0) return [];
+                context.drawImage(canvas, 0, 0, edge, edge);
+                const { data } = context.getImageData(0, 0, edge, edge);
 
-        const colours = new Set<number>();
-        for (let index = 0; index < data.length; index += 4) {
-            const red = data[index] >> noiseBits;
-            const green = data[index + 1] >> noiseBits;
-            const blue = data[index + 2] >> noiseBits;
-            colours.add((red << 16) | (green << 8) | blue);
-        }
-        return colours.size;
-    };
-
-    return Math.max(...canvases.map(coloursIn));
-};
+                const colours: number[] = [];
+                for (let index = 0; index < data.length; index += 4) {
+                    const red = data[index] >> noiseBits;
+                    const green = data[index + 1] >> noiseBits;
+                    const blue = data[index + 2] >> noiseBits;
+                    colours.push((red << 16) | (green << 8) | blue);
+                }
+                return colours;
+            });
+        },
+        { edge: SAMPLE_EDGE, noiseBits: CHANNEL_NOISE_BITS },
+    );

@@ -1,0 +1,132 @@
+name: 🐛 Bug Report
+description: Report a bug or unexpected behavior in the TomTom Maps SDK for JavaScript
+title: '[Bug]: '
+labels: ['bug', 'needs-triage']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! Please provide as much detail as possible to help us investigate and fix the issue.
+
+        **Before you start:**
+        - Check if this issue already exists to avoid duplicates
+        - Review our [documentation](https://docs.tomtom.com/maps-sdk-js/introduction/overview) to ensure correct usage
+        - This SDK is in Public Preview (0.x) - check the [CHANGELOG](https://github.com/tomtom-international/maps-sdk-js/blob/main/CHANGELOG.md) for recent breaking changes
+
+  - type: dropdown
+    id: package
+    attributes:
+      label: Which package is affected?
+      description: Select the package where you're experiencing the issue
+      options:
+        - '@tomtom-org/maps-sdk/map (Web maps)'
+        - '@tomtom-org/maps-sdk/services (Search, Routing, Geocoding)'
+        - '@tomtom-org/maps-sdk/core (Core utilities)'
+        - 'Multiple packages'
+        - 'Not sure'
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: SDK Version
+      description: Which version of the SDK are you using? (e.g., 0.40.0)
+      placeholder: '0.40.0'
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      description: Where are you using the SDK?
+      options:
+        - 'Web Browser'
+        - 'Node.js'
+        - 'React Native'
+        - 'Other'
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is
+      placeholder: Tell us what went wrong
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+      placeholder: Describe what should have happened
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+      placeholder: Describe what actually happened
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Provide detailed steps to reproduce the issue
+      placeholder: |
+        1. Initialize the map with...
+        2. Call method...
+        3. Observe error...
+    validations:
+      required: true
+
+  - type: textarea
+    id: code-sample
+    attributes:
+      label: Code Sample
+      description: Provide a minimal code sample that reproduces the issue
+      placeholder: |
+        ```typescript
+        import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+
+        const map = new TomTomMap({
+          // your configuration
+        });
+        ```
+      render: typescript
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment Details
+      description: Provide relevant environment information
+      placeholder: |
+        - OS: macOS 14.1
+        - Browser: Chrome 120
+        - Framework: React 18.2
+        - Build tool: Vite 5.0
+    validations:
+      required: true
+
+  - type: textarea
+    id: errors
+    attributes:
+      label: Error Messages / Console Output
+      description: Include any error messages, stack traces, or console output
+      placeholder: Paste error messages or console logs here
+      render: shell
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Add any other context about the problem (screenshots, links to similar issues, etc.)
+      placeholder: Any additional information that might help

@@ -1,0 +1,120 @@
+/* PANEL: a full-height planner on the left */
+
+.ui-planner {
+    left: var(--ui-panel-margin);
+    right: auto;
+    width: 400px;
+    max-height: calc(100% - 2 * var(--ui-panel-margin));
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* The content scrolls under the header, so what sticks inside it sticks below the tabs. */
+.ui-planner > .ui-panel-content {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.ui-planner .ui-heading {
+    gap: var(--ui-space-2);
+}
+
+.ui-planner .ui-panel-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ui-space-3);
+}
+
+.ui-planner .ui-panel-header .ui-heading {
+    margin-bottom: 0;
+}
+
+.ui-planner .ui-toggle-label {
+    justify-content: space-between;
+    margin-bottom: var(--ui-space-2);
+}
+
+.ui-plan-status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--ui-space-1);
+    font-size: var(--ui-font-caption-m);
+    font-weight: var(--ui-font-weight-medium);
+    color: var(--ui-text-med-em);
+}
+
+.ui-plan-status .ui-spinner {
+    width: 14px;
+    height: 14px;
+}
+
+.ui-notice {
+    margin: 0 0 var(--ui-space-3);
+}
+
+/* TABS: the open tab takes the room for its label, the others show their icon */
+
+.ui-tabs {
+    width: 100%;
+}
+
+.ui-tabs .ui-tab {
+    flex: 0 0 44px;
+    gap: 6px;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.ui-tabs .ui-tab.active {
+    flex: 1;
+}
+
+.ui-tab svg {
+    width: 14px;
+    height: 14px;
+}
+
+/* MAP CONTROLS: the map look button at the top right */
+
+.ui-map-controls {
+    position: absolute;
+    top: var(--ui-panel-margin);
+    right: var(--ui-panel-margin);
+    z-index: var(--ui-z-panel);
+}
+
+/* SECTIONS DOCK: the map's full width, clicks passing through beside the bar, so a route fit keeps clear of its top edge only */
+
+.ui-sections-dock {
+    position: absolute;
+    left: 0;
+    right: 0;
+    /* Clear of the map attribution in the corner */
+    bottom: 32px;
+    z-index: var(--ui-z-panel);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--ui-space-2);
+    padding: 0 var(--ui-panel-margin) 0 calc(400px + 2 * var(--ui-panel-margin));
+    pointer-events: none;
+}
+
+/* SMALL SCREENS: the planner becomes a bottom sheet, and the sections bar gives way */
+
+@media (max-width: 768px) {
+    .ui-planner {
+        top: auto;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        max-height: 60%;
+        border-radius: var(--ui-rounded-20) var(--ui-rounded-20) 0 0;
+    }
+
+    .ui-sections-dock {
+        display: none;
+    }
+}

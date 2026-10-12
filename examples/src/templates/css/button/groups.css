@@ -50,6 +50,24 @@
     border-right: none;
 }
 
+/* Outlined toggles keep their outline on every side; each overlaps the one before, so a divider stays one outline wide. */
+.ui-button-group-segmented .ui-button.ui-toggle {
+    border-right: 2px solid var(--ui-border-high-em);
+}
+
+.ui-button-group-segmented .ui-button.ui-toggle + .ui-button.ui-toggle {
+    margin-left: -2px;
+}
+
+.ui-button-group-segmented .ui-button.ui-toggle.active {
+    position: relative;
+    border-right-color: var(--ui-surface-brand-red);
+}
+
+.ui-button-group-segmented .ui-button.ui-toggle.active:hover {
+    border-right-color: var(--ui-surface-brand-red-hover);
+}
+
 /* Responsive: max-width 768px */
 @media (max-width: 768px) {
     .ui-button-group {

@@ -2,7 +2,7 @@
 
 A camera that flies a calculated route on a `TomTomMap`: it follows the line, aims at the junctions ahead, frames them, keeps clear of the terrain it crosses, and parks the followed position — marked with an arrow — where you want it on screen.
 
-> Package is `@tomtom-org/maps-sdk-plugin-flyover`.
+> [Public preview](https://docs.tomtom.com/legal/public-preview) — package is `@tomtom-org/maps-sdk-plugin-flyover`.
 
 ## Imports
 

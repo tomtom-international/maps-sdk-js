@@ -30,7 +30,7 @@ const unsub = terrain.events.on('config-change', (config) => {
 unsub();
 ```
 
-Triggers: `applyConfig`, `updateConfig`, `resetConfig` (what each does: `map-setup.md` § Changing a setting), `setKnob`, `resetKnob`, `setVisible` (BaseMap's with `{ layerGroups }` too), Traffic Incidents' `setIconsVisible`, Terrain's `setHillshadeVisible` / `setElevationVisible`, Area Analytics' `setPalette` / `setColorStops` / `setHeight` / `setFilters`, `get(map, config)` on a style-owned module the map already has (replaces its config; `StylingFoundationsModule` merges it), and `setStyle(…, { resetState: true })`. **Not** the config given at `create()` / the first `get()`.
+Triggers: `applyConfig`, `updateConfig`, `resetConfig` (what each does: `map-setup.md` § Changing a setting), `setKnob`, `setKnobs` (one event for all its values), `resetKnob`, `setVisible` (BaseMap's with `{ layerGroups }` too), Traffic Incidents' `setIconsVisible`, Terrain's `setHillshadeVisible` / `setElevationVisible`, Area Analytics' `setPalette` / `setColorStops` / `setHeight` / `setFilters`, `get(map, config)` on a style-owned module the map already has (replaces its config; `StylingFoundationsModule` merges it), and `setStyle(…, { resetState: true })`. **Not** the config given at `create()` / the first `get()`.
 
 ### Saving and replaying a configuration
 
@@ -42,6 +42,8 @@ places.events.on('config-change', (config) => localStorage.setItem('places', JSO
 const state: PlacesModuleSerializableConfig = JSON.parse(localStorage.getItem('places')!);
 places.applyConfig({ ...state, extraFeatureProps: { ...state.extraFeatureProps, rank: rankPlace } }); // add code back
 ```
+
+`applyConfig` checks nothing at run time. For saved settings your own `getConfig()` didn't write (an older release, a user's edit, a shared URL), save knob values by id and restore them with `setKnobs(module, catalogue, values)`, which refuses them all if one is out of range (`map-setup.md` § Changing a setting).
 
 | Type | Left out (add back in code on replay) |
 |------|------|

@@ -1,19 +1,19 @@
 # Agent Toolkit Plugin
 
-A headless conversational agent that gives Large Language Models tool-based control over a [TomTom Map](https://docs.tomtom.com/maps-sdk-js/guides/map/tomtom-map) and TomTom location services, powered by [Vercel AI SDK v6](https://ai-sdk.dev/).
+This plugin is a headless conversational agent that gives large language models tool-based control over a [TomTom Map](https://docs.tomtom.com/maps-sdk-js/guides/map/tomtom-map) and TomTom location services. It's built on [Vercel AI SDK v6](https://ai-sdk.dev/).
 
-No UI is included — bring your own chat interface. No LLM provider is bundled — supply any AI SDK-compatible model.
+The plugin has no UI, so you bring your own chat interface. It bundles no LLM provider, so you supply any AI SDK-compatible model.
 
-> **Full documentation** — guides, architecture diagrams, and tutorials are available at [docs.tomtom.com](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/overview).
+> **Full documentation**, with guides, architecture diagrams and tutorials, lives at [docs.tomtom.com](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/overview).
 
 ## Design principles
 
-1. **Client-side only** — uses AI SDK's `DirectChatTransport` + `ToolLoopAgent`. The consumer provides the model; no server infrastructure is required.
-2. **No bundled LLM provider** — supply any AI SDK-compatible `LanguageModel`. Keeps the package provider-agnostic.
-3. **Token-efficient** — all service responses are summarized before reaching the LLM. Full GeoJSON stays in `ToolState`.
-4. **Lazy module initialization** — map modules are instantiated on first use and cached in state.
-5. **Coordinate convention** — always `[longitude, latitude]` per GeoJSON standard, enforced throughout.
-6. **Task-oriented tools** — tool boundaries follow user tasks, not SDK API surface, so a single prompt maps to a single tool call.
+1. **Client-side only** — the agent runs on AI SDK's `DirectChatTransport` and `ToolLoopAgent`. You provide the model and need no server infrastructure.
+2. **No bundled LLM provider** — you supply any AI SDK-compatible `LanguageModel`, which keeps the package provider-agnostic.
+3. **Token-efficient** — the plugin summarizes every service response before it reaches the LLM. The full GeoJSON stays in `ToolState`.
+4. **Lazy module initialization** — the plugin creates each map module on first use and caches it in state.
+5. **Coordinate convention** — the plugin always uses and enforces `[longitude, latitude]`, the GeoJSON standard's order.
+6. **Task-oriented tools** — tool boundaries follow user tasks, not the SDK's API surface, so one prompt maps to one tool call.
 
 ## Installation
 
@@ -81,11 +81,11 @@ function ChatPanel() {
 }
 ```
 
-See the [traffic agent example](https://docs.tomtom.com/maps-sdk-js/examples/map-traffic-agent-react) for a full working example.
+For a full working app, see the [traffic agent example](https://docs.tomtom.com/maps-sdk-js/examples/map-traffic-agent-react).
 
 ## Tools reference
 
-The plugin ships a `DEFAULT_TOOLS` registry covering search, routing, traffic, reachable areas, BYOD GeoJSON, base-map control, MapLibre access, and code-generated analysis. All tools are included by default and can be individually removed or replaced via the [`tools` option](#composing-tool-sets). The full per-tool reference lives in the [Agent Toolkit guide](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/tools).
+The plugin ships a `DEFAULT_TOOLS` registry that covers search, routing, traffic, reachable areas, BYOD GeoJSON, base-map control, MapLibre access and code-generated analysis. The agent gets every tool by default, and you can remove or replace each one through the [`tools` option](#composing-tool-sets). The [Agent Toolkit guide](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/tools) has the full per-tool reference.
 
 ### Location & search
 
@@ -96,26 +96,26 @@ The plugin ships a `DEFAULT_TOOLS` registry covering search, routing, traffic, r
 | `discoverPlaces` | Search for places by text query or POI category within an area |
 | `getPOICategoryCodes` | Look up TomTom POI category codes from natural-language names |
 | `getCurrentLocation` | Get the user's physical GPS location from the browser |
-| `getViewport` | Get current map center, zoom, and bounding box |
+| `getViewport` | Get the current map center, zoom and bounding box |
 
 ### Routing & reachable areas
 
 | Tool | Description |
 |---|---|
-| `setRoute` | Calculate or recalculate a route — provide `locations` (waypoints), `parameters` (route options), or both |
+| `setRoute` | Calculate or recalculate a route — provide `locations` (waypoints), `parameters` (route options) or both |
 | `addWaypointsToRoute` | Extend the current route — prepend a new origin, append a new destination, and/or insert intermediate stops |
 | `removeWaypointsFromRoute` | Remove one or more waypoints by index from the current route |
-| `replaceWaypointInRoute` | Overwrite a single waypoint of the current route in place — origin, destination, or by index |
+| `replaceWaypointInRoute` | Overwrite a single waypoint of the current route in place — origin, destination or by index |
 | `getCurrentWaypoints` | Get the staged waypoint slots (origin, stops, destination) |
 | `startRouteMonitor` | Recalculate an already-calculated route on a cadence (default 60 s) so its live-traffic delays stay current |
-| `stopRouteMonitor` | Stop recalculating a route; the entry keeps its last data |
-| `findReachableAreas` | Calculate isochrone/isodistance polygons from one or more origins (private preview: the API key needs Calculate Reachable Range access) |
+| `stopRouteMonitor` | Stop recalculating a route. The entry keeps its last data |
+| `findReachableAreas` | Calculate isochrone/isodistance polygons from one or more origins (in private preview, so the API key needs Calculate Reachable Range access) |
 
 ### Traffic
 
 | Tool | Description |
 |---|---|
-| `getTrafficIncidents` | Fetch traffic incidents within an area (viewport, named place, route corridor, polygon, IDs); the entry keeps refreshing by default |
+| `getTrafficIncidents` | Fetch traffic incidents within an area (viewport, named place, route corridor, polygon, IDs). By default, the entry keeps refreshing |
 | `setTrafficIncidentsMonitor` | Turn background refreshing of an already-loaded incidents entry on or off |
 | `clusterIncidents` | Group loaded incidents into hotspots (DBSCAN) with road and category labels, delay totals and trends |
 | `focusIncidents` | Highlight a subset of incidents (by id / category / severity) on the map and dim the rest |
@@ -128,30 +128,30 @@ The plugin ships a `DEFAULT_TOOLS` registry covering search, routing, traffic, r
 | `createTracker` | Watch loaded entries with generated code and log an alert when its condition turns true (e.g. an incident near a hospital) |
 | `getTrackers` | List the active trackers and whether each is firing |
 | `getTrackerHistory` | Read the alerts and events trackers have logged, for one tracker or since a time |
-| `clearTracker` | Stop a tracker; the entries it watched stay |
+| `clearTracker` | Stop a tracker. The entries it watched stay |
 
 ### Bring-your-own-data (BYOD)
 
 | Tool | Description |
 |---|---|
-| `addByodSource` | Ingest a customer-authored GeoJSON source (URL or inline `FeatureCollection`) and profile its shape; the entry has no layers and renders nothing until the agent sets them via `setByodLayers` |
-| `setByodLayers` | Restyle a BYOD entry — replace its MapLibre layers (type + data-driven paint) using the entry's data `profile` |
-| `updateByodDisplay` | Show, hide, or clear BYOD layers on the map |
+| `addByodSource` | Ingest a customer-authored GeoJSON source (URL or inline `FeatureCollection`) and profile its shape. The entry has no layers and renders nothing until the agent sets them with `setByodLayers` |
+| `setByodLayers` | Restyle a BYOD entry by replacing its MapLibre layers (type and data-driven paint), using the entry's data `profile` |
+| `updateByodDisplay` | Show, hide or clear BYOD layers on the map |
 
-> See the [Bring your own data](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/byod) guide for ingestion patterns, visibility lifecycle, and how BYOD entries feed into `analyseData` / `processData`.
+> See the [Bring your own data](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/byod) guide for ingestion patterns, the visibility lifecycle and how BYOD entries feed into `analyseData` / `processData`.
 
 ### Unified data tools — scope-aware code generation
 
 | Tool | Description |
 |---|---|
-| `analyseData` | Aggregate / chart entries (`places`, `routes`, `incidents`, `geometries`, `trafficAreaAnalytics`, `byod`) via dynamic JS; classifier-emitted scope narrows the schema per turn |
-| `processData` | Transform entries into new `places`, `placeConnections`, `geometries`, `byod`, or a `fitOnMap` camera move via dynamic JS |
+| `analyseData` | Aggregate or chart entries (`places`, `routes`, `incidents`, `geometries`, `trafficAreaAnalytics`, `byod`) with dynamic JS. The scope the classifier emits narrows the schema each turn |
+| `processData` | Transform entries, with dynamic JS, into new `places`, `placeConnections`, `geometries`, `byod` or a `fitOnMap` camera move |
 | `monitorAnalysis` | Start or stop recomputing an `analyseData` analysis whenever its source entries change |
-| `executeMaplibreCode` | Execute arbitrary MapLibre JS against the live `Map` instance — escape hatch for custom layers, animations, raster overlays |
+| `executeMaplibreCode` | Run arbitrary MapLibre JS against the live `Map` instance, an escape hatch for custom layers, animations and raster overlays |
 
-> See [Code generation](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/code-generation) for the injected identifiers, output contracts, and threat model, and [Scope-aware data tools](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/scope-aware-data-tools) for how the per-turn classifier scope keeps the prompt small.
+> See [Code generation](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/code-generation) for the injected identifiers, output contracts and threat model, and [Scope-aware data tools](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/scope-aware-data-tools) for how the per-turn classifier scope keeps the prompt small.
 
-`analyseData`, `processData`, `createTracker` and `clusterIncidents` code is **always isolated in the browser** — a Web Worker in a sandboxed, opaque-origin iframe (no DOM/network; terminable on timeout), zero-config (the SDK lazily loads its own bundled turf/h3 for the worker). Where the code runs is chosen by environment, not configured: the browser always isolates; Node / SSR always run on the main thread (where that boundary has no equivalent — defense-in-depth only). The optional `codeExecution` only tunes the isolated browser run:
+`analyseData`, `processData`, `createTracker` and `clusterIncidents` code is **always isolated in the browser**. It runs in a Web Worker inside a sandboxed, opaque-origin iframe with no DOM or network access, terminable on timeout. It needs no configuration, since the SDK lazily loads its own bundled turf and h3 for the worker. The environment, not a setting, decides where the code runs. The browser always isolates it, while Node and SSR always run it on the main thread. That boundary has no equivalent there, so the protection is defense-in-depth only. The optional `codeExecution` only tunes the isolated browser run:
 
 ```typescript
 const agent = createMapAgent(map, {
@@ -160,17 +160,17 @@ const agent = createMapAgent(map, {
 });
 ```
 
-> **Experimental** — the isolation boundary is verified by the `e2e-tests/` suite (CSP egress-block, worker termination, opaque-origin isolation), which runs in CI as a dedicated job; if the iframe can't initialise it falls back to the main thread (with a warning). `turf` / `h3` / `routeUtils` are all bundled into the worker, so that code (route-slicing included) runs fully in the browser. See the [code-generation guide](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/code-generation#data-tool-execution-isolation-experimental).
+> **Experimental.** The `e2e-tests/` suite verifies the isolation boundary (CSP egress-block, worker termination, opaque-origin isolation) and runs in CI as a dedicated job. If the iframe can't initialise, the code falls back to the main thread with a warning. The worker bundles `turf`, `h3` and `routeUtils`, so that code, route slicing included, runs fully in the browser. See the [code-generation guide](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/code-generation#data-tool-execution-isolation-experimental).
 
 ### Map display
 
 | Tool | Description |
 |---|---|
-| `updatePlacesDisplay` | Show, hide, or restyle place entries on the map |
-| `updateRoutesDisplay` | Show, hide, or swap route entries, switch the highlighted alternative, fit the camera |
+| `updatePlacesDisplay` | Show, hide or restyle place entries on the map |
+| `updateRoutesDisplay` | Show, hide or swap route entries, switch the highlighted alternative or fit the camera |
 | `updateWaypointsDisplay` | Show staged waypoint markers without the route line |
-| `updateTrafficAreaAnalyticsDisplay` | Show, hide, or swap traffic-area-analytics entries |
-| `clearMap` | Remove displayed places, routes, BYOD layers, or all features |
+| `updateTrafficAreaAnalyticsDisplay` | Show, hide or swap traffic-area-analytics entries |
+| `clearMap` | Remove displayed places, routes, BYOD layers or all features |
 
 ### Map control
 
@@ -183,7 +183,7 @@ const agent = createMapAgent(map, {
 | `setMapStandardStyle` | Switch map style (light, dark, satellite, driving, etc.) |
 | `setLanguage` | Change the language for map labels and API responses |
 | `setGeopoliticalView` | Show disputed borders and territory names from a country's view, for the map and later searches |
-| `setMapStyling` | Set or reset what the base map shows and how it looks, by knob id — layer groups such as 3D buildings, the built-in POI icons and their categories, the live traffic overlays and their filters, the hillshade and 3D terrain, sizes, colours, map presets, or a whole theme from a few colours or an image — and the look of every layer the agent drew: places, routes and their sections, polygons, reachable areas, area analytics and fetched incidents; the classifier scope lists only the knob families a turn touches |
+| `setMapStyling` | Set or reset, by knob id, what the base map shows and how it looks. That covers layer groups such as 3D buildings, the built-in POI icons and their categories, the live traffic overlays and their filters, the hillshade and 3D terrain, sizes, colours, map presets, or a whole theme from a few colours or an image. It also sets the look of every layer the agent drew: places, routes and their sections, polygons, reachable areas, area analytics and fetched incidents. The classifier scope lists only the knob families a turn touches |
 
 ### MapLibre direct access
 
@@ -210,7 +210,7 @@ const agent = createMapAgent(map, {
 
 ## Customization
 
-> See [Customizing tools](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/customizing-tools) for the full walkthrough — registry resolution, removing or replacing defaults, adding scopable custom tools, and starting from a blank slate.
+> See [Customizing tools](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/customizing-tools) for the full walkthrough. It covers registry resolution, removing or replacing defaults, adding scopable custom tools and starting from a blank slate.
 
 ### `createMapAgent` options
 
@@ -277,7 +277,7 @@ const agent = createMapAgent<MyState>(map, {
 
 ### Composing tool sets
 
-The `tools` option is merged with the built-in defaults. Use `false` to exclude a tool.
+The plugin merges the `tools` option with the built-in defaults. To exclude a tool, set it to `false`.
 
 ```typescript
 import { createMapAgent } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
@@ -307,7 +307,7 @@ createMapAgent(map, { model, includeDefaultTools: false, tools: { myTool } });
 
 ### Defining custom tools
 
-Use `satisfies` for type-safe custom tool definitions:
+To define custom tools type-safely, use `satisfies`:
 
 ```typescript
 import { type ToolEntry, createMapAgent } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
@@ -361,9 +361,9 @@ type ToolEntry<S extends ToolState = ToolState, Scope = unknown> = {
 
 ## State management
 
-> See the [State](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/state) guide for a per-slice deep dive, `entryMode` semantics (`multiple` vs `single`), inspecting state from your application, and adding custom slices.
+> See the [State](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/state) guide for a per-slice deep dive, `entryMode` semantics (`multiple` vs `single`), inspecting state from your application and adding custom slices.
 
-`ToolState` is organized by feature area. Each slice manages lazy-initialized map modules and an append-only history of results produced during the session. Built-in slices:
+`ToolState` holds one slice per feature area. Each slice manages lazily initialized map modules and an append-only history of the results the session produces. The built-in slices are:
 
 - `PlacesState` — place / geometry entry history
 - `RoutingState` — route history, planning waypoint slots, route parameters
@@ -371,12 +371,12 @@ type ToolEntry<S extends ToolState = ToolState, Scope = unknown> = {
 - `CustomGeometriesState` — derived polygon entries produced by `processData` (union, difference, h3-coverage, …)
 - `BYODState` — bring-your-own-data GeoJSON layer entries
 - `BaseMapState` — viewport, style, language, raw `mapLibreMap`
-- `TrafficTilesState` — real-time traffic flow + incident tile-overlay visibility
+- `TrafficTilesState` — visibility of the real-time traffic flow and incident tile overlays
 - `TrafficAreaAnalyticsState` — historical traffic-area-analytics entries and per-entry visualisation
-- `TrafficIncidentsState` — fetched incident entries, registered analyses, focused subsets, and the optional polling monitor
+- `TrafficIncidentsState` — fetched incident entries, registered analyses, focused subsets and the optional polling monitor
 - `MapPOIsState` — POI category visibility and filters
 
-Built-in slices are constructed automatically by `createMapAgent`. To add custom slices, define an interface extending `ToolState` and pass the type parameter — only the custom fields need to be provided:
+`createMapAgent` constructs the built-in slices. To add custom slices, define an interface that extends `ToolState` and pass it as the type parameter. You provide only the custom fields:
 
 ```typescript
 interface MyState extends ToolState {
@@ -396,14 +396,14 @@ agent.state.places;  // PlacesState — append-only history of place entries
 
 > See the [What the agent sends, and where](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/what-the-agent-sends) guide for the full list.
 
-- **What reaches your model provider**: every message and the system prompt; the classifier's copy (by default up to 8 earlier messages, 300 characters each; `classifier: false` turns it off); and tool results, including addresses, coordinates, the viewport, the device location, `analyseData` and `processData` output over your BYOD data, and up to 200 events per tracker.
+- **What reaches your model provider**: every message and the system prompt, plus the classifier's copy of earlier messages. By default, that copy holds up to eight messages of 300 characters each, and `classifier: false` turns it off. Tool results go too, including addresses, coordinates, the viewport, the device location, `analyseData` and `processData` output over your BYOD data, and up to 200 events per tracker.
 - **The provider is your processor**: sign a DPA with it and pick an EEA region where it offers one.
-- **What stays in memory**: `agent.state`, until the `resetState` tool or `agent.destroy()`. Nothing goes to browser storage. Chat history is yours, so erasing a user's data means clearing it and calling `agent.destroy()`.
-- **To send less**: remove tools (`getCurrentLocation: false`), turn off the classifier, or replace a tool with one that returns less.
+- **What stays in memory**: `agent.state`, until the `resetState` tool or `agent.destroy()` clears it. Nothing goes to browser storage. Chat history is yours, so erasing a user's data means clearing it and calling `agent.destroy()`.
+- **To send less**: remove tools (`getCurrentLocation: false`), turn off the classifier or replace a tool with one that returns less.
 
 ## Intent classifier
 
-The intent classifier is an optional per-turn optimization that selects which tools the LLM sees, reducing noise and improving accuracy. See the [How it works](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/how-it-works) guide for the full two-phase pipeline (classification → tool loop), prompt assembly, and observability hooks.
+The intent classifier is an optional per-turn optimization. It picks which tools the LLM sees, which cuts noise and improves accuracy. The [How it works](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/how-it-works) guide covers the full two-phase pipeline (classification, then the tool loop), prompt assembly and observability hooks.
 
 ```typescript
 import { createMapAgent, createDefaultClassifier } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
@@ -424,13 +424,13 @@ const agent = createMapAgent(map, {
 });
 ```
 
-The classifier prompt is built dynamically from each tool's `classificationPrompt` and `relatedTools` metadata, so it stays in sync automatically when tools are added or renamed.
+The plugin builds the classifier prompt on the fly from each tool's `classificationPrompt` and `relatedTools` metadata, so the prompt stays in sync when you add or rename tools.
 
 ## System prompt
 
-The built-in `BASE_SYSTEM_PROMPT` covers identity, a capability summary, scope/rejection rules, response formatting, data-confidence rules, tool-execution guidance, and session-state conventions. Per-tool mechanics (coordinate order, location-reference routing, etc.) live in the tool descriptions and the classifier prompt, not here.
+The built-in `BASE_SYSTEM_PROMPT` covers identity, a capability summary, scope/rejection rules, response formatting, data-confidence rules, tool-execution guidance and session-state conventions. Per-tool mechanics (coordinate order, location-reference routing, etc.) live in the tool descriptions and the classifier prompt, not here.
 
-`systemPrompt` accepts **either** a full replacement string **or** a section-overrides object (`Partial<Record<SystemPromptSection, string>>`) — omitted sections keep their defaults, and you supply only the section body (the heading is added for you):
+`systemPrompt` accepts **either** a full replacement string **or** a section-overrides object (`Partial<Record<SystemPromptSection, string>>`). Sections you omit keep their defaults. For a section you override, you supply only its body, and the plugin adds the heading:
 
 ```typescript
 import {
@@ -482,7 +482,7 @@ const agent = createMapAgent(map, {
 
 ### Wrapping default tools
 
-Add logging, analytics, or custom behavior around existing tools:
+To add logging, analytics or custom behavior around an existing tool, wrap it:
 
 ```typescript
 import { DEFAULT_TOOLS, createMapAgent } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
@@ -544,9 +544,9 @@ agent.destroy(); // Reset all state slices (call on unmount)
 
 ## Public API exports
 
-The main entry point is `createMapAgent`; `DEFAULT_TOOLS` and `BASE_SYSTEM_PROMPT` cover the most common customizations (see the examples above).
+The main entry point is `createMapAgent`. `DEFAULT_TOOLS` and `BASE_SYSTEM_PROMPT` cover the most common customizations, as the examples above show.
 
-For the complete, always-current list of exports — factories, tool-registry helpers, state introspection, the classifier, and all types — see the [API reference](https://docs.tomtom.com/maps-sdk-js/reference).
+For the complete, always-current list of exports, including factories, tool-registry helpers, state introspection, the classifier and all types, see the [API reference](https://docs.tomtom.com/maps-sdk-js/reference).
 
 ## Dependencies
 
@@ -567,7 +567,7 @@ For the complete, always-current list of exports — factories, tool-registry he
     - [How it works](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/how-it-works) — two-phase pipeline (classifier + tool loop), prompt assembly, observability
     - [Tools](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/tools) — per-tool reference
     - [State](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/state) — per-slice reference, entry modes, custom slices
-    - [Customizing tools](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/customizing-tools) — add, replace, remove, or start from a blank slate
+    - [Customizing tools](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/customizing-tools) — add, replace, remove or start from a blank slate
     - [Code generation](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/code-generation) — `analyseData` / `processData` / `createTracker` / `clusterIncidents` / `executeMaplibreCode` (threat model included)
     - [Scope-aware data tools](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/scope-aware-data-tools) — per-turn scope mechanism
     - [Bring your own data](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/byod) — ingest customer GeoJSON layers

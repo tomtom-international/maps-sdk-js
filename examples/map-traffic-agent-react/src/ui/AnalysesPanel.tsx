@@ -96,7 +96,7 @@ function AnalysisItem({
         latestBody = isChart ? (
             <AnalysisChart config={latest.data} expanded={expanded} />
         ) : (
-            <pre className="m-0 max-h-40 overflow-auto rounded-(--panel-radius) bg-(--ui-surface-1) p-2 text-[11px] leading-snug text-(--ui-text-med-em) [font-variant-numeric:tabular-nums]">
+            <pre className="m-0 max-h-40 overflow-auto rounded-(--ui-rounded-5) bg-(--ui-surface-1) p-2 text-[11px] leading-snug text-(--ui-text-med-em) [font-variant-numeric:tabular-nums]">
                 {safeStringify(latest.data)}
             </pre>
         );

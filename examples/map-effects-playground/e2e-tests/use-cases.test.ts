@@ -93,12 +93,15 @@ const applyUseCase = async (page: Page, value: string): Promise<void> => {
  * The panel is generated from `effectKnobCatalogue`, so there is no stable id per knob — but the
  * grouping is the catalogue's own, which makes group plus name the honest selector.
  */
+const knobField = (page: Page, group: string, knob: string) =>
+    page
+        .locator('.ui-section', { has: page.locator('h4.ui-subheading', { hasText: group }) })
+        .locator('.ui-form-field', { has: page.locator('.ui-form-label', { hasText: new RegExp(`^${knob}$`) }) });
+
+const knobSlider = (page: Page, group: string, knob: string) => knobField(page, group, knob).locator('input[type="range"]');
+
 const setKnob = async (page: Page, group: string, knob: string, value: number): Promise<void> => {
-    const section = page.locator('.ui-section', { has: page.locator('h4.ui-subheading', { hasText: group }) });
-    const field = section.locator('.ui-form-field', {
-        has: page.locator('.ui-form-label', { hasText: new RegExp(`^${knob}$`) }),
-    });
-    await field.locator('input[type="range"]').fill(String(value));
+    await knobSlider(page, group, knob).fill(String(value));
     await page.waitForTimeout(2500);
 };
 
@@ -135,6 +138,17 @@ test.describe('map effects use cases', () => {
             expect(consoleErrors).toHaveLength(0);
         });
     }
+
+    test('a reload restores the knobs the panel saved', { tag: TAG_PROD }, async ({ page }) => {
+        const consoleErrors = await loadPlayground(page);
+        await setKnob(page, 'vignette', 'intensity', -0.5);
+        await knobField(page, 'bloom', 'only').locator('select').selectOption('traffic');
+
+        await page.reload();
+        await expect(knobSlider(page, 'vignette', 'intensity')).toHaveValue('-0.5');
+        await expect(knobField(page, 'bloom', 'only').locator('select')).toHaveValue('traffic');
+        expect(consoleErrors).toHaveLength(0);
+    });
 
     test('bloom at full strength, so the effect is legible at all', { tag: TAG_PROD }, async ({ page }) => {
         // `night-driving` ships bloom at 0.6 above a 0.55 threshold, which lights only the brightest

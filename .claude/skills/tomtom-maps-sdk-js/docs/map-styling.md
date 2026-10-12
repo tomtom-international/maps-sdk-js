@@ -1,6 +1,6 @@
 # Map Styling Reference (StylingFoundationsModule)
 
-Semantic restyling of the map's foundations — label, icon and road sizes, the map colours, projection and sky — through **knobs** with stable ids, each reaching across the whole style. Prefer this over `map.mapLibreMap.setPaintProperty(...)` on base-map layers: knobs are validated, listed as data in a catalogue (as every module's settings are), re-applied across `setStyle`, and re-verified by the SDK against the styles it ships with — raw layer ids are not a contract.
+Semantic restyling of the map's foundations — label, icon and road sizes, the label typeface, the map colours, projection and sky — through **knobs** with stable ids, each reaching across the whole style. Prefer this over `map.mapLibreMap.setPaintProperty(...)` on base-map layers: knobs are validated by `setKnob` and `setMapColors` (not by `applyConfig` / `updateConfig`, see `map-setup.md` § Changing a setting), listed as data in a catalogue (as every module's settings are), re-applied across `setStyle`, and re-verified by the SDK against the styles it ships with — raw layer ids are not a contract.
 
 The look of one part is the knobs of the module drawing it, set with the same `setKnob`: POI size, density and label colours on `POIsModule` (`places.md`), the traffic colours and widths on `TrafficFlowModule` / `TrafficIncidentsModule` (`traffic.md`), the hillshade on `TerrainModule` and the road markings on `BaseMapModule` (`map-setup.md`). Map presets set knobs across this module, `BaseMapModule` and `POIsModule` at once (§ Presets).
 
@@ -15,6 +15,10 @@ import {
     type StyleColorKnobId,
     type MapColors,
     type MapPresetId,
+    type MapTypeface,
+    type CustomTypeface,
+    type CustomTypefaceFile,
+    mapTypefaces,
     stylingFoundationsKnobIds,
     styleColorKnobIds,
     stylingFoundationsKnobCatalogue,
@@ -24,6 +28,7 @@ import {
     getKnob,
     resetKnob,
     setKnob,
+    setKnobs,
     getStyleColor,
     applyMapPreset,
     mapPresetCatalogue,
@@ -35,14 +40,14 @@ import {
 
 ```ts
 const styling = await StylingFoundationsModule.get(map);                       // one per map: get() again returns it
-const styling = await StylingFoundationsModule.get(map, { 'labels.sizeFactor': 1.2 }); // settings merged over what it holds
+const styling = await StylingFoundationsModule.get(map, { labels: { sizeFactor: 1.2 } }); // nested along the knob id; merged one level deep over what it holds
 ```
 
 `get` resolves after the style loads and before its first frame; knobs set by then (passed to `get`, or `setMapColors` right after it) land on that frame without fading in from the style's own colours. Theme at startup this way: no hidden container or delay needed (`examples/themed-map`).
 
-## setKnob / getKnob / resetKnob
+## setKnob / setKnobs / getKnob / resetKnob
 
-The same three functions as on every module (`map-setup.md` § Every setting as data); styling ids are keys of the settings, not paths.
+The same functions as on every module (`map-setup.md` § Every setting as data); a styling id is the setting's path in `StylingFoundationsModuleConfig`, `'colors.water'` being `{ colors: { water } }`. Use them for values held as data (a panel, storage, an LLM): they check each value. `applyConfig`/`updateConfig` are for typed settings your code writes, check nothing at run time, and `updateConfig({ colors: { water } })` **replaces** every colour set before (`map-setup.md` § Changing a setting).
 
 ```ts
 setKnob(styling, stylingFoundationsKnobCatalogue, 'labels.sizeFactor', 1.3);            // factor 0.5–1.5, 1 = as the style ships
@@ -50,6 +55,7 @@ setKnob(styling, stylingFoundationsKnobCatalogue, 'symbols.sizeFactor', 1.2);   
 setKnob(styling, stylingFoundationsKnobCatalogue, 'roads.widthFactor', 0.8);            // road hierarchy kept
 setKnob(styling, stylingFoundationsKnobCatalogue, 'colors.water', '#7cc4e8');           // any CSS colour
 setKnob(styling, stylingFoundationsKnobCatalogue, 'view.projection', 'globe');          // enum
+setKnobs(styling, stylingFoundationsKnobCatalogue, { 'colors.land': '#f6efe3', 'colors.roadMajor': '#d9822b' }); // several: one restyle, all or none
 
 getKnob(styling, stylingFoundationsKnobCatalogue, 'roads.widthFactor');   // current value, or the style default
 resetKnob(styling, stylingFoundationsKnobCatalogue, 'roads.widthFactor'); // one knob back to the style
@@ -63,6 +69,7 @@ Invalid values throw `RangeError` naming the knob and its range; unknown ids thr
 | Group | Ids | Kind |
 | --- | --- | --- |
 | Labels & symbols | `labels.sizeFactor`, `symbols.sizeFactor` | factor 0.5–1.5 |
+| | `labels.typeface` (`'sans'` \| `'sans-italic'` \| `'serif'` \| `'serif-italic'`, § Typeface) | enum |
 | Roads | `roads.widthFactor` | factor 0.5–1.5 |
 | Map colours | `colors.land`, `colors.water`, `colors.vegetation`, `colors.park`, `colors.artificial`, `colors.roadMajor`, `colors.road`, `colors.roadOutline`, `colors.label`, `colors.labelHalo`, `colors.accent` (see `setMapColors`) | color |
 | View | `view.projection` (`'mercator'` \| `'globe'`) | enum |
@@ -89,6 +96,36 @@ getStyleColor(map, 'traffic.incidents.colors.major');    // undefined where the 
 ```
 
 Name a map colour through these ids rather than hard-coding it (the map-effects plugin's `bloom.only` takes them).
+
+### Typeface
+
+Every map label in one typeface, each keeping its weight (bold stays bold) and slant. Two ways, and the second wins while set:
+
+```ts
+setKnob(styling, stylingFoundationsKnobCatalogue, 'labels.typeface', 'serif'); // the Noto faces the TomTom styles serve; `mapTypefaces` lists the ids
+
+// Your own font files (WOFF2/TTF URLs, self-hosted or a font CDN; the SDK bundles none). Not a knob: config only.
+// `updateConfig` replaces `labels` whole: spread the rest of it on every set and unset, or labels.sizeFactor/typeface go
+const fraunces = 'https://cdn.jsdelivr.net/fontsource/fonts/fraunces@5/latin';
+styling.updateConfig({ labels: { ...styling.getConfig()?.labels, customTypeface: {
+    regular: `${fraunces}-400-normal.woff2`,          // required; a missing weight takes the nearest one given
+    bold: `${fraunces}-700-normal.woff2`,
+    regularItalic: `${fraunces}-400-italic.woff2`,    // a missing italic takes the upright file of its weight
+} } });
+styling.updateConfig({ labels: { ...styling.getConfig()?.labels, customTypeface: undefined } }); // unset the files alone
+```
+
+- `CustomTypeface` takes `regular`, `medium`, `bold`, `regularItalic`, `mediumItalic`, `boldItalic`, each a URL or a `CustomTypefaceFile[]` (`{ url, unicodeRange }`) for a weight split into files by script (a CDN's `latin` + `latin-ext`).
+- A plain URL draws the characters in `unicodeRange`, by default the `latin` subset Fontsource and Google Fonts serve (Basic Latin, Latin-1, punctuation). Every other character, and every character of a file that fails to load, comes from the style's Noto face of that weight, so Cyrillic or CJK names still show. A character inside the range that the file lacks falls to the browser's sans-serif: list only what the files have. Keep Arabic and Indic scripts outside the range (drawn one cluster at a time, letters don't join).
+- The serif and italic Noto faces lack some scripts (serif: no Arabic; italics: Latin, Greek, Cyrillic only); the style's own face draws those.
+- Kept in `getConfig()` and re-declared after `setStyle`; a clean switch drops it.
+- **The SDK's own labels follow** (route waypoints and summary bubbles, places, geometry titles and border labels, reachable ranges, incident details) unless their module sets one of its own.
+- **A module's own typeface** goes on its label settings, the same two fields as the map's `labels`: `typeface` (a knob: `RoutingModule`'s `waypoints.label.typeface`, `PlacesModule`'s `label.typeface`, `GeometriesModule`'s `label.typeface` and `lineLabel.typeface`, `ReachableRangesModule`'s `lineLabel.typeface`) and `customTypeface` (font files, config only, wins over `typeface`). It sets those labels only; unset, they follow the map's again, files included. The module re-declares its files after `setStyle`.
+  ```ts
+  await PlacesModule.create(map, { label: { customTypeface: { regular: `${fraunces}-400-normal.woff2` } } });
+  setKnob(routing, routingKnobCatalogue, 'waypoints.label.typeface', 'serif-italic');
+  ```
+- Per label, the order is `font` (exact `mapFonts` faces, or a raw `text-font` under `layers`), then `customTypeface`, then `typeface`, then the map's. Live demo: the `map-typeface` example.
 
 ### Borrowed looks
 
@@ -148,6 +185,8 @@ map.mapLibreMap.setMaxPitch(75);                          // fog over a tilted v
 
 Sky colours: a set `view.sky.color` / `view.sky.horizonColor` wins; unset, they take the style's own `sky` where it declares one, else follow `map.styleLightDarkTheme` — daylit blue + white horizon on a light style, night blue + dim horizon on a dark one.
 
+The sky knobs write MapLibre's **whole** sky: a field set with `map.mapLibreMap.setSky` (`atmosphere-blend`, `sky-horizon-blend`, the fog colour and blends) goes back to the style's own value, else the SDK's default, whenever a sky knob applies — on set, on reset, and after `setStyle`. With only `view.projection` set, a hand-set sky stays until the next style switch.
+
 `view.space.color` is the colour **behind** the map, which a globe leaves visible around the planet. The map canvas is transparent there, so something has to fill it. A background your page already gives the map container is the knob's default and what `resetKnob` returns to — the SDK does not paint over it. Otherwise it follows the theme (white on light, the night sky's `#0a1626` on dark) and is re-applied after a `setStyle`, so a light→dark switch carries it.
 
 Gotcha: the globe flattens to Mercator between zoom 11–12 by design.
@@ -192,10 +231,12 @@ getKnob(styling, stylingFoundationsKnobCatalogue, 'roads.widthFactor'); // the v
 ## Settings — persist / share / replay
 
 ```ts
-const settings: StylingFoundationsModuleConfig | undefined = styling.getConfig(); // only overridden knobs, plain JSON
-styling.applyConfig(settings);                                     // replace all knobs with these
-styling.updateConfig(settings);                                    // set these, keep the other knobs
-styling.events.on('config-change', (settings) => save(settings));  // fires after every setKnob/resetKnob/applyConfig/updateConfig
+const settings: StylingFoundationsModuleConfig | undefined = styling.getConfig(); // only overridden knobs, nested, plain JSON
+styling.applyConfig(settings);                                     // replace all knobs with these — NOT checked at run time
+styling.updateConfig(settings);                                    // replace the top-level groups given (`colors`, `view`, …), keep the others
+styling.events.on('config-change', (settings) => save(settings));  // fires after every setKnob/setKnobs/resetKnob/applyConfig/updateConfig
+
+setKnobs(styling, stylingFoundationsKnobCatalogue, JSON.parse(fromUrl)); // settings from outside your code: { 'labels.sizeFactor': 1.2 }, checked, all or none
 ```
 
 ## Build a UI from the catalogue
@@ -260,4 +301,5 @@ styling.layers.query({ group: 'railways' }).layerIds;                           
 - Module boundaries: this module holds the foundations across every part; the look of one part is its own module's knobs (§ Knob ids), and which module owns visibility, filters and data-owned layers is the *Who owns what* table in `map-setup.md`.
 - Knobs never write the SDK's own overlays (PlacesModule pins, routes, geometries, BYOD) — those have their own display config. The few parts that borrow a look from the style read it back and follow its knobs (§ Borrowed looks).
 - `symbols.sizeFactor` and `labels.sizeFactor` both reach POI layers, as does `POIsModule`'s `sizeFactor`; factors on the same property multiply.
+- A knob writes the **whole** value of each property it reaches, computed from the style's own value. A `setPaintProperty` on one of those properties — a `['coalesce', ['feature-state', …], …]` wrapper included — is replaced whenever the knob applies (set, reset, `setStyle`). There is no way to compose an app's expression with a knob on one property; leave a property to the knobs or to your own `setPaintProperty`, not both.
 - Agent toolkit: the look knobs of every module are the `setMapStyling` tool, by their map-wide ids, whose schema names every id and range (see `agent-toolkit/tools.md`).

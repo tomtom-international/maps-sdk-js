@@ -1,0 +1,23 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+@import "../../src/templates/css/panel/search-panel.css";
+@import "../../src/templates/css/form/field.css";
+@import "../../src/templates/css/form/input.css";
+@import "../../src/templates/css/form/dropdown.css";
+@import "../../src/templates/css/form/slider.css";
+@import "../../src/templates/css/form/toggle.css";
+@import "../../src/templates/css/feedback/loading-spinner.css";
+@import "../../src/templates/css/feedback/tooltip.css";
+@import "../../src/templates/css/button/button.css";
+@import "../../src/templates/css/button/variants.css";
+@import "../../src/templates/css/button/sizes.css";
+@import "../../src/templates/css/button/groups.css";
+@import "../../src/templates/css/button/chips.css";
+@import "../../src/templates/css/button/option-card.css";
+@import "../../src/templates/css/maplibre/popup.css";
+
+.ui-icon {
+    flex-shrink: 0;
+}

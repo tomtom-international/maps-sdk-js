@@ -33,7 +33,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     const effects = new MapEffects(map, BLOOM_LOOK);
 
     // The same glow, pointed at less of the map.
-    initScopeSelector(BLOOM_LOOK['bloom.only'] ?? [], (scope) =>
+    initScopeSelector(BLOOM_LOOK.bloom?.only ?? [], (scope) =>
         setKnob(effects, effectKnobCatalogue, 'bloom.only', scope),
     );
 })();

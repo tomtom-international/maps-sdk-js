@@ -5,6 +5,7 @@
 @import "../../src/templates/css/panel/custom-panel.css";
 @import "../../src/templates/css/form/input.css";
 @import "../../src/templates/css/form/toggle.css";
+@import "../../src/templates/css/form/checkbox.css";
 @import "../../src/templates/css/form/slider.css";
 @import "../../src/templates/css/form/color-picker.css";
 @import "../../src/templates/css/form/field.css";
@@ -75,6 +76,7 @@
     color: var(--ui-surface-warning);
 }
 .ui-severity-moderate {
+    /* Playbook has no orange between warning and red; the severity scale needs a middle step. */
     color: #e87722;
 }
 .ui-severity-major,

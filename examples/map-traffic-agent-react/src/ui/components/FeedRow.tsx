@@ -1,4 +1,5 @@
 import { type ReactNode, useEffect, useRef, useState } from 'react';
+import { playbook, tint } from '../lib/playbook-tokens';
 import { relativeAge, shortClock } from '../lib/time';
 
 export type FeedRowTag = { label: string; accent: string };
@@ -74,7 +75,7 @@ export function FeedRow({
             className={`flex w-full gap-2 border-0 bg-transparent px-3 py-2 text-left ${
                 clickable ? 'cursor-pointer transition-colors hover:bg-(--ui-surface-1)' : ''
             }`}
-            style={flash ? { backgroundColor: 'color-mix(in srgb, var(--ops-sweep) 20%, transparent)' } : undefined}
+            style={flash ? { backgroundColor: tint(playbook.status.warning, 20) } : undefined}
         >
             <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center" style={{ color: iconColor }}>
                 {icon}

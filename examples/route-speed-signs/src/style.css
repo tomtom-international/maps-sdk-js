@@ -1,9 +1,11 @@
+@import "../../src/templates/css/base/tokens.css";
+
 html,
 body {
     margin: 0;
     padding: 0;
     height: 100%;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: var(--ui-font-proxima);
 }
 
 /* Rows are sized in pixels rather than fractions: a map measuring its container as zero high never
@@ -22,9 +24,9 @@ body {
 .tile {
     position: relative;
     height: 100%;
-    border-radius: 8px;
+    border-radius: var(--ui-rounded-10);
     overflow: hidden;
-    box-shadow: 0 1px 4px rgb(0 0 0 / 18%);
+    box-shadow: var(--ui-elevation-e2);
 }
 
 .tile-map {
@@ -38,21 +40,24 @@ body {
     left: 10px;
     display: flex;
     flex-direction: column;
-    padding: 6px 10px;
-    border-radius: 6px;
-    background: rgb(255 255 255 / 92%);
-    box-shadow: 0 1px 3px rgb(0 0 0 / 20%);
+    padding: var(--ui-space-1) var(--ui-space-2);
+    border-radius: var(--ui-rounded-5);
+    background: var(--ui-surface-0);
+    box-shadow: var(--ui-elevation-e1);
 }
 
 .tile-country {
-    font-size: 13px;
-    font-weight: 600;
-    color: #1a2024;
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-title-3);
+    line-height: var(--ui-font-title-3-lh);
+    font-weight: var(--ui-font-weight-bold);
+    color: var(--ui-text-high-em);
 }
 
 .tile-note {
-    font-size: 11px;
-    color: #5a646e;
+    font-size: var(--ui-font-caption-m);
+    line-height: var(--ui-font-caption-m-lh);
+    color: var(--ui-text-med-em);
 }
 
 @media screen and (max-width: 768px) {

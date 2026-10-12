@@ -1,0 +1,15 @@
+{
+  "dependencies": {
+    "marked": "catalog:",
+    "yaml": "catalog:"
+  },
+  "exports": {
+    "./markdown-fences": "./src/markdownFences.ts"
+  },
+  "name": "@documentation/public-repo-docs-archive",
+  "private": true,
+  "scripts": {
+    "build-site": "node src/buildSite.ts"
+  },
+  "type": "module"
+}

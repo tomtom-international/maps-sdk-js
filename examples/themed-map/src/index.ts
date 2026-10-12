@@ -1,5 +1,5 @@
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
-import { type MapColors, StylingFoundationsModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { type CustomTypeface, type MapColors, StylingFoundationsModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import './style.css';
 import { API_KEY } from './config';
 
@@ -20,10 +20,16 @@ const lisbonSummer: MapColors = {
     labelHalo: '#fffdf8',
 };
 
+// Every label in Fraunces, an open-source serif (SIL Open Font License) the map downloads from the
+// Fontsource CDN.
+const fraunces = (weight: number) =>
+    `https://cdn.jsdelivr.net/fontsource/fonts/fraunces@5.3.0/latin-${weight}-normal.woff2`;
+const lisbonType: CustomTypeface = { regular: fraunces(400), medium: fraunces(500), bold: fraunces(700) };
+
 (async () => {
     const map = new TomTomMap({
         mapLibre: { container: 'sdk-map', center: [-9.1393, 38.7223], zoom: 13 },
     });
-    const styling = await StylingFoundationsModule.get(map);
+    const styling = await StylingFoundationsModule.get(map, { labels: { customTypeface: lisbonType } });
     styling.setMapColors(lisbonSummer);
 })();

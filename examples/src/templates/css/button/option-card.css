@@ -1,0 +1,25 @@
+/* OPTION CARD: a button laid out as a card, one of a set to pick from; .active marks the picked one */
+
+.ui-option-card {
+    border: 2px solid var(--ui-border-low-em);
+    border-radius: var(--ui-rounded-10);
+    background: var(--ui-surface-0);
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color var(--ui-transition-fast);
+}
+
+.ui-option-card:hover {
+    border-color: var(--ui-border-med-em);
+}
+
+.ui-option-card.active {
+    border-color: var(--ui-surface-primary);
+}
+
+.ui-option-card:focus-visible {
+    outline: none;
+    box-shadow: var(--ui-shadow-focus);
+}

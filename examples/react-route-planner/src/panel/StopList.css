@@ -1,0 +1,94 @@
+.ui-stop-list {
+    list-style: none;
+    margin: 0 0 var(--ui-space-3);
+    padding: 0;
+}
+
+.ui-stop {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--ui-space-2);
+    padding: var(--ui-space-2) 0;
+    border-bottom: 1px solid var(--ui-border-low-em);
+    background: var(--ui-surface-0);
+}
+
+.ui-stop.is-dragging {
+    position: relative;
+    z-index: 1;
+    box-shadow: var(--ui-elevation-e4);
+}
+
+.ui-stop-handle {
+    display: flex;
+    padding: 4px 0 0;
+    border: none;
+    background: none;
+    color: var(--ui-text-low-em);
+    cursor: grab;
+    touch-action: none;
+}
+
+.ui-stop-handle:focus-visible {
+    outline: 2px solid var(--ui-surface-info);
+    border-radius: var(--ui-rounded-5);
+}
+
+.ui-stop-body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.ui-stop-empty {
+    padding: var(--ui-space-1) var(--ui-space-2);
+    border: 1px dashed var(--ui-border-med-em);
+    border-radius: var(--ui-rounded-5);
+    background: none;
+    font: inherit;
+    font-size: var(--ui-font-body-s);
+    color: var(--ui-text-med-em);
+    text-align: left;
+    cursor: pointer;
+}
+
+.ui-stop-empty.is-targeted {
+    border-style: solid;
+    border-color: var(--ui-surface-info);
+    color: var(--ui-text-info-on-base);
+    background: var(--ui-surface-info-accent-1);
+}
+
+.ui-stop-options {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ui-space-1);
+    margin-top: var(--ui-space-1);
+}
+
+.ui-leg-options summary {
+    font-size: var(--ui-font-caption-m);
+    color: var(--ui-text-med-em);
+    cursor: pointer;
+}
+
+.ui-leg-options[open] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ui-space-2);
+    padding-bottom: var(--ui-space-2);
+}
+
+.ui-leg-badge {
+    margin-left: var(--ui-space-1);
+    padding: 0 var(--ui-space-1);
+    border-radius: var(--ui-rounded-5);
+    background: var(--ui-surface-info-accent-1);
+    color: var(--ui-text-info-on-base);
+}
+
+.ui-stop-actions {
+    margin-bottom: var(--ui-space-2);
+}

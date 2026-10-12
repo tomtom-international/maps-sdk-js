@@ -1,0 +1,41 @@
+/* CHIPS: small toggles in a wrapping row, each a .ui-button.ui-toggle.ui-button-xs.ui-chip */
+
+.ui-chip-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ui-space-1);
+}
+
+.ui-chip.ui-button-with-icon {
+    gap: var(--ui-space-1);
+}
+
+.ui-chip.ui-button-with-icon svg {
+    width: 14px;
+    height: 14px;
+}
+
+/* A chip can be a label around a hidden radio or checkbox, which then shows the input's focus and state */
+.ui-chip:has(:focus-visible) {
+    box-shadow: var(--ui-shadow-focus);
+}
+
+.ui-chip:has(:disabled) {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Square, its label left to a tooltip */
+.ui-chip.is-icon-only {
+    width: var(--ui-height-xs);
+    padding: 0;
+    justify-content: center;
+}
+
+.ui-chip-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    margin-right: 4px;
+    border-radius: var(--ui-rounded-full);
+}
