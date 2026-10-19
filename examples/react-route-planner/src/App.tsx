@@ -112,7 +112,10 @@ export const App = () => {
 
     useSeedStops(dispatch);
     useRouteHoverProgress(modules, plan.routes, cursorStore);
-    useSectionFocus(modules, pointedSectionId ?? selectedSectionId);
+    // The section pointed at rings over the route pointed at, which rings over the open section.
+    const pointedIds = pointedSectionId ? [pointedSectionId] : plan.pointedSectionIds;
+    const openIds = selectedSectionId ? [selectedSectionId] : undefined;
+    useSectionFocus(modules, pointedIds ?? openIds);
 
     const addPlace = (place: Place) => {
         dispatch(addPlaceAction(stops, place, route, targetStopId));
@@ -133,6 +136,8 @@ export const App = () => {
             if (stop?.place) setPopup({ kind: 'stop', stopId: stop.id });
         },
         onRoute: plan.selectRoute,
+        onRouteHover: plan.pointAtRoute,
+        onRouteLineHover: plan.pointAtRouteLine,
         onSearchResultHover: (place) => search.setHighlightedId(place?.id),
         onSectionHover: setPointedSectionId,
         onSectionClick: selectSection,
@@ -335,6 +340,8 @@ const PlanTab = ({ plan, stops, dispatch, targetStopId, onTarget, onPointAtSecti
                 routes={plan.routes}
                 selectedIndex={plan.selectedIndex}
                 onSelect={plan.selectRoute}
+                pointedIndex={plan.pointedIndex}
+                onPointAtRoute={plan.pointAtRoute}
                 stops={stops}
                 onPointAtLeg={onPointAtSection}
             />

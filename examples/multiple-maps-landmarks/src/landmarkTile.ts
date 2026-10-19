@@ -1,4 +1,4 @@
-import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { BaseMapModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { Landmarks3D } from '@tomtom-org/maps-sdk-plugin-landmarks-3d';
 import type { Landmark } from './landmarks';
 
@@ -41,6 +41,8 @@ export const addLandmarkTile = (grid: HTMLElement, landmark: Landmark): Landmark
     const map = new TomTomMap({
         mapLibre: { container, centerClampedToGround: false, ...cameraFor(container, landmark) },
     });
+    // The base map's 3D buildings, hidden in most standard styles, stand around the landmark.
+    void BaseMapModule.get(map, { groups: { buildings3D: { visible: true } } });
     new Landmarks3D(map);
 
     let current = landmark;

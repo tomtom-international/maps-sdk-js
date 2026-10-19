@@ -60,13 +60,19 @@ const wordOverlap = (term: string, category: POICategoryResult): number => {
     return termWords.filter((termWord) => targetWords.some((targetWord) => wordMatch(termWord, targetWord))).length;
 };
 
-// The catalog lists some codes twice ("Car Wash"), so a code keeps its first, strongest entry.
-const firstPerCode = (categories: POICategoryResult[]): POICategoryResult[] => {
+// A ranked match turns up again among the word-overlap ones, so a code keeps its first, strongest entry.
+// A plain sub-category reads exactly like its parent ("Car Wash" under "Car Wash"), so the agent could not
+// tell them apart: it is left out when its parent is listed, whose code searches it too.
+const distinctCandidates = (categories: POICategoryResult[]): POICategoryResult[] => {
     const byCode = new Map<POICategory, POICategoryResult>();
     for (const category of categories) {
         if (!byCode.has(category.code)) byCode.set(category.code, category);
     }
-    return [...byCode.values()];
+    const candidates = [...byCode.values()];
+    return candidates.filter(
+        ({ code, name }) =>
+            !candidates.some((parent) => parent.name === name && parent.childCategoryCodes.includes(code)),
+    );
 };
 
 // The term's ranked name and synonym matches first, then the fuzzy word-overlap candidates.
@@ -77,7 +83,7 @@ const candidatesFor = async (term: string, catalog: POICategoryResult[]): Promis
         .filter(({ overlap }) => overlap > 0)
         .sort((first, second) => second.overlap - first.overlap)
         .map(({ category }) => category);
-    return firstPerCode([...ranked, ...related]);
+    return distinctCandidates([...ranked, ...related]);
 };
 
 /**

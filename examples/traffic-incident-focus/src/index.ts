@@ -18,7 +18,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     const map = new TomTomMap({ mapLibre: { container: 'sdk-map', center: [-0.13, 51.51], zoom: 10 } });
 
     const styling = await StylingFoundationsModule.get(map);
-    await TrafficFlowModule.get(map, { visible: true });
+    const flow = await TrafficFlowModule.get(map, { visible: true });
     const incidents = await TrafficIncidentDetailsModule.create(map);
     const boundary = await GeometriesModule.create(map, { fill: { style: 'outline' } });
 
@@ -28,5 +28,5 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     await incidents.show(await trafficIncidentDetails({ polygon: cityBoundary, timeValidityFilter: ['present'] }));
     map.mapLibreMap.fitBounds(bboxFromGeoJSON(cityBoundary) as LngLatBoundsLike, { padding: 40, duration: 0 });
 
-    initFocus(styling, incidents, boundary);
+    initFocus(styling, flow, incidents, boundary);
 })();

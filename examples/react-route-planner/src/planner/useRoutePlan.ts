@@ -15,6 +15,13 @@ export type RoutePlan = {
     calculating: boolean;
     error?: string;
     selectRoute: (index: number) => void;
+    /** The route pointed at, on the map or in the panel, which the map draws as hovered. */
+    pointedIndex?: number;
+    /** The sections to ring on the route pointed at: those it was pointed at with, else the roads it has to itself. */
+    pointedSectionIds?: string[];
+    pointAtRoute: (index?: number, sectionIds?: string[]) => void;
+    /** Points at a route whose line the map hovers, and so already draws as hovered. */
+    pointAtRouteLine: (index: number) => void;
 };
 
 // Waits for a burst of edits (a drag, typing a weight) to settle before asking for a route.
@@ -41,6 +48,16 @@ export const useRoutePlan = (modules: MapModules | undefined, stops: Stop[], opt
     // A pick holds for the routes it was made on; new routes start on their first.
     const [selection, setSelection] = useState<{ routes: Routes; index: number }>();
     const selectedIndex = selection && selection.routes === routes ? selection.index : 0;
+    // A pointer, like a pick, holds for the routes it was made on.
+    const [pointer, setPointer] = useState<{
+        routes: Routes;
+        index: number;
+        sectionIds?: string[];
+        lineHovered?: boolean;
+    }>();
+    const pointed = pointer && pointer.routes === routes ? pointer : undefined;
+    const pointedIndex = pointed?.index;
+    const lineHovered = pointed?.lineHovered;
 
     const draw = useMapQueue();
     useEffect(() => {
@@ -49,6 +66,15 @@ export const useRoutePlan = (modules: MapModules | undefined, stops: Stop[], opt
     useEffect(() => {
         if (modules) void draw(() => (routes ? modules.routing.showRoutes(routes) : modules.routing.clearRoutes()));
     }, [modules, routes, draw]);
+    useEffect(() => {
+        // Putting `hover` again on a line that holds it would redraw every route.
+        if (!modules || lineHovered) return;
+        void draw(async () =>
+            pointedIndex === undefined
+                ? modules.routing.clearEventStates({ states: ['hover'] })
+                : modules.routing.setEventState({ index: pointedIndex, state: 'hover' }),
+        );
+    }, [modules, pointedIndex, lineHovered, draw]);
 
     useFitNewPlaces(modules, query.isPlaceholderData ? undefined : routes, request.locations);
 
@@ -58,9 +84,19 @@ export const useRoutePlan = (modules: MapModules | undefined, stops: Stop[], opt
         calculating: query.isFetching,
         error: enabled ? query.error?.message : undefined,
         selectRoute: (index) => {
+            // A click on the map can still land on a route the new routes, not yet drawn, no longer have.
+            if (!routes?.features[index]) return;
             if (modules) void draw(() => modules.routing.selectRoute(index));
-            if (routes) setSelection({ routes, index });
+            setSelection({ routes, index });
         },
+        pointedIndex,
+        pointedSectionIds:
+            pointed &&
+            (pointed.sectionIds ??
+                pointed.routes.features[pointed.index]?.properties.sections.distinct?.map((section) => section.id)),
+        pointAtRoute: (index, sectionIds) =>
+            setPointer(routes && index !== undefined ? { routes, index, sectionIds } : undefined),
+        pointAtRouteLine: (index) => setPointer(routes && { routes, index, lineHovered: true }),
     };
 };
 

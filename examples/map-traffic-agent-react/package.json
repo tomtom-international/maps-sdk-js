@@ -21,7 +21,7 @@
     "@assistant-ui/react-ai-sdk": "catalog:",
     "@assistant-ui/react-markdown": "catalog:",
     "@assistant-ui/react-ui": "^0.2.1",
-    "@microsoft/applicationinsights-web": "^3.4.5",
+    "@microsoft/applicationinsights-web": "catalog:",
     "@tomtom-org/maps-sdk": "catalog:",
     "@tomtom-org/maps-sdk-plugin-agent-toolkit": "catalog:",
     "ai": "catalog:",

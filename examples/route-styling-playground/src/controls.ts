@@ -18,13 +18,14 @@ export type RoutePlaygroundState = {
     };
 };
 
-// The slider spans the range the SDK clamps the factor to.
-// The catalogue entry carries the knob's range, and the factor the SDK draws when it is unset.
+// The slider spans the range the SDK clamps the knob to.
+// The catalogue entry carries the knob's range, and the value the SDK draws when it is unset.
 const initFactorSlider = (
     id: string,
     knobId: RoutingKnobId,
     initial: number | undefined,
     onChange: (factor: number) => void,
+    suffix = '×',
 ): void => {
     const { range, default: sdkDefault } = knobEntryOf(routingKnobCatalogue, knobId);
     if (!range) return;
@@ -35,9 +36,9 @@ const initFactorSlider = (
     slider.max = String(range.max);
     slider.step = String(range.step);
     slider.value = String(initial ?? sdkDefault ?? range.min);
-    valueLabel.textContent = `${slider.value}×`;
+    valueLabel.textContent = `${slider.value}${suffix}`;
     slider.addEventListener('input', () => {
-        valueLabel.textContent = `${slider.value}×`;
+        valueLabel.textContent = `${slider.value}${suffix}`;
         onChange(Number(slider.value));
     });
 };
@@ -146,13 +147,14 @@ export const initControls = (
 
     initSectionRingControls(state, apply, setTollRoadsRinged);
 
-    // Route opacity slider
-    const opacitySlider = document.getElementById('route-opacity') as HTMLInputElement;
-    const opacityValue = document.getElementById('route-opacity-value') as HTMLElement;
-    opacitySlider?.addEventListener('input', () => {
-        const pct = Number(opacitySlider.value);
-        opacityValue.textContent = `${pct}%`;
-        state.routeOpacity = pct / 100;
-        apply();
-    });
+    initFactorSlider(
+        'route-opacity',
+        'opacity',
+        state.routeOpacity,
+        (opacity) => {
+            state.routeOpacity = opacity;
+            apply();
+        },
+        '',
+    );
 };

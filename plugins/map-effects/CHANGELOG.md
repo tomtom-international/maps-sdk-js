@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.3.1
+
+### Patch Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - `MapEffects` stops paying for the WebGL chain while nothing runs on it
+  - With the depth of field off, or on over a flat map, a map frame no longer measures the map canvas, so it stops forcing a page layout on every frame
+  - The chain takes its WebGL2 context on the first pass or depth of field it runs rather than in the constructor, so a `MapEffects` with only bloom or CSS overlays on holds no context
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - Plugins are side-effect free, so your bundler drops every part of a plugin your app doesn't use
+  
+  - Each plugin declares `"sideEffects": false`, and its knob catalogue and other module-level tables are dropped when nothing reads them
+  - flyover takes `@turf/turf` as a peer dependency, the copy the SDK already requires, instead of bundling its own
+  - The plugins' bundles keep their module-level names, as the SDK's do, so Sandpack and builds that transpile `node_modules` with Babel run their loops correctly
+
 ## 0.3.0
 
 ### Minor Changes

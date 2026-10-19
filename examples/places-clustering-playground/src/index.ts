@@ -2,6 +2,7 @@ import type { Place } from '@tomtom-org/maps-sdk/core';
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { calculatePaddedBBox, PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { createLatestRequest, discoverPlaces } from '@tomtom-org/maps-sdk/services';
+import type { GeoJSONSource } from 'maplibre-gl';
 import './style.css';
 import { API_KEY } from './config';
 import { CONNECTORS_PROPERTY, initPanel, readClusterConfig, showZoom } from './panel';
@@ -29,6 +30,15 @@ const countConnectors = (place: Place): number =>
         extraFeatureProps: { [CONNECTORS_PROPERTY]: countConnectors },
         ...readClusterConfig(),
     });
+
+    // A cluster isn't a place, so the module-wide events receive it, as MapLibre renders it.
+    places.events
+        .where((feature) => feature.properties.cluster === true)
+        .on('click', async (cluster, lngLat) => {
+            const source = map.mapLibreMap.getSource<GeoJSONSource>(cluster.source);
+            const zoom = await source?.getClusterExpansionZoom(cluster.properties.cluster_id);
+            map.mapLibreMap.easeTo({ center: lngLat, zoom });
+        });
 
     // A newer search retires the one in flight, so a slow response cannot repopulate the map.
     const latestSearch = createLatestRequest();

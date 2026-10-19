@@ -5,7 +5,7 @@ export type Coord = Position;
 export type IncidentAddress = { from?: string; to?: string };
 
 /** The slice of a reverse-geocode result this module reads. */
-export type AddressedPlace = { properties: { address: { streetName?: string; freeformAddress: string } } };
+export type AddressedPlace = { properties?: { address: { streetName?: string; freeformAddress: string } } };
 export type ReverseGeocodeFn = (params: { position: Coord }) => Promise<AddressedPlace>;
 
 /** An incident already has a usable label when it carries a road number or a "from" street. */
@@ -28,8 +28,8 @@ export const incidentEndpoints = (geometry: TrafficIncident['geometry']): { star
 export const coordKey = (coord: Coord): string => `${coord[0].toFixed(4)},${coord[1].toFixed(4)}`;
 
 /** Prefer the street name; fall back to the full formatted address. */
-export const addressLabel = (place: AddressedPlace): string =>
-    place.properties.address.streetName ?? place.properties.address.freeformAddress;
+export const addressLabel = (place: AddressedPlace): string | undefined =>
+    place.properties && (place.properties.address.streetName ?? place.properties.address.freeformAddress);
 
 /**
  * Human label for an incident's extent. Collapses identical endpoints to a single name

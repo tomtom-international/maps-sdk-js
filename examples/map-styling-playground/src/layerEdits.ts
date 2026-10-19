@@ -18,6 +18,6 @@ export const initLayerEdits = (styling: StylingFoundationsModule) => {
     bindLayerEdit(
         'ui-trafficFlowEdit',
         styling.layers.query({ group: 'trafficFlow', layerTypes: ['line'] }),
-        (flowLines) => flowLines.setPaint({ 'line-opacity': 0.35 }),
+        (flowLines) => flowLines.setPaint({ 'line-blur': 4 }),
     );
 };

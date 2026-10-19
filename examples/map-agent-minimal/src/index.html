@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Minimal map agent</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+        <aside class="ui-customPanel chat-panel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">Map agent</h3>
+            </div>
+            <div id="chat-messages" aria-live="polite"></div>
+            <form id="chat-form" class="ui-panel-footer chat-form">
+                <input
+                    id="chat-input"
+                    class="ui-input"
+                    placeholder="Show coffee shops near Dam Square"
+                    aria-label="Message the map agent"
+                    autocomplete="off"
+                >
+                <button id="chat-send" class="ui-button" type="submit">Send</button>
+            </form>
+        </aside>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

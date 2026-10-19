@@ -116,7 +116,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
                     `
                 <div id="ui-popup-basemap">
                 ${
-                    properties.address.freeformAddress
+                    properties?.address.freeformAddress
                         ? ` <h4 id="ui-popup-basemap-address">${properties.address.freeformAddress}</h4> <hr class="ui-hr" />`
                         : ''
                 }

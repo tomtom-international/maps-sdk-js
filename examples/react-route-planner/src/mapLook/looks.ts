@@ -31,7 +31,10 @@ export const defaultLook: MapLook = {
     trafficIncidents: false,
     buildings3D: false,
     pois: 'all',
-    terrain: false,
+    // The trips cross the Alps: shaded from above and raised in the fly-over, the relief reads every
+    // climb and pass on the way.
+    hillshade: 'styleDefault',
+    terrain: true,
     exaggeration: 1.5,
 };
 
@@ -254,9 +257,9 @@ export const mapPresets: MapPreset[] = [
         {
             id: 'mountains',
             label: 'Mountain passes',
-            description: 'Satellite imagery over 3D terrain',
+            description: 'Satellite imagery, with no places pinned over it',
         },
-        { style: 'streetSatellite', hillshade: 'styleDefault', terrain: true, pois: 'none' },
+        { style: 'streetSatellite', pois: 'none' },
     ),
     preset(
         {

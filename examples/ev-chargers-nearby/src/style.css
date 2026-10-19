@@ -1,0 +1,11 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+
+/* CUSTOM STYLES (example-specific) */
+
+#station-name {
+    margin-bottom: var(--ui-space-1);
+    font-weight: var(--ui-font-weight-semibold);
+}

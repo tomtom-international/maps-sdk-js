@@ -1,7 +1,13 @@
-import { bboxFromGeoJSON, type CountrySectionProps, type SectionType, TomTomConfig } from '@tomtom-org/maps-sdk/core';
-import type { DrawnSectionType } from '@tomtom-org/maps-sdk/map';
-import { drawnSectionTypes, RoutingModule, sectionSourceKey, TomTomMap } from '@tomtom-org/maps-sdk/map';
-import { calculateRoute, createLatestRequest } from '@tomtom-org/maps-sdk/services';
+import { bboxFromGeoJSON, type CountrySectionProps, TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import type { DrawnSectionType, MapColors, StandardStyleID } from '@tomtom-org/maps-sdk/map';
+import {
+    drawnSectionTypes,
+    RoutingModule,
+    StylingFoundationsModule,
+    sectionSourceKey,
+    TomTomMap,
+} from '@tomtom-org/maps-sdk/map';
+import { calculateRoute, createLatestRequest, type InputSectionTypes } from '@tomtom-org/maps-sdk/services';
 import { API_KEY } from './config';
 import { PICKABLE_ROUTES } from './routes';
 import { buildConfig, buildInitialState } from './sectionsConfig';
@@ -19,7 +25,14 @@ const STRETCH_ZOOM = 17;
 // A section type is only in the response when it was asked for, so ask for every type the map
 // draws. `drawnSectionTypes` is the SDK's own list of them. `country` is not among them — it draws
 // no line of its own — but the border crossings are read off it.
-const SECTION_TYPES: SectionType[] = [...drawnSectionTypes, 'country'];
+const SECTION_TYPES: InputSectionTypes = [...drawnSectionTypes, 'country'];
+
+// The border crossings take the map's colours, as the route summaries do, until a swatch sets their own.
+const MAP_LOOKS: Record<string, { style: StandardStyleID; colors?: MapColors }> = {
+    light: { style: 'streetLight' },
+    dark: { style: 'streetDark' },
+    amber: { style: 'streetDark', colors: { land: '#12161D', label: '#FFB547', labelHalo: '#12161D' } },
+};
 
 (async () => {
     const [firstRoute] = PICKABLE_ROUTES;
@@ -76,7 +89,7 @@ const SECTION_TYPES: SectionType[] = [...drawnSectionTypes, 'country'];
     });
 
     // A crossing hands over the two `country` sections it joins, so the click can report the
-    // stretch each one covers rather than just the pair of codes on the plaque.
+    // stretch each one covers rather than just the pair of codes in the bubble.
     routingModule.events.countryCrossings.on('click', (crossing) => {
         const { fromSection, toSection, label } = crossing.properties;
         const extent = (section?: CountrySectionProps) =>
@@ -108,6 +121,19 @@ const SECTION_TYPES: SectionType[] = [...drawnSectionTypes, 'country'];
 
         panel.setCounts(panelCounts());
     };
+
+    const styling = await StylingFoundationsModule.get(map);
+    const lookPicker = document.getElementById('map-look-picker') as HTMLSelectElement;
+    lookPicker.addEventListener('change', async () => {
+        const look = lookPicker.value;
+        const { style, colors } = MAP_LOOKS[look];
+        // The routes, their sections and crossings come along onto the new style.
+        if (style !== map.getStyleInput()) await map.setStyle(style);
+        // A look picked while the style loaded has applied its own colours.
+        if (lookPicker.value !== look) return;
+        // `applyConfig` replaces every colour, so a look without a theme goes back to the style's.
+        styling.applyConfig(colors ? { colors } : {});
+    });
 
     const picker = document.getElementById('route-picker') as HTMLSelectElement;
     picker.innerHTML = PICKABLE_ROUTES.map(({ label }, index) => `<option value="${index}">${label}</option>`).join('');

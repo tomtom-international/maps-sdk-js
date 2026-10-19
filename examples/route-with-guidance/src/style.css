@@ -1,7 +1,30 @@
-#sdk-map {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+
+.ui-directions {
+    margin: 0;
+    padding: 0 0 var(--ui-panel-padding);
+    list-style: none;
+}
+
+.ui-direction {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--ui-space-2);
+    padding: var(--ui-space-2) 0;
+    border-bottom: 1px solid var(--ui-border-low-em);
+    font-size: var(--ui-font-body-m);
+}
+
+.ui-direction svg {
+    width: auto;
+    max-width: 100%;
+    height: 28px;
+}
+
+.ui-direction:last-child {
+    border-bottom: none;
 }

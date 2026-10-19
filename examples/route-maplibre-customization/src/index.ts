@@ -1,6 +1,6 @@
 import type { Waypoint } from '@tomtom-org/maps-sdk/core';
 import { bboxFromGeoJSON, TomTomConfig } from '@tomtom-org/maps-sdk/core';
-import { defaultRoutingLayers, RoutingModule, SELECTED_ROUTE_FILTER, TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { RoutingModule, SELECTED_ROUTE_FILTER, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { calculateRoute, geocodeOne } from '@tomtom-org/maps-sdk/services';
 import './style.css';
 import { API_KEY } from './config';
@@ -21,6 +21,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
 
     const routingModule = await RoutingModule.create(map, {
         color: '#DF1B12',
+        sections: { tunnel: { opacity: 1 } },
         layers: {
             mainLines: {
                 routeOutline: {
@@ -48,15 +49,6 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
                             'line-color': '#29A2FFFF',
                             'line-opacity': 1,
                             'line-dasharray': [1, 0.2],
-                        },
-                    },
-                },
-                tunnel: {
-                    routeTunnelLine: {
-                        paint: {
-                            // Reuse default tunnel props like width:
-                            ...defaultRoutingLayers.sections.tunnel?.routeTunnelLine?.paint,
-                            'line-opacity': 1,
                         },
                     },
                 },

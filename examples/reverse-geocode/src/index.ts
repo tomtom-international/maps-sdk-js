@@ -8,17 +8,21 @@ import { API_KEY } from './config';
 TomTomConfig.instance.put({ apiKey: API_KEY });
 
 (async () => {
-    const position = [5.112969, 52.090521];
+    const position: [number, number] = [5.112969, 52.090521];
     const location = await reverseGeocode({ position });
 
     const map = new TomTomMap({
         mapLibre: {
             container: 'sdk-map',
-            center: position as [number, number],
+            center: position,
             zoom: 17,
         },
     });
 
     const placesModule = await PlacesModule.create(map);
-    await placesModule.show(location);
+    if (location.properties) {
+        await placesModule.show(location);
+    }
+
+    (document.getElementById('ui-response') as HTMLElement).textContent = JSON.stringify(location, null, 2);
 })();

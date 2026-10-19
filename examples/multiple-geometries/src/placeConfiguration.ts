@@ -36,7 +36,14 @@ const pastelRainbow = [
     '#efea5a',
     '#f29e4c',
 ];
-const greenToBlue = ['#d9ed92', '#b5e48c', '#99d98c', '#76c893', '#52b69a', '#34a0a4', '#168aad', '#1a759f', '#184e77'];
+// Two ends of a ramp: every postcode gets its own shade between them.
+const greenToBlue = ['#d9ed92', '#184e77'];
+
+// Palettes to try in place of a region's own: the two ends of a ramp, and three stops it passes through.
+export const palettes: Record<string, string[]> = {
+    Dusk: ['#f5d000', '#6a1b9a'],
+    'Blue, yellow, red': ['#2b83ba', '#ffffbf', '#d7191c'],
+};
 
 export const namedConfigs: NamedConfigs = {
     france: {
@@ -77,6 +84,6 @@ export const namedConfigs: NamedConfigs = {
             geoBias: { boundingBox: [-87.70362, 41.73845, -87.57001, 41.83279] },
             filters: { geographyTypes: ['PostalCodeArea'] },
         },
-        geometryConfig: { fill: { palette: greenToBlue, opacity: 0.3 }, line },
+        geometryConfig: { fill: { palette: greenToBlue, paletteMode: 'ramp', opacity: 0.3 }, line },
     },
 };

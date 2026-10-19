@@ -1,0 +1,21 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+@import "../../src/templates/css/form/radio.css";
+
+/* CUSTOM STYLES (example-specific) */
+
+.ui-customPanel {
+    width: 240px;
+}
+
+.ui-summary {
+    margin: 0;
+    min-height: 1.5em;
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-body-m);
+    font-weight: var(--ui-font-weight-bold);
+    font-variant-numeric: tabular-nums;
+    color: var(--ui-text-high-em);
+}

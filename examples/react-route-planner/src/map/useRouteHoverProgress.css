@@ -1,6 +1,8 @@
 /* The time and distance at the hovered point of the route, in a compact popup */
 
 .ui-progress-popup .maplibregl-popup-content {
+    /* It follows the pointer along the line, so it must not catch the pointer heading for a bubble. */
+    pointer-events: none;
     padding: var(--ui-space-2) var(--ui-space-3);
     border-radius: var(--ui-rounded-10);
     box-shadow:

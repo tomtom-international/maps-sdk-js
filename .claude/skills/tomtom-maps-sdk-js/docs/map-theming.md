@@ -66,7 +66,7 @@ map.mapColors.accent;                             // what routes and areas draw 
 
 | Module | Takes the accent | Caller's own colour, which always wins |
 | --- | --- | --- |
-| `RoutingModule` | route line, its outline, waypoint icons | `color`; a `layers` paint override for one layer |
+| `RoutingModule` | route line, its outline, waypoint icons; the summary bubbles and border crossings take `labelHalo` (lightened) and `label` instead, only when set | `color`; a `layers` paint override for one layer; `summaryBubbles.color`, `summaryBubbles.label.color`; `countryCrossings.color`, `countryCrossings.label.color` |
 | `GeometriesModule` | fill, outline | `color`, `fill.color` or `fill.palette` for both, `line.color`, a feature's `color` property |
 | `ReachableRangesModule` | its bands, as a ramp from the accent (innermost) toward the map's `land` (outermost), reversed for `inverted`; follows both, and without them ramps between the style's light/dark defaults | `palette` |
 | `PlacesModule` | pin, selected label, connection lines, entry points | `color` for all four; over it, `icon.default.style.fillColor`, `label.color` or `layers.selected`, `connections.layers`, `entryPoints.layers` |

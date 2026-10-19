@@ -1,0 +1,15 @@
+/* ROAD CHIP: a road's number or name, or what lies on it, inline in text; hovering one can point at it */
+
+.ui-road-chip {
+    display: inline-block;
+    margin-right: 4px;
+    padding: 0 6px;
+    border-radius: var(--ui-rounded-5);
+    background: var(--ui-surface-1);
+    color: var(--ui-text-high-em);
+    font-weight: var(--ui-font-weight-bold);
+}
+
+.ui-road-chip:hover {
+    background: var(--ui-surface-2);
+}

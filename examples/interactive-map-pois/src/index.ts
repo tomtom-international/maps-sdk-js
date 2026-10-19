@@ -35,7 +35,12 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
 
     poisModule.events.on('click', async (feature) => {
         const lookup = await latestLookup.run((signal) =>
-            getPlaceDetails({ entityId: feature.properties.id, openingHours: 'nextSevenDays', signal }),
+            getPlaceDetails({
+                entityId: feature.properties.id,
+                openingHours: 'nextSevenDays',
+                timeZone: 'iana',
+                signal,
+            }),
         );
         if (!lookup.current || !lookup.value) return;
 

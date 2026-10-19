@@ -23,12 +23,16 @@ const stations: { name: string; position: [number, number] }[] = [
 ];
 const minutes = [10, 20, 30];
 
-// Band colours of your own, innermost first. The empty list leaves them to the map's colours.
+// Band colours of your own, innermost first. The empty list leaves them to the map's colours. With
+// `fill.paletteMode` `ramp`, the two-colour Dusk shades every band, and the five-colour Spectral
+// spreads its stops over the three bands rather than taking its first three in turn.
 const palettes: Record<string, string[]> = {
     'From the map': [],
     Sunset: ['#b3001b', '#e85d04', '#faa307'],
     Ocean: ['#03045e', '#0077b6', '#00b4d8'],
     Forest: ['#1b4332', '#40916c', '#95d5b2'],
+    Dusk: ['#f5d000', '#6a1b9a'],
+    Spectral: ['#d7191c', '#fdae61', '#ffffbf', '#abdda4', '#2b83ba'],
 };
 
 (async () => {

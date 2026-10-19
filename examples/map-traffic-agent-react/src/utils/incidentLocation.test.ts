@@ -71,6 +71,9 @@ describe('addressLabel', () => {
     it('falls back to the freeform address', () => {
         expect(addressLabel(place({ freeformAddress: 'Somewhere 1, Town' }))).toBe('Somewhere 1, Town');
     });
+    it('is undefined for a result that matched no address', () => {
+        expect(addressLabel({})).toBeUndefined();
+    });
 });
 
 describe('formatEndpoints', () => {
@@ -102,6 +105,14 @@ describe('createCoordResolver', () => {
         const resolve = createCoordResolver(fn);
         expect(await resolve([4.904112, 52.367612])).toBe('Ringweg-West');
         expect(await resolve([4.904134, 52.367644])).toBe('Ringweg-West'); // same rounded key
+        expect(fn).toHaveBeenCalledTimes(1);
+    });
+
+    it('caches a result that matched no address as undefined and does not ask again', async () => {
+        const fn = vi.fn().mockResolvedValue({});
+        const resolve = createCoordResolver(fn);
+        expect(await resolve([1, 1])).toBeUndefined();
+        expect(await resolve([1, 1])).toBeUndefined();
         expect(fn).toHaveBeenCalledTimes(1);
     });
 

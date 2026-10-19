@@ -1,5 +1,15 @@
 # @tomtom-org/maps-sdk-plugin-map-theme
 
+## 0.3.6
+
+### Patch Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - Plugins are side-effect free, so your bundler drops every part of a plugin your app doesn't use
+  
+  - Each plugin declares `"sideEffects": false`, and its knob catalogue and other module-level tables are dropped when nothing reads them
+  - flyover takes `@turf/turf` as a peer dependency, the copy the SDK already requires, instead of bundling its own
+  - The plugins' bundles keep their module-level names, as the SDK's do, so Sandpack and builds that transpile `node_modules` with Babel run their loops correctly
+
 ## 0.3.5
 
 ### Patch Changes

@@ -26,6 +26,6 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
     const baseMap = await BaseMapModule.get(map);
     baseMap.setVisible(true, { layerGroups: { show: 'only', values: ['buildings3D'] } });
 
-    // Streams the 3D Landmarks
-    new Landmarks3D(map, { displayMode: 'inherited' });
+    // Streams the 3D Landmarks, shaded like the 3D buildings around them
+    new Landmarks3D(map);
 })();

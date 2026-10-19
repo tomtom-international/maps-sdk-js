@@ -27,7 +27,8 @@ const placesModule = await PlacesModule.create(map);
 const places = await discoverPlaces({ query: 'coffee shop', geoBias: { position: [4.9, 52.4] }, limit: 20 });
 await placesModule.show(places);
 
-// `events` covers every surface the module draws; `events.places` is the pins alone, typed as Place
+// `events` covers every surface the module draws; `events.places` is the pins alone, typed as Place,
+// so a `pin-clustered` cluster never reaches it
 placesModule.events.places.on('click', (place, lngLat) => {
     console.log(place.properties.poi?.name, place.properties.address.freeformAddress);
 });
@@ -45,8 +46,8 @@ resolves with the first result and throws when there is none.
 ## What `show()` takes — no mapping, and two results it doesn't
 
 `show()` takes `Place | Place[] | Places` (`ShownPlaces`) as the service returns it — `discoverPlaces`,
-`geocode`, `reverseGeocode`, `getPlaceDetails`, or your own GeoJSON
-points. Never map fields by hand first.
+`geocode`, `getPlaceDetails`, or your own GeoJSON points — and a `reverseGeocode` result once
+`if (place.properties)` narrows it to a `Place`. Never map fields by hand first.
 
 | Result | Not a place because | Show it with |
 | --- | --- | --- |
@@ -61,7 +62,7 @@ import { buildPlaceTitle, preparePlacesForDisplay, toPlaces } from '@tomtom-org/
 
 const [first] = preparePlacesForDisplay(places, { markerType: 'base-map' }).features;
 // Kept: every property of the place. Added: id (also in properties, for promoteId), title,
-// iconID, category + group (base-map, pin-clustered), extraFeatureProps
+// iconID, category + group (base-map, pin-clustered), baseMapIconID (pin-clustered), extraFeatureProps
 first.properties.title;
 // An iconID naming a module-added image (default pin, categoryIcons) is the first module's;
 // placesModule.getShown().places is what a given module drew
@@ -134,6 +135,12 @@ const { poiCategories } = await getPOICategories({ filters: ['gym'] });
 poiCategories.forEach(c => console.log(c.code, c.name));
 ```
 
+A parent code also returns its sub-categories (its `childCategoryCodes`): `'SCHOOL'` also returns `CHILDCARE` and
+`DRIVING_SCHOOL` places. To leave them out, list only the codes you want, such as `'SCHOOL_GENERIC'` (a plain school)
+and `'PRIMARY_SCHOOL'`. A place filed under the parent alone comes back only with the parent code: to keep those too,
+or when the list passes the 10 codes a search takes, search by the parent and keep the results whose
+`place.properties.poi?.categories` holds the parent code or one you want.
+
 Category words straight into the search — one call, any variant (`geoBias`, `geometries`, `route`):
 
 ```ts
@@ -147,7 +154,7 @@ const { poiCategories, unmatched } = await resolvePOICategories({ filters: ['caf
 - `filters.poiCategoryQuery` (`discoverPlaces` only, a string or an array) resolves through `resolvePOICategories`
   in the call's `language`, so it never sits beside `poiCategories` (a type error).
 - `resolvePOICategories` keeps each word's best three codes, merged round-robin and capped at the 10 a search takes,
-  and returns the words nothing matched in `unmatched`. A code stays itself, and codes alone skip the catalog request.
+  and returns the words nothing matched in `unmatched`. A code stays itself, and codes alone skip the catalog request and come back as given, never folded into a parent, with duplicates dropped.
   For a picker listing every close match, use `getPOICategoryCodes` instead.
 - In a search, a word nothing matches is left out; when none matches, it rejects with `SDKError` and sends no search.
   Resolve first when the caller must hear about unmatched words, or catch and retry as `query`.
@@ -198,6 +205,8 @@ const cities = await geocode({ query: 'Utrecht', filters: { countries: ['NL'], g
 const area = await geocodeOne('Paris, France');
 // `geometries`: places (Place[] or Places), or geometry ids (string[]) — not a single Place
 const boundary = await geometryData({ geometries: [area], zoom: 10 });
+// A Places input types each polygon's properties as PlaceGeometryProps<P> | null: its place's properties
+// plus placeCoordinates, or null for a polygon matching no place. Place[] or ids give plain PolygonFeatures.
 
 const places = await discoverPlaces({
     filters: { poiCategories: ['ITALIAN_RESTAURANT'] },
@@ -386,7 +395,7 @@ Category groups: `FOOD_DRINKS_GROUP`, `SHOPPING_GROUP`, `TRANSPORTATION_GROUP`, 
 
 ```ts
 // One list for the map's own POIs and for the places a PlacesModule shows
-const categoryIcons = [
+const categoryIcons: CustomImage<MapStylePOICategory>[] = [
     { id: 'RESTAURANT', image: restaurantSvg },
     { id: 'HOTEL_OR_MOTEL', image: hotelPinSvg, offsetY: -17 }, // a 34 px tall pin, tip on the POI
 ];
@@ -395,9 +404,9 @@ searchResults.updateConfig({ icon: { categoryIcons } });
 poisModule.updateConfig({ icon: undefined }); // the style's icons again
 ```
 
-- An entry reaches its whole map category (`CAFE` and `CAFE_PUB` are both cafés on the map; first entry wins). Unlisted categories keep the style's icon.
+- An entry reaches its whole map category (`CAFE` and `CAFE_PUB` are both cafés on the map; first entry wins). Unlisted categories keep the style's icon. A place takes the entry for its own category first (§ Custom category icons), so with an entry for each, a `CAFE` place and the map's cafés can draw different images.
 - Drawn centred at the style's icon size, the module's `sizeFactor` included; `offsetX` / `offsetY` in pixels.
-- Entries without `image` change nothing; micro markers keep the style's dots.
+- Entries without `image` change no POI (a place takes one as an existing sprite id); micro markers keep the style's dots.
 - Survives `setStyle`; `setStyle(style, { resetState: true })` drops it.
 - Not a knob (it takes images), so it is absent from `poisKnobCatalogue`.
 
@@ -539,6 +548,14 @@ const places = await PlacesModule.create(map, {
 
 - Changing `source` with `applyConfig` recreates the places source.
 - Clustering has no switch of its own (the marker type turns it on), and the `clusterBaseMapIconIDs` key of `properties` is reserved.
+- A cluster isn't a place: `events.places` leaves it out (no handler runs, it keeps the map cursor). The module-wide
+  `events` get it as MapLibre renders it, with `cluster: true`, `cluster_id` and `point_count` in its properties:
+
+```ts
+places.events.where((feature) => feature.properties.cluster === true).on('click', (cluster) => {
+    console.log(cluster.properties.point_count);
+});
+```
 
 ### Showing and hiding
 
@@ -558,8 +575,10 @@ places.isVisible();          // true — the flag, not whether anything is shown
 ```ts
 const places = await PlacesModule.create(map, {
     markerType: 'base-map',
+    icon: { opacity: 0.75 },   // every place icon but the selected one, the cluster pin included; 0–1, default 1
+    label: { opacity: 0.9 },
     layers: {
-        main:     { paint: { 'text-color': '#AA0000', 'icon-opacity': 0.75 } },
+        main:     { paint: { 'text-color': '#AA0000' } },
         selected: { paint: { 'text-color': 'red' } },
         // zoom-based visibility:
         // main: { minzoom: 15 }
@@ -567,7 +586,7 @@ const places = await PlacesModule.create(map, {
 });
 ```
 
-A `layers.*` override wins over `label` and `color` for the layout and paint properties it names.
+A `layers.*` override wins over `icon`, `label` and `color` for the layout and paint properties it names. `icon.opacity` leaves the labels (`label.opacity`), the cluster badges and a highlighted or selected place opaque.
 
 ### Colour
 
@@ -607,10 +626,12 @@ places.updateConfig({ icon: iconConfig });
 // or: pass as icon: { ... } to PlacesModule.create(map, { icon }) using the same shape
 ```
 
-A place takes the entry for its own category, else the first entry with an `image` for the same
+A place takes the entry for its own category, then (plain sub-category `SCHOOL_GENERIC`) its
+parent's, `SCHOOL`, image or not, else the first entry with an `image` for the same
 map category: `RESTAURANT` reaches a searched
-`ITALIAN_RESTAURANT`, `CAFE` a `CAFE_PUB`. Same rule as `POIsModule`'s `icon.categoryIcons`
-(above), so one list restyles both.
+`ITALIAN_RESTAURANT`, `CAFE` a `CAFE_PUB`. That last step is `POIsModule`'s rule for
+`icon.categoryIcons` (above), so with one list, a place reaching it draws the map POIs' icon; one
+matched by its own or its parent's entry may not.
 
 `offsetX`/`offsetY` (pixels, `CustomImage`) shift a custom icon from its coordinate. Scope:
 only a `categoryIcons` entry that also has `image` — no `image` (existing sprite by `id`
@@ -626,8 +647,9 @@ places.updateConfig({ label: { title: (place) => place.properties.poi?.name ?? '
 // PlaceLabelConfig = LabelConfig (size, color, haloColor, haloWidth, opacity, font) + title, distance (ems from the icon).
 // Unset fields keep the marker type's label: base-map follows the style's POI labels; pin and
 // circle-icon draw '#333333' on a '#FFFFFF' halo (reversed on a dark map), size 14–16 and halo 1–1.5 px by zoom.
-// Use this, not mapLibreMap.setPaintProperty on the places layers: setStyle and a markerType change
-// rebuild those layers from the config, so the label config survives and a raw paint write is lost.
+// Use this, not mapLibreMap.setPaintProperty on the places layers: setStyle, or a markerType switch to or
+// from 'pin-clustered', rebuilds those layers from the config, so the label config survives and a raw
+// paint write is lost; another markerType change rewrites only the properties it changes.
 // `label` replaces the whole label: spread the current one to keep the title set above.
 places.updateConfig({ label: { ...places.getConfig()?.label, opacity: 0.8, haloWidth: 2 } });
 
@@ -721,6 +743,9 @@ places.events.entryPoints.on('click', (entryPoint) => {
 - Dots draw over the pins, lines under them. `markerType: 'pin-clustered'` raises `minZoom` to `cluster.source.maxZoom` plus one, 18 by default.
 - `reverseGeocode` geometry is the queried point: set `geometry.coordinates` to
   `properties.originalPosition` (the matched address) before `show`.
+- `reverseGeocode` returns `ReverseGeocodingResponse`: a `Place`, or the queried point with `properties` absent
+  where nothing matches. `if (place.properties)` narrows it to a `Place` that `PlacesModule.show` accepts;
+  passing it unchecked is a compile error.
 
 ### Every knob as data — `placesKnobCatalogue`
 
@@ -745,6 +770,7 @@ const size: PlacesKnobValueOf<'label.size'> = 14; // the plain value: an express
 | `icon.default.style.fillColor` | color | `color` |
 | `icon.default.style.outlineColor` | color | — |
 | `icon.default.style.outlineOpacity` | number | — |
+| `icon.opacity` | number, 0–1 | `1` |
 | `label.size` | number | 14–16 by zoom |
 | `label.color` | color | by light/dark |
 | `label.haloColor` | color | by light/dark |
@@ -763,16 +789,16 @@ const size: PlacesKnobValueOf<'label.size'> = 14; // the plain value: an express
 | `cluster.badge.offset` | offset, pixels, −32 to 32 per axis | `[12, -14]` |
 | `cluster.source.radius` | number | `60` |
 | `cluster.source.maxZoom` | number | `17` |
-| `cluster.source.minPoints` | number | MapLibre's, 2 |
+| `cluster.source.minPoints` | number | `2` |
 | `entryPoints.showFor` | enum | `'selected'` |
 | `entryPoints.minZoom` | number | `15` |
 | `connections.color` | color | the module's `color`, else the accent, else `#3f9cd9` (`#5AB6F0` dark) |
 | `connections.label.color` | color | a shade of the line's, else `#1a5f8a` (`#A9D6F5` dark) |
 | `connections.label.haloColor` | color | `#FFFFFF` (`#333333` dark) |
 
-- Not in it: the place and connection labels' `title`, the cluster source's `properties`,
-  the `icon` images and `mapping`, `layers`, `beforeLayerConfig`,
-  `extraFeatureProps` and `events` — callbacks, images, structured or MapLibre values.
+- Not in it: the place and connection labels' `title`, the place label's `customTypeface`, the
+  cluster source's `properties`, the `icon` images and `mapping`, `layers`, `beforeLayerConfig`,
+  `extraFeatureProps` and `events` — callbacks, images, font files, structured or MapLibre values.
 - `entryPoints.*` draws nothing until `entryPoints` is set; `cluster.*` applies under `pin-clustered` only. A `—` or prose default is not in the entry.
 - `setKnob(places, placesKnobCatalogue, 'cluster.badge.color', '#3f9cd9')`, `getKnob` and `resetKnob`
   work by id. Entry shape, kinds and the knob functions: `map-setup.md` § Every setting as data.
@@ -798,7 +824,8 @@ await places.show(data);
   of your own: the module adds the images its `iconID`s name, and owns events, clustering and
   restoration after `setStyle`.
 - `icon.mapping` to `poiCategory` also sets `category`/`group`, so under `base-map` your points take
-  the style's icon and label colour for that category.
+  the style's icon and label colour for that category. An `icon.categoryIcons` entry matching that
+  category wins over the style's icon.
 - No `poi.name` and no `address.freeformAddress` → give `label.title` a function; the default label
   reads one of them.
 
@@ -838,6 +865,10 @@ const brand = await discoverPlaces({ filters: { poiBrands: ['Starbucks'] }, geoB
 
 // Typeahead (partial query)
 const partial = await discoverPlaces({ query: 'amst', typeahead: true, geoBias: { position: [4.9, 52.4] } });
+
+// Fuzziness, fuzzy search only: FuzzyLevel, the literals 1 | 2 | 3 | 4; minFuzzyLevel defaults to 1 and maxFuzzyLevel to 2.
+// A minFuzzyLevel above maxFuzzyLevel, or above 2 with no maxFuzzyLevel, rejects with INVALID_REQUEST
+const typoTolerant = await discoverPlaces({ query: 'restaurnt', maxFuzzyLevel: 3 });
 
 // Administrative geographies (e.g. municipalities, whose outlines geometryData fetches)
 const municipalities = await discoverPlaces({
@@ -924,8 +955,10 @@ with the country only when it isn't the one the search is in (`['Rue du Moulin 2
 
 The blend follows Places Search v3: at most one brand or category, first, and only when the whole
 query names it from a word start (`pizz` → Pizzeria; `baker st`, `amster` → none). A brand also needs
-a leading place carrying it. Places follow in search order. Asking only for `brand`/`category` via
-`filters.kinds` returns every recognised refinement instead. The blend is the SDK's heuristic.
+a leading place carrying it, unless `filters.kinds` leaves out `place`. Places follow in search order;
+once the query names a brand or category, places whose titles hold the typed words move up. Asking only
+for `brand`/`category` via `filters.kinds` returns every recognised refinement instead. The blend is the
+SDK's heuristic.
 
 Brand and category suggestions alone — no places — are one request:
 
@@ -951,7 +984,7 @@ value.
 | `places.properties.totalResults` | Total matches beyond the page returned |
 | `places.properties.fuzzyLevel` | How loosely the query was matched |
 | `places.properties.geoBias` | The position results were biased towards |
-| `places.properties.queryIntent` (fuzzy search) | Coordinates, what3words and "near X" detection |
+| `places.properties.queryIntent` (fuzzy search) | Coordinates, what3words, "near X" and home or work bookmark detection |
 | `place.properties.score` | Relevance score, for thresholding and merging |
 | `places.bbox` | Bounding box, on results covering an area |
 

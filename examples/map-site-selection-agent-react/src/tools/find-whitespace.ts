@@ -1,4 +1,4 @@
-import { type CommonPlaceProps, getPosition, type PolygonFeature } from '@tomtom-org/maps-sdk/core';
+import { bboxCenter, type CommonPlaceProps, getPosition, type PolygonFeature } from '@tomtom-org/maps-sdk/core';
 import { reverseGeocode } from '@tomtom-org/maps-sdk/services';
 import type { ToolEntry, ToolEntryBuilder, ToolState } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import { isResolveError, resolveWithin, toolStateToWhereContext } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
@@ -33,7 +33,7 @@ import {
 import { resolveCategoriesWithNames } from './categories';
 import { toPolygonFeature } from './profile-site';
 
-// The default demand-anchor basket now lives on the session-preferences slice (site-selection-state),
+// The default demand-anchor basket lives on the session-preferences slice (site-selection-state),
 // so a request inherits it and the user can change it once for the session.
 const MIN_DEMAND = 2;
 const MAX_GRID_CELLS = 20000;
@@ -127,8 +127,7 @@ const resolveArea = async (query: string, state: ToolState): Promise<ResolvedAre
         };
     }
     // No admin boundary — fall back to a circle around the bbox centre.
-    const center: [number, number] = [(raw.bbox[0] + raw.bbox[2]) / 2, (raw.bbox[1] + raw.bbox[3]) / 2];
-    const circle = turf.circle(center, AREA_FALLBACK_KM, { units: 'kilometers' });
+    const circle = turf.circle(bboxCenter(raw.bbox), AREA_FALLBACK_KM, { units: 'kilometers' });
     return {
         geometry: circle.geometry as AreaGeometry,
         label: raw.label ?? query,
@@ -322,8 +321,7 @@ const selectDistinct = async (
     return top;
 };
 
-// The execute() below is an orchestration of these phase helpers. They are split out (rather than
-// inlined) to keep execute's cognitive complexity low; each is a verbatim lift of one phase.
+// The execute() below orchestrates these phase helpers, one per phase, which keep its cognitive complexity low.
 
 type HexGrid = ReturnType<typeof turf.hexGrid>;
 
@@ -626,9 +624,9 @@ const buildSteps = (n: number): string[] => [
 
 // BUILDER: the model-facing surface (householdDemand field + description) depends on the household
 // signal, so it is assembled at createMapAgent time rather than at module load. The signal is read
-// from `householdsEnabled()`, which now always reports false — see
-// demographics/experimental-search.ts. The executor reads the same
-// stored flag at runtime.
+// from `householdsEnabled()`, which always reports false — see
+// demographics/experimental-search.ts. The executor reads `params.householdDemand`, which the
+// schema leaves out while that signal is off.
 export const findWhitespace: ToolEntryBuilder = () => {
     const households = householdsEnabled();
     return {
@@ -660,13 +658,14 @@ const executeFindWhitespace = (async (params: FindWhitespaceInput, state: ToolSt
     const progress = startProgress('findWhitespace', buildSteps(areas.length));
     const prefs = getSitePreferences(state);
     const radius = params.walkRadiusMeters ?? prefs.walkReachMeters;
-    // User-supplied demand points (from a BYOD layer) augment the searched anchor demand.
-    const byodDemandPoints = params.demandByodEntryId
-        ? byodCandidateSites(requireByodFeatures(state, params.demandByodEntryId))
-        : [];
-    const byodDemandPositions = byodDemandPoints.map((point) => point.position);
 
     try {
+        // User-supplied demand points (from a BYOD layer) augment the searched anchor demand.
+        const byodDemandPoints = params.demandByodEntryId
+            ? byodCandidateSites(requireByodFeatures(state, params.demandByodEntryId))
+            : [];
+        const byodDemandPositions = byodDemandPoints.map((point) => point.position);
+
         // Phase 0 — resolve all areas
         progress.step(0);
         const resolvedAreas: { areaQuery: string; resolved: ResolvedArea }[] = [];
@@ -836,12 +835,19 @@ const executeFindWhitespace = (async (params: FindWhitespaceInput, state: ToolSt
                 warnings: unsearchedNote ? [...warnings, `${unsearchedNote}.`] : warnings,
             });
             const goalWord = colocation === 'avoid' ? 'genuine gap' : 'in-cluster pocket';
+            const goalWithArticle = colocation === 'avoid' ? `a ${goalWord}` : `an ${goalWord}`;
+            const noGoalReason =
+                colocation === 'avoid'
+                    ? `every one already has a ${peers} within ${radius} m, so ${resolved.label} is already well-served for this. Say that plainly in ONE sentence; these are only the LEAST-served busy spots, NOT gaps — do not call them "sparse".`
+                    : `none has a ${peers} within ${radius} m, so ${resolved.label} has no cluster to join here. Say that plainly in ONE sentence; these are just the closest available spots, NOT clusters.`;
             // Honest framing for saturated areas: if NOTHING clears the goal, the agent must say so
             // rather than calling busy-but-served spots "gaps" or "sparse".
             lastHint =
-                gapCount === 0
-                    ? `IMPORTANT: NONE of these pockets is a ${goalWord} — every one already has a ${peers} within ${radius} m, so ${resolved.label} is already well-served for this. Say that plainly in ONE sentence; these are only the LEAST-served busy spots, NOT gaps — do not call them "sparse". Refer to pockets by colour/number; do not restate scores or coordinates.`
-                    : `${gapCount} of ${pockets.features.length} pockets is a ${goalWord}${gapCount === 1 ? '' : 's'}; the rest are only least-served. Lead with that count in ONE sentence and don't oversell the non-gaps. Refer to pockets by colour/number; do not restate scores or coordinates.`;
+                top.length === 0
+                    ? `IMPORTANT: the scan found no pockets to rank in ${resolved.label}. Say that plainly in ONE sentence.`
+                    : gapCount === 0
+                      ? `IMPORTANT: NONE of these pockets is ${goalWithArticle} — ${noGoalReason} Refer to pockets by colour/number; do not restate scores or coordinates.`
+                      : `${gapCount} of ${pockets.features.length} pockets ${gapCount === 1 ? `is ${goalWithArticle}` : `are ${goalWord}s`}; the rest are ${colocation === 'avoid' ? 'only least-served' : 'not clustered'}. Lead with that count in ONE sentence and don't oversell the rest. Refer to pockets by colour/number; do not restate scores or coordinates.`;
             headlines.push(
                 `Scanned ${resolved.label} for ${peers}: ${pockets.features.length} pocket${pockets.features.length === 1 ? '' : 's'}, ${gapCount} ${goalWord}${gapCount === 1 ? '' : 's'}`,
             );

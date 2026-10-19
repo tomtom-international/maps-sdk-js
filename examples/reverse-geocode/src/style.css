@@ -1,26 +1,19 @@
-#sdk-map {
-    position: absolute;
-    left: 0;
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+
+#ui-response {
     top: 0;
-    width: 100%;
-    height: 100%;
+    left: 0;
+    width: 360px;
+    max-width: calc(100vw - 20px);
+    max-height: calc(100vh - 20px);
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 12px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
 }
 
-.ui-pin {
-    position: absolute;
-    border-radius: 50%;
-    border: 8px solid #df1b12;
-    width: 8px;
-    height: 8px;
-}
-
-.ui-pin::after {
-    position: absolute;
-    content: "";
-    width: 0px;
-    height: 0px;
-    bottom: -30px;
-    left: -6px;
-    border: 10px solid transparent;
-    border-top: 17px solid #df1b12;
+#ui-response:empty {
+    display: none;
 }

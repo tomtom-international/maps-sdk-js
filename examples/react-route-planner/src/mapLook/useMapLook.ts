@@ -10,8 +10,6 @@ import type { MapModules } from '../map/useMapModules';
 import { useMapQueue } from '../map/useMapQueue';
 import { hillshadeLooks, type MapLook, type POIFocus, poiFocuses, themes } from './looks';
 
-const TERRAIN_PITCH = 60;
-
 /** Applies the fields that differ from the look applied before; everything, the first time. */
 const applyLook = async ({ map, baseMap, pois }: MapModules, look: MapLook, previous?: MapLook) => {
     const changed = (...keys: (keyof MapLook)[]) => !previous || keys.some((key) => previous[key] !== look[key]);
@@ -26,7 +24,7 @@ const applyLook = async ({ map, baseMap, pois }: MapModules, look: MapLook, prev
             ...(look.theme && { colors: themes[look.theme].colors }),
             labels: { sizeFactor: look.labelSize },
             roads: { widthFactor: look.roadWidth },
-            // A tilted 3D view shows the horizon: give it a sky.
+            // The sky's fog fades the far relief that the fly-over's tilted 3D view looks out on.
             view: { sky: { visible: look.terrain } },
         });
     }
@@ -47,11 +45,6 @@ const applyLook = async ({ map, baseMap, pois }: MapModules, look: MapLook, prev
             elevation: { visible: look.terrain, exaggeration: look.exaggeration },
         });
     }
-    if (changed('terrain') && (previous || look.terrain)) {
-        map.mapLibreMap.setMaxPitch(85);
-        map.mapLibreMap.easeTo({ pitch: look.terrain ? TERRAIN_PITCH : 0, duration: 1000 });
-    }
-
     if (changed('buildings3D')) {
         baseMap.setVisible(look.buildings3D, { layerGroups: { show: 'only', values: ['buildings3D'] } });
     }

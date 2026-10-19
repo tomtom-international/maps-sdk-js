@@ -28,6 +28,31 @@
                     <p class="ui-subheading">Avoid road types</p>
                     <div class="ui-checkbox-list avoid-types-list" id="avoid-types-list"></div>
                 </div>
+                <div class="ui-section">
+                    <p class="ui-subheading">Vehicle</p>
+                    <div class="ui-form-field-inline">
+                        <label class="ui-form-label vehicle-label" for="vehicle-weight">Weight</label>
+                        <select class="ui-dropdown" id="vehicle-weight">
+                            <option value="">Not set</option>
+                            <option value="3500">3.5 t van</option>
+                            <option value="12000">12 t truck</option>
+                            <option value="40000">40 t truck</option>
+                        </select>
+                    </div>
+                    <div class="ui-form-field-inline">
+                        <label class="ui-form-label vehicle-label" for="vehicle-max-speed">Top speed</label>
+                        <select class="ui-dropdown" id="vehicle-max-speed">
+                            <option value="0">Router's choice</option>
+                            <option value="110">110 km/h</option>
+                            <option value="90">90 km/h</option>
+                            <option value="60">60 km/h</option>
+                        </select>
+                    </div>
+                    <div class="ui-form-field-inline">
+                        <label class="ui-form-label vehicle-label" for="vehicle-toll-transponder">Toll tag</label>
+                        <select class="ui-dropdown" id="vehicle-toll-transponder"></select>
+                    </div>
+                </div>
                 <div class="ui-section avoid-areas-section" id="avoid-areas-section">
                     <p class="ui-subheading">Avoided areas</p>
                     <p class="ui-instructions avoid-areas-empty" id="avoid-areas-empty">

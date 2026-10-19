@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.16.0
+
+### Minor Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** `PlacesEntry.geometries` and the boundaries `PlacesState` fetches, shows and returns are typed `PolygonFeature`, with the Geometry Data service's own properties, not `PolygonFeature<CommonPlaceProps>`
+  - The route schema the model reads marks a traffic section's `tec` optional
+  - `find_reachable_areas` keeps the other origins' ranges when one origin's service call fails, and lists that origin under `skipped` with the error; with no range at all, it returns the first error's code
+
+### Patch Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - Showing a route without its summary bubbles keeps the bubbles' other settings, the knobs set on them included
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - The route schema the model reads describes `sections.distinct`, the stretches each route has to itself
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - Plugins are side-effect free, so your bundler drops every part of a plugin your app doesn't use
+  
+  - Each plugin declares `"sideEffects": false`, and its knob catalogue and other module-level tables are dropped when nothing reads them
+  - flyover takes `@turf/turf` as a peer dependency, the copy the SDK already requires, instead of bundling its own
+  - The plugins' bundles keep their module-level names, as the SDK's do, so Sandpack and builds that transpile `node_modules` with Babel run their loops correctly
+
 ## 0.15.1
 
 ### Patch Changes

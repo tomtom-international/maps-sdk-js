@@ -49,15 +49,17 @@ trafficFlow.events.off('click'); // every click handler of the module
 - Road subcategories: `street` → `unclassified`, `residential`, `living_street` (`streetRoadSubCategories`); `service` → `parking`, `driveway`, `alley` (`serviceRoadSubCategories`). Only `street` and `service` roads have one, so `roadSubCategories: { show: 'only', … }` drops every other road.
 - A values filter applies only with both `show` and `values` set.
 
-### Flow appearance — `colors`, `widthFactor`
+### Flow appearance — `colors`, `widthFactor`, `opacityFactor`
 
 ```ts
 const trafficFlow = await TrafficFlowModule.get(map, { visible: true, colors: { slow: '#f59e0b', stationary: '#7f1d1d' }, widthFactor: 1.5 });
 setKnob(trafficFlow, trafficFlowKnobCatalogue, 'colors.free', '#16a34a'); // outline shade re-derived automatically
+trafficFlow.updateConfig({ opacityFactor: 0.6 }); // fade the flow under a route
 ```
 
 - Levels: `free`, `slow`, `queueing`, `stationary`, `closed` (closed roads' outline). Unset, the style's colours.
 - `widthFactor`: factor 0.5–2, default `1` — the flow lines only; `roads.widthFactor` (`map-styling.md`) does not reach them.
+- `opacityFactor`: factor 0–1, default `1` — the flow lines and their outlines, times the style's own opacity, so its zoom ramp keeps its shape.
 - Map-wide colour ids, for `getStyleColor(map, id)` and `bloom.only`: `traffic.flow.colors.slow`, and so on per level.
 
 ### Flow as data — what you can and cannot get
@@ -74,6 +76,7 @@ for (const segment of segments) {
 
 - **Available:** `relativeSpeed`, `absoluteSpeed` (km/h), `openlr` (OpenLR location reference, a map-agnostic key for the section), `roadCategory`, `roadSubcategory` (on `street` / `service`), `roadClosure`, `leftHandTraffic`, `displayClass`. The SDK requests these tile tags on every flow tile.
 - **`partOfTwoWayRoad`:** `true` on a section covering both directions of a two-way road, absent otherwise.
+- **Geometry:** `LineString | MultiLineString` (a section a tile draws in several parts). Check `geometry.type` before reading coordinates.
 - **Not available anywhere on Orbis:** free-flow speed, travel time, delay in seconds, confidence. Do not promise them.
 - Viewport-bound and zoom-dependent, and only what is drawn: a hidden module returns none. A segment crossing a tile boundary comes back once per tile, so de-duplicate on geometry if you export.
 - "Export traffic for an area" or "speed per road class" is a **historical** question: use `trafficAreaAnalytics()` (below), not the flow tiles.
@@ -112,18 +115,20 @@ trafficIncidents.events.on('click', (incident) => {
 - Magnitudes (`DelayMagnitude`): `'unknown'`, `'minor'`, `'moderate'`, `'major'`, `'indefinite'`
 - Incident categories (`fullTrafficIncidentCategories`, from core): `accident`, `animals-on-road`, `broken-down-vehicle`, `danger`, `flooding`, `fog`, `frost`, `jam`, `lane-closed`, `narrow-lanes`, `other`, `rain`, `road-closed`, `roadworks`, `wind`. `animals-on-road` and `narrow-lanes` are tile-only.
 - Road filters: the flow ones above.
-- Tile features are `TrafficIncidentsModuleFeature`: `TrafficIncidentBaseProperties` (core) plus `description`, `roadCategory`, `roadSubcategory`, `averageSpeedKmph`, `timeValidity`, …
+- Tile features are `TrafficIncidentsModuleFeature`: `TrafficIncidentBaseProperties` (core) plus `description`, `roadCategory`, `roadSubcategory` (optional: on `street` / `service` only), `averageSpeedKmph`, `timeValidity`, …
 - `description` is in the map language, or the nearest the traffic service has (`pt-PT` for `pt-BR`), else English; `map.setLanguage` reloads the incident tiles when that changes.
 
-### Incidents appearance — `colors`, `widthFactor`
+### Incidents appearance — `colors`, `widthFactor`, `opacityFactor`
 
 ```ts
 const trafficIncidents = await TrafficIncidentsModule.get(map, { visible: true, colors: { major: '#b91c1c', closed: '#111827' }, widthFactor: 1.5 });
 setKnob(trafficIncidents, trafficIncidentsKnobCatalogue, 'colors.minor', '#facc15');
+setKnob(trafficIncidents, trafficIncidentsKnobCatalogue, 'opacityFactor', 0.5);
 ```
 
 - Magnitudes: `minor`, `moderate`, `major`, `closed` (closed roads' outline). Unset, the style's colours.
 - `widthFactor`: factor 0.5–2, default `1` — the incident lines.
+- `opacityFactor`: factor 0–1, default `1` — the incident lines and their outlines, times the style's own opacity; the icons stay opaque.
 - Borrowed: `RoutingModule`'s `traffic` sections and `TrafficIncidentDetailsModule` draw in these colours, live (`map-styling.md` § Borrowed looks).
 - Map-wide colour ids, for `getStyleColor(map, id)` and `bloom.only`: `traffic.incidents.colors.major`, and so on per magnitude.
 
@@ -183,6 +188,15 @@ incidentDetailsModule.updateConfig({ highlight: { outline: { color: '#c2185b' },
 // and `['get', 'eventState']`.
 const incidentDetailsModule = await TrafficIncidentDetailsModule.create(map, { highlight: false });
 ```
+
+### Line opacity — `line.opacity`
+
+```ts
+const incidentDetailsModule = await TrafficIncidentDetailsModule.create(map, { line: { opacity: 0.6 } });
+incidentDetailsModule.updateConfig({ line: { opacity: 1 } }); // live
+```
+
+- `line.opacity`: number 0–1, default `1` — every incident line, focused or not. The markers and the outline of a highlighted incident stay opaque.
 
 ### Layer overrides — `layers`
 
@@ -356,7 +370,8 @@ const analyticsModule = await TrafficAreaAnalyticsModule.create(map, {
         speed: { palette: 'heat' },
     },
 });
-// From here on, getConfig() holds displayMode, activeMetric and every metric's settings, defaults filled in
+// From here on, getConfig() holds displayMode, activeMetric and every metric's settings, defaults filled in;
+// a field a setter clears with undefined is left out until the next applyConfig, updateConfig or knob write
 
 // 3. Fetch and display
 const analytics = await trafficAreaAnalytics({ ... });
@@ -377,7 +392,8 @@ const { stops } = resolveColorStops('speed', analyticsModule.getConfig()?.metric
 analyticsModule.setHeight({ maxMeters: 200 });        // height for all metrics (predefinedRange default)
 analyticsModule.setHeight({ scaleMode: 'currentRange', maxMeters: 500 }, ['speed']); // specific metrics
 analyticsModule.setHeight({ scaleMode: 'raw', metersPerUnit: 10 });  // raw: metric value × metersPerUnit metres
-analyticsModule.setFilters({ min: 20, max: 80 });     // filter tiles by value range (all metrics)
+analyticsModule.setHeight(undefined, ['speed']);      // clear the height: the metric's default
+analyticsModule.setFilters({ min: 20, max: 80 });     // filter cells by value range (all metrics)
 analyticsModule.setFilters({ min: 50 }, ['congestionLevel']); // filter specific metric
 analyticsModule.setFilters(undefined);                // clear all filters
 analyticsModule.setVisible(false);
@@ -427,9 +443,9 @@ const { heatmap, hexgrid, square } = analyticsModule.getShown();
 
 Metrics: `'congestionLevel'`, `'speed'`, `'travelTime'`, `'freeFlowSpeed'`, `'networkLength'` (road length per tile in metres — road density indicator; its palette and default height span the loaded range)
 Modes: `'hexgrid-3d'` (default), `'hexgrid-2d'`, `'square-3d'`, `'square-2d'`, `'heatmap'`
-Palettes (`areaAnalyticsPalettes`, type `AreaAnalyticsPalette`), good → bad: `'trafficLight'` (default), `'heat'`, `'monochrome'`, `'viridis'`, `'plasma'`. A palette spans the metric's predefined range (`networkLength`: the loaded range), reversed for `speed` / `freeFlowSpeed`; `getConfig()` keeps the name. `colorStops` wins over `palette` and is used as given, never reversed; stops may come in any order (sorted by value, the last given winning a shared value). Each setter writes only its own field.
-`colorStops.scaleMode` (`AreaAnalyticsScaleMode`, shared with the height): `'raw'` (default) — actual metric values; `'predefinedRange'` — 0–100% of the SDK's range (congestion 0–100, speed and freeFlowSpeed 0–120 km/h, travelTime 0–20 min per 10 km, networkLength 0–5000 m); `'currentRange'` — 0–100% of the loaded data's range
-Height scaleMode: `'predefinedRange'` (default; `'currentRange'` for `networkLength`) / `'currentRange'` — use `maxMeters` (default 1000); `'raw'` — use `metersPerUnit` (metres per unit of the metric, default 1). On `speed`, cells rise as speed drops.
+Palettes (`areaAnalyticsPalettes`, type `AreaAnalyticsPalette`), good → bad: `'trafficLight'` (default), `'heat'`, `'monochrome'`, `'viridis'`, `'plasma'`. A palette spans the metric's predefined range (`networkLength`: the loaded range), reversed for `speed` / `freeFlowSpeed`; `getConfig()` keeps the name. `colorStops` wins over `palette` and is used as given, never reversed (an empty `stops` leaves the palette painting); stops may come in any order (sorted by value, the last given winning a shared value). Each setter writes only its own field.
+`colorStops.scaleMode` (`AreaAnalyticsScaleMode`, shared with the height): `'raw'` (default) — actual metric values; `'predefinedRange'` — 0–100% of the SDK's range (congestion 0–100, speed and freeFlowSpeed 0–120 km/h, travelTime 0–20 min per 10 km, networkLength 0–5000 m); `'currentRange'` — 0–100% of the loaded data's range. The heatmap colours its density instead, spreading the stops over it whatever the mode (percentage stops from 0 to 100, `'raw'` stops from their lowest value to their highest)
+Height scaleMode: `'predefinedRange'` (default; `'currentRange'` for `networkLength`) / `'currentRange'` — use `maxMeters` (default 1000), the height of a cell at the top of the range and the ceiling; `'raw'` — use `metersPerUnit` (metres per unit of the metric, default 1). On `speed`, cells rise as speed drops.
 `layers` (`TrafficAreaAnalyticsLayersConfig`), drawn per mode: `heatmap`; `hexgridFill` + `hexgridOutline` (hover/click outline) in `hexgrid-2d`; `hexgridExtrusion` + `hexgridExtrusionHighlight` in `hexgrid-3d`; the same four `square*`; `regionFill` + `regionLine` always. A cell layer's `filter` is ANDed with the active metric's `filters`; an extrusion highlight follows its extrusion's height; a `beforeID` is ignored; `layout.visibility: 'none'` keeps that layer hidden in its mode.
 
 ---
@@ -449,8 +465,8 @@ const knob = trafficAreaAnalyticsKnobCatalogue.find(({ id }) => id === 'displayM
 const mode: TrafficAreaAnalyticsKnobValueOf<'displayMode'> = 'heatmap';
 ```
 
-- The flow and incident catalogues hold visibility, filters and the look: `colors.*` and
-  `widthFactor` (§ Flow appearance, § Incidents appearance).
+- The flow and incident catalogues hold visibility, filters and the look: `colors.*`,
+  `widthFactor` and `opacityFactor` (§ Flow appearance, § Incidents appearance).
 - Their `filters.…` knobs set the fields of `filters`, one filter; `filters.any`, further filters
   a feature may match instead (combined with OR), is config only. Each `….show` (`only` /
   `all-except`) goes with its `….values`; neither has a default — unset, nothing is filtered.
@@ -468,6 +484,7 @@ const mode: TrafficAreaAnalyticsKnobValueOf<'displayMode'> = 'heatmap';
 | `filters.roadClosures` | enum, `only` / `all-except` | — |
 | `colors.free`, `colors.slow`, `colors.queueing`, `colors.stationary`, `colors.closed` | color | — the style's |
 | `widthFactor` | factor, 0.5–2 | `1` |
+| `opacityFactor` | factor, 0–1 | `1` |
 
 ### `trafficIncidentsKnobCatalogue`
 
@@ -486,6 +503,7 @@ const mode: TrafficAreaAnalyticsKnobValueOf<'displayMode'> = 'heatmap';
 | `filters.delays.minMinutes` | number, 0–120 | — |
 | `colors.minor`, `colors.moderate`, `colors.major`, `colors.closed` | color | — the style's |
 | `widthFactor` | factor, 0.5–2 | `1` |
+| `opacityFactor` | factor, 0–1 | `1` |
 
 ### `trafficIncidentDetailsKnobCatalogue`
 
@@ -494,6 +512,7 @@ const mode: TrafficAreaAnalyticsKnobValueOf<'displayMode'> = 'heatmap';
 | `visible` | toggle | `true` |
 | `highlight.outline.color` | color | black on light styles, white on dark |
 | `highlight.line.widthFactor` | factor, 1–1.8 | `1.6` |
+| `line.opacity` | number, 0–1 | `1` |
 
 Not in it: `beforeLayerConfig`, `layers`, and `highlight: false`, which turns the highlight off. The
 incident lines take the style's incident colours, which `TrafficIncidentsModule`'s `colors.*` knobs
@@ -560,7 +579,7 @@ Not in it: `colorStops` (set them through `setColorStops` or the config), `befor
 - `isVisible()` on every traffic module reports the `visible` setting: `true` on a `TrafficIncidentDetailsModule` or Area Analytics module showing nothing, and `false` on `TrafficIncidentsModule` set hidden with `icons: { visible: true }`, whose icons still draw (`isIconsVisible()` reads their setting, `true` there). To know whether data is drawn, read `getShown()` (`getRenderedFeatures()` on flow and incidents); for a layer itself, `map.mapLibreMap.getLayoutProperty(layerId, 'visibility')`
 - `TrafficIncidentDetailsModule.show()` clears the focus; `setFocus` before the first `show()` does nothing
 - `TrafficIncidentDetailsModule` click handlers receive the *typed* `TrafficIncident` (Date / array / object properties preserved) — not the flattened MapLibre feature
-- Stacked incidents on `TrafficIncidentDetailsModule`: MapLibre's symbol collision keeps only the highest-sort-key icon visible, so hover/click can't reach the others. Query the `FeatureCollection` you passed to `show()` directly when you need every incident at a point
+- Stacked incidents on `TrafficIncidentDetailsModule`: MapLibre's symbol collision keeps only the icon of the longest delay visible, so hover/click can't reach the others. Query the `FeatureCollection` you passed to `show()` directly when you need every incident at a point
 - `TrafficAreaAnalyticsModule.applyConfig` replaces the configuration, and `updateConfig({ metrics })` replaces the whole per-metric record — to change one metric and keep the others, use `setPalette` / `setColorStops` / `setHeight` / `setFilters` with that metric (`setPalette('heat', ['speed'])`). `AREA_ANALYTICS_DEFAULTS` holds every default, to read or spread as a base
 - `trafficAreaAnalytics` requires either `startDate` (+ optional `endDate`) or `days` — not both; `endDate` must be 1 to 31 UTC calendar days after `startDate`, so `startDate` equal to `endDate` fails validation, and so does a `startDate` more than 34 days ago with `endDate` omitted
 - `trafficAreaAnalytics` `timedData.weekly` entries count `week` in the ISO 8601 year, which `year` holds: the week from Monday 30 December 2024 is `{ year: 2025, week: 1 }`

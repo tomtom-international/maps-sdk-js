@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
     <head>
+        <meta charset="utf-8">
         <title>Calculating a route with alternatives</title>
         <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
         <link rel="icon" href="data:,">
@@ -20,8 +21,15 @@
             </div>
             <div class="ui-panel-content">
                 <div class="ui-section">
-                    <label class="ui-form-label" for="ui-routeSelection">Route:</label>
-                    <select class="ui-dropdown" id="ui-routeSelection"></select>
+                    <span class="ui-form-label">Routes</span>
+                    <div class="ui-route-cards" id="ui-route-cards"></div>
+                </div>
+                <div class="ui-section">
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" id="ui-compare-usual">
+                        <span class="ui-toggle-switch"></span>
+                        Compare with the usual route
+                    </label>
                 </div>
             </div>
         </div>

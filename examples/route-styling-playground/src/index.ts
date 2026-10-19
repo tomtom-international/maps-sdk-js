@@ -1,6 +1,6 @@
 import type { Waypoint } from '@tomtom-org/maps-sdk/core';
 import { bboxFromGeoJSON, TomTomConfig } from '@tomtom-org/maps-sdk/core';
-import { RoutingModule, SELECTED_ROUTE_FILTER, TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { defaultRoutingLayers, RoutingModule, SELECTED_ROUTE_FILTER, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { calculateRoute, geocodeOne } from '@tomtom-org/maps-sdk/services';
 import { API_KEY } from './config';
 import type { RoutePlaygroundState } from './controls';
@@ -8,6 +8,10 @@ import { initControls } from './controls';
 import './style.css';
 
 TomTomConfig.instance.put({ apiKey: API_KEY });
+
+// The tunnel's own opacity, which the opacity slider fades along with the route.
+const tunnelOpacity = defaultRoutingLayers.sections.tunnel?.routeTunnelLine?.paint?.['line-opacity'];
+const TUNNEL_OPACITY = typeof tunnelOpacity === 'number' ? tunnelOpacity : 1;
 
 (async () => {
     const waypoints: Waypoint[] = await Promise.all([geocodeOne('London'), geocodeOne('Paris')]);
@@ -38,6 +42,12 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         color: state.color,
         widthPreset: state.width,
         widthFactor: state.widthFactor,
+        opacity: state.routeOpacity,
+        // Sections keep their own opacity, faded here with the route.
+        sections: {
+            tollRoad: { opacity: state.routeOpacity },
+            tunnel: { opacity: TUNNEL_OPACITY * state.routeOpacity },
+        },
         waypoints: {
             sizePreset: state.waypointSize,
             sizeFactor: state.waypointSizeFactor,
@@ -47,15 +57,9 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
             outline: { ...state.highlight.outline },
             section: { outline: { ...state.highlight.section.outline } },
         },
-        layers: {
-            mainLines: {
-                routeLine: {
-                    paint: { 'line-opacity': state.routeOpacity },
-                },
-                routeOutline: {
-                    paint: { 'line-opacity': state.routeOpacity },
-                },
-                ...(state.centerDash && {
+        ...(state.centerDash && {
+            layers: {
+                mainLines: {
                     additional: {
                         routeCenterDash: {
                             type: 'line' as const,
@@ -68,21 +72,9 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
                             beforeID: 'routeIncidentBackgroundLine',
                         },
                     },
-                }),
-            },
-            sections: {
-                tollRoad: {
-                    routeTollRoadOutline: {
-                        paint: { 'line-opacity': state.routeOpacity },
-                    },
-                },
-                tunnel: {
-                    routeTunnelLine: {
-                        paint: { 'line-opacity': 0.3 * state.routeOpacity },
-                    },
                 },
             },
-        },
+        }),
     });
 
     const routingModule = await RoutingModule.create(map, buildConfig());

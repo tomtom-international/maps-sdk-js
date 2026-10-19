@@ -6,6 +6,7 @@ import {
     type GeometryHighlightConfig,
     geometriesKnobCatalogue,
     knobEntryOf,
+    type LinePattern,
     type MapStyleLayerID,
     mapStyleLayerIDs,
     type StandardStyleID,
@@ -17,7 +18,7 @@ import {
 // they can be styled and positioned in the layer stack independently.
 export type GeometryStyleState = {
     fill: { style: GeometryFillStyle; color: string; opacity: number };
-    line: { color: string; width: number };
+    line: { color: string; width: number; pattern: LinePattern };
     beforeLayerConfig: { fill: BeforeLayerConfig; line: BeforeLayerConfig };
     // Unset factors keep the SDK's own, which the sliders start at.
     highlight: Required<GeometryHighlightConfig>;
@@ -64,6 +65,16 @@ const initSlider = (
         readout.textContent = slider.value;
         onInput(Number(slider.value));
     });
+};
+
+// A select lists the knob's catalogue options, with its description as the tooltip.
+const initSelect = (selectId: string, id: GeometriesKnobId, value: string, onChange: (value: string) => void): void => {
+    const select = getElement<HTMLSelectElement>(selectId);
+    const { options, description } = knob(id);
+    options?.forEach((option) => select.add(new Option(option)));
+    select.title = description;
+    select.value = value;
+    select.addEventListener('change', () => onChange(select.value));
 };
 
 // Fill a "Below layer" dropdown with every target, preselecting the section's startup choice.
@@ -149,14 +160,14 @@ export const initControls = ({
         apply();
     });
 
-    // The fill style select lists the knob's catalogue options; the sliders follow its ranges.
-    const fillStyle = getElement<HTMLSelectElement>('ui-fillStyle');
-    const { options, description } = knob('fill.style');
-    options?.forEach((option) => fillStyle.add(new Option(option)));
-    fillStyle.title = description;
-    fillStyle.value = state.fill.style;
-    fillStyle.addEventListener('change', () => {
-        state.fill.style = fillStyle.value as GeometryFillStyle;
+    // The fill style and border pattern selects list their knobs' catalogue options; the sliders follow
+    // their ranges.
+    initSelect('ui-fillStyle', 'fill.style', state.fill.style, (style) => {
+        state.fill.style = style as GeometryFillStyle;
+        apply();
+    });
+    initSelect('ui-linePattern', 'line.pattern', state.line.pattern, (pattern) => {
+        state.line.pattern = pattern as LinePattern;
         apply();
     });
     initSlider('ui-fillOpacity', 'fill.opacity', state.fill.opacity, (opacity) => {

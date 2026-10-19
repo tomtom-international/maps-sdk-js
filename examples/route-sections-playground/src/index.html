@@ -28,6 +28,15 @@
                 </div>
 
                 <div class="ui-section">
+                    <span class="ui-subheading">map look</span>
+                    <select id="map-look-picker" class="ui-dropdown">
+                        <option value="light" selected>streetLight</option>
+                        <option value="amber">streetDark, amber theme</option>
+                        <option value="dark">streetDark</option>
+                    </select>
+                </div>
+
+                <div class="ui-section">
                     <span class="ui-subheading">border crossings</span>
                     <div id="country-crossing-row" class="section-row enabled">
                         <label class="ui-checkbox-label section-name">
@@ -36,20 +45,23 @@
                         </label>
                         <span class="section-count" title="border crossings on this route"></span>
                         <span class="ui-color-swatch">
-                            <input type="color" data-crossing-knob="color" value="#1A2024">
+                            <input
+                                type="color"
+                                data-crossing-knob="color"
+                                value="#FFFFFF"
+                                title="Unset until picked: the bubble takes the map look's colour"
+                            >
                         </span>
                         <div class="section-knobs">
                             <label class="section-knob">
-                                <span class="section-knob-name">alignment</span>
-                                <select class="ui-dropdown" data-crossing-knob="alignment">
-                                    <option value="viewport">viewport</option>
-                                    <option value="route">route</option>
-                                </select>
-                            </label>
-                            <label class="section-knob">
                                 <span class="section-knob-name">label.color</span>
                                 <span class="ui-color-swatch">
-                                    <input type="color" data-crossing-knob="label.color" value="#F1F3F5">
+                                    <input
+                                        type="color"
+                                        data-crossing-knob="label.color"
+                                        value="#000000"
+                                        title="Unset until picked: the label takes the map look's colour"
+                                    >
                                 </span>
                             </label>
                             <label class="section-knob section-knob-wide">
@@ -68,7 +80,7 @@
                                 </span>
                             </label>
                             <span class="section-knob section-knob-wide crossing-detail" id="crossing-detail">
-                                click a plaque for the two sections it joins
+                                click a bubble for the two sections it joins
                             </span>
                         </div>
                     </div>

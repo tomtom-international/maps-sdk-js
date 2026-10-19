@@ -90,7 +90,7 @@ const showRouteAndPlaces = async (routing: RoutingModule, places: PlacesModule, 
 
     // How the map looks is held by the module drawing each part: the foundations by StylingFoundationsModule,
     // road markings by BaseMapModule, and the POI, traffic and hillshade looks by their own modules.
-    const isTrafficLook = (id: string) => id.startsWith('colors.') || id === 'widthFactor';
+    const isTrafficLook = (id: string) => id.startsWith('colors.') || id === 'widthFactor' || id === 'opacityFactor';
     const lookSources: LookKnobSource[] = [
         // The typeface dropdown sets the map's typeface, with font files as well as the style's faces.
         { module: styling, catalogue: stylingFoundationsKnobCatalogue, isLook: (id) => id !== 'labels.typeface' },

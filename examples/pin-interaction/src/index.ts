@@ -1,5 +1,5 @@
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
-import { PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { BaseMapModule, PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { reverseGeocode } from '@tomtom-org/maps-sdk/services';
 import { Popup } from 'maplibre-gl';
 import './style.css';
@@ -28,5 +28,12 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
             .addTo(map.mapLibreMap);
     });
 
-    places.show(await reverseGeocode({ position }));
+    // Fires for every click the places module does not take
+    const baseMap = await BaseMapModule.get(map, { events: { cursorOnHover: 'default' } });
+    baseMap.events.on('click', () => popup.remove());
+
+    const place = await reverseGeocode({ position });
+    if (place.properties) {
+        places.show(place);
+    }
 })();

@@ -1,6 +1,6 @@
 # Custom GeoJSON Module Reference
 
-`CustomGeoJSONModule` renders arbitrary GeoJSON with caller-authored MapLibre layer specs and adds the SDK lifecycle: style-change restoration, per-source user events, module events, managed source/layer IDs. Use it for any GeoJSON no opinionated module (`PlacesModule`, `GeometriesModule`, …) fits — even one layer: the specs are the ones raw `addLayer` takes, so it costs no styling freedom over raw MapLibre.
+`CustomGeoJSONModule` renders arbitrary GeoJSON with caller-authored MapLibre layer specs and adds the SDK lifecycle: style-change restoration, per-source user events, module events, managed source/layer IDs. Use it for any GeoJSON no opinionated module (`PlacesModule`, `GeometriesModule`, …) fits — even one layer: the specs are the ones raw `addLayer` takes for the six layer types a GeoJSON source draws (`circle`, `heatmap`, `fill`, `fill-extrusion`, `line`, `symbol`), so it costs no styling freedom over raw MapLibre.
 
 ## Imports
 
@@ -83,7 +83,7 @@ class CustomGeoJSONModule<TSources extends Record<string, FeatureCollection> = R
 }
 ```
 
-A source's layers draw while it holds features and the module is visible. `setVisible(false)` hides every layer of every source and keeps the data: `show()` and `clear()` leave a hidden module hidden; `setVisible(true)` draws the sources holding features again.
+A source's layers draw while it holds features and the module is visible; a layer whose spec sets `layout.visibility: 'none'` stays hidden. `setVisible(false)` hides every layer of every source and keeps the data: `show()` and `clear()` leave a hidden module hidden; `setVisible(true)` draws the sources holding features again.
 
 `CustomGeoJSONModuleSerializableConfig` is `getConfig()` minus `images` — what survives `JSON.stringify`; pass `images` again on replay.
 
@@ -107,7 +107,7 @@ A raw `setPaintProperty` on those layers lasts until a config change sets that p
 
 ## Feature IDs (auto-normalized)
 
-`show()` makes `feature.id` and `feature.properties.id` match: an explicit value on either is kept and copied to the other (`feature.id` wins when both are set and differ); with neither, both become the array index. Event lookup reads `properties.id`, else `feature.id`. Needed because MapLibre disables `promoteId` on clustered sources — without it every clustered point has `feature.id === undefined` and every click resolves to the first feature.
+`show()` makes `feature.id` and `feature.properties.id` match: an explicit value on either is kept and copied to the other (`feature.id` wins when both are set and differ); with neither, both become the array index, or the next number no other feature holds. Event lookup reads `properties.id`, else `feature.id`. Needed because MapLibre disables `promoteId` on clustered sources — without it every clustered point has `feature.id === undefined` and every click resolves to the first feature.
 
 ---
 
@@ -220,8 +220,8 @@ const module = await CustomGeoJSONModule.create(map, {
 
 - `image`: `HTMLImageElement`, `ImageBitmap`, `ImageData`, `StyleImageInterface`, or `{ width, height, data: Uint8Array | Uint8ClampedArray }`. **No URLs or raw SVG strings** — pre-load to a loaded `HTMLImageElement`.
 - `options`: `Partial<StyleImageMetadata>` (`pixelRatio`, `sdf`, `stretchX`, `stretchY`, `content`), forwarded verbatim.
-- An id already on the map (`map.hasImage(id)`) is skipped — several modules may register the same icon.
-- `applyConfig` registers new entries; removing one never calls `removeImage`.
+- An id already on the map (`map.hasImage(id)`) that another owner added is skipped — several modules may register the same icon.
+- `applyConfig` registers new entries, and replaces an image the module added itself when its `image` (by reference) or `options` change; removing an entry never calls `removeImage`.
 
 ---
 
@@ -269,7 +269,8 @@ module.applyConfig({
 });
 ```
 
-Not supported: adding or removing source names, changing `cluster` — recreate the module.
+Not supported: adding or removing source names, changing a `sourceID` or `cluster` — recreate the module.
+`applyConfig` throws on changed source names or a changed `sourceID`, before changing anything.
 
 ---
 

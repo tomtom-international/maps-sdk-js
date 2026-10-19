@@ -41,9 +41,14 @@ const territorySelect = document.querySelector('#ui-territorySelect') as HTMLSel
         try {
             const lookup = await latestLookup.run((signal) => reverseGeocode({ position, signal }));
             if (!lookup.current) return;
+            const place = lookup.value;
+            if (!place.properties) {
+                showStatus('No address found at this point.');
+                return;
+            }
 
-            await addressPin.show(lookup.value);
-            showAddress(lookup.value.properties);
+            await addressPin.show(place);
+            showAddress(place.properties);
         } catch (error) {
             showStatus(error instanceof Error ? error.message : 'The reverse geocoding call failed.');
         }

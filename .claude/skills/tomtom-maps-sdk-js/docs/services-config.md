@@ -40,9 +40,11 @@ TomTomConfig.instance.reset();
 | `displayUnits` | metric, `km`/`m`, `hr`/`min` | `{ distance: { type: 'metric' \| 'imperial_us' \| 'imperial_uk', …labels }, time: { hours, minutes } }` — used by `formatDistance` / `formatDuration` and the routing module's labels; see `core-utilities.md` |
 | `retry` | `{ initialWaitMs: 0.447, backoffFactor: 1.618, timeoutMs: 40000 }` | Retries `429` with exponential backoff, honouring `Retry-After` |
 
-- `retry` is read from the global config only, never per call. A field left out of a `put` takes its default (not an earlier `put`'s value); `retry: undefined` disables retrying.
+- A field left out of a `put`'s `retry` takes its default (not an earlier `put`'s value); `retry: undefined` disables retrying.
+- A service call's own `retry` overrides the global one field by field (`retry: { timeoutMs: 2000 }` keeps the global wait and factor); `retry: undefined` on a call disables retrying for that call only.
+- Service calls do not take `displayUnits` (a compile error): pass it to `formatDistance` / `formatDuration` or the `RoutingModule` config instead.
 - A `TomTomMap` takes the same keys in its constructor params, overriding the global values for that map.
-- Node.js: the package is ESM only — `import`, not `require`. Read the key from `process.env`.
+- Node.js: 22 or newer, the package's `engines` floor. The package is ESM only — `import`, not `require`. Read the key from `process.env`.
 
 ### Geopolitical view
 
@@ -65,7 +67,7 @@ See [Geopolitical views](https://docs.tomtom.com/maps-sdk-js/guides/core/geopoli
 
 ## Per-call options
 
-Every service call merges the global config under its own params, so a per-call `apiKey`, `language`, `geopoliticalView` or `commonBaseURL` wins for that call only. Endpoint paths and API versions are not configurable.
+Every service call merges the global config under its own params, so a per-call `apiKey`, `language`, `geopoliticalView`, `commonBaseURL` or `retry` (field by field) wins for that call only. Endpoint paths and API versions are not configurable.
 
 ```ts
 // Override API key for a specific call
@@ -138,8 +140,15 @@ clearButton.addEventListener('click', latestLookup.cancel);
 Every rejection is an `SDKError` with `.code` (`SDKErrorCode`, core — branch on it, never on
 `.message`; the TomTom Navigation SDK's names for the same failures), `.canRetry` (`true` for `RATE_LIMITED`,
 `LIVE_SERVICE_NOT_AVAILABLE`, `NETWORK_NOT_AVAILABLE`: retry later; any other code fails the same way again),
-`.service` naming the service and `.sdkVersion` — except a request the service cannot
-build at all (a geometry type geometry search does not take), which rejects with a plain `Error`. Two subclasses carry more:
+`.service` naming the service (`ServiceName`, a literal union: `'Geocode'`, `'FuzzySearch'`, `'GeometrySearch'`, `'AlongRouteSearch'`,
+`'DiscoverPlaces'`, `'Autocomplete'`, `'SearchSuggestions'`, `'PlaceDetails'`, `'POICategories'`, `'ReverseGeocode'`,
+`'GeometryData'`, `'Routing'`, `'ReachableRange'`, `'TrafficIncidentDetails'`, `'TrafficAreaAnalytics'`) and `.sdkVersion`, with two exceptions that reject with a plain `Error`:
+
+- A request the service cannot build at all, such as a geometry type geometry search does not take, sent with
+  `validateRequest: false`.
+- `geocodeOne` / `discoverOnePlace` finding nothing (the **Tip** below).
+
+Two subclasses carry more:
 
 | `code` | When |
 |---|---|

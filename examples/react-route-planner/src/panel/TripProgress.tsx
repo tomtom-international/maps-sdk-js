@@ -4,49 +4,44 @@ import { Pause, Play } from 'lucide-react';
 import { Marker } from 'maplibre-gl';
 import { useEffect, useMemo, useState } from 'react';
 import { addSeconds, clockTime, distance, duration } from '../format';
+import { reclaimCamera } from '../map/cameraHolder';
+import { flyRoute } from '../map/routeFlight';
 import { type StopMark, stopMarks } from '../sections/routeLanes';
 import './TripProgress.css';
 
-// A whole trip replays in this long, whatever its length.
-const REPLAY_SECONDS = 20;
 const SLIDER_STEPS = 1000;
 
-/** A slider position that plays forward on its own, back to the start whenever `resetKey` changes. */
-const useReplay = (resetKey: unknown) => {
+/**
+ * A slider position over the trip, which a fly-over of the route moves while it plays. A new route
+ * lands the flight and goes back to the start.
+ */
+const useReplay = (map: TomTomMap, route: Route) => {
     const [step, setStep] = useState(0);
-    const [running, setRunning] = useState(false);
-    // A replay that reaches the end of the trip stops there.
-    const playing = running && step < SLIDER_STEPS;
+    const [playing, setPlaying] = useState(false);
+    const { travelTimeInSeconds } = route.properties.summary;
 
     useEffect(() => {
         setStep(0);
-        setRunning(false);
-    }, [resetKey]);
+        setPlaying(false);
+        return reclaimCamera;
+    }, [route]);
 
-    useEffect(() => {
-        if (!playing) return;
-
-        let frame = 0;
-        let last = performance.now();
-        const advance = (now: number) => {
-            const elapsed = (now - last) / 1000;
-            last = now;
-            setStep((current) => Math.min(SLIDER_STEPS, current + (elapsed / REPLAY_SECONDS) * SLIDER_STEPS));
-            frame = requestAnimationFrame(advance);
-        };
-        frame = requestAnimationFrame(advance);
-        return () => cancelAnimationFrame(frame);
-    }, [playing]);
+    const play = (fromStep: number) => {
+        setStep(fromStep);
+        setPlaying(true);
+        flyRoute(map, route, (fromStep / SLIDER_STEPS) * travelTimeInSeconds, {
+            onProgress: ({ traveledTimeInSeconds }) =>
+                setStep((traveledTimeInSeconds / travelTimeInSeconds) * SLIDER_STEPS),
+            onLand: () => setPlaying(false),
+        });
+    };
 
     return {
         step,
         playing,
-        togglePlaying: () => {
-            if (!playing && step >= SLIDER_STEPS) setStep(0);
-            setRunning(!playing);
-        },
+        togglePlaying: () => (playing ? reclaimCamera() : play(step >= SLIDER_STEPS ? 0 : step)),
         scrub: (next: number) => {
-            setRunning(false);
+            reclaimCamera();
             setStep(next);
         },
     };
@@ -70,15 +65,17 @@ const useRouteMarker = (map: TomTomMap, position: number[] | undefined) => {
 };
 
 /**
- * Scrub or replay the trip by the clock: a marker follows the route, and waits out each stay.
- * Before the first move nothing is underway, and `elapsedSeconds` is undefined.
+ * Scrub the trip by the clock, with a marker that follows the route and waits out each stay, or
+ * play it as a fly-over of the route. Before the first move nothing is underway, and
+ * `elapsedSeconds` is undefined.
  */
 export const useTripReplay = (map: TomTomMap, route: Route) => {
-    const { step, playing, togglePlaying, scrub } = useReplay(route);
+    const { step, playing, togglePlaying, scrub } = useReplay(map, route);
     const { travelTimeInSeconds } = route.properties.summary;
     const elapsedSeconds = (step / SLIDER_STEPS) * travelTimeInSeconds;
     const progress = getCoordinateAtRouteProgress(route, { traveledTimeInSeconds: elapsedSeconds });
-    useRouteMarker(map, step > 0 ? progress?.position : undefined);
+    // In flight, the fly-over's own marker rides the route instead.
+    useRouteMarker(map, step > 0 && !playing ? progress?.position : undefined);
 
     return {
         step,
@@ -130,7 +127,7 @@ export const TripProgress = ({ route, stopNames, replay }: TripProgressProps) =>
                 <button
                     type="button"
                     className="ui-button ui-button-icon ui-button-sm"
-                    aria-label={playing ? 'Pause the replay' : 'Replay the trip'}
+                    aria-label={playing ? 'Pause the fly-over' : 'Fly over the trip'}
                     onClick={togglePlaying}
                 >
                     {playing ? <Pause /> : <Play />}

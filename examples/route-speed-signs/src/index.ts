@@ -7,9 +7,9 @@ import './style.css';
 
 TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
 
-// Four countries, four signs for the same fact. Nothing below configures the signs: the module
-// posts them for every speed limit section it is given, and takes the face and the unit from the
-// country each stretch runs through — which is why `country` is asked for alongside `speedLimit`.
+// Four countries, four signs for the same fact. Nothing below picks a sign: the module posts one
+// for every speed limit section it is given, and takes the face and the unit from the country each
+// stretch runs through — which is why `country` is asked for alongside `speedLimit`.
 type Tile = {
     country: string;
     note: string;
@@ -101,8 +101,12 @@ const showTile = async (tile: Tile, index: number): Promise<void> => {
     map.mapLibreMap.resize();
 
     // No summary bubble and no waypoint pins: on a tile this size they would take the space the
-    // signs need, and a sign gives way to every other route icon by default.
-    const routingModule = await RoutingModule.create(map, { summaryBubbles: { visible: false } });
+    // signs need, and a sign gives way to every other route icon by default. Each tile frames its
+    // whole route, below the zoom the signs start at by default, so `minZoom` brings them out here.
+    const routingModule = await RoutingModule.create(map, {
+        summaryBubbles: { visible: false },
+        sections: { speedLimit: { sign: { minZoom: 10 } } },
+    });
     await routingModule.showRoutes(routes);
 
     await whenPainted(map);

@@ -9,12 +9,19 @@ const openMapPanel = async (page: Page) => {
     await page.locator('.ui-fine-tune summary').click();
 };
 
+// The trip slider, walked to both ends, scrubs the flight and so lands it.
+const flyOverTrip = async (page: Page) => {
+    await openTab('Directions')(page);
+    await page.getByRole('button', { name: 'Fly over the trip' }).click();
+};
+
 test.describe('every control can be moved without an error', () => {
     for (const [panel, reveal] of [
         ['the plan', undefined],
         ['the search options', openTab('Search')],
         ['the route options', openTab('Options')],
         ['the map panel', openMapPanel],
+        ['the directions, mid-flight', flyOverTrip],
     ] as const) {
         test(`in ${panel}`, { tag: TAG_PROD }, async ({ page }) => {
             // Each change recalculates the route and refits the map, which a software renderer

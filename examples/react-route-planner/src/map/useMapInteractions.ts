@@ -6,7 +6,7 @@ import { type RefObject, useEffect, useRef } from 'react';
 import { errorMessage } from '../format';
 import { keysOf } from '../keysOf';
 import { type LaneId, sectionAt } from '../sections/routeLanes';
-import { onRouteLineLeave } from './routeLineLeave';
+import { onRouteLeave, onRouteLineLeave } from './routeLineLeave';
 import type { MapModules } from './useMapModules';
 
 export type MapInteractionHandlers = {
@@ -14,8 +14,12 @@ export type MapInteractionHandlers = {
     onPlace: (place: Place) => void;
     /** A stop's pin, by its row in the planner. */
     onStop: (index: number) => void;
-    /** A route line, by its index among the alternatives. */
+    /** A route line or its summary bubble, by its index among the alternatives. */
     onRoute: (index: number) => void;
+    /** The summary bubble under the pointer, by its route's index among the alternatives, or none when the pointer moves off a route. */
+    onRouteHover: (index?: number) => void;
+    /** The route line under the pointer, by its index among the alternatives, which the map already draws as hovered. */
+    onRouteLineHover: (index: number) => void;
     onSearchResultHover: (place?: Place) => void;
     /** A route section drawn on the map, by its id, or none when the pointer moves off. */
     onSectionHover: (sectionId?: string) => void;
@@ -53,20 +57,32 @@ const sectionUnder = (route: Route<DisplayRouteProps>, lngLat: LngLat): string |
     return progress && sectionAt(route, progress.distanceInMeters, drawnLanes)?.id;
 };
 
-/** The route lines and the sections drawn on them, a click on a line's section picking the section. */
+/**
+ * The route lines, the sections drawn on them and the summary bubbles. A click on a line's section picks
+ * the section, and one on a line or its bubble the route.
+ */
 const listenToRouteLines = (routing: RoutingModule, handlersRef: RefObject<MapInteractionHandlers>) => [
+    routing.events.summaryBubbles.on('click', (summary) => handlersRef.current.onRoute(summary.properties.routeIndex)),
+    routing.events.summaryBubbles.on('hover', (summary) =>
+        handlersRef.current.onRouteHover(summary.properties.routeIndex),
+    ),
     routing.events.mainLines.on('click', (route, lngLat) => {
         const sectionId = sectionUnder(route, lngLat);
         if (sectionId) handlersRef.current.onSectionClick(sectionId);
         else handlersRef.current.onRoute(route.properties.index);
     }),
+    routing.events.mainLines.on('hover', (route) => handlersRef.current.onRouteLineHover(route.properties.index)),
     ...(['hover', 'hover-move'] as const).map((type) =>
         routing.events.mainLines.on(type, (route, lngLat) =>
             handlersRef.current.onSectionHover(sectionUnder(route, lngLat)),
         ),
     ),
     ...sectionScopes.flatMap((scope) => [
-        routing.events[scope].on('hover', (section) => handlersRef.current.onSectionHover(section.properties.id)),
+        // A section above the line takes `hover` off it, so pointing at its route puts the outline back.
+        routing.events[scope].on('hover', (section) => {
+            handlersRef.current.onRouteHover(section.properties.routeIndex);
+            handlersRef.current.onSectionHover(section.properties.id);
+        }),
         routing.events[scope].on('click', (section) => handlersRef.current.onSectionClick(section.properties.id)),
     ]),
 ];
@@ -84,7 +100,7 @@ export const useMapInteractions = (modules: MapModules | undefined, handlers: Ma
     useEffect(() => {
         if (!modules) return;
 
-        const { routing, searchResults, baseMap, pois } = modules;
+        const { routing, searchResults, baseMapUnderRoutes, pois } = modules;
         // A newer click supersedes a lookup still in flight.
         const lookup = createLatestRequest();
         const lookUp = async (request: (signal: AbortSignal) => Promise<Place | undefined>) => {
@@ -98,17 +114,22 @@ export const useMapInteractions = (modules: MapModules | undefined, handlers: Ma
 
         const unsubscribes = [
             ...onRouteLineLeave(modules, () => handlersRef.current.onSectionHover(undefined)),
+            ...onRouteLeave(modules, () => handlersRef.current.onRouteHover(undefined)),
             searchResults.events.places.on('click', (place) => handlersRef.current.onPlace(place)),
             searchResults.events.places.on('hover', (place) => handlersRef.current.onSearchResultHover(place)),
             pois.events.on('click', (poi) =>
                 lookUp((signal) => getPlaceDetails({ entityId: poi.properties.id, signal })),
             ),
-            baseMap.events.on('click', (_, lngLat) => {
+            baseMapUnderRoutes.on('click', (_, lngLat) => {
                 if (!handlersRef.current.dismiss()) {
-                    void lookUp((signal) => reverseGeocode({ position: lngLat.toArray(), signal }));
+                    void lookUp((signal) =>
+                        reverseGeocode({ position: lngLat.toArray(), signal }).then((place) =>
+                            place.properties ? place : undefined,
+                        ),
+                    );
                 }
             }),
-            baseMap.events.on('hover', () => handlersRef.current.onSearchResultHover(undefined)),
+            baseMapUnderRoutes.on('hover', () => handlersRef.current.onSearchResultHover(undefined)),
             routing.events.waypoints.on('click', (waypoint) => handlersRef.current.onStop(waypoint.properties.index)),
             ...listenToRouteLines(routing, handlersRef),
         ];

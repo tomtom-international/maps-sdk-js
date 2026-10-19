@@ -3,6 +3,7 @@ import type {
     GeometryLayersConfig,
     LayerSelection,
     StylingFoundationsModule,
+    TrafficFlowModule,
     TrafficIncidentDetailsLayersConfig,
     TrafficIncidentDetailsModule,
 } from '@tomtom-org/maps-sdk/map';
@@ -36,18 +37,19 @@ const boundaryLayers: GeometryLayersConfig = {
 
 export const initFocus = (
     styling: StylingFoundationsModule,
+    flow: TrafficFlowModule,
     incidents: TrafficIncidentDetailsModule,
     boundary: GeometriesModule,
 ) => {
     // The style's own layers, by group: these queries never reach the incidents or the boundary.
     const backdrop: [LayerSelection, Parameters<LayerSelection['setPaint']>[0]][] = [
-        [styling.layers.query({ group: 'trafficFlow', layerTypes: ['line'] }), { 'line-opacity': 0.12 }],
         [styling.layers.query({ group: 'roads', layerTypes: ['line'] }), { 'line-opacity': 0.3 }],
         [styling.layers.query({ group: 'pois' }), { 'icon-opacity': 0.2, 'text-opacity': 0.2 }],
         [styling.layers.query({ group: 'roadLabels' }), { 'text-opacity': 0.3 }],
     ];
 
     const setFocus = (focused: boolean) => {
+        flow.updateConfig({ opacityFactor: focused ? 0.12 : 1 });
         incidents.updateConfig({ layers: focused ? incidentLayers : undefined });
         boundary.updateConfig({ layers: focused ? boundaryLayers : undefined });
         for (const [selection, paint] of backdrop) {

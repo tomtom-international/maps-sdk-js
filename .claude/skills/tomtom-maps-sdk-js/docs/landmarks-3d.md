@@ -10,7 +10,12 @@ Renders TomTom Orbis **3D Landmarks** — high-detail building meshes streamed a
 import {
     Landmarks3D,
     type Landmarks3DOptions,
-    type Landmarks3DDisplayMode,
+    type Landmarks3DConfig,
+    landmarks3DKnobCatalogue,
+    landmarks3DKnobIds,
+    type Landmarks3DKnob,
+    type Landmarks3DKnobId,
+    type Landmarks3DKnobValueOf,
     // advanced: the custom layer and its tile URL, for building the layer yourself
     buildLandmarksTileURL,
     ModelsLayer,
@@ -34,7 +39,7 @@ npm i @tomtom-org/maps-sdk maplibre-gl @tomtom-org/maps-sdk-plugin-landmarks-3d 
 
 ```ts
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
-import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { BaseMapModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { Landmarks3D } from '@tomtom-org/maps-sdk-plugin-landmarks-3d';
 
 TomTomConfig.instance.put({ apiKey: 'YOUR_API_KEY' });
@@ -43,53 +48,69 @@ const map = new TomTomMap({
     mapLibre: { container: 'sdk-map', center: [4.9003, 52.3791], zoom: 16, pitch: 60 },
 });
 
+// The 3D city around the landmarks: buildings3D ships hidden in every standard style but the driving ones.
+await BaseMapModule.get(map, { groups: { buildings3D: { visible: true } } });
 // Starts rendering once the map is ready; the tile URL is built from TomTomConfig.
 const landmarks = new Landmarks3D(map);
 ```
 
-Use a **pitched camera** (`pitch > 0`) to see the meshes. The plugin enables the standard style's hidden `3D - Building` layer automatically, so landmarks sit in a full 3D city context.
+Use a **pitched camera** (`pitch > 0`) to see the meshes. The plugin never shows or hides `3D - Building`: its visibility is the `BaseMapModule`'s `buildings3D` group, so show it there for a 3D city context, or leave it out for landmarks alone.
 
 ## Constructor & options
 
-`new Landmarks3D(map: TomTomMap, options?: Landmarks3DOptions)` — no `await`; rendering starts when the map becomes ready.
+`new Landmarks3D(map: TomTomMap, options?: Landmarks3DOptions)` — no `await`; rendering starts when the map becomes ready. `Landmarks3DOptions` is the knobs (`Landmarks3DConfig`) plus:
 
 | Option | Type | Default | Meaning |
 |---|---|---|---|
-| `displayMode` | `'inherited' \| 'dark' \| 'light'` | `'inherited'` | How landmarks are shaded (see below) |
-| `visible` | `boolean` | `true` | Initial visibility |
-| `minZoom` | `number` | basemap 3D building layer's min; `10` without it | Zoom at which landmarks appear |
-| `maxZoom` | `number` | basemap 3D building layer's max; `22` without it | Zoom at which landmarks disappear |
-| `withCredentials` | `boolean` | `isProxyCredentialsMode()` | Send `credentials: 'include'` with tile requests (proxy session cookie) |
+| `withCredentials` | `boolean` | `isProxyCredentialsMode()` | Send `credentials: 'include'` with tile requests (proxy session cookie). Not a knob: `getConfig()` leaves it out |
 
-When `minZoom`/`maxZoom` are omitted the range tracks the basemap 3D building layer, so landmarks appear and disappear together with it.
+## Knobs
 
-## Display modes
+The look is a flat set of knobs, each id its key in `Landmarks3DConfig`. Every knob but `visible` **follows the base map's `3D - Building` layer while unset**, each on its own:
 
-Every mode renders landmarks as maplibre-style fill-extrusion buildings.
+| Knob | Kind | Range | Unset |
+|---|---|---|---|
+| `visible` | toggle | — | `true` |
+| `color` | color | CSS colour | the 3D buildings' `fill-extrusion-color` (a `match` uses its default operand) |
+| `opacity` | number | 0–1 | the 3D buildings' `fill-extrusion-opacity` |
+| `verticalGradient` | toggle | — | the 3D buildings' `fill-extrusion-vertical-gradient` |
+| `minZoom` | number | 0–22 | the 3D buildings' `minzoom` |
+| `maxZoom` | number | 0–22 | the 3D buildings' `maxzoom`; landmarks stay drawn up to the next whole zoom |
 
-- `inherited` (default) — mirrors the **colour, opacity and vertical gradient** of the basemap 3D building layer, so landmarks blend in. Falls back to the `light` look when that layer is absent or its colour is not one value (a `match` uses its default operand).
-- `dark` — the 3D-building look of the `streetDark` style (`hsl(210, 9%, 17%)`, opacity 0.7).
-- `light` — the 3D-building look of the `streetLight` style (`hsl(38, 6%, 90%)`, opacity 0.7).
+- **Follows the style live**: an unset knob is re-read on every MapLibre `styledata`, so it follows `setStyle`, the map colours that recolour the 3D buildings (`styling.setMapColors(...)`, a `colors.artificial`/`colors.land` knob, a map-theme theme) and a raw `setPaintProperty('3D - Building', …)`. It repaints only when the look changed. A knob set always wins.
+- **Fallback**: where the style has no `3D - Building` layer (`streetSatellite`, or a custom style), or a paint value is an expression that is not one value, that knob takes the `streetLight` look, `hsl(38, 6%, 90%)`, opacity 0.7, gradient on, and the plugin's own zoom range, 10–22. Every other standard style resolves colour, opacity and gradient from its own buildings.
+- Landmark tiles exist at zoom 15 only, so keep `minZoom` near 15 (see Gotchas).
 
 ## Methods
 
 ```ts
-await landmarks.setDisplayMode('dark'); // change shading at runtime
-landmarks.getDisplayMode();             // 'inherited' | 'dark' | 'light'
+import { getKnob, resetKnob, setKnob, setKnobs } from '@tomtom-org/maps-sdk/map';
 
-await landmarks.setVisible(false);      // hide / show
+landmarks.updateConfig({ color: '#c8b28a', opacity: 0.9 }); // set some, keep the others
+landmarks.applyConfig({ opacity: 1 });                      // replace all: color follows the base map again
+landmarks.resetConfig();                                    // every knob follows the base map
+landmarks.getConfig();                                      // the knobs set only: {}
+
+setKnob(landmarks, landmarks3DKnobCatalogue, 'verticalGradient', false); // validated; RangeError when refused
+setKnobs(landmarks, landmarks3DKnobCatalogue, { color: '#1d3f8a', maxZoom: 20 });
+getKnob(landmarks, landmarks3DKnobCatalogue, 'opacity');                 // value in force: the base map's when unset
+resetKnob(landmarks, landmarks3DKnobCatalogue, 'color');
+
+landmarks.setVisible(false);            // = updateConfig({ visible: false })
 landmarks.isVisible();                  // boolean
 
 landmarks.layer;                        // the underlying ModelsLayer (advanced use)
 ```
+
+`landmarks3DKnobCatalogue` entries carry `id`, `kind`, `description`, `range` and, for `visible`, `default` — static data for a UI or an agent.
 
 ## How it works
 
 - Adds a MapLibre **custom layer** (`ModelsLayer`, id `orbis-3d-landmarks`) that fetches the GLB tiles covering the viewport and renders them with Three.js, keeping lighting in sync with the map style light.
 - **Frames on demand**: the layer draws when the map draws and requests a frame only when a tile arrives, so a still map stays idle. After writing a `landmarks.layer` field yourself (`diffuseColor`, `visible`), call `map.mapLibreMap.triggerRepaint()`.
 - Inserted before `mapStyleLayerIDs.poi` (on top when the style lacks it), so POIs draw over the meshes and roads stay below.
-- Shows the standard style's hidden `3D - Building` layer for city context, and filters basemap extrusions flagged `has_landmark` out of that layer so they don't clip through the high-detail meshes.
-- The layer, its visibility, and the filter are all re-applied after map style changes.
+- Filters basemap extrusions flagged `has_landmark` out of `3D - Building` (through `LayerFilterComposer`), so they don't clip through the high-detail meshes. It leaves the layer's visibility to `BaseMapModule`.
+- The layer, the filter and the look are all re-applied after map style changes.
 - **3D terrain**: with `TerrainModule` elevation on, each landmark is lowered onto the lowest terrain under its footprint every frame, so it follows terrain tiles as they load and exaggeration changes. Nothing to configure.
 
 ## Gotchas

@@ -8,12 +8,14 @@ import { EXTRA_SHOT_OPTIONS, loadProdExample } from '../../src/e2e-test-utils/lo
  * @remarks
  * The example's own `upon-load` shot frames a whole country, where no sign draws: a stretch too
  * short on screen carries none. So this test asks for a view of one stretch through the map's URL
- * hash, which is the only place the signs can be seen at all — and the only baseline that would
- * catch them disappearing from the playground.
+ * hash, which is the only place the signs can be seen at all.
+ *
+ * The shot's tolerance absorbs live-tile drift, which outweighs a few signs, so it shows them to a
+ * reviewer rather than guarding them: `map-integration-tests` asserts that they draw.
  */
 test('speed limit signs at the zoom a stretch is readable', { tag: TAG_PROD }, async ({ page }) => {
     // A stretch of the Munich-to-Milan route through the Alps, in `zoom/lat/lng`.
-    const consoleErrors = await loadProdExample(page, 'route-sections-playground', '11/46.22/9.02');
+    const consoleErrors = await loadProdExample(page, 'route-sections-playground', '12.5/46.22/9.02');
 
     await expect(page).toHaveScreenshot('speed-limit-signs.png', EXTRA_SHOT_OPTIONS);
     expect(consoleErrors).toHaveLength(0);

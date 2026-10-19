@@ -19,11 +19,11 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
 
     const placesModule = await PlacesModule.create(map, {
         markerType: 'base-map',
+        icon: { opacity: 0.75 },
         layers: {
             main: {
                 paint: {
                     'text-color': '#AA0000',
-                    'icon-opacity': 0.75,
                 },
             },
             selected: {

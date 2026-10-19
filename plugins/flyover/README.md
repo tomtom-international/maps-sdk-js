@@ -11,7 +11,7 @@ it crosses, and it parks the followed position, marked with an arrow, where you 
 
 ## Quickstart
 
-This plugin declares `@tomtom-org/maps-sdk` and `maplibre-gl` as peer dependencies and bundles neither, so install both in your project too.
+This plugin declares `@tomtom-org/maps-sdk`, `maplibre-gl` and `@turf/turf` as peer dependencies and bundles none of them, so install the first two in your project too. `@turf/turf` is one of the SDK's own peers, so it installs with the SDK.
 
 ```bash
 npm install @tomtom-org/maps-sdk maplibre-gl @tomtom-org/maps-sdk-plugin-flyover
@@ -35,7 +35,8 @@ flyover.start();
 ## Features
 
 The route is the only geometry it needs. There are no camera keyframes to author and no animation
-to re-time when the route changes. The flight loops. It wraps at the destination and never lands.
+to re-time when the route changes. By default, the flight loops: it wraps at the destination and
+never lands. With `loop: false`, it stops at the destination instead.
 
 - **Aim** — at the next guidance instruction, a fixed distance down the road or a number of the
   route's own vertices.

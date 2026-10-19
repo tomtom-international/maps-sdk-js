@@ -1,5 +1,5 @@
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
-import type { Route, Routes } from '@tomtom-org/maps-sdk/core';
+import { getImportantRoads, type Route, type Routes } from '@tomtom-org/maps-sdk/core';
 import type { ReactNode } from 'react';
 import { clockTime, distance, duration, placeTitle } from '../format';
 import { filledStops, type Stop, stopBadge } from '../planner/stops';
@@ -12,26 +12,80 @@ type TripSummaryProps = {
     routes: Routes;
     selectedIndex: number;
     onSelect: (index: number) => void;
+    /** The route pointed at, on the map or in the panel. */
+    pointedIndex?: number;
+    /** The route pointed at in the panel, with the sections to ring on it when only some of it is, or none. */
+    onPointAtRoute: (index?: number, sectionIds?: string[]) => void;
     stops: Stop[];
     /** The leg of the drive pointed at in the itinerary, by id, or none. */
     onPointAtLeg: (legId?: string) => void;
 };
 
-export const TripSummary = ({ routes, selectedIndex, onSelect, stops, onPointAtLeg }: TripSummaryProps) => {
-    const route = routes.features[selectedIndex] ?? routes.features[0];
+export const TripSummary = ({ routes, stops, onPointAtLeg, ...alternatives }: TripSummaryProps) => {
+    const route = routes.features[alternatives.selectedIndex];
     return (
         <>
-            {routes.features.length > 1 && (
-                <Alternatives routes={routes} selectedIndex={selectedIndex} onSelect={onSelect} />
-            )}
+            {routes.features.length > 1 && <Alternatives routes={routes} {...alternatives} />}
             <RouteFacts route={route} />
             <Itinerary route={route} stops={stops} onPointAtLeg={onPointAtLeg} />
         </>
     );
 };
 
-const Alternatives = ({ routes, selectedIndex, onSelect }: Omit<TripSummaryProps, 'stops' | 'onPointAtLeg'>) => {
-    const fastest = Math.min(...routes.features.map((route) => route.properties.summary.travelTimeInSeconds));
+const comparedToSelected = (minutes: number, isFastest: boolean): string => {
+    if (minutes > 0) return ` · ${duration(minutes * 60)} slower`;
+    if (minutes < 0) return ` · ${duration(-minutes * 60)} faster`;
+    return isFastest ? ' · fastest' : '';
+};
+
+// A road the route follows for less than this on its own isn't worth naming.
+const MIN_ROAD_LENGTH_IN_METERS = 2000;
+
+type OwnRoadsProps = { route: Route; onPointAtRoad: (sectionIds?: string[]) => void };
+
+/** The main roads only this route takes, which set it apart; pointing at one rings its stretches. */
+const OwnRoads = ({ route, onPointAtRoad }: OwnRoadsProps) => {
+    const ownSections = route.properties.sections.distinct ?? [];
+    const roads = getImportantRoads(route, {
+        within: ownSections,
+        minLengthInMeters: MIN_ROAD_LENGTH_IN_METERS,
+    }).filter((road) => road.name);
+    if (!roads.length) {
+        return (
+            <span className="ui-alternative-roads">
+                {ownSections.length ? 'via minor roads' : 'no road of its own'}
+            </span>
+        );
+    }
+
+    return (
+        <span className="ui-alternative-roads">
+            via{' '}
+            {roads.map((road) => (
+                <span
+                    key={road.name}
+                    className="ui-road-chip"
+                    onPointerEnter={() => onPointAtRoad(road.sections.map((section) => section.id))}
+                    onPointerLeave={() => onPointAtRoad(undefined)}
+                >
+                    {road.name}
+                </span>
+            ))}
+        </span>
+    );
+};
+
+const Alternatives = ({
+    routes,
+    selectedIndex,
+    onSelect,
+    pointedIndex,
+    onPointAtRoute,
+}: Omit<TripSummaryProps, 'stops' | 'onPointAtLeg'>) => {
+    // Timed against the selected route, as the map's bubbles are, each duration rounded to the minute first.
+    const minutesOf = (route: Route) => Math.round(route.properties.summary.travelTimeInSeconds / 60);
+    const fastest = Math.min(...routes.features.map(minutesOf));
+    const selectedMinutes = minutesOf(routes.features[selectedIndex]);
     return (
         <div className="ui-section">
             <h4 className="ui-subheading">Routes</h4>
@@ -45,18 +99,23 @@ const Alternatives = ({ routes, selectedIndex, onSelect }: Omit<TripSummaryProps
             >
                 {routes.features.map((route, index) => {
                     const { travelTimeInSeconds, lengthInMeters } = route.properties.summary;
-                    const slower = travelTimeInSeconds - fastest;
+                    const versusSelected = minutesOf(route) - selectedMinutes;
                     return (
                         <ToggleGroup.Item
                             key={route.id ?? index}
                             value={String(index)}
-                            className={`ui-option-card ui-alternative${index === selectedIndex ? ' active' : ''}`}
+                            className={`ui-option-card ui-alternative${index === selectedIndex ? ' active' : ''}${
+                                index === pointedIndex ? ' ui-hovered' : ''
+                            }`}
+                            onPointerEnter={() => onPointAtRoute(index)}
+                            onPointerLeave={() => onPointAtRoute(undefined)}
                         >
                             <span className="ui-alternative-time">{duration(travelTimeInSeconds)}</span>
                             <span className="ui-alternative-detail">
                                 {distance(lengthInMeters)}
-                                {slower >= 60 ? ` · ${duration(slower)} slower` : ' · fastest'}
+                                {comparedToSelected(versusSelected, minutesOf(route) === fastest)}
                             </span>
+                            <OwnRoads route={route} onPointAtRoad={(sectionIds) => onPointAtRoute(index, sectionIds)} />
                         </ToggleGroup.Item>
                     );
                 })}

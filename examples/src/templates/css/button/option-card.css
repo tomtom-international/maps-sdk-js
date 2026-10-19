@@ -1,4 +1,5 @@
-/* OPTION CARD: a button laid out as a card, one of a set to pick from; .active marks the picked one */
+/* OPTION CARD: a button laid out as a card, one of a set to pick from; .active marks the picked one, and
+   .ui-hovered one pointed at elsewhere, say on the map */
 
 .ui-option-card {
     border: 2px solid var(--ui-border-low-em);
@@ -11,7 +12,8 @@
     transition: border-color var(--ui-transition-fast);
 }
 
-.ui-option-card:hover {
+.ui-option-card:hover,
+.ui-option-card.ui-hovered {
     border-color: var(--ui-border-med-em);
 }
 

@@ -44,6 +44,7 @@ vi.mocked(resolveWithin).mockImplementation(async ({ queries }) => {
 // The scan reads the session preferences and redraws its scan-area outline through these.
 const state = {
     siteSelection: new SiteSelectionState(),
+    byod: { entries: [], findById: () => undefined },
     customGeometries: {
         entries: [],
         addEntry: vi.fn(async () => 'scan-area'),
@@ -78,6 +79,19 @@ describe('findWhitespace', () => {
         expect(getResultsSnapshot().whitespace?.warnings).toContain(
             'Not scanned, as the place search failed: Eastside.',
         );
+    });
+
+    it('tells the model there are no pockets when the scan ranks none', async () => {
+        const result = await scan(['Downtown']);
+        expect(result.hint).toContain('the scan found no pockets to rank in Downtown');
+    });
+
+    it('returns an error for an unknown demand layer', async () => {
+        const result = await findWhitespace({}).execute(
+            { areas: ['Downtown'], targetCategories: ['gym'], colocation: 'avoid', demandByodEntryId: 'missing' },
+            state,
+        );
+        expect(result.error).toContain('No BYOD layer "missing"');
     });
 
     it('fails the scan when no area could be searched', async () => {

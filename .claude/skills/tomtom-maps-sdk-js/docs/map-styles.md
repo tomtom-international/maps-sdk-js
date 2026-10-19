@@ -63,7 +63,7 @@ map.setStyle({
 `setStyle(style, options?: SetStyleOptions)` returns `Promise<void>`:
 
 - Resolves once the style has loaded and every style change handler, the SDK modules' included, has finished.
-- Rejects if the style itself fails to load: the map keeps its previous style and `map.mapReady` stays `false`. A failing tile or source does not fail the switch.
+- Rejects if the style itself fails to load: the map keeps its previous style and `map.mapReady` stays `false` (called before the first style loaded, it finishes that one and the map is ready). A failing tile or source does not fail the switch.
 - A second `setStyle` while one is in flight supersedes it: only the last style is applied, and both promises resolve.
 - Passing the style already loaded runs the lifecycle without reloading it.
 
@@ -99,13 +99,13 @@ For GeoJSON, skip this and use `CustomGeoJSONModule` (`custom.md`): it restores 
 ```ts
 import type { GeoJSONSource } from 'maplibre-gl';
 
-let savedData: GeoJSON.FeatureCollection | null = null;
+let savedData: GeoJSON.GeoJSON | null = null;
 
 map.addStyleChangeHandler({
-    onStyleAboutToChange: () => {
-        const source = map.mapLibreMap.getSource('my-data') as GeoJSONSource | undefined;
+    onStyleAboutToChange: async () => {
+        const source = map.mapLibreMap.getSource<GeoJSONSource>('my-data');
         if (source) {
-            savedData = source._data as GeoJSON.FeatureCollection;
+            savedData = await source.getData();
             map.mapLibreMap.removeLayer('my-layer');
             map.mapLibreMap.removeSource('my-data');
         }

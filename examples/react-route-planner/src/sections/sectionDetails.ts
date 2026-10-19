@@ -1,11 +1,13 @@
-import type {
-    ImportantRoadStretchProps,
-    Maneuver,
-    RoadInformation,
-    Route,
-    RouteProgressAtPoint,
-    SectionProps,
-    TrafficIncidentCategory,
+import {
+    getImportantRoads,
+    getSectionOverlap,
+    type ImportantRoadStretchProps,
+    type Maneuver,
+    type RoadInformation,
+    type Route,
+    type RouteProgressAtPoint,
+    type SectionProps,
+    type TrafficIncidentCategory,
 } from '@tomtom-org/maps-sdk/core';
 import { addSeconds, clockTime, distance, duration, progressInto } from '../format';
 import { isCountry, isTraffic, type LaneBlock, type LaneId } from './routeLanes';
@@ -30,9 +32,6 @@ export type SectionDetails = {
     facts: SectionFact[];
 };
 
-const overlaps = (section: SectionProps, other: SectionProps) =>
-    section.startPointIndex < other.endPointIndex && other.startPointIndex < section.endPointIndex;
-
 const unique = (labels: (string | undefined)[]): string[] => [
     ...new Set(labels.filter((label): label is string => Boolean(label))),
 ];
@@ -56,8 +55,10 @@ const roadOnSegment = (route: Route, segment: number): string | undefined => {
     const fromGuidance =
         nextManeuver &&
         joinLabels([...roadNumbersOf(nextManeuver.previousRoadInfo), nextManeuver.previousRoadInfo.streetName?.text]);
+    // A stretch, not getImportantRoads: a segment can measure 0 m, where a stop repeats its vertex.
+    const segmentSpan = { startPointIndex: segment, endPointIndex: segment + 1 };
     const stretch = route.properties.sections.importantRoadStretch
-        ?.filter((candidate) => candidate.startPointIndex <= segment && segment < candidate.endPointIndex)
+        ?.filter((candidate) => getSectionOverlap(candidate, segmentSpan))
         .sort((first, second) => first.index - second.index)[0];
     return fromGuidance ?? (stretch && stretchLabel(stretch));
 };
@@ -67,21 +68,19 @@ const roadNumbersAlong = (route: Route, section: SectionProps): string[] => {
     const ahead = instructionsOf(route).filter((instruction) => instruction.pathPointIndex > section.startPointIndex);
     const lastIndex = ahead.findIndex((instruction) => instruction.pathPointIndex >= section.endPointIndex);
     const covering = lastIndex === -1 ? ahead : ahead.slice(0, lastIndex + 1);
-    const { importantRoadStretch = [], roadShields = [] } = route.properties.sections;
+    const { roadShields = [] } = route.properties.sections;
     return unique([
         ...covering.flatMap((instruction) => roadNumbersOf(instruction.previousRoadInfo)),
-        ...importantRoadStretch
-            .filter((stretch) => overlaps(stretch, section))
-            .flatMap((stretch) => stretch.roadNumbers ?? []),
+        ...getImportantRoads(route, { within: [section] }).flatMap((road) => road.roadNumbers),
         ...roadShields
-            .filter((shields) => overlaps(shields, section))
+            .filter((shields) => getSectionOverlap(shields, section))
             .flatMap((shields) => shields.roadShieldReferences.map((reference) => reference.shieldContent)),
     ]);
 };
 
 const speedLimitsAlong = (route: Route, section: SectionProps): string | undefined => {
     const limits = (route.properties.sections.speedLimit ?? [])
-        .filter((limit) => overlaps(limit, section))
+        .filter((limit) => getSectionOverlap(limit, section))
         .map((limit) => limit.maxSpeedLimitInKmh);
     if (!limits.length) return undefined;
 
@@ -114,7 +113,7 @@ const onBoardFacts =
 const vignetteCountries = (route: Route, section: SectionProps): string[] =>
     unique(
         (route.properties.sections.tollVignette ?? [])
-            .filter((vignette) => overlaps(vignette, section))
+            .filter((vignette) => getSectionOverlap(vignette, section))
             .map((vignette) => countryName(vignette.countryCodeISO2)),
     );
 
@@ -145,7 +144,7 @@ const laneFacts: Partial<Record<LaneId, (route: Route, section: SectionProps) =>
         ];
     },
     toll: (route, section) => {
-        const perUse = (route.properties.sections.toll ?? []).some((toll) => overlaps(toll, section));
+        const perUse = (route.properties.sections.toll ?? []).some((toll) => getSectionOverlap(toll, section));
         const vignette = vignetteCountries(route, section);
         const payment = [
             ...(perUse ? ['Pay per use'] : []),

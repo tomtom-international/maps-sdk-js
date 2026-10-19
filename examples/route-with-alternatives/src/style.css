@@ -2,4 +2,27 @@
 @import "../../src/templates/css/base/global.css";
 @import "../../src/templates/css/base/typography.css";
 @import "../../src/templates/css/panel/custom-panel.css";
-@import "../../src/templates/css/form/dropdown.css";
+@import "../../src/templates/css/button/option-card.css";
+@import "../../src/templates/css/button/road-chip.css";
+@import "../../src/templates/css/form/toggle.css";
+
+.ui-route-cards {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ui-space-2);
+}
+
+.ui-route-card {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: var(--ui-space-2) var(--ui-space-3);
+}
+
+.ui-route-card-detail,
+.ui-route-card-roads,
+.ui-route-card-compare {
+    font-size: var(--ui-font-caption-m);
+    line-height: var(--ui-font-caption-m-lh);
+    color: var(--ui-text-med-em);
+}

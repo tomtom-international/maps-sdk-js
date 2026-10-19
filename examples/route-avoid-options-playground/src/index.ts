@@ -8,6 +8,7 @@ import { API_KEY } from './config';
 import { buildAvoidHTML, createSectionPopup } from './popup';
 import './style.css';
 import { initTogglePanel } from './togglePanel';
+import { setupVehicleOptions } from './vehicleOptions';
 
 TomTomConfig.instance.put({ apiKey: API_KEY });
 
@@ -29,6 +30,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     let suppressNextMapClick = false;
     let avoidedAreasManager: ReturnType<typeof setupAvoidedAreas>;
     let avoidOptions: ReturnType<typeof setupAvoidOptions>;
+    let vehicleOptions: ReturnType<typeof setupVehicleOptions>;
 
     const recalculate = async () => {
         const areas = avoidedAreasManager.areas;
@@ -36,6 +38,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         const routeResult = await calculateRoute({
             locations,
             costModel: { avoid: avoidOptions.activeAvoidTypes, avoidAreas },
+            vehicle: vehicleOptions.vehicle,
         });
         currentRoute = routeResult.features[0];
         await routingModule.showWaypoints(locations);
@@ -52,8 +55,10 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
             suppressNextMapClick = true;
         },
     );
+    vehicleOptions = setupVehicleOptions(recalculate);
     avoidOptions = setupAvoidOptions(recalculate, async () => {
         avoidedAreasManager.reset();
+        vehicleOptions.reset();
         await recalculate();
     });
 

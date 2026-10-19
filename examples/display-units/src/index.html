@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Display units</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">Display units</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+
+            <div class="ui-panel-content">
+                <div class="ui-section">
+                    <span class="ui-form-label">Units</span>
+                    <div class="ui-radio-group" id="ui-units"></div>
+                </div>
+
+                <div class="ui-section">
+                    <span class="ui-form-label">Route summary</span>
+                    <p class="ui-summary" id="ui-summary" role="status"></p>
+                    <p class="ui-note">
+                        Printed with <code>formatDistance</code> and <code>formatDuration</code>, which read the same
+                        global units as the map.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

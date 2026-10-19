@@ -37,10 +37,10 @@ const TrafficJam = mapSign(
     `${DISC}M11 6h6l1.5 3v3.5H17V14h-1.5V9h-6zm.6 1h4.8l.75 1.5h-6.3zM7 10h6l1.5 3v3.5H13V18h-1.5v-1.5h-3V18H7v-1.5H5.5V13zm.6 1h4.8l1 2H6.6zm-.85 3h1.5v1h-1.5zm5.5 0h1.5v1h-1.5z`,
 );
 
-/** The plaque the route writes a border crossing on, such as "IT → CH". */
-const BorderPlaque = mapSign(
-    'border-plaque',
-    'M3 6h18q2 0 2 2v8q0 2-2 2H3q-2 0-2-2V8q0-2 2-2zm4 5h6.5V9l4 3-4 3v-2H7z',
+/** The bubble the route stands on a border crossing, such as "IT → CH", its tail on the border. */
+const BorderBubble = mapSign(
+    'border-bubble',
+    'M4 4h16q3 0 3 3v7q0 3-3 3h-6l-2 3-2-3H4q-3 0-3-3V7q0-3 3-3zm3 5.75h6.5V8l4 2.5-4 2.5v-1.75H7z',
 );
 
 /**
@@ -57,7 +57,7 @@ export const roadIcons = {
     lowEmissionZone: Leaf,
     urban: Building,
     unpaved: Tractor,
-    country: BorderPlaque,
+    country: BorderBubble,
     carpool: Users,
     repeat: Repeat,
 } satisfies Record<string, LucideIcon>;

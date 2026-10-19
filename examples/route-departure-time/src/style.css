@@ -1,0 +1,68 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+
+/* CUSTOM STYLES (example-specific) */
+
+.ui-customPanel {
+    width: 300px;
+}
+
+.ui-departures {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ui-space-1);
+}
+
+.ui-departure {
+    display: grid;
+    grid-template-columns: auto 3em 1fr 4.5em;
+    align-items: center;
+    gap: var(--ui-space-2);
+    padding: var(--ui-space-1) 0;
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-body-s);
+    font-variant-numeric: tabular-nums;
+    color: var(--ui-text-high-em);
+    cursor: pointer;
+}
+
+.ui-departure input[type="radio"] {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    cursor: pointer;
+    accent-color: var(--ui-surface-brand-red);
+}
+
+.ui-departure-track {
+    height: 10px;
+    border-radius: var(--ui-rounded-5);
+    background: var(--ui-surface-1);
+    overflow: hidden;
+}
+
+.ui-departure-bar {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--ui-surface-3);
+}
+
+.ui-departure:has(input:checked) .ui-departure-bar {
+    background: var(--ui-surface-high-em);
+}
+
+.ui-departure-fastest .ui-departure-bar,
+.ui-departure-fastest:has(input:checked) .ui-departure-bar {
+    background: var(--ui-surface-success);
+}
+
+.ui-departure-duration {
+    text-align: right;
+}
+
+.ui-departure:has(input:checked) .ui-departure-duration {
+    font-weight: var(--ui-font-weight-bold);
+}

@@ -8,13 +8,13 @@ import { API_KEY } from './config';
 TomTomConfig.instance.put({ apiKey: API_KEY });
 
 (async () => {
-    const location = await geocodeOne('Amsterdam Centraal, NL');
+    const location = await geocodeOne('Amsterdam, NL');
 
     const map = new TomTomMap({
         mapLibre: {
             container: 'sdk-map',
-            center: location.geometry.coordinates as [number, number],
-            zoom: 17,
+            bounds: location.bbox,
+            fitBoundsOptions: { padding: 50 },
         },
     });
 

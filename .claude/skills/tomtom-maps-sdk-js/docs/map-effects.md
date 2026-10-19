@@ -153,6 +153,7 @@ Re-renders at the new ratio (never resamples), waits for `idle` (15 s at most), 
 
 - Without `preserveDrawingBuffer: true`, bloom is blank, the depth of field and app passes do nothing, and capture returns an empty map.
 - Effects are DOM overlays under the map controls with `pointer-events: none`; they do not affect hit-testing or SDK events.
+- The chain takes its WebGL2 context on the first pass or depth of field it runs, not in the constructor; bloom and the CSS overlays need none. Once taken it is held until `remove()`.
 - Compositing order: the GPU chain (your passes, the depth of field), then bloom blended in `screen` mode over it, then the CSS overlays (grade, fog, edge blur, tint, vignette) over both — so a grade, tint or vignette changes the glow too.
 - Effects change the *frame*, the modules' knobs change the *style*; compose them (e.g. `await applyMapPreset(map, 'data-viz')` + `setKnob(effects, effectKnobCatalogue, 'grade.saturation', 0.4)`).
 - Bloom redraws on every map `render` (coalesced per animation frame) at a quarter of the pixels; keep `bloom.radius` moderate on large canvases.

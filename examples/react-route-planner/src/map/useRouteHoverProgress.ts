@@ -31,7 +31,7 @@ export const useRouteHoverProgress = (
     useEffect(() => {
         if (!modules) return;
 
-        const { map, routing, baseMap } = modules;
+        const { map, routing, baseMapUnderRoutes } = modules;
         const popup = new Popup({
             className: 'ui-maplibre-popup ui-progress-popup',
             closeButton: false,
@@ -70,7 +70,7 @@ export const useRouteHoverProgress = (
             routing.events.mainLines.on('hover', hoverLine),
             routing.events.mainLines.on('hover-move', hoverLine),
             ...onRouteLineLeave(modules, leave),
-            baseMap.events.on('click', leave),
+            baseMapUnderRoutes.on('click', leave),
         ];
         return () => {
             for (const unsubscribe of unsubscribes) unsubscribe();

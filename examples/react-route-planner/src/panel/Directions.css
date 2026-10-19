@@ -63,6 +63,17 @@
     flex-direction: column;
 }
 
+.ui-direction-lanes {
+    display: flex;
+    margin: var(--ui-space-1) 0;
+}
+
+.ui-direction-lanes svg {
+    width: auto;
+    max-width: 100%;
+    height: 28px;
+}
+
 .ui-direction-meta {
     font-size: var(--ui-font-caption-m);
     color: var(--ui-text-med-em);

@@ -1,4 +1,4 @@
-import type { Instruction, Maneuver, Route } from '@tomtom-org/maps-sdk/core';
+import { getInstructionLanes, type Instruction, type Maneuver, type Route } from '@tomtom-org/maps-sdk/core';
 import type { TomTomMap } from '@tomtom-org/maps-sdk/map';
 import {
     ArrowUp,
@@ -17,6 +17,7 @@ import { useEffect, useRef } from 'react';
 import { addSeconds, clockTime, distance } from '../format';
 import { flyBetweenPanels } from '../map/coveringPanels';
 import { roadIcons } from './icons';
+import { laneSign } from './laneSign';
 import './Directions.css';
 
 type DirectionsProps = {
@@ -53,6 +54,12 @@ const maneuverIcon = (maneuver: Maneuver): LucideIcon =>
 
 const secondsInto = (instruction: Instruction) => instruction.routePath[0]?.travelTimeInSeconds ?? 0;
 
+/** The lanes into a maneuver, drawn in the row's text colour. */
+const laneSignOf = (route: Route, instruction: Instruction): string | undefined => {
+    const lanes = getInstructionLanes(route, instruction);
+    return lanes && laneSign(lanes);
+};
+
 /** Keeps the instruction the replay is on in view, without scrolling the rest of the page. */
 const useScrollIntoView = (index: number) => {
     const list = useRef<HTMLOListElement>(null);
@@ -83,6 +90,7 @@ export const Directions = ({ map, route, elapsedSeconds, onJump }: DirectionsPro
                 const fromPrevious = previous && instruction.routeOffsetInMeters - previous.routeOffsetInMeters;
                 const secondsIn = secondsInto(instruction);
                 const ManeuverIcon = maneuverIcon(instruction.maneuver);
+                const sign = laneSignOf(route, instruction);
                 const state = index === current ? ' is-current' : index < current ? ' is-passed' : '';
                 return (
                     <li key={`${instruction.pathPointIndex}-${instruction.maneuver}`}>
@@ -100,6 +108,9 @@ export const Directions = ({ map, route, elapsedSeconds, onJump }: DirectionsPro
                             </span>
                             <span className="ui-direction-body">
                                 <span className="ui-direction-text">{instructionText(instruction)}</span>
+                                {sign && (
+                                    <span className="ui-direction-lanes" dangerouslySetInnerHTML={{ __html: sign }} />
+                                )}
                                 <span className="ui-direction-meta">
                                     {clockTime(addSeconds(departureTime, secondsIn))}
                                     {fromPrevious ? ` · after ${distance(fromPrevious)}` : ''}

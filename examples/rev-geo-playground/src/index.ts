@@ -1,4 +1,3 @@
-import type { RevGeoAddressProps } from '@tomtom-org/maps-sdk/core';
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { BaseMapModule, PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { createLatestRequest, reverseGeocode } from '@tomtom-org/maps-sdk/services';
@@ -80,12 +79,12 @@ const toLngLat = (position: Position): LngLat => new LngLat(position[0], positio
 
             const result = query.value;
             // With a radius set, the service can answer with the queried point and no properties.
-            const match: RevGeoAddressProps | undefined = result.properties;
-            if (!match) {
+            if (!result.properties) {
                 clearMatch();
                 showNoMatch();
                 return;
             }
+            const match = result.properties;
 
             // The result's geometry is the point that was asked about; `originalPosition` is what
             // the service matched it to.

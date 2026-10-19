@@ -60,6 +60,7 @@ const CLICKED_ADDRESS_ID = 'clicked-address';
     const baseMap = await BaseMapModule.get(map);
     baseMap.events.on('click', async (_feature, lngLat) => {
         const address = await reverseGeocode({ position: lngLat.toArray() });
+        if (!address.properties) return;
         // The result geometry is the clicked point; `originalPosition` is the address it matched.
         clickedAddress = {
             ...address,

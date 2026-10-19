@@ -54,7 +54,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
 
     const showRevGeoResponses = (responses: ReverseGeocodingResponse[]) => {
         addressesElement.innerHTML = responses
-            .map((response) => response.properties.address.freeformAddress)
+            .map((response) => response.properties?.address.freeformAddress ?? '')
             .join('<br>');
     };
 

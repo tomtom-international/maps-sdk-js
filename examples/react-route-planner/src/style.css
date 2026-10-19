@@ -16,6 +16,7 @@
 @import "../../src/templates/css/button/groups.css";
 @import "../../src/templates/css/button/chips.css";
 @import "../../src/templates/css/button/option-card.css";
+@import "../../src/templates/css/button/road-chip.css";
 @import "../../src/templates/css/maplibre/popup.css";
 
 .ui-icon {

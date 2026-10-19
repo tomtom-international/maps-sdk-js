@@ -12,9 +12,8 @@ This plugin for the [TomTom Maps SDK for JavaScript](https://docs.tomtom.com/map
 ## Features
 
 - Streams 3D landmark tiles for the current viewport.
-- Shows the basemap 3D building layer (hidden by default in the standard styles) for full 3D city context.
 - Hides basemap extruded buildings flagged with `has_landmark` so they don't clip through the landmark meshes.
-- Three display modes: `inherited` (the default, mirrors the basemap building colour and opacity), `dark` and `light`.
+- Shades the landmarks like the base map's 3D buildings, and follows whatever restyles them, such as the map colours. Set a knob, such as `color` or `opacity`, for a look of your own.
 - Restores itself automatically across map style changes.
 
 ## Quickstart
@@ -25,24 +24,27 @@ This plugin declares `@tomtom-org/maps-sdk`, `maplibre-gl` and `three` as peer d
 npm install @tomtom-org/maps-sdk maplibre-gl three @tomtom-org/maps-sdk-plugin-landmarks-3d
 ```
 
-1. Follow the SDK [Project setup](https://docs.tomtom.com/maps-sdk-js/introduction/project-setup) or the Map [quickstart](https://docs.tomtom.com/maps-sdk-js/guides/map/quickstart) to create and initialize a `TomTomMap`. For the best result, use a pitched camera. The plugin turns on the standard style's 3D building layer for you.
+1. Follow the SDK [Project setup](https://docs.tomtom.com/maps-sdk-js/introduction/project-setup) or the Map [quickstart](https://docs.tomtom.com/maps-sdk-js/guides/map/quickstart) to create and initialize a `TomTomMap`. For the best result, use a pitched camera.
 
 2. Import and use the plugin (plugin-specific steps only):
 
 ```ts
+import { BaseMapModule } from '@tomtom-org/maps-sdk/map';
 import { Landmarks3D } from '@tomtom-org/maps-sdk-plugin-landmarks-3d';
 
 // assume `map` is your initialized TomTomMap instance
+// the 3D city around the landmarks, hidden in most standard styles
+await BaseMapModule.get(map, { groups: { buildings3D: { visible: true } } });
 const landmarks = new Landmarks3D(map);
 
-// optional: give the landmarks the dark style's building look instead of the base map's
-await landmarks.setDisplayMode('dark');
+// optional: a colour of your own, while the other knobs keep following the base map
+landmarks.updateConfig({ color: '#c8b28a' });
 
 // optional: hide them, and bring them back with setVisible(true)
-await landmarks.setVisible(false);
+landmarks.setVisible(false);
 ```
 
-`new Landmarks3D(map, { displayMode, visible, minZoom, maxZoom })` sets the same options up front. By default, the zoom range matches that of the base map's 3D building layer.
+`new Landmarks3D(map, { color, opacity, verticalGradient, visible, minZoom, maxZoom })` sets the same knobs up front. Each one you leave out follows the base map's 3D buildings, zoom range included.
 
 ## License
 

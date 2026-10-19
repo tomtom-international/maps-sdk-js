@@ -60,6 +60,9 @@ poi?.openingHours?.timeRanges;          // [{ start: { date, hour, minute }, end
 poi?.timeZone?.ianaId;                   // 'Europe/Amsterdam'
 ```
 
+A `timeRanges` `Date` holds the POI's local wall-clock time read in the runtime's time zone, not the instant. To tell
+whether it is open now, compare it with the current time in `poi.timeZone`, which a search or `getPlaceDetails` returns when it passes `timeZone: 'iana'`.
+
 ### Data source IDs (for follow-up calls)
 
 ```ts
@@ -163,6 +166,8 @@ const sections: SectionsProps = route.properties.sections;
 sections.leg;                // LegSectionProps[] — per waypoint segment
 sections.traffic;            // TrafficSectionProps[] — incident-affected stretches
 sections.country;            // CountrySectionProps[] — cross-border transitions
+sections.distinct;           // DistinctSectionProps[] — stretches no other route of the response drives, with lengthInMeters;
+                             // computed by calculateRoute on every route when it returns 2+ (getDistinctSections)
 sections.toll;               // SectionProps[] — stretches charging a per-use toll
 sections.tollRoad;           // SectionProps[] — stretches that cost money by ANY scheme
 sections.tollVignette;       // CountrySectionProps[] — one per country needing a vignette
@@ -178,7 +183,7 @@ sections.roadShields;        // RoadShieldSectionProps[]
 sections.importantRoadStretch; // ImportantRoadStretchProps[]
 sections.carpool;            // SectionProps[]; also carTrain, lowEmissionZone, vehicleRestricted
 
-// Sections have startPointIndex, endPointIndex (indices into route.geometry.coordinates);
+// Sections have startPointIndex, endPointIndex (indices into route.geometry.coordinates; the pair alone is a RouteSpan);
 // optional on leg sections, present when the route has its path geometry
 const section = sections.motorway?.[0];
 if (section) route.geometry.coordinates.slice(section.startPointIndex, section.endPointIndex + 1);
@@ -217,6 +222,7 @@ sections.traffic?.forEach(t => {
     t.delayInSeconds;      // number
     t.effectiveSpeedInKmh; // number
     t.eventId;             // string — join key back to the traffic incident details service
+    t.tec?.causes;         // TPEG2-TEC codes; `tec` is absent when the service has none, so guard it
 });
 ```
 

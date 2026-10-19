@@ -53,11 +53,13 @@ export function WhitespacePanel() {
         .sort((a, b) => b.opp - a.opp);
 
     const goalLabel = data.colocation === 'avoid' ? 'gap' : 'in cluster';
+    const metSingular = data.colocation === 'avoid' ? 'a genuine gap' : 'inside a cluster';
     const metPlural = data.colocation === 'avoid' ? 'genuine gaps' : 'inside a cluster';
-    const noneMessage =
-        data.colocation === 'avoid'
-            ? `No genuine gaps: ${data.area} is already well-served, so the pockets below are only the least-served busy spots.`
-            : 'None of these sit inside an existing cluster; they are just the closest available spots.';
+    const noneMessage = !data.pockets.features.length
+        ? `No pockets to rank in ${data.area}.`
+        : data.colocation === 'avoid'
+          ? `No genuine gaps: ${data.area} is already well-served, so the pockets below are only the least-served busy spots.`
+          : 'None of these sit inside an existing cluster; they are just the closest available spots.';
 
     const breakdownRows = ({ feature }: { feature: WhitespacePocket }) => {
         const { demand, households, nearestTargetMeters } = feature.properties;
@@ -95,7 +97,7 @@ export function WhitespacePanel() {
                 ) : (
                     <span style={captionStyle}>
                         {data.pocketsMeetingGoal} of {data.pockets.features.length}{' '}
-                        {data.pocketsMeetingGoal === 1 ? 'is a genuine gap' : `are ${metPlural}`}.
+                        {data.pocketsMeetingGoal === 1 ? `is ${metSingular}` : `are ${metPlural}`}.
                     </span>
                 )}
             </div>

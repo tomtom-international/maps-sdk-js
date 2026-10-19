@@ -23,7 +23,7 @@ const INITIAL_STYLE: StandardStyleID = 'monoLight';
 // independent fill/line positioning is obvious on load.
 const state: GeometryStyleState = {
     fill: { style: 'filled', color: '#2A5BD7', opacity: 0.35 },
-    line: { color: '#1B3A8C', width: 3 },
+    line: { color: '#1B3A8C', width: 3, pattern: 'solid' },
     beforeLayerConfig: { fill: 'lowestRoadLine', line: 'lowestLabel' },
     highlight: { fill: {}, line: {} },
 };

@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.1.0
+
+### Minor Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** `Landmarks3D` takes its look as knobs, each one following the base map's 3D buildings until you set it
+  
+  - `color`, `opacity`, `verticalGradient`, `visible`, `minZoom` and `maxZoom` are knobs in the new `landmarks3DKnobCatalogue`. Set them with `applyConfig`, `updateConfig`, or the SDK's `setKnob` and `setKnobs`, read them with `getConfig` and `getKnob`, and unset them with `resetKnob` and `resetConfig`
+  - A knob left unset follows the base map's `3D - Building` layer through `setStyle` and whatever restyles it: the map colours, such as `setMapColors({ artificial })`, or a paint property set on the layer directly
+  - **Breaking:** the plugin no longer shows the `3D - Building` layer, which it used to turn visible on every style load over the `BaseMapModule`'s `buildings3D` group. For the 3D city around the landmarks, show that group: `BaseMapModule.get(map, { groups: { buildings3D: { visible: true } } })`
+  - `displayMode`, `setDisplayMode`, `getDisplayMode` and `Landmarks3DDisplayMode` are removed. For `'dark'` use `updateConfig({ color: 'hsl(210, 9%, 17%)' })`, for `'light'` use `updateConfig({ color: 'hsl(38, 6%, 90%)' })`, and for `'inherited'` use `resetConfig()`
+  - `setVisible` returns `void` instead of a promise, and stores `visible` in the configuration
+  - The plugin needs `@tomtom-org/maps-sdk` 1.0.0-rc.2 or later
+  - examples: `landmarks-3d-plugin` sets the landmark knobs and a built-up colour they follow, `landmarks-3d-plugin` and `multiple-maps-landmarks` show the `buildings3D` group themselves, and `3d-terrain` drops `displayMode`
+
+### Patch Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - Plugins are side-effect free, so your bundler drops every part of a plugin your app doesn't use
+  
+  - Each plugin declares `"sideEffects": false`, and its knob catalogue and other module-level tables are dropped when nothing reads them
+  - flyover takes `@turf/turf` as a peer dependency, the copy the SDK already requires, instead of bundling its own
+  - The plugins' bundles keep their module-level names, as the SDK's do, so Sandpack and builds that transpile `node_modules` with Babel run their loops correctly
+
 ## 0.0.13
 
 ### Patch Changes

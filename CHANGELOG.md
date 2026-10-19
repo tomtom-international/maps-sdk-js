@@ -1,5 +1,218 @@
 # Changelog
 
+## 1.0.0-rc.3
+
+### Minor Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** core: ten plain POI sub-categories have codes of their own, such as `SCHOOL_GENERIC`, so a search can ask for plain schools without childcare or driving schools
+  
+  - **Breaking:** core: a place in one of them reads as its own code rather than its parent's. Where you match `SCHOOL`, `THEATER`, `SPORTS_CENTER`, `MARINA`, `WEIGH_STATION`, `OPEN_CAR_PARKING_AREA`, `COLLEGE_OR_UNIVERSITY`, `CAR_WASH`, `AMUSEMENT_PARK` or `TRAFFIC_CONTROL_DEPARTMENT` in `poi.categories`, match its `_GENERIC` code too
+  - **Breaking:** core: a `Record<POICategory, …>` needs an entry for each of the ten codes
+  - services: a `poiCategoryQuery` or `resolvePOICategories` word that names a plain sub-category best, such as `'rto'` or `'open car parking area'`, resolves to its `_GENERIC` code, which searches that sub-category alone rather than its parent and the parent's other sub-categories
+  - services: a word no longer spends one of its three codes on a sub-category of another code it already has, so `'medical'` and `'care'` also find `EMERGENCY_MEDICAL_SERVICE`
+  - map: a place with one of the new codes takes its parent's base-map icon, pin and `categoryIcons` entry
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** map: a route's border crossings stand in a bubble above the route, the summary bubble's shape with its tail on the border, instead of a plaque on the route line; `countryCrossings.alignment` is removed with its knob and the `CountryCrossingAlignment` type, and crossings no longer carry a `bearing`
+  
+  - The default bubble takes the selected summary bubble's default colours, so it follows the light or dark style, `setMapColors()` and the `colors.label` and `colors.labelHalo` knobs: white on a light style, dark grey on a dark one, the map's label halo lightened under a theme. `countryCrossings.color` and `countryCrossings.label.color` still override either.
+  - A crossing hides where a waypoint pin, a summary bubble, another symbol drawn above it or a crossing close by would cover it, and shows again once there's room.
+  - Migration: drop `alignment` from `countryCrossings`. A bubble stays level with the screen.
+  - examples: `route-sections-playground` drops its crossing alignment control and gains a map look picker, light, dark and an amber theme, that the crossings follow.
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - services: an instruction's `pathPointIndex` is the route point at its maneuver, rather than the first point a few metres short of it, so it usually falls inside the `lanes` section leading to the maneuver
+  
+  - **Breaking:** a `lanes` section's `properties` read `IS_MANEUVER`, as documented, where they passed the API's `isManeuver` through. Match `'IS_MANEUVER'` instead.
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** map: the types of place events, traffic features and waypoint ids match what the map hands your code
+  
+  - **Breaking:** map: under `pin-clustered`, a cluster no longer reaches the `events.places` handlers, which are typed `Place`, nor takes their hover and click states. The module-wide `events` receive it, with `cluster: true`, `cluster_id` and `point_count` in its properties
+  - **Breaking:** map: `roadSubcategory` is optional on `TrafficIncidentsModuleFeature`, and absent off `street` and `service` roads, as on `TrafficFlowModuleFeature`
+  - **Breaking:** map: a `TrafficFlowModuleFeature`'s geometry is a `LineString` or a `MultiLineString`, so check `geometry.type` before you read its coordinates
+  - **Breaking:** map: a waypoint keeps the id you give it, a number included, so `WaypointDisplayProps.id` is `string | number`
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** core: `getDistinctSections` finds the stretches each route has to itself, and `calculateRoute` returns them as `sections.distinct` whenever it returns two or more routes. `getImportantRoads` names the main roads a route takes, by road number
+  
+  - **Breaking:** core: `SectionType` and `sectionTypes` include `'distinct'`, which a request's `sectionTypes` can't ask for: the SDK adds it. A `Record<SectionType, …>` needs an entry for it
+  - **Breaking:** services: `InputSectionType` is only the types a request can ask for, so `leg` and `distinct` no longer compile in `sectionTypes`; type a list as `InputSectionTypes` rather than `SectionType[]`. `InputSectionTypes` is read-only, so build a list whole rather than `push` onto one. `inputSectionTypes`, `inputSectionTypesWithGuidance` and `sectionTypes` are read-only lists of their exact types
+  - core: each distinct section runs from where its route leaves the others to where it rejoins them, with its `lengthInMeters`, and `minLengthInMeters` leaves out the short ones
+  - core: `getSectionOverlap` gives the stretch two sections of one route share, whatever their types, as a `RouteSpan`
+  - core: `getSectionsWithin` lists a route's sections of every type within spans of it, such as the ferries, tolls and traffic on its distinct sections, with each section's share there to prorate a jam's delay
+  - core: `compareRoutes` tells what a route adds and avoids against a reference route, such as the selected alternative, or the route `costModel: { traffic: 'historical' }` gives, to say which jams and closures the live route avoids
+  - core: `getImportantRoads` groups a route's `importantRoadStretch` sections road by road, each with its `name`, its length and its stretches to ring with `setSectionFocus`; `within: sections.distinct` names what sets a route apart
+  - map: summary bubbles sit on their route's longest distinct section, read from `sections.distinct` when every route carries it, so a route crossing another at a junction keeps its whole stretch for the bubble
+  - examples: the `route-with-alternatives` and `react-route-planner` examples name the main roads of the stretches each route has to itself, and highlight a route the same way from the map or its card
+  - examples: each card in `route-with-alternatives` says what its route adds and avoids against the selected route, or against the usual route a toggle draws: ferries, car trains, tolls, closures, roadworks, traffic and unpaved roads
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** map: a route you select with a click takes the selected style alone, and a feature an `events.where()` predicate rejects stays inert, so narrowing a click to the alternatives keeps the selected route from reacting to the pointer
+  
+  - **Breaking:** map: an `events.where()` predicate decides on the top-most feature under the pointer. One it rejects keeps the map cursor and takes no hover or click highlight, and the handler doesn't run, even with a matching feature beneath
+  - map: `selectRoute` clears the `click` state of the route lines and summary bubbles, so a route you select with a click no longer stays highlighted
+  - map: a long hover comes on the feature under the pointer when it comes due, so a still pointer no longer long-hovers a route as it was before a click selected it, which drew its wider outline
+  - examples: `route-summary-bubbles-playground` selects only alternatives on click
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - services: **Breaking:** the service types say what each call returns and takes, from reverse geocoding and geometry data to the errors, and a call can set its own `retry`
+  - services: **Breaking:** `reverseGeocode` resolves a `ReverseGeocodingResponse`, a `Place` or, where nothing matches, the queried point without `properties`; checking `properties` narrows it to a `Place`
+  - services: **Breaking:** `geometryData` given a `Places` collection types each polygon's properties as `PlaceGeometryProps`, its place's properties plus `placeCoordinates`, and gives a polygon that matches no place `null` properties; a `Place[]` or geometry IDs return plain `PolygonFeatures`
+  - services: a service call's `retry` overrides the global one field by field, and `retry: undefined` turns retrying off for that call
+  - services: **Breaking:** a service call no longer takes `displayUnits`, which no service reads
+  - services: **Breaking:** `calculateReachableRanges` rejects a `404`, a `5xx` or an error without a status, as it does a `401`, `403` or `429`, and skips only the other `4xx`, such as the `400` `MAP_MATCHING_FAILURE` of an origin off the road network
+  - services: **Breaking:** `SDKError.service` is a `ServiceName`, the union of the services' names, and reachable ranges report `'ReachableRange'`, not `'Reachable Range'`
+  - services: **Breaking:** the wire-format types `PoiCategoriesResponseAPI`, `PoiCategoryAPI`, `PlaceDetailsResponseAPI` and `PlaceDetailsResultAPI` are no longer exported
+  - services: **Breaking:** `minFuzzyLevel` and `maxFuzzyLevel` take a `FuzzyLevel`, the whole numbers `1` to `4`
+  - core: **Breaking:** a route traffic section's `tec` is optional, and absent when the service sends no TEC codes
+
+### Patch Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - core: `languages` is a runtime export, and the distance formatter, bounding-box and route helpers handle their edge cases
+  
+  - core: `formatDistance` rounds below 10 m to one decimal, rounds a negative distance to the same magnitude as its positive, rounds feet and yards once rather than twice, and takes `undefined`
+  - core: `bboxCenter` centres a box that crosses the antimeridian, and `bboxFromGeoJSON` reads the 2D edges of a 3D `bbox`
+  - core: `getProgressAtNearestRoutePoint` returns `undefined` on a route under two coordinates, rather than throwing
+  - core: `getCoordinateAtRouteProgress` returns `undefined` past an end whose progress entry lacks the value, rather than `0`
+  - core: `findBestWaypointInsertionIndices` and `withInsertedWaypoints` prepend on a route under two coordinates
+  - core: `getRouteProgressForSection` and `getSectionBBox` take any `RouteSpan`, such as the one `getSectionOverlap` returns
+  - core: `TomTomConfig.instance.reset()` restores the retry defaults, even after a caller edited `get().retry`
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - core: `getInstructionLanes(route, instruction)` finds the `lanes` section leading to an instruction's maneuver, so a directions panel can show the lanes to take under each step
+  
+  - examples: `route-with-guidance` lists its instructions in a Directions panel, and both it and `react-route-planner` draw the lanes to take under each instruction that has them, as a small SVG sign of their own.
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - map: images without a DOM, base-map places under offset POI icons and a module's `events.off()` handle their edge cases
+  
+  - map: a module given an SVG image where there is no DOM, as in a server render or a Node.js test, adds no image rather than throwing a `TypeError`
+  - map: a `base-map` place keeps the style's icon offset when `POIsModule` offsets its own `categoryIcons` entry for the same category, rather than drawing its sprite that many pixels away
+  - map: `events.off('shown-features')` stops compiling on a module with no `show` method, which never emits that event, as `events.on('shown-features', …)` already did
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - map: geometries and reachable ranges can blend `fill.palette` from its first colour to its last, fade the bands away from the origin, and dash or dot their borders
+  
+  - map: `fill.paletteMode: 'ramp'` shades the features, or the bands, evenly from the palette's first colour to its last, blended in OKLCH. `'cycle'`, the default, takes the colours in turn as before
+  - map: `ReachableRangesModule`'s `fill.outermostOpacityFactor` multiplies the outermost band's fill opacity, and steps the bands between evenly from the innermost one. A lone range takes the factor
+  - map: `line.pattern` (`'solid'`, `'dashed'` or `'dotted'`) breaks up the borders of `GeometriesModule` and `ReachableRangesModule`, scaled with the border width
+  - map: the new settings are knobs of `geometriesKnobCatalogue` and `reachableRangesKnobCatalogue`
+  - map: `LinePattern` now types every line pattern; `SectionLinePattern` is deprecated in its favour
+  - examples: `geometry-config-playground` sets the border pattern, `multiple-geometries` swaps palettes and switches them between cycling and ramping, and `reachable-ranges-playground` offers two- and five-colour palettes to ramp
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - map: light the 3D buildings with the `view.light` knobs of `StylingFoundationsModule`, kept across style switches
+  
+  - `view.light.direction`, `view.light.altitude`, `view.light.alignment`, `view.light.color` and `view.light.intensity` set MapLibre's light. A part you leave unset takes the style's own light, otherwise MapLibre's default
+  - `stylingFoundationsKnobKinds` gains `number`, the kind of the direction, altitude and intensity
+  - `exportStyle()` carries the light the knobs set
+  - Once a light knob has been set, a clean `setStyle(…, { resetState: true })` draws the new style's light, rather than keeping the one the knobs had set
+  - examples: `map-styling-playground` shows the light knobs in a View light section
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - map: road shields, POI icons and road patterns no longer go missing when the map's own sprite loads more slowly than the place pins' sprite
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - map: modules keep their state across style switches, routes draw with a traffic halo, and events, images and knobs handle their edge cases
+  
+  - map: `RoutingModule` draws its routes when `sections.traffic.style` is `'halo'`, at creation, after a style switch and when switched at runtime
+  - map: `routeIndex` on route sections, summary bubbles and border crossings is the route's position among the shown routes, so `selectRoute` and clicks work when only some routes are shown
+  - map: `selectRoute` waits for the module before reading the shown routes, so a `showRoutes` it follows unawaited keeps its routes; a new `showRoutes` starts its summary bubbles with no click state
+  - map: route jam labels follow `displayUnits.time`, and a speed limit that changes at a border takes the country the route enters
+  - map: speed-limit signs anchor to their own instance's layers, and go to the top on a style without their usual anchor
+  - map: `PlacesModule` restores what it showed synchronously on a style switch, repaints its default pin when created with no config, and no longer fires `shown-features` for the restore
+  - map: a place category icon with no image resolves to the sprite's own id, a `poiCategory` icon mapping draws the `categoryIcons` entry for the category it returns, and `layers.*.layout` overrides win over the computed text and icon offsets
+  - map: `POIsModule` keeps its category icons after a `setStyle` to the style already loaded, and `FOOD_DRINKS_GROUP`, `HEALTH_GROUP` and `ENTERTAINMENT_GROUP` no longer pull in delicatessens, welfare organisations and clubs
+  - map: a centre title keeps its own hover and click state rather than its polygon's, and two identical reachable ranges no longer shade the inverted style
+  - map: raw layer edits stay on top of every module's knobs, a preset switch fires `config-change` once per module, and an unknown preset id such as `'toString'` throws the documented error
+  - map: event handlers survive a style switch that leaves their scope with no layers, hover detects a feature with id 0 and the same id in two sources, and a handler that unsubscribes mid-dispatch no longer skips the next one
+  - map: a slow image load no longer overwrites a newer image or re-adds a removed one, and `addOrUpdateImage` leaves a caller's `onload` alone
+  - map: a `setStyle` called before the first style load finishes on the style it asked for, or on the first style when its own fails to load
+  - map: `TrafficAreaAnalyticsModule` moves its hover outlines and highlights with their cells on a `beforeLayerConfig` change, and its heatmap stays valid when every tile has the same value
+  - map: an incident with an average speed of 0 km/h keeps it, and the jam delay label rounds to whole minutes first, with a marker sized for the rounded label
+  - map: `CustomGeoJSONModule` gives a feature with no id one no other feature holds, keeps a layer hidden that its spec sets to `visibility: 'none'`, re-adds an image whose options change, and no longer fires `shown-features` on a style switch
+  - map: a retry after the first style fails to load loads it, and a `setGeopoliticalView` or `setLanguage` called mid-switch applies once the map is ready without undoing a later call
+  - map: a display-units change keeps the hover and click states of route jams and speed-limit signs, `showWaypoints` draws with a config applied while it waited, a waypoint Feature with `properties: null` no longer throws, and speed-limit signs show mph in Jersey, Guernsey, the Isle of Man, the US territories, seven British Overseas Territories, eight Caribbean states and Samoa
+  - map: a dotted ferry or tunnel line draws its dots, and a named routing layer override placed under another routing layer, by its bare name or its full id, lands there rather than on top
+  - map: `PlacesModule` keeps entry point and connection event states across a style switch, a cluster rebuild and a config change, and a custom icon's label offset accounts for its `pixelRatio` and an SVG's drawn size, an SVG with only a width or a height taking the other from its viewBox
+  - map: `POIsModule` no longer turns on micro markers the style hides, `styling.layers` visibility edits no longer show a layer a module hides, a style sky that draws nothing no longer hides the theme sky while one with colours but no atmosphere counts as shown, and base-map group knobs apply in the order given
+  - map: an events scope you hold registers on the current sources after a style switch, clicking the empty map clears a click state set before one, an `on()` unsubscribe removes only its own registration, and a hovered place redrawn as selected doesn't fire `hover` twice
+  - map: a layer added in the same config change follows the layer it is pinned under when that layer moves
+  - map: geometries with their own ids keep them, and their event states, after a config change
+  - map: area analytics cells stop at `maxMeters`, their hover outlines and highlights follow the metric filter, and an empty `colorStops` falls back to the palette; `TrafficIncidentDetailsModule.show()` keeps the layers its `layers` config hides; an incident delay or report count of 0 is kept
+  - map: `calculateFittingBBox` clamps latitudes to the Web Mercator range and handles a box across the antimeridian, and `calculatePaddedBBox` covers a rotated map and cuts a panel touching one edge from its closest edge
+  - map: a module's `applyConfig` and `resetConfig` reach the event handlers already registered, so a new hover cursor or grace period applies, and a click on a cluster whose id matches a shown feature's hands the handler the cluster
+  - map: `TrafficFlowModule`, `TrafficIncidentsModule` and `TerrainModule` show and hide their layers alongside `styling.layers` edits, so an edit no longer shows traffic or a hillshade the module hides, and `BaseMapModule` no longer misrecords an `all-except` visibility for a layer group the style has no layers for
+  - map: a section's halo no longer vanishes under the route outline when the section sets a narrower `widthFactor` or `widthPreset`, and setting `countryCrossings.visible: true` while they are shown keeps a clicked crossing's state
+  - map: a `setStyle` call a newer one supersedes resolves even when its style fails to load, as documented
+  - map: area analytics extrusion highlights follow an extrusion height that ramps with zoom
+  - map: `POIsModuleSerializableConfig` is exported, and `stylingFoundationsKnobIds` is `readonly` like the other modules' knob id lists, so code that mutates it stops compiling
+  - map: `PlaceLayerName` leaves out `'additional'`, which names no layer, and `RouteLayersConfig.sections` names only the layers each type draws: `speedLimit` its sign layer, the other generated types their line and icon layers
+  - map: `PlacesModule.updateData` and a show after a config change drop the category, icon and extra properties the previous config added, and a custom module's layers that reference each other stack in dependency order at creation, on `applyConfig` and after a style switch
+  - map: `CustomGeoJSONLayerSpec` takes only the six layer types a GeoJSON source draws (circle, line, fill, fill-extrusion, symbol and heatmap)
+  - map: a route module with only some `displayUnits` of its own follows a global unit-system change for the rest
+  - map: a POIs event handler no longer receives base-map features, nor a base-map handler POI ones, and a `recently-hovered` state clears after its handler unsubscribes
+  - map: area analytics fall back to the defaults for each fill and line field left `undefined`, an inverted display cuts every region out of the mask, and `setHeight(undefined)` clears the extrusion height
+  - map: a jam with a delay of 0 shows no "1 min" marker, and a whole-hour jam delay gets the small sprite
+  - map: `setLayout` takes `visibility` as `'visible'` or `'none'` only, since a visibility expression was drawn as always visible, and `getStyleInput()` is typed as never `undefined`
+  - map: routes relabel on the next config change after a global display-units change, a style switch in between included, and a layer override's `reset()` after a style switch restores the new style's value, or after a `setStyle` to the style already loaded the value it replaced
+  - map: an `off()` followed by a style switch no longer leaves a hover, click or recently-hovered state stuck on a source
+  - map: a place config change gives back the place's own value of a property an `extraFeatureProps` entry replaced, and a clicked `micro` dot under `pin-clustered` keeps its state across a config change and a style switch
+  - map: `CustomGeoJSONModule.applyConfig` throws a clear error before changing anything when the config names other sources or `sourceID`s than the module was created with, where it used to apply half of it
+  - map: area analytics hover and click highlights stay off the cells a layer filter hides
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - core, services, map: the package now installs on Node.js 22 with any package manager
+  
+  - The `engines` field asks for Node.js 22 or newer instead of 24, and no longer names a pnpm version, so npm and pnpm stop warning about it on Node.js 22 and `engine-strict` installs succeed
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - map: Fade a route, the traffic overlays, the incidents you show and your place icons, each with one opacity setting
+  
+  - `RoutingModule` `opacity` fades the route lines and their outlines, selected and deselected; sections keep `sections.<type>.opacity`
+  - `TrafficFlowModule` and `TrafficIncidentsModule` `opacityFactor` multiply the style's own line opacity, its zoom ramp kept; the incident icons stay opaque
+  - `TrafficIncidentDetailsModule` `line.opacity` fades the incident lines; the markers and the highlight outline stay opaque
+  - `PlacesModule` `icon.opacity` fades the icons of every marker type, the cluster pin included; a selected place stays opaque
+  - Each is a knob in its module's catalogue
+  - `route-styling-playground` fades the route through `opacity`, `places-customize-playground` gains an icon opacity slider, and `traffic-incident-focus` fades the flow through `opacityFactor`
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - services: `calculateReachableRange` rejects an arrival time with a message that shows the `when` shape to use instead, `when: { option: 'departAt', date }`
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - map: Choose what a route's summary bubble says, its colour, typeface and the zooms it shows at, or write your own text per route
+  
+  - `summaryBubbles.fields` lists `duration`, `distance` and `trafficDelay` in the order shown; a bubble with nothing to say isn't drawn, so `['trafficDelay']` shows bubbles on delayed routes alone
+  - `summaryBubbles.minZoom`, `maxZoom`, `color` and `label` (`color`, `size`, `opacity`, `typeface`, `customTypeface`) are knobs in `routingKnobCatalogue`, all but `customTypeface`
+  - `summaryBubbles.label.title` takes a function of the route's summary, or a MapLibre expression, and writes its text in place of the fields
+  - The bubbles now follow the map: a theme's `labelHalo` and `label` colours once one sets them, else dark bubbles and light text on a dark style
+  - New `route-summary-bubbles-playground` example, its panel built from the catalogue
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - map: Summary bubbles keep clear of each other, show on the routes you choose and give each alternative's time against the selected route
+  
+  - Each bubble sits on a stretch of road its route has to itself, so routes sharing a motorway no longer hide each other's bubble, and it stays put when another route is selected
+  - `summaryBubbles.routes` shows the bubbles on `all` routes, the `selected` one alone or its `alternatives`
+  - The `durationDifference` field writes each other route's time against the selected one, such as `+6 min`, and `selectRoute` re-times the bubbles
+  - The `route-summary-bubbles-playground` example opens with bubbles timed against the selected route
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - services: validation catches the inputs that used to crash or reach the API, and routing, search suggestions and the shared pipeline handle their edge cases
+  
+  - services: validation rejects, as `INVALID_REQUEST`, what used to throw a plain `Error` or come back as a 400: an empty Polygon or a Point in `geometrySearch`, an impossible date such as `'2024-02-30'` in `trafficAreaAnalytics`, more than 100 incident ids, a non-integer fuzzy level or a `minFuzzyLevel` above `maxFuzzyLevel`, a routing avoid area with no bounding box, a one-point path, a non-integer `maxAlternatives`, an along-route search route under two positions, a zero reachable-range budget, a non-integer or out-of-range `limit` or `heading`, and an undefined `commonBaseURL`
+  - services: validation also rejects an empty array as a route location, a stop's `candidateEntryPoints` off the globe or `preferredEntryPointIndex` past them, an empty `geometrySearch` geometry list or ring, `days` beside an `endDate` in `trafficAreaAnalytics`, and a bare bbox of other than four numbers; it now accepts a GeometryCollection where a bounding box is read, bare or inside a Feature or FeatureCollection, and the documented `weightKG: 0`
+  - services: validation checks GeoJSON input against its type: a route waypoint's position, every position of a path, an along-route search route or a polygon ring, and a `geometrySearch` Circle centre must be on the globe, a bounding box can't be an empty array or collection, a path given as a Feature must hold a LineString, a stop's `pauseDurationSeconds` can't be negative and its `legCostModel` takes only known route types and avoid values, a geometry's coordinates must match its `type`, and a GeoJSON `bbox` must hold 4 or 6 numbers; `extendedPostalCodesFor`, `mapcodes`, `openingHours`, `timeZone`, `relatedPois` and `filters.indexes` reject values outside their types
+  - services: a validation error from a union schema lists what each branch rejected
+  - services: `onAPIResponse` receives the API's response body, as its type says, rather than the fetch envelope, and fires once per call
+  - services: proxy-credentials mode is decided per call, so a call with its own `apiKey` no longer sends `credentials: 'include'` under a global proxy setup
+  - services: an error response labelled JSON whose body doesn't parse still rejects with its status
+  - services: `calculateRoute` keeps the leg point indices right after a one-coordinate first leg, gives a road-shield section with no references `[]`, no longer lets an origin's `candidateEntryPoints` override `useEntryPoints`, maps TEC cause codes 16, 22 and 23 to `'other'` as the TPEG2-TEC table defines them, and gives each instruction with no road info an object of its own
+  - services: `trafficAreaAnalytics` no longer throws a `RangeError` over a region with hundreds of thousands of tiles, and `calculateReachableRanges` stops listening to the batch's abort signal once each call settles
+  - services: `getSearchSuggestions` shows a brand asked for alongside address-type kinds
+  - services: `getSearchSuggestions` no longer offers a category refinement whose `refine()` fails for a category id the SDK doesn't know, and leaves out autocomplete segments of a type the SDK doesn't know
+  - services: `getPOICategories` and `resolvePOICategories` validate their parameters and reject with `SDKAbortError` on an aborted signal even when the cache or the known codes answer the call
+  - services: `SDKServiceError.status` is `readonly`, like the other error fields
+  - services: `geocode` keeps in `geographyType` only the types core's `geographyTypes` lists, and rejects `extendedPostalCodesFor: ['POI']` as `INVALID_REQUEST`
+  - services: a blank `poiCategoryQuery` rejects rather than searching with no category filter
+  - services: `calculateReachableRanges` no longer needs `AbortSignal.any`, which React Native lacks, and the search cursor no longer needs `atob` and `btoa`
+  - services: a search or geocode result at distance 0 keeps its `distance`, Kosovo's `XK` maps to `XKX`, and `getPOICategories` hands out a copy of its cache
+  - services: `VehicleModel` and `VehicleDimensions` are exported
+  - core: `TomTomConfig.instance.put` drops `undefined` retry fields rather than storing them over the defaults
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - core, services, map: an app now bundles only the SDK code its imports use, so most single imports come out far smaller
+  
+  - core: importing one helper, such as `generateId`, bundles under 1 KB minified instead of about 30 KB with lodash
+  - services: `geocode` bundles about 14 KB minified instead of 68 KB, and `calculateRoute` 32 KB instead of 86 KB, with lodash
+  - map: `TomTomMap` bundles about 44 KB minified on top of MapLibre instead of 123 KB, with lodash
+  - core, services, map: the package declares `sideEffects: false`, so bundlers drop the modules an app doesn't import
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - map: a route's speed limit signs draw from zoom 12.5 by default instead of 11, two and a half zooms after the tunnel and closed-road signs, so they no longer crowd the overview of a route; `sections.speedLimit.sign.minZoom` still sets it, in steps of half a zoom in `routingKnobCatalogue`
+  
+  - examples: `route-speed-signs` sets `sign.minZoom` to 10, so its tiles post the signs on a whole route; `route-sections-playground` moves its `sign.minZoom` slider by half a zoom
+
 ## 1.0.0-rc.2
 
 ### Minor Changes

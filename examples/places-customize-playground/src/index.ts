@@ -1,7 +1,13 @@
 import type { BBox, Place } from '@tomtom-org/maps-sdk/core';
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import type { MapFont, PlaceIconConfig, PlacesMarkerType } from '@tomtom-org/maps-sdk/map';
-import { calculatePaddedBBox, PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
+import {
+    calculatePaddedBBox,
+    knobEntryOf,
+    PlacesModule,
+    placesKnobCatalogue,
+    TomTomMap,
+} from '@tomtom-org/maps-sdk/map';
 import { createLatestRequest, discoverPlaces } from '@tomtom-org/maps-sdk/services';
 import type { DataDrivenPropertyValueSpecification } from 'maplibre-gl';
 import tomtomLogo from './tomtomLogo.png';
@@ -11,6 +17,23 @@ import { initTogglePanel } from './togglePanel';
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
+
+// The slider spans the range the SDK takes, read from the catalogue with its default.
+const initIconOpacitySlider = (onInput: () => void): HTMLInputElement => {
+    const slider = document.getElementById('ui-icon-opacity') as HTMLInputElement;
+    const valueLabel = document.getElementById('ui-icon-opacity-value') as HTMLSpanElement;
+    const { range, default: defaultOpacity } = knobEntryOf(placesKnobCatalogue, 'icon.opacity');
+    slider.min = String(range?.min);
+    slider.max = String(range?.max);
+    slider.step = String(range?.step);
+    slider.value = String(defaultOpacity);
+    valueLabel.textContent = slider.value;
+    slider.addEventListener('input', () => {
+        valueLabel.textContent = slider.value;
+        onInput();
+    });
+    return slider;
+};
 
 (async () => {
     const map = new TomTomMap({
@@ -120,8 +143,9 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
             const config = customIconsToggle.checked
                 ? buildCustomIconsConfig(Number(offsetXSlider.value), Number(offsetYSlider.value))
                 : {};
-            places.updateConfig({ icon: config });
+            places.updateConfig({ icon: { ...config, opacity: Number(opacitySlider.value) } });
         };
+        const opacitySlider = initIconOpacitySlider(applyCustomIcons);
 
         customIconsToggle?.addEventListener('change', applyCustomIcons);
         offsetXSlider?.addEventListener('input', () => {

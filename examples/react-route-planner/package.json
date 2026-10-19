@@ -1,6 +1,6 @@
 {
   "name": "@examples/react-route-planner",
-  "description": "A full route planner in React: search, stops, route options, itinerary, directions and trip progress",
+  "description": "A full route planner in React: search, stops, route options, itinerary, directions and a fly-over of the trip",
   "type": "module",
   "scripts": {
     "build": "vite build --config ../example-vite.config.ts",
@@ -23,6 +23,8 @@
     "@radix-ui/react-tooltip": "^1.3.0",
     "@tanstack/react-query": "^5.104.1",
     "@tomtom-org/maps-sdk": "catalog:",
+    "@tomtom-org/maps-sdk-plugin-flyover": "catalog:",
+    "@tomtom-org/maps-sdk-plugin-map-effects": "catalog:",
     "downshift": "^9.4.0",
     "lucide-react": "~1.52.0",
     "react": "catalog:",

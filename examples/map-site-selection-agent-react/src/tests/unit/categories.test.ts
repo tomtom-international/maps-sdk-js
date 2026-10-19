@@ -16,8 +16,8 @@ const category = (
 const cafe = category('CAFE', 'Café', ['Cafe']);
 const cafePub = category('CAFE_PUB', 'Café/Pub', [], ['CAFE', 'INTERNET_CAFE']);
 const bar = category('BAR', 'Bar');
-const carWash = category('CAR_WASH', 'Car Wash', ['Auto Wash', 'Carwash'], ['CAR_WASH']);
-// Catalog entries as the POI Categories API returns them, Car Wash listed twice as it is there.
+const carWash = category('CAR_WASH', 'Car Wash', ['Auto Wash', 'Carwash'], ['CAR_WASH_GENERIC']);
+// Catalog entries as the POI Categories API returns them, Car Wash with its plain sub-category of the same name.
 const catalog = [
     cafePub,
     cafe,
@@ -25,7 +25,7 @@ const catalog = [
     category('TRUCK_STOP', 'Truck Stop', ['Coach & Truck Parking', 'Transport Café']),
     bar,
     carWash,
-    category('CAR_WASH', 'Car Wash', ['Auto Wash', 'Carwash']),
+    category('CAR_WASH_GENERIC', 'Car Wash', ['Auto Wash', 'Carwash']),
     category('CAR_DEALER', 'Car Dealer', ['Car Dealership']),
     category('CREPERIE', 'Crêperie'),
     category('PARKING_GARAGE', 'Parking Garage'),
@@ -85,7 +85,7 @@ describe('lookupCategoryCandidates', () => {
         expect(codes).toEqual(expect.arrayContaining(['INTERNET_CAFE', 'TRUCK_STOP']));
     });
 
-    it('lists a code the catalog repeats once', async () => {
+    it('lists a plain sub-category named like its parent once, as the parent', async () => {
         expect(await candidateCodes('auto wash')).toEqual(['CAR_WASH']);
     });
 

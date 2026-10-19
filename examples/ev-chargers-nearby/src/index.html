@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>EV chargers nearby</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+        <div class="ui-panel ui-panel-top-left ui-panel-md">
+            <h4 class="ui-subheading">Fast CCS chargers in Utrecht</h4>
+            <p id="station-name" class="ui-text">Click a charging station to see its connectors.</p>
+            <span id="station-address" class="ui-label"></span>
+            <dl id="connector-list" class="ui-detail-list"></dl>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

@@ -50,7 +50,7 @@ const all = map.mapLibreMap.queryRenderedFeatures([[p.x - 5, p.y + 5], [p.x + 5,
 
 ## Event priority (layer order)
 
-The top-most feature under the pointer picks the one module (and scope) that receives the event; it does not bubble to lower layers. Layer order comes from the style and each module's `beforeLayerConfig`, not from creation order. Hidden and collision-culled features receive nothing; nothing fires while the map moves.
+The top-most feature under the pointer picks the one module (and scope) that receives the event; it does not bubble to lower layers. Layer order comes from the style and each module's `beforeLayerConfig`, not from creation order. Only features a handler covers take part: a feature of a module, or scope, with no handler lets the event through to what lies below (a waypoint pin with no `waypoints` handler passes a hover to its route or the base map). Hidden and collision-culled features receive nothing; nothing fires while the map moves.
 
 ---
 
@@ -111,7 +111,8 @@ routing.events.tunnels.where((section) => section.properties.routeState === 'sel
     .on('click', showTunnel);
 ```
 
-- A predicate filters the whole stack under the pointer and promotes the first match to `feature`; with no match the handler is not called.
+- A predicate decides on the top-most feature the handler covers. A rejected top feature stays inert — map cursor, no `hover`/`click`/`long-hover` state, handler not called — even with a match beneath; no promotion. The handler's `features` are the matching ones, top first.
+- `routing.events.mainLines.where((route) => route.properties.routeState === 'deselected')` makes only alternatives selectable, also where one runs under the selected route.
 - `where()` returns plain `UserEvents`: no lifecycle events, no event-state methods.
 
 ## Named scopes
@@ -126,7 +127,8 @@ A module drawing several kinds of feature has one scope per kind on `events` —
 | `CustomGeoJSONModule` | your `sources` keys |
 
 ```ts
-routing.events.mainLines.on('click', (route) => routing.selectRoute(route.properties.index));
+routing.events.mainLines.where((route) => route.properties.routeState === 'deselected')
+    .on('click', (route) => routing.selectRoute(route.properties.index)); // selectRoute clears the lines' `click`; index is the response index, the shown position only when every route is shown
 routing.events.waypoints.on('hover', (waypoint, lngLat) => { });
 places.events.places.on('click', (place) => showDetails(place)); // places.events also covers connections + entry points
 ```
@@ -135,7 +137,7 @@ BaseMap, POIs, TrafficFlow, TrafficIncidents, TrafficIncidentDetails, TrafficAre
 
 ---
 
-## Background clicks — `BaseMapModule`
+## Background clicks and hovers — `BaseMapModule`
 
 The base map is under everything, so its handlers get what no module above takes (deselect, close popup, reverse geocode):
 
@@ -153,6 +155,27 @@ baseMap.events.where({ layerGroups: { show: 'all-except', values: names } }, { c
     .on('click', () => clearAllSelections());
 ```
 
+### Ending a hover — there is no leave event
+
+The pointer leaving a feature either hovers another one or leaves the map. To un-highlight your own UI (a card lit while its route is hovered), end it on the base map's `hover` and MapLibre's `mouseout`:
+
+```ts
+// Labels, shields and 3D buildings draw above the routes: any base map handler on them (click too) steals a route's hover.
+const underRoutes = baseMap.events.where({ layerGroups: { show: 'only',
+    values: ['land', 'water', 'buildings2D', 'roads', 'railways', 'ferries', 'borders'] } });
+routing.events.mainLines.on('hover', (route) => highlightCard(route.properties.index));
+underRoutes.on('hover', () => highlightCard(undefined));
+map.mapLibreMap.on('mouseout', () => { // left the map, e.g. for your panel
+    highlightCard(undefined);
+    routing.clearEventStates({ states: ['hover'] }); // leaving the map keeps the SDK's hover
+});
+```
+
+- A module with handlers of its own (places, POIs, waypoints you handle) takes the hover the base map would get: end it on that module's `hover` too.
+- Moving on to another feature or the base map turns the left feature's `hover` into `recently-hovered`, drawn as no state. Leaving the map keeps it `hover` (the pointer may be in your popup), so clear it in `mouseout` if it shouldn't stay.
+  The SDK still holds that feature as hovered, so coming straight back onto it fires no `hover`: it stays unlit until the pointer moves off it and back.
+- Don't add a handler only to detect leaving a module's features: it makes them hoverable, so they take the hover state and its look (waypoint pins grow).
+
 ---
 
 ## Event states — select, highlight and read back features
@@ -165,7 +188,8 @@ routing.setEventState({ index: 0, state: 'hover', mode: 'add' }); // 'add' keeps
 routing.setEventState({ index: 1, state: 'hover', show: false }); // show: false defers the redraw, for batches
 routing.clearEventState({ id: routeID });
 routing.clearEventStates({ states: ['hover'] });                  // or () for every state
-const { click: [selectedID] = [], hover = [] } = routing.getEventStates(); // ids by state, user's and yours; absent = none
+const { click: [clickedID] = [], hover = [] } = routing.getEventStates(); // ids by state, user's and yours; absent = none
+// a route's `click` is not its selection: selectRoute clears it; read routeState === 'selected'
 ```
 
 - The module methods act on exactly what `getShown()` returns as main features — Places `places` (clustered or not), Routing `mainLines`, Geometries / ReachableRanges `geometry`, Custom every source, TrafficIncidentDetails `incidents`, TrafficAreaAnalytics `hexgrid` + `square` + `heatmap`. An id from `getShown()` or a handler is an id they take.
@@ -187,6 +211,7 @@ For `hoverGracePeriodMS` (default 400; module `events` override wins) after the 
 ## Gotchas
 
 - `off(type)` removes **all** handlers of that type; use the unsubscribe from `on` to remove one. `off` takes no handler argument.
-- `'hover'` fires on entering each new feature, not once per enter/leave cycle. There is no leave event: react to the next `hover`, a base-map `hover`, or `recently-hovered`.
+- A named scope's `off(type)` also strips the module's module-wide handlers from that scope's features: after `places.events.places.off('click')`, a `places.events.on('click', h)` stops firing on pins but still fires on connections and entry points.
+- `'hover'` fires on entering each new feature, not once per enter/leave cycle. There is no leave event: see *Ending a hover* above.
 - `'long-hover'` never fires while the map moves; the first one after a move waits `longHoverDelayAfterMapMoveMS`.
-- Module-wide `places.events` and `routing.events` type `feature` as `MapGeoJSONFeature`; use `places.events.places` / `routing.events.mainLines` for `Place` / `Route`.
+- Module-wide `places.events` and `routing.events` type `feature` as `MapGeoJSONFeature`; use `places.events.places` / `routing.events.mainLines` for `Place` / `Route`. A `pin-clustered` cluster isn't a `Place`, so it reaches `places.events` only (`cluster: true`, `cluster_id`, `point_count`), never `places.events.places`.

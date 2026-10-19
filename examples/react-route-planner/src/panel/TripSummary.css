@@ -37,7 +37,8 @@
     font-weight: var(--ui-font-weight-bold);
 }
 
-.ui-alternative-detail {
+.ui-alternative-detail,
+.ui-alternative-roads {
     font-size: var(--ui-font-caption-m);
     color: var(--ui-text-med-em);
 }

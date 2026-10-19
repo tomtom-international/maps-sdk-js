@@ -1,5 +1,5 @@
 import { Place, Places, TomTomConfig } from '@tomtom-org/maps-sdk/core';
-import { BaseMapModule, PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { BaseMapModule, PlacesModule, TomTomMap, toPlaces } from '@tomtom-org/maps-sdk/map';
 import {
     createLatestRequest,
     discoverPlaces,
@@ -64,7 +64,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         selectedRefinement = undefined;
     };
 
-    // Places a refinement found: pins on the map, and a list that highlights them.
+    // Only pins the places: the list below draws itself from `shown-features`.
     const showPlaces = (places: Places) => {
         // Showing places drops their event states, so a further page puts the clicked one back.
         const [clickedID] = placesModule.getEventStates().click ?? [];
@@ -72,7 +72,14 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         void placesModule.show(places).then(() => {
             if (clickedID !== undefined) placesModule.setEventState({ id: clickedID, state: 'click' });
         });
-        for (const place of places.features) {
+    };
+
+    // Whatever the module draws, the list shows: a picked location, a page of results or a longer list.
+    placesModule.events.on('shown-features', (shown) => {
+        if (!('places' in shown)) return;
+        const { features } = toPlaces(shown.places);
+        placesList.innerHTML = '';
+        for (const place of features) {
             const lines = [place.properties.poi?.name, place.properties.address.freeformAddress];
             const item = listItem(
                 lines.filter((line) => line !== undefined),
@@ -87,8 +94,8 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
             );
             placesList.appendChild(item);
         }
-        if (!places.features.length) placesList.appendChild(listItem(['No results found']));
-    };
+        if (!features.length) placesList.appendChild(listItem(['No results found']));
+    });
 
     // A refinement's follow-up, narrowed to the current view. Each further page repeats the same
     // parameters with the previous page's `nextCursor`, and there is no further page without one.

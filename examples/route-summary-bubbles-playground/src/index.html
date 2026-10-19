@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Route summary bubbles playground</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+        <div id="ui-panel" class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">Route summary bubbles</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+            <div class="ui-panel-content">
+                <p class="ui-hint">Amsterdam to Rotterdam and its alternatives. Click a route to select it.</p>
+
+                <div class="ui-section">
+                    <h4 class="ui-subheading">Text and map</h4>
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" id="ui-namedRoutes">
+                        <span class="ui-toggle-switch"></span>
+                        Name each route
+                    </label>
+                    <label class="ui-form-field">
+                        <span class="ui-form-label">Map style</span>
+                        <select class="ui-dropdown" id="ui-style">
+                            <option value="streetLight" selected>streetLight</option>
+                            <option value="streetDark">streetDark</option>
+                        </select>
+                    </label>
+                </div>
+
+                <div class="ui-section">
+                    <h4 class="ui-subheading">Knobs</h4>
+                    <div id="ui-knobs"></div>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

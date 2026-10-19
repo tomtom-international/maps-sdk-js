@@ -1,12 +1,12 @@
 import type {
-    CountryCrossingAlignment,
     DrawnSectionType,
+    LinePattern,
     RouteWidth,
     SectionDrawStyle,
-    SectionLinePattern,
     SectionSignPlacement,
     SectionSignPriority,
     SectionSignUnit,
+    SectionTypeWithKnob,
     TomTomMap,
 } from '@tomtom-org/maps-sdk/map';
 import {
@@ -77,6 +77,19 @@ const enumKnobControls = (type: DrawnSectionType): string[] =>
         return selectKnob(type, knob, options, unsetLabel);
     });
 
+// 5 to 14, where a sign reads, rather than the catalogue's 0 to 22.
+const signMinZoomControl = (type: SectionTypeWithKnob<'sign'>): string => {
+    const { range, default: sdkDefault } = knobEntryOf(routingKnobCatalogue, `sections.${type}.sign.minZoom`);
+    return `<label class="section-knob section-knob-wide">
+                <span class="section-knob-name">sign.minZoom</span>
+                <span class="ui-slider-container">
+                    <input type="range" class="ui-slider" data-type="${type}" data-knob="sign.minZoom"
+                        min="5" max="14" step="${range?.step ?? 1}" value="${sdkDefault}">
+                    <span class="ui-slider-value" data-readout="${type}-sign-minZoom"></span>
+                </span>
+            </label>`;
+};
+
 const knobControls = (type: DrawnSectionType): string =>
     [
         ...enumKnobControls(type),
@@ -89,17 +102,7 @@ const knobControls = (type: DrawnSectionType): string =>
                     <span class="ui-slider-value" data-readout="${type}"></span>
                 </span>
             </label>`,
-        // 5 to 14, where a sign reads, rather than the catalogue's 0 to 22.
-        sectionSupportsKnob(type, 'sign') &&
-            `<label class="section-knob section-knob-wide">
-                <span class="section-knob-name">sign.minZoom</span>
-                <span class="ui-slider-container">
-                    <input type="range" class="ui-slider" data-type="${type}" data-knob="sign.minZoom"
-                        min="5" max="14" step="1"
-                        value="${knobEntryOf(routingKnobCatalogue, `sections.${type}.sign.minZoom`).default}">
-                    <span class="ui-slider-value" data-readout="${type}-sign-minZoom"></span>
-                </span>
-            </label>`,
+        sectionSupportsKnob(type, 'sign') && signMinZoomControl(type),
     ]
         .filter(Boolean)
         .join('');
@@ -196,7 +199,7 @@ const readSectionKnob = (target: HTMLInputElement | HTMLSelectElement, state: Pa
             section.style = (target.value || undefined) as SectionDrawStyle | undefined;
             break;
         case 'pattern':
-            section.pattern = (target.value || undefined) as SectionLinePattern | undefined;
+            section.pattern = (target.value || undefined) as LinePattern | undefined;
             break;
         case 'sign.placement':
             section.sign = { ...section.sign, placement: target.value as SectionSignPlacement };
@@ -235,9 +238,6 @@ const initCrossingRow = (state: PanelState, apply: () => void): void => {
                 break;
             case 'label.color':
                 state.countryCrossings.label = { color: target.value };
-                break;
-            case 'alignment':
-                state.countryCrossings.alignment = target.value as CountryCrossingAlignment;
                 break;
             case 'minZoom':
                 state.countryCrossings.minZoom = Number(target.value);
