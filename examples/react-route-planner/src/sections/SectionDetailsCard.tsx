@@ -1,4 +1,4 @@
-import type { Route } from '@tomtom-org/maps-sdk/core';
+import type { Route, TrafficSectionProps } from '@tomtom-org/maps-sdk/core';
 import { X } from 'lucide-react';
 import { useEffect, useMemo } from 'react';
 import { isTraffic, type LaneBlock, laneLook } from './routeLanes';
@@ -46,7 +46,7 @@ export const SectionDetailsCard = ({ route, block, onClose }: SectionDetailsCard
                 <li className="ui-section-span">{details.span}</li>
                 <SectionEndRow kind="Ends" end={details.end} />
             </ol>
-            {isTraffic(block.section) && <IncidentReport eventId={block.section.eventId} />}
+            {isTraffic(block.section) && <IncidentReport route={route} section={block.section} />}
             {details.facts.length > 0 && (
                 <dl className="ui-detail-list">
                     {details.facts.map(({ term, value }) => (
@@ -82,10 +82,10 @@ const SectionEndRow = ({ kind, end }: { kind: string; end: SectionEnd }) => {
 const reportTime = (date: Date): string => date.toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
 
 /** What the traffic service reports about the incident behind a traffic section. */
-const IncidentReport = ({ eventId }: { eventId?: string }) => {
-    const { data: incident, isPending, isError } = useIncident(eventId);
-    if (!eventId || isError || incident === null) return null;
-    if (isPending) return <p className="ui-note">Loading the incident report…</p>;
+const IncidentReport = ({ route, section }: { route: Route; section: TrafficSectionProps }) => {
+    const { data: incident, isLoading } = useIncident(route, section);
+    if (isLoading) return <p className="ui-note">Loading the incident report…</p>;
+    if (!incident) return null;
 
     const descriptions = [...new Set(incident.events.map((event) => event.description))];
     const times = [

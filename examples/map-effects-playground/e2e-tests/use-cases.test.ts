@@ -24,7 +24,9 @@ import { EXTRA_SHOT_OPTIONS, loadProdExample } from '../../src/e2e-test-utils/lo
 const USE_CASES = [
     { value: 'data-viz', shot: 'use-case-data-viz.png' },
     { value: 'night-driving', shot: 'use-case-night-driving.png' },
+    { value: 'street-lights', shot: 'use-case-street-lights.png' },
     { value: 'focus', shot: 'use-case-focus.png' },
+    { value: 'milky-distance', shot: 'use-case-milky-distance.png' },
 ] as const;
 
 /**
@@ -32,9 +34,10 @@ const USE_CASES = [
  *
  * @remarks
  * The use cases above are what an app would ship, and they combine effects — `data-viz` is grade
- * plus tint, `focus` is vignette plus edge blur. That leaves no picture of any single effect, and
- * none at all of `fog`, which no use case includes. These are the catalogue itself: every effect
- * once, in isolation, at a setting that shows what the knob does rather than what we recommend.
+ * plus tint, `focus` is vignette plus edge blur, and `milky-distance` is fog in an air of its own.
+ * That leaves no picture of any single effect at its theme's defaults. These are the catalogue
+ * itself: every effect once, in isolation, at a setting that shows what the knob does rather than
+ * what we recommend.
  *
  * The settings are deliberately past what anyone would ship. A shot at the tasteful value is what
  * `night-driving` already demonstrated: honest, and indistinguishable from the effect not running.
@@ -75,6 +78,15 @@ const ISOLATED_EFFECTS = [
             { group: 'depthOfField', knob: 'bokeh', value: 1 },
         ],
     },
+    {
+        // The other GPU effect, keyed on the style's major roads by default: a scope that resolved
+        // no colour would streak the whole frame instead, labels and all.
+        shot: 'effect-glare.png',
+        knobs: [
+            { group: 'glare', knob: 'intensity', value: 1 },
+            { group: 'glare', knob: 'length', value: 80 },
+        ],
+    },
 ] as const;
 
 const loadPlayground = (page: Page): Promise<string[]> => loadProdExample(page, 'map-effects-playground');
@@ -98,7 +110,8 @@ const knobField = (page: Page, group: string, knob: string) =>
         .locator('.ui-section', { has: page.locator('h4.ui-subheading', { hasText: group }) })
         .locator('.ui-form-field', { has: page.locator('.ui-form-label', { hasText: new RegExp(`^${knob}$`) }) });
 
-const knobSlider = (page: Page, group: string, knob: string) => knobField(page, group, knob).locator('input[type="range"]');
+const knobSlider = (page: Page, group: string, knob: string) =>
+    knobField(page, group, knob).locator('input[type="range"]');
 
 const setKnob = async (page: Page, group: string, knob: string, value: number): Promise<void> => {
     await knobSlider(page, group, knob).fill(String(value));

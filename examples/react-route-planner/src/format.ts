@@ -1,13 +1,13 @@
 import { formatDistance, formatDuration, type Place, type RouteProgressAtPoint } from '@tomtom-org/maps-sdk/core';
 
-const formatCoordinates = ({ geometry }: Place): string => {
-    const [longitude, latitude] = geometry.coordinates;
-    return `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
-};
+export const formatCoordinates = ([longitude, latitude]: number[]): string =>
+    `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
 
 // A reverse-geocoded spot with no address match comes back with no properties.
 export const placeTitle = (place: Place): string =>
-    place.properties?.poi?.name ?? place.properties?.address?.freeformAddress ?? formatCoordinates(place);
+    place.properties?.poi?.name ??
+    place.properties?.address?.freeformAddress ??
+    formatCoordinates(place.geometry.coordinates);
 
 export const placeSubtitle = (place: Place): string | undefined =>
     place.properties?.poi?.name ? place.properties.address?.freeformAddress : undefined;

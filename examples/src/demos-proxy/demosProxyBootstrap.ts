@@ -10,24 +10,22 @@
  * line is the whole import-time effect.
  *
  * No top-level `await` (the live editor's TS compiler rejects it), so the session is a
- * free promise, awaited by the fetch wrapper on the main thread and by the
- * `__DEMOS_PROXY_ENSURE_SESSION__` hook for MapLibre's worker-fetched tiles (see
- * gateOnDemosProxySession in map/src/shared/mapUtils.ts).
+ * free promise, awaited by the fetch wrapper on the main thread and by every map's
+ * `transformRequest` for MapLibre's worker-fetched tiles.
  */
 
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import type { TomTomMapParams } from '@tomtom-org/maps-sdk/map';
 
 interface HCaptchaApi {
     render: (container: HTMLElement | string, options: { sitekey: string; size: 'invisible' }) => string;
     execute: (widgetId: string, options: { async: true }) => Promise<{ response: string }>;
 }
 
-// Global `var`s, not `Window` members, so the SDK side can read them off
-// `globalThis` (gateOnDemosProxySession in map/src/shared/mapUtils.ts).
+// Global `var`s, not `Window` members, so they can be read off `globalThis`.
 declare global {
     var hcaptcha: HCaptchaApi | undefined;
     var __DEMOS_PROXY_READY__: boolean | undefined;
-    var __DEMOS_PROXY_ENSURE_SESSION__: (() => Promise<void>) | undefined;
 }
 
 // Baked in at build time (live editor: substituteEnvVars; dist/prod: Vite
@@ -79,19 +77,47 @@ const expiresInSeconds = (response: Response): number | null => {
     return Number.isFinite(seconds) && seconds > 0 ? seconds : null;
 };
 
-// The cookie is HttpOnly, so ask the demos proxy: /session/status answers 204
-// while it is still valid, saving an hCaptcha + POST on every later example load.
+// The cookie is HttpOnly, so its expiry is kept beside it, in epoch milliseconds.
+const SESSION_EXPIRY_STORAGE_KEY = 'tomtom-demos-proxy-session-expires-at';
+
+// Storage can be blocked (a sandboxed frame, some private modes), which reads as no session.
+const readStoredSessionExpiry = (): number => {
+    try {
+        return Number(localStorage.getItem(SESSION_EXPIRY_STORAGE_KEY)) || 0;
+    } catch {
+        return 0;
+    }
+};
+
+const storeSessionExpiry = (expiresAtMs: number | null): void => {
+    try {
+        if (expiresAtMs === null) localStorage.removeItem(SESSION_EXPIRY_STORAGE_KEY);
+        else localStorage.setItem(SESSION_EXPIRY_STORAGE_KEY, String(expiresAtMs));
+    } catch {
+        // Every load then mints its own session.
+    }
+};
+
+// /session/status answers 204 while the cookie is valid, saving an hCaptcha + POST on
+// every later example load, and 401 without one. So it is asked only while the stored
+// expiry says a session may outlive the renewal margin, the only one establishSession
+// adopts, and a first visit sends no request bound to fail.
 const checkExistingSession = async (): Promise<number | null> => {
+    if (readStoredSessionExpiry() - SESSION_RENEWAL_MARGIN_MS <= Date.now()) return null;
+
     try {
         const response = await originalFetch(`${DEMOS_PROXY_URL}/session/status`, { credentials: 'include' });
-        return response.status === 204 ? expiresInSeconds(response) : null;
+        if (response.status === 204) return expiresInSeconds(response);
+
+        storeSessionExpiry(null);
+        return null;
     } catch {
         return null;
     }
 };
 
 // MapLibre fetches tiles from workers, whose fetch the wrapper below cannot
-// reach, so a worker taking 401s after expiry has no recovery path. The SDK's
+// reach, so a worker taking 401s after expiry has no recovery path. The map's
 // transformRequest calls ensureFreshSession on the MAIN thread instead, so the
 // cookie is re-minted within this margin, before the request goes out.
 const SESSION_RENEWAL_MARGIN_MS = 60_000;
@@ -100,6 +126,7 @@ let sessionExpiresAtMs = 0;
 
 const recordSessionExpiry = (remainingSeconds: number): void => {
     sessionExpiresAtMs = Date.now() + remainingSeconds * 1000;
+    storeSessionExpiry(sessionExpiresAtMs);
 };
 
 // Adopt a live session if there is one, otherwise solve an invisible hCaptcha
@@ -186,6 +213,14 @@ const ensureFreshSession = async (): Promise<void> => {
     await refreshSession(observedGeneration);
 };
 
+// Tile fetches run in workers, out of the fetch wrapper's reach, but MapLibre awaits each map's
+// transformRequest on the main thread before handing a request to a worker. The bootstrap creates
+// no map, so it puts the hook in the global config, which every map merges its own params over.
+const holdForFreshSession: Pick<TomTomMapParams, 'transformRequest'> = {
+    transformRequest: (request) =>
+        isDemosProxyRequest(request.url) ? ensureFreshSession().then(() => request) : request,
+};
+
 // Everything this module does on import, in one place.
 const installDemosProxy = (): void => {
     if (!DEMOS_PROXY_URL || !SITEKEY) return;
@@ -194,7 +229,7 @@ const installDemosProxy = (): void => {
     // the session lands still targets the right host. `apiKey: ''` is what puts
     // the SDK in proxy mode — see isProxyCredentialsMode in core/src/config/globalConfig.ts.
     if (!globalThis.__DEMOS_PROXY_READY__) {
-        TomTomConfig.instance.put({ apiKey: '', commonBaseURL: `${DEMOS_PROXY_URL}/api` });
+        TomTomConfig.instance.put({ apiKey: '', commonBaseURL: `${DEMOS_PROXY_URL}/api`, ...holdForFreshSession });
     }
 
     sessionReady = establishSession().catch((error) => {
@@ -214,10 +249,6 @@ const installDemosProxy = (): void => {
         await refreshSession(observedGeneration);
         return originalFetch(input, init);
     };
-
-    // Tile fetches run in workers, out of the wrapper's reach; the SDK awaits
-    // this hook on the main thread before dispatching each map request.
-    globalThis.__DEMOS_PROXY_ENSURE_SESSION__ = ensureFreshSession;
 };
 
 installDemosProxy();

@@ -1,0 +1,34 @@
+/* DISCLOSURE */
+
+/* A native <details> that folds a group of controls away behind its <summary>. The summary takes its
+   typeface from a class of its own, e.g. `ui-form-label`, and keeps only the marker here. */
+.ui-disclosure-summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: var(--ui-space-2);
+    margin-bottom: 0;
+}
+
+.ui-disclosure-summary::-webkit-details-marker {
+    display: none;
+}
+
+.ui-disclosure-summary::before {
+    content: "";
+    width: 0;
+    height: 0;
+    border-left: 5px solid currentcolor;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    transition: transform var(--ui-transition-fast);
+}
+
+.ui-disclosure[open] > .ui-disclosure-summary::before {
+    transform: rotate(90deg);
+}
+
+.ui-disclosure-content {
+    margin-top: var(--ui-space-3);
+}

@@ -30,7 +30,9 @@ const INITIAL_QUERY = 'London';
         },
     });
 
-    const incidentDetailsModule = await TrafficIncidentDetailsModule.create(map);
+    const incidentDetailsModule = await TrafficIncidentDetailsModule.create(map, {
+        highlight: { unfocusedOpacityFactor: 0.25 },
+    });
     initKnobPanel('ui-knobs', trafficIncidentDetailsKnobCatalogue, incidentDetailsModule);
     const baseMap = await BaseMapModule.get(map);
     const boundaryOutline = await GeometriesModule.create(map, {

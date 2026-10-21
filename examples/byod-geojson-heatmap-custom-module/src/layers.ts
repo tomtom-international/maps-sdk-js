@@ -1,4 +1,4 @@
-import type { CustomGeoJSONLayerSpec } from '@tomtom-org/maps-sdk/map';
+import { type CustomGeoJSONLayerSpec, MAP_REGULAR_FONT } from '@tomtom-org/maps-sdk/map';
 
 /**
  * Layer specs for the `heatmap` source: a single MapLibre heatmap layer that fades out
@@ -49,6 +49,7 @@ export const buildMarkersLayers = (iconImageId: string): CustomGeoJSONLayerSpec[
             'icon-size': ['interpolate', ['linear'], ['zoom'], 13, 0.4, 18, 0.9],
             'icon-allow-overlap': true,
             'text-field': ['get', 'Name'],
+            'text-font': [MAP_REGULAR_FONT],
             'text-size': 11,
             'text-offset': [0, 1.2],
             'text-anchor': 'top',

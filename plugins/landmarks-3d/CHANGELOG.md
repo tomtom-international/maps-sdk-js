@@ -1,5 +1,51 @@
 # Changelog
 
+## 0.2.0
+
+### Minor Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** the `maplibre-gl` peer dependency moves up to `^6.15.0`
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** The Basis Universal transcoder ships as its two files in `dist/`, which your app's bundler emits with your build, instead of a 780 KB chunk of `data:` URLs, and `Landmarks3D` takes a `transcoderPath` to load them from your own host
+  - A strict Content Security Policy no longer needs `data:` in `connect-src`.
+  - If your bundler doesn't emit the files a `new URL('./file', import.meta.url)` names, copy `basis_transcoder.js` and `basis_transcoder.wasm` from the plugin's `dist/` to your host and set `transcoderPath` to their path.
+  - On the Vite 7 dev server, add `@tomtom-org/maps-sdk-plugin-landmarks-3d` to `optimizeDeps.exclude`, beside the SDK, or upgrade to Vite 8. Pre-bundled, the plugin moves away from its two files.
+
+### Patch Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - landmarks-3d: `Buildings3D` windows mirror the facades across the street, the sky and a glint of the sun, as much as the new `reflections.intensity` knob sets, and the `roadLabels.occluded` and `pois.occluded` knobs draw those labels under the buildings, which hide them where they cover them
+  
+  - landmarks-3d: the reflection takes the place of the glass's own colour, each pane mirroring its own slice of the street and of the facades across it, whose windows slide past as the camera moves, under the scene's sun and sky light, at no extra texture or pass. A pane in shadow loses the sun's glint
+  - landmarks-3d: landmarks drawn among the buildings mirror a little of the same street and sky, their darker windows the most and their roofs barely, and catch the sun's glint
+  - landmarks-3d: an occluded label layer moves under the buildings' layer, at no cost per frame, and goes back to its place in the style's order once the knob is off. A hidden POI still keeps other labels off its place, and the labels moved under give way to the ones above them where they collide
+  - landmarks-3d: on a style without 3D buildings of its own, `Buildings3D` draws under every label, road names included, where it drew over them
+  - examples: `buildings-3d-plugin-playground` adds the glass reflections slider and the two label toggles, and `cinematic-city-flyby` hides its road names with `roadLabels.occluded`
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - Draw the base map's buildings in 3D with `Buildings3D`: windows on every wall, a sun or a moon that casts shadows, lit windows at night and a preset for each standard style, every part of it a knob
+  - Shadows reach 5 km from the map's centre, fading out over the last kilometre, however far a tilted view reaches
+  - Landmarks among the buildings share their sun and shadows, casting theirs on the buildings and catching the buildings' ones, and take their wall colour, with their own stonework and windows as facade detail
+  - `Buildings3D` is in Public Preview and works with any API key, while the landmarks stay in Private Preview
+  - examples: `landmarks-3d-plugin` builds its landmark controls from `landmarks3DKnobCatalogue`, adding the zoom range, flies to landmarks in seven cities, and adds a toggle that draws `Buildings3D` around them
+  - examples: `buildings-3d-plugin-playground` tunes the buildings' look live over Manhattan, plays a day through, and adds the landmarks behind a Landmarks toggle
+  - examples: `cinematic-city-orbit` circles the Empire State Building in eight looks, each mixing the 3D buildings and landmarks with bloom, depth of field and a map theme
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - `Landmarks3D` and the fly-over marker add their layers through the SDK's `map.addCustomLayer`, which keeps them placed through style switches
+  
+  - landmarks-3d: module layers placed at `'poi'` now go under the landmarks, even when added after `Landmarks3D`, where one added later drew over them
+  - flyover: module layers placed at `'top'`, such as the default of `CustomGeoJSONModule`, now go under the marker, even when added after it, where one added later drew over it
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - Both plugins need `@tomtom-org/maps-sdk` 1.0.0-rc.4 or later, since they line their layers up with the map through its `localFrameMatrix`
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - landmarks-3d: draw the landmarks in their own colours with the new `texture` knob, set to `color`, still lit by the style light's colour and intensity, or by a `Buildings3D`'s sun, sky and shadows
+  
+  - landmarks-3d: `texture` takes one of `landmarkTextureUses`. `mask` only carves the silhouette, `detail` adds the texture's light and shade over `color`, and `color` takes the texture's colours in place of it. Unset, it's `mask`, or `detail` while a `Buildings3D` draws, as before
+  - landmarks-3d: `opacity` and `verticalGradient` keep applying with every texture use
+  - examples: `landmarks-3d-plugin` adds a Texture control
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - The `license` field reads `SEE LICENSE IN LICENSE.txt`, the form npm and license scanners recognise, so they point to the package's own `LICENSE.txt` instead of reporting an unknown license
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - Installs beside `@tomtom-org/maps-sdk` 1.0.0 and every later 1.x release: the peer range on the SDK runs up to `<2.0.0` instead of stopping below 1.0.0
+
 ## 0.1.0
 
 ### Minor Changes

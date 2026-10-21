@@ -8,11 +8,11 @@ export type PickableRoute = {
 };
 
 /**
- * Routes that between them carry all fifteen drawn section types.
+ * Routes that between them carry all seventeen drawn section types.
  *
  * A type is only on the map when the route has stretches of it, so any single route leaves part of
  * the panel greyed out. Munich to Milan carries most of them; each route after it is the
- * only one here that reaches the type in its label.
+ * only one here that reaches the type in its label, or, for curves, the one that shows them best.
  */
 export const PICKABLE_ROUTES: readonly PickableRoute[] = [
     // The Alps for the tunnels, an Austrian vignette in the middle, a low-emission zone at either
@@ -54,6 +54,15 @@ export const PICKABLE_ROUTES: readonly PickableRoute[] = [
         locations: [
             [17.0832, -22.5609],
             [15.2875, -24.7333],
+        ],
+    },
+    // Munich to Milan has curves and curvy stretches too, but only at its motorway junctions: the
+    // hairpins of the Stelvio Pass come one curvy stretch after another.
+    {
+        label: 'Bormio → Prato allo Stelvio (curves)',
+        locations: [
+            [10.3705, 46.4669],
+            [10.5925, 46.6189],
         ],
     },
 ];

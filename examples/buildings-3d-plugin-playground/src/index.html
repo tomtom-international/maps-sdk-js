@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Buildings 3D playground</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">3D Buildings</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+            <div class="ui-panel-content">
+                <div class="ui-section" id="ui-look">
+                    <label class="ui-form-field">
+                        <span class="ui-form-label">Map style</span>
+                        <select class="ui-dropdown" id="ui-mapStyle"></select>
+                    </label>
+                </div>
+                <div class="ui-section" id="ui-facade"></div>
+                <div class="ui-section" id="ui-colors"></div>
+                <div class="ui-section" id="ui-light"></div>
+                <div class="ui-section" id="ui-labels"></div>
+                <div class="ui-section">
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" id="ui-landmarks">
+                        <span class="ui-toggle-switch"></span>
+                        Landmarks
+                    </label>
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" id="ui-sun">
+                        <span class="ui-toggle-switch"></span>
+                        Sun through the day
+                    </label>
+                    <button class="ui-button" id="ui-reset">Reset</button>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

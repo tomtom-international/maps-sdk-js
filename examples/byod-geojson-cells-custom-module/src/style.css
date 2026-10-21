@@ -1,0 +1,60 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+@import "../../src/templates/css/form/dropdown.css";
+@import "../../src/templates/css/form/radio.css";
+@import "../../src/templates/css/form/slider.css";
+@import "../../src/templates/css/form/toggle.css";
+
+/* CUSTOM STYLES (example-specific) */
+
+.ui-customPanel {
+    width: 300px;
+}
+
+.ui-description {
+    margin: 0 0 var(--ui-space-3);
+}
+
+.ui-description code {
+    background: var(--ui-surface-1);
+    padding: 1px 4px;
+    border-radius: var(--ui-rounded-5);
+    font-size: 12px;
+}
+
+.ui-legend {
+    height: 10px;
+    border-radius: var(--ui-rounded-5);
+}
+
+.ui-legend-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: var(--ui-space-1);
+    font-size: var(--ui-font-body-s);
+    color: var(--ui-text-med-em);
+}
+
+.ui-selection {
+    font-size: var(--ui-font-body-s);
+    line-height: var(--ui-font-body-s-lh);
+    color: var(--ui-text-high-em);
+    background: var(--ui-surface-1);
+    padding: var(--ui-space-3);
+    border-radius: var(--ui-rounded-10);
+    min-height: 20px;
+}
+
+.ui-selection strong {
+    display: block;
+    margin-bottom: var(--ui-space-1);
+}
+
+/* Responsive: max-width 768px */
+@media (max-width: 768px) {
+    .ui-customPanel {
+        width: 260px;
+    }
+}

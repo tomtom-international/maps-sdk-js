@@ -1,5 +1,5 @@
 import type { GeopoliticalView } from '@tomtom-org/maps-sdk/core';
-import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { servesGeopoliticalView, TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { createLatestRequest, reverseGeocode } from '@tomtom-org/maps-sdk/services';
 import './style.css';
@@ -7,7 +7,7 @@ import { showAddress, showStatus } from './addressPanel';
 import { API_KEY } from './config';
 import { territories } from './territories';
 import { initTogglePanel } from './togglePanel';
-import { initViewSelect } from './viewSelect';
+import { DEFAULT_VIEW_LABEL, initViewSelect } from './viewSelect';
 
 const START_VIEW: GeopoliticalView = 'Unified';
 
@@ -16,6 +16,14 @@ const START_VIEW: GeopoliticalView = 'Unified';
 TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB', geopoliticalView: START_VIEW });
 
 const territorySelect = document.querySelector('#ui-territorySelect') as HTMLSelectElement;
+
+// The view a reverse geocoding request carries: the SDK leaves out one the API does not serve.
+const requestViewLabel = (): string => {
+    const { geopoliticalView } = TomTomConfig.instance.get();
+    return geopoliticalView && servesGeopoliticalView(geopoliticalView, 'reverseGeocoding')
+        ? geopoliticalView
+        : DEFAULT_VIEW_LABEL;
+};
 
 (async () => {
     let territory = territories[0];
@@ -38,6 +46,7 @@ const territorySelect = document.querySelector('#ui-territorySelect') as HTMLSel
             showStatus('No address here: the dispute is over sea, ice or an unpopulated border.');
             return;
         }
+        const viewLabel = requestViewLabel();
         try {
             const lookup = await latestLookup.run((signal) => reverseGeocode({ position, signal }));
             if (!lookup.current) return;
@@ -48,7 +57,7 @@ const territorySelect = document.querySelector('#ui-territorySelect') as HTMLSel
             }
 
             await addressPin.show(place);
-            showAddress(place.properties);
+            showAddress(place.properties, viewLabel);
         } catch (error) {
             showStatus(error instanceof Error ? error.message : 'The reverse geocoding call failed.');
         }

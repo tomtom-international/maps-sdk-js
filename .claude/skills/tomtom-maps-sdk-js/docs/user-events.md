@@ -19,6 +19,9 @@ Every module that draws features has `events.on(type, handler)`:
 | `'hover'` | The pointer arrives on a feature, or moves on to another one |
 | `'hover-move'` | The pointer moves along the feature it is already on (every move) |
 | `'long-hover'` | The pointer rests on a feature for the long-hover delay |
+| `'dragstart'` | A pressed feature moves 3 px (mouse main button or one finger) — see *Dragging* |
+| `'drag'` | Every move of the drag, the first right after `dragstart` |
+| `'dragend'` | The drag is released |
 
 ```ts
 const unsub = placesModule.events.on('click', (feature, lngLat, allEventFeatures, sourceWithLayers) => { });
@@ -41,6 +44,7 @@ placesModule.events.off('click');   // removes ALL click handlers of the module
 ```
 
 - Omit trailing args you don't need. For modules with a mapping (POIs, traffic tiles, Places `entryPoints`, Routing `countryCrossings`), `feature` is the mapped shape and `allEventFeatures[0]` its raw form.
+- In drag events, `feature` and `allEventFeatures` are the ones pressed at `dragstart`; `lngLat` is where the pointer is now.
 - `allEventFeatures` covers the firing module only. Every feature at the point, all modules and the base map, with `.source` / `.layer` — project first, `queryRenderedFeatures(lngLat)` silently queries the whole viewport:
 
 ```ts
@@ -54,6 +58,28 @@ The top-most feature under the pointer picks the one module (and scope) that rec
 
 ---
 
+## Custom layer objects — `hitTest`
+
+Register a hit tester for a custom layer, and its objects get the same click, hover and cursor handling as module features. A raw `mapLibreMap.on('click')` picker runs beside the SDK's handlers instead: no hover state or cursor, and the road under the vehicle fires too.
+
+```ts
+const vehicles = map.addCustomLayer(vehiclesLayer, {
+  beforeLayerConfig: 'lowest3D',
+  hitTest: (point) => pickVehicles(point), // [{ id, properties? }], topmost first; point in pixels
+  setState: (id, state) => highlightVehicle(id, state), // 'hover' | 'click' | 'recently-hovered' | … | undefined
+  events: { cursorOnHover: 'pointer' },
+});
+vehicles.events.on('click', (vehicle) => inspector.show(vehicle)); // the object hitTest returned
+```
+
+- The hits merge with the rendered features **in layer order**, so priority holds: the vehicle wins over a road under it, a module layer drawn above the custom layer wins over the vehicle.
+- `setState` is how hover and click states reach your drawing: a custom layer has no feature state. The states follow the module rules (a click outranks a hover, `recently-hovered` for `hoverGracePeriodMS`).
+- **The hit tester owns depth**: a screen-projection pick also hits an object behind a 3D building.
+- **Hits rank by layer stack, not by draw depth**: with a handler on the 3D buildings, a click on a `'lowest3D'` object in front of a building goes to the building.
+- Placement, style-change restore and the three.js side are in `maplibre.md` § Custom layers.
+
+---
+
 ## Map-level event config (all modules)
 
 ```ts
@@ -64,7 +90,8 @@ const map = new TomTomMap({
         paddingBoxPx: 5,                   // default; box half-size, ignored with 'point'
         cursorOnHover: 'pointer',          // default; over a feature a handler covers
         cursorOnMap: 'default',            // default; anywhere else
-        cursorOnMouseDown: 'grabbing',     // default
+        cursorOnMouseDown: 'grabbing',     // default; also while dragging
+        cursorOnDraggable: 'grab',         // default; over a feature a drag handler covers, instead of cursorOnHover
         longHoverDelayAfterMapMoveMS: 800, // default; first long-hover after the map moved
         longHoverDelayOnStillMapMS: 300,   // default; next long-hovers on a still map
         hoverGracePeriodMS: 400,           // default; how long a left feature stays 'recently-hovered'
@@ -77,7 +104,7 @@ map.updateEventsConfig({ longHoverDelayOnStillMapMS: 600, hoverGracePeriodMS: 10
 
 ## Module-level override
 
-A module's `events` (`EventHandlerConfig`) overrides `cursorOnHover` and `hoverGracePeriodMS` for its features:
+A module's `events` (`EventHandlerConfig`) overrides `cursorOnHover`, `cursorOnDraggable` and `hoverGracePeriodMS` for its features:
 
 ```ts
 const places = await PlacesModule.create(map, {
@@ -134,6 +161,31 @@ places.events.places.on('click', (place) => showDetails(place)); // places.event
 ```
 
 BaseMap, POIs, TrafficFlow, TrafficIncidents, TrafficIncidentDetails, TrafficAreaAnalytics have no named scopes — `events` already is the one scope. `TerrainModule` and `StylingFoundationsModule` have `config-change` only.
+
+---
+
+## Dragging — `dragstart` / `drag` / `dragend`
+
+Any module and scope, on the same `on` / `off` / `where`. A handler for any of the three makes the features it covers draggable: `cursorOnDraggable` (`grab`) on hover, MapLibre doesn't pan the map under the drag (the SDK `preventDefault`s the press; `map.mapLibreMap.dragPan` stays as you set it), touch included (one finger; a second finger ends the drag). The top-most feature decides, as for clicks.
+
+```ts
+// Move a stop; the SDK moves nothing itself, so show it again where the pointer is
+routing.events.waypoints.on('drag', async (waypoint, lngLat) => {
+    waypoints[waypoint.properties.index] = lngLat.toArray();
+    await routing.showWaypoints(waypoints);
+});
+// RoutingModule plans nothing: calculateRoute + showRoutes yourself (throttled during `drag`, or on `dragend`)
+routing.events.waypoints.on('dragend', async () => routing.showRoutes(await calculateRoute({ locations: waypoints })));
+places.events.places.on('dragend', (place, lngLat) => savePosition(place.id, lngLat)); // Places pins drag too
+```
+
+Pulling a new stop onto a route line with `findBestWaypointInsertionIndex`: `routing.md`, *Interactive route editing*. The route-dragging plugin does all of it for a `RoutingModule`: `route-dragging.md`.
+
+- A press released within 3 px stays a `click`; a drag fires **no** `click` on release, so click handlers on the same features don't run.
+- Hover is frozen during the drag: no `hover` / `hover-move` / `long-hover` fire, the cursor stays `cursorOnMouseDown`.
+- Released outside the map, `dragend` fires with the last position over the map. Disabled events or a second finger end the drag the same way.
+- Drag events set no `eventState`; `setEventState` doesn't take them.
+- Secondary mouse button never drags; a press while the map is still moving pans instead.
 
 ---
 
@@ -214,4 +266,5 @@ For `hoverGracePeriodMS` (default 400; module `events` override wins) after the 
 - A named scope's `off(type)` also strips the module's module-wide handlers from that scope's features: after `places.events.places.off('click')`, a `places.events.on('click', h)` stops firing on pins but still fires on connections and entry points.
 - `'hover'` fires on entering each new feature, not once per enter/leave cycle. There is no leave event: see *Ending a hover* above.
 - `'long-hover'` never fires while the map moves; the first one after a move waits `longHoverDelayAfterMapMoveMS`.
+- Don't drag with raw `mapLibreMap.on('mousedown')` + `queryRenderedFeatures` + `dragPan.disable()`: `drag*` handlers do it, keep the SDK's hit priority, and drop the trailing `click`.
 - Module-wide `places.events` and `routing.events` type `feature` as `MapGeoJSONFeature`; use `places.events.places` / `routing.events.mainLines` for `Place` / `Route`. A `pin-clustered` cluster isn't a `Place`, so it reaches `places.events` only (`cluster: true`, `cluster_id`, `point_count`), never `places.events.places`.

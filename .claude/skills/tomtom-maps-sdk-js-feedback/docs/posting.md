@@ -157,10 +157,11 @@ matched nothing.
 
 ## 4. Post with `gh`
 
-Run `gh auth status` first. If it fails, use §5.
+Run `gh auth status` first. If it fails, use §5. `<dir>` is the draft's own directory from
+Step 5 in `SKILL.md`.
 
 Screenshots: only `gh issue create` and `gh issue comment` upload images, with
-`--attach "$TMPDIR/feedback-<n>.png#<alt text>"` per image, and only on a recent `gh` (check with
+`--attach "<dir>/<n>.png#<alt text>"` per image, and only on a recent `gh` (check with
 `gh issue create --help | grep -q -- --attach`). Everywhere else — discussions, an older `gh`, a
 §5 URL — post without them, then give the developer the file paths to drop into the post in the
 browser.
@@ -172,11 +173,11 @@ Adding labels needs push access, so the command retries without them:
 ```bash
 gh issue create --repo "$REPO" \
   --title "[Bug]: <title>" \
-  --body-file "$TMPDIR/feedback-draft.md" \
+  --body-file "<dir>/draft.md" \
   --label bug \
   || gh issue create --repo "$REPO" \
        --title "[Bug]: <title>" \
-       --body-file "$TMPDIR/feedback-draft.md"
+       --body-file "<dir>/draft.md"
 ```
 
 - For a `showcase-mismatch`, add `--label documentation` to the first command. No other labels.
@@ -201,7 +202,7 @@ gh api graphql \
     }
   }' \
   -f repo="R_kgDORJUglQ" -f cat="<category node id from the table>" -f title="<title>" \
-  -F body=@"$TMPDIR/feedback-draft.md"
+  -F body=@"<dir>/draft.md"
 ```
 
 - `-F body=@file` sends the file contents; `-f body=@file` would send the literal path.
@@ -235,7 +236,7 @@ Reported by an AI coding agent.
 ````
 
 ```bash
-gh issue comment <issue number> --repo "$REPO" --body-file "$TMPDIR/feedback-draft.md"
+gh issue comment <issue number> --repo "$REPO" --body-file "<dir>/draft.md"
 ```
 
 For a discussion, pass its node `id` (returned by the Step 2 search in `SKILL.md`), not its number:
@@ -245,7 +246,7 @@ gh api graphql \
   -f query='mutation($d: ID!, $body: String!) {
     addDiscussionComment(input: {discussionId: $d, body: $body}) { comment { url } }
   }' \
-  -f d="<discussion node id>" -F body=@"$TMPDIR/feedback-draft.md"
+  -f d="<discussion node id>" -F body=@"<dir>/draft.md"
 ```
 
 ## 5. Fallback: a prefilled URL

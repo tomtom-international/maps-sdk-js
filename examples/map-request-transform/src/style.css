@@ -1,0 +1,28 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+@import "../../src/templates/css/form/toggle.css";
+
+/* CUSTOM STYLES (example-specific) */
+
+.ui-summary {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--ui-space-1) var(--ui-space-3);
+    margin: var(--ui-space-3) 0 0;
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-body-s);
+}
+
+.ui-summary-label {
+    margin: 0;
+    color: var(--ui-text-med-em);
+}
+
+.ui-summary-value {
+    margin: 0;
+    text-align: right;
+    color: var(--ui-text-high-em);
+    font-variant-numeric: tabular-nums;
+}

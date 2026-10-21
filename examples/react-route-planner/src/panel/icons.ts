@@ -1,4 +1,14 @@
-import { Building, createLucideIcon, Leaf, type LucideIcon, Milestone, Repeat, Tractor, Users } from 'lucide-react';
+import {
+    Building,
+    createLucideIcon,
+    Leaf,
+    type LucideIcon,
+    Milestone,
+    Repeat,
+    Spline,
+    Tractor,
+    Users,
+} from 'lucide-react';
 
 const SQUARE = 'M5 1h14q4 0 4 4v14q0 4-4 4H5q-4 0-4-4V5q0-4 4-4z';
 const DISC = 'M12 1a11 11 0 1 1 0 22 11 11 0 0 1 0-22z';
@@ -57,6 +67,7 @@ export const roadIcons = {
     lowEmissionZone: Leaf,
     urban: Building,
     unpaved: Tractor,
+    curvyStretch: Spline,
     country: BorderBubble,
     carpool: Users,
     repeat: Repeat,

@@ -12,7 +12,6 @@ export type RouteAlternative = {
     travelTimeInSeconds: number;
     trafficDelayInSeconds: number;
     lengthInMeters: number;
-    trafficLengthInMeters: number;
     arrivalTime: number; // epoch ms
 };
 
@@ -67,7 +66,6 @@ export function useRouteMonitor(agent: AgentInstance | undefined) {
                             travelTimeInSeconds: summary.travelTimeInSeconds,
                             trafficDelayInSeconds,
                             lengthInMeters: summary.lengthInMeters,
-                            trafficLengthInMeters: summary.trafficLengthInMeters,
                             arrivalTime: new Date(summary.arrivalTime).getTime(),
                         };
                     }),

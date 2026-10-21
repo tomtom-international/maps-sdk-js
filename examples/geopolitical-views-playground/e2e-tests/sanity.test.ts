@@ -10,7 +10,7 @@ test.describe('sanity', () => {
         await sanityE2ETest({
             page,
             testInfo: test.info(),
-            uiPinnedValues: { '.ui-summary-value': 'Gilgit-Baltistan, Pakistan' },
+            uiPinnedValues: { '.ui-summary-value:not(:first-of-type)': 'Gilgit-Baltistan, Pakistan' },
         });
     });
 });

@@ -26,9 +26,9 @@ export const buildInitialState = (): PanelState => ({
 });
 
 // Only the types the panel actually touched, so the config stays a diff against the defaults rather
-// than a dump of all fifteen. The panel renders a control only where `sectionSupportsKnob` reports
+// than a dump of all of them. The panel renders a control only where `sectionSupportsKnob` reports
 // one, so what it collected per type is what that type accepts — which TypeScript cannot see
-// through a record keyed by all fifteen at once.
+// through a record keyed by every type at once.
 const configuredSections = (state: PanelState): SectionsDisplayConfig =>
     Object.fromEntries(
         drawnSectionTypes

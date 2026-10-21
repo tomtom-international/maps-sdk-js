@@ -1,4 +1,4 @@
-import type { CustomGeoJSONLayerSpec } from '@tomtom-org/maps-sdk/map';
+import { type CustomGeoJSONLayerSpec, MAP_BOLD_FONT } from '@tomtom-org/maps-sdk/map';
 
 // Two layers on the clustered point source: one for clusters (with a count label
 // on top), one for individual points.
@@ -20,6 +20,7 @@ export const pointLayers: CustomGeoJSONLayerSpec[] = [
         filter: ['has', 'point_count'],
         layout: {
             'text-field': ['get', 'point_count_abbreviated'],
+            'text-font': [MAP_BOLD_FONT],
             'text-size': 12,
         },
         paint: {

@@ -152,7 +152,8 @@ const result = await trafficIncidentDetails({ bbox: map.getBBox(), timeValidityF
 await incidentDetailsModule.show(result); // replaces what was shown, clears the focus; fires `shown-features`
 
 // Highlight a subset — wider stripe + theme-aware outline (black on light styles, white on dark),
-// unfocused features unchanged. No-op before show(); kept through a setStyle that keeps state.
+// unfocused features unchanged unless `highlight.unfocusedOpacityFactor` fades them.
+// No-op before show(); kept through a setStyle that keeps state.
 incidentDetailsModule.setFocus([result.features[0].properties.id]);
 
 // Any handler makes a hovered or clicked incident draw the same highlight (its `eventState`);
@@ -183,7 +184,14 @@ const incidentDetailsModule = await TrafficIncidentDetailsModule.create(map, {
 // `highlight` also changes live — its fields, or `false` — repainting the highlighted incidents in place.
 incidentDetailsModule.updateConfig({ highlight: { outline: { color: '#c2185b' }, line: { widthFactor: 1.2 } } });
 
-// Disable the built-in highlight — for focused, hovered and clicked incidents —
+// Fade every incident outside the focus set — lines, icons and delay text — while a focus is active.
+// A factor on their opacity, clamped to 0–1, default 1 (no fade); multiplies `line.opacity`; a hovered or clicked incident stays at full strength;
+// it's config, so it survives setStyle() with no re-apply. Don't repaint the module's layers for this.
+const focusModule = await TrafficIncidentDetailsModule.create(map, { highlight: { unfocusedOpacityFactor: 0.15 } });
+focusModule.setFocus([incidentId]); // the rest fade
+focusModule.setFocus(null);         // all back at full strength
+
+// Disable the built-in highlight — for focused, hovered and clicked incidents, and the fade —
 // but keep the state writing: drive your own styling off `feature-state.focused`
 // and `['get', 'eventState']`.
 const incidentDetailsModule = await TrafficIncidentDetailsModule.create(map, { highlight: false });
@@ -196,7 +204,7 @@ const incidentDetailsModule = await TrafficIncidentDetailsModule.create(map, { l
 incidentDetailsModule.updateConfig({ line: { opacity: 1 } }); // live
 ```
 
-- `line.opacity`: number 0–1, default `1` — every incident line, focused or not. The markers and the outline of a highlighted incident stay opaque.
+- `line.opacity`: number 0–1, default `1` — every incident line, focused or not. The markers and the outline of a highlighted incident stay opaque. To fade only the unfocused incidents, markers included, use `highlight.unfocusedOpacityFactor`.
 
 ### Layer overrides — `layers`
 
@@ -232,7 +240,7 @@ await incidentDetailsModule.show(await trafficIncidentDetails({ bbox: map.getBBo
 | Data acquisition | Built into the map style | `await trafficIncidentDetails(...)` then `incidentDetailsModule.show(result)` |
 | Click payload | Tile feature (`TrafficIncidentsModuleFeature`) | Typed `TrafficIncident` with `Date` / array / object fields preserved |
 | Filtering | `filters` config (`magnitudes`, `incidentCategories`, `delays`, road filters) | Filter the service request (`categoryFilter`, `timeValidityFilter`) or the response before `show()` |
-| Highlight subset | — | `setFocus(ids)` — wider stripe + outline, MapLibre `feature-state.focused`; a hovered or clicked incident draws the same |
+| Highlight subset | — | `setFocus(ids)` — wider stripe + outline, MapLibre `feature-state.focused`; a hovered or clicked incident draws the same; `highlight.unfocusedOpacityFactor` fades the rest |
 | Per-road-class width / offset, declutter | Yes (road-classification tags in tiles) | No — uniform stripe (REST API has no `road_category`); only the icons of shorter delays wait for a higher zoom |
 | Use when | "Just show me live traffic" | App needs the structured data (ids, delays, geometry) and renders exactly that |
 
@@ -241,7 +249,7 @@ await incidentDetailsModule.show(await trafficIncidentDetails({ bbox: map.getBBo
 ## Map click or route section → fetch incident details
 
 ```ts
-// A live tile incident's id, or a route traffic section's eventId, is the join key to the service
+// A live tile incident's id is the id the service takes
 trafficIncidents.events.on('click', async (incident) => {
     const result = await trafficIncidentDetails({ ids: [incident.properties.id] });
     const props = result.features[0]?.properties;
@@ -257,9 +265,20 @@ trafficIncidents.events.on('click', async (incident) => {
     });
 });
 
-const eventIds = (route.properties.sections.traffic ?? []).flatMap((section) => section.eventId ?? []);
-const routeIncidents = await trafficIncidentDetails({ ids: eventIds });
+// A route traffic section's incident: getSectionBBox is from core
+for (const section of route.properties.sections.traffic ?? []) {
+    const { eventId } = section;
+    const bbox = getSectionBBox(route, section);
+    if (!eventId || !bbox) continue;
+    const incidents = await trafficIncidentDetails({ bbox });
+    const incident = incidents.features.find(({ properties }) => properties.id.endsWith(eventId));
+}
 ```
+
+- **Never pass `eventId` as `ids`**: the routing service returns a bare `TTR…`-style id, while
+  `trafficIncidentDetails` indexes incidents as `TTI-<uuid>-TTR…`, and that prefix varies per incident.
+  The lookup answers 200 with an empty `FeatureCollection`, no error.
+- **One section per query**: a whole route's bbox can exceed the service's 10,000 km² limit.
 
 ---
 
@@ -294,6 +313,7 @@ incidents.features.forEach((incident) => {
 - `categoryFilter` takes `trafficIncidentRequestCategories` (`TrafficIncidentRequestCategory`): `accident`, `broken-down-vehicle`, `danger`, `flooding`, `fog`, `frost`, `jam`, `lane-closed`, `other`, `rain`, `road-closed`, `roadworks`, `wind` — not the tile-only `animals-on-road` / `narrow-lanes`.
 - No magnitude parameter: filter the response on `magnitudeOfDelay`.
 - `ids`: up to 100; more than 5 go as a POST, which the SDK picks.
+- No past incidents: `timeValidityFilter` takes `present` and `future` only, and no TomTom API serves the incidents in force on an earlier day.
 
 ---
 
@@ -346,6 +366,8 @@ region.tiledData?.tiles.forEach((tile) => {
 Metrics (`metrics`, `areaAnalyticsMetricKeys`): `'speed'` (km/h), `'freeFlowSpeed'` (km/h), `'congestionLevel'` (%), `'travelTime'` (minutes per 10 km), `'networkLength'` (m), or `'all'` for all five
 
 Functional road classes: `'MOTORWAY'`, `'MAJOR_ROAD'`, `'OTHER_MAJOR_ROAD'`, `'SECONDARY_ROAD'`, `'LOCAL_CONNECTING_ROAD'`, `'LOCAL_ROAD_HIGH_IMPORTANCE'`, `'LOCAL_ROAD'`, `'LOCAL_ROAD_MINOR_IMPORTANCE'`, `'OTHER_ROAD'` (`result.properties.frcs` echoes them as indices 0–8)
+
+Values are per region and per tile, never per road segment, and there are no vehicle counts. Per-segment speeds by date and hour come from MOVE Traffic Stats (https://docs.tomtom.com/traffic-stats/documentation/product-information/introduction), an asynchronous job API the SDK doesn't wrap: call it directly with the MOVE Portal key.
 
 ---
 
@@ -416,7 +438,8 @@ const analyticsModule = await TrafficAreaAnalyticsModule.create(map, {
 });
 analyticsModule.updateConfig({ beforeLayerConfig: { 'hexgrid-3d': 'top' } }); // a mode it leaves out goes back to its default
 // Defaults: heatmap and 2D modes below 'lowestLabel', 3D modes below 'lowestPlaceLabel'; the region always below labels.
-// A target the style lacks (satellite has no `lowestRoadLine` or `lowestBuilding`) puts that mode's layers on top.
+// A target the style lacks (satellite has no `lowestRoadLine` or `lowestBuilding`) puts that mode's layers on top;
+// a missing `lowest3D` goes under the POIs first.
 
 // Layer overrides — a partial MapLibre layer per layer, merged over the module's own (which they win over)
 analyticsModule.updateConfig({
@@ -512,6 +535,7 @@ const mode: TrafficAreaAnalyticsKnobValueOf<'displayMode'> = 'heatmap';
 | `visible` | toggle | `true` |
 | `highlight.outline.color` | color | black on light styles, white on dark |
 | `highlight.line.widthFactor` | factor, 1–1.8 | `1.6` |
+| `highlight.unfocusedOpacityFactor` | factor, 0–1 | `1` |
 | `line.opacity` | number, 0–1 | `1` |
 
 Not in it: `beforeLayerConfig`, `layers`, and `highlight: false`, which turns the highlight off. The
@@ -573,6 +597,7 @@ Not in it: `colorStops` (set them through `setColorStops` or the config), `befor
 - `TrafficIncidentsModule` filters narrow the incident lines and their icons alike; `icons` only decides whether the icons show (`icons: { visible }`, `setIconsVisible`, read back with `isIconsVisible()`, which is `isVisible()` while `icons.visible` is unset)
 - `TrafficIncidentsModule.setVisible()` clears `icons.visible`, so the icons follow `visible` again. Icons alone are `{ visible: false, icons: { visible: true } }`, or `setVisible(false)` and then `setIconsVisible(true)` — in the other order the icons hide again
 - `events.off(type)` takes no handler and removes every handler of that type on the module; to remove one, call the function `events.on` returned
+- `trafficIncidentDetails` writes `events` descriptions in the call's `language`, or the nearest the traffic service has (`pt-PT` for `pt-BR`), else English
 - `trafficIncidentDetails` bbox accepts `[w, s, e, n]` or any GeoJSON object; the area is at most 10,000 km²
 - `trafficIncidentDetails` takes exactly one of `bbox`, `polygon` or `ids`. `polygon` accepts a `Polygon`/`MultiPolygon`, a `Feature` or a `FeatureCollection` of them (what `geometryData` returns); a `LineString` incident crossing the boundary is kept, and the 10,000 km² limit applies to the polygon's bbox
 - `TrafficIncidentDetailsModule` and `TrafficIncidentsModule` both draw incidents. The tile module is hidden until shown, so they don't collide by default — but if the app shows the tile module, hide it (`tileIncidents.setVisible(false)`) before showing fetched incidents

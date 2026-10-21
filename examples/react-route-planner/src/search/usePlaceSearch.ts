@@ -1,6 +1,6 @@
 import { skipToken, useInfiniteQuery } from '@tanstack/react-query';
 import type { Place, Route } from '@tomtom-org/maps-sdk/core';
-import { discoverPlaces } from '@tomtom-org/maps-sdk/services';
+import { type DiscoverPlacesResponse, discoverPlaces } from '@tomtom-org/maps-sdk/services';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { placeTitle } from '../format';
 import { flyBetweenPanels } from '../map/coveringPanels';
@@ -20,7 +20,14 @@ type SearchPageParams = {
 };
 
 /** One page of results: a fuzzy search pages through a cursor, an along-route search answers at once. */
-const searchPage = ({ modules, request, stationFilters, alongRoute, cursor, signal }: SearchPageParams) => {
+const searchPage = ({
+    modules,
+    request,
+    stationFilters,
+    alongRoute,
+    cursor,
+    signal,
+}: SearchPageParams): Promise<DiscoverPlacesResponse> => {
     const filters = requestFilters(request, stationFilters);
     const common = {
         ...(request.query && { query: request.query }),

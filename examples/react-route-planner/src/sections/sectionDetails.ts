@@ -10,7 +10,7 @@ import {
     type TrafficIncidentCategory,
 } from '@tomtom-org/maps-sdk/core';
 import { addSeconds, clockTime, distance, duration, progressInto } from '../format';
-import { isCountry, isTraffic, type LaneBlock, type LaneId } from './routeLanes';
+import { isCountry, isCurvyStretch, isTraffic, type LaneBlock, type LaneId } from './routeLanes';
 
 export type RoutePosition = Route['geometry']['coordinates'][number];
 
@@ -151,6 +151,18 @@ const laneFacts: Partial<Record<LaneId, (route: Route, section: SectionProps) =>
             ...(vignette.length ? [`Vignette (${vignette.join(', ')})`] : []),
         ];
         return fact('Payment', payment.join(', ') || 'Charged road');
+    },
+    curvyStretch: (route, section) => {
+        if (!isCurvyStretch(section)) return [];
+
+        const inTown = (route.properties.sections.urban ?? []).some((town) => getSectionOverlap(town, section));
+        return [
+            ...fact('Hairpins', section.hairpinCount ? String(section.hairpinCount) : undefined),
+            ...fact('Winding', `A curve every ${distance(section.lengthInMeters / section.curveCount)}`),
+            ...fact('Tightest curve', `${distance(section.minRadiusInMeters)} radius`),
+            ...fact('Curviness', String(Math.round(section.curvinessScore))),
+            ...fact('Setting', inTown ? 'Partly through a town' : 'Open road'),
+        ];
     },
     ferry: onBoardFacts('TAKE_SHIP_FERRY', 'LEAVE_SHIP_FERRY'),
     carTrain: onBoardFacts('TAKE_CAR_TRAIN', 'LEAVE_CAR_TRAIN'),

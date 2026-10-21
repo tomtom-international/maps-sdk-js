@@ -37,7 +37,7 @@ const STILL_CHANGE_RATIO = 0.01;
  *
  * Must be installed before the page's own script runs, and reaches its iframes too. MapLibre asks
  * for the default `preserveDrawingBuffer: false`, under which drawing the canvas into a 2D context
- * yields blank — the same flag `MapEffects.capture` requires of consumers for the same reason.
+ * outside MapLibre's `render` event yields blank.
  */
 export const enableMapReadback = async (page: Page): Promise<void> => {
     await page.addInitScript(() => {

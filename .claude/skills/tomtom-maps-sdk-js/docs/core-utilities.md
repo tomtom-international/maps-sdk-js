@@ -14,6 +14,7 @@ import {
     calculateProgressAtRoutePoint, getRouteProgressBetween,
     getRouteProgressForSection, getCoordinateAtRouteProgress,
     getProgressAtNearestRoutePoint,
+    aggregateIntoCells,
 } from '@tomtom-org/maps-sdk/core';
 ```
 
@@ -21,14 +22,16 @@ import {
 
 ## Bounding boxes
 
+A `BBox` is `[west, south, east, north]`. **`west > east` means the box crosses the antimeridian** (RFC 7946 §5.2): geocoding Fiji returns `[176.84, -21.02, -178.16, -12.46]`. The services return that form, and every bbox utility below reads and returns it — never compute `east - west` or `min`/`max` longitudes by hand. MapLibre's `fitBounds` and the map's `bounds` option take a crossing box as is; for another MapLibre API that needs `east` past 180, use `LngLatBounds.convert(bbox).adjustAntiMeridian()`.
+
 ### `bboxFromGeoJSON`
 
-Extracts or calculates `[west, south, east, north]` from any GeoJSON object or array of them. An existing `bbox` wins; otherwise it is calculated from the geometry, sampling lines longer than 1000 points (use turf's `bbox` for an exact box).
+Extracts or calculates `[west, south, east, north]` from any GeoJSON object or array of them. An existing `bbox` wins; otherwise it is calculated from the geometry, sampling lines longer than 1000 points. Points cross the antimeridian when that box is the narrower one; input spanning -180 to 180 (every country in the world) stays `[-180, …, 180]`. A line or ring follows its edges, which don't wrap (RFC 7946 §3.1.9): `[[179, 0], [181, 0]]` → `[179, 0, -179, 0]`, while `[[179, 0], [-179, 0]]` spans 358°. Parts and features merge into the narrowest box, so a MultiPolygon cut at 180 crosses. turf's `bbox` is exact but always min/max, so it wraps the whole world around input near ±180.
 
 ```ts
 // From a geocoded place (uses the place's own bbox — often a city-level area)
 const place = await geocodeOne('Amsterdam');
-const bbox = bboxFromGeoJSON(place);            // [minLng, minLat, maxLng, maxLat] | undefined
+const bbox = bboxFromGeoJSON(place);            // [west, south, east, north] | undefined
 
 // From a FeatureCollection (encompasses all features)
 const places = await discoverPlaces({ query: 'coffee', geoBias: { position: [4.9, 52.4] } });
@@ -41,20 +44,22 @@ const bbox = bboxFromGeoJSON(route.features[0].geometry);
 const bbox = bboxFromGeoJSON([place1, place2, place3]);
 ```
 
-Returns `[minLng, minLat, maxLng, maxLat] | undefined`.
+Returns `[west, south, east, north] | undefined`.
 
 ### `bboxFromCoordsArray`
 
-Calculates bbox from a flat array of `[lng, lat]` coordinates — useful when you have raw coordinate pairs (e.g., multiple origins/destinations) rather than GeoJSON objects. Samples arrays longer than 1000 positions, like `bboxFromGeoJSON`; `undefined` for an empty array.
+Calculates bbox from a flat array of `[lng, lat]` coordinates, read as loose points, not a line (pass a `LineString` to `bboxFromGeoJSON` for that) — useful when you have raw coordinate pairs (e.g., multiple origins/destinations) rather than GeoJSON objects. Samples arrays longer than 1000 positions, like `bboxFromGeoJSON`; `undefined` for an empty array. Of the min/max box and the box across the antimeridian, it returns the narrower; a tie, or positions spanning -180 to 180, keeps min/max.
 
 ```ts
 const bounds = bboxFromCoordsArray([[4.9, 52.4], [2.3, 48.8], [13.4, 52.5]]);
 // → [2.3, 48.8, 13.4, 52.5]
+bboxFromCoordsArray([[179.5, -16.8], [-179.8, -16.6]]);
+// → [179.5, -16.8, -179.8, -16.6], 0.7° wide across the antimeridian
 ```
 
 ### `bboxFromBBoxes`
 
-The bbox containing every given one, skipping `undefined` entries — combine `bboxFromGeoJSON` results without null checks. `undefined` when none is defined.
+The narrowest bbox containing every given one, crossing the antimeridian when that is narrower, skipping `undefined` entries — combine `bboxFromGeoJSON` results without null checks. `undefined` when none is defined; a single box comes back as is.
 
 ```ts
 const bounds = bboxFromBBoxes([bboxFromGeoJSON(city), bboxFromGeoJSON(cafes)]);
@@ -72,7 +77,7 @@ else if (bbox) map.mapLibreMap.jumpTo({ center: bboxCenter(bbox), zoom: 15 });
 
 ### `polygonFromBBox`
 
-Converts a bbox to a GeoJSON `Feature<Polygon>` — useful for displaying a search area on the map.
+Converts a bbox to a GeoJSON `Feature<Polygon>` — useful for displaying a search area on the map. For a box crossing the antimeridian, the ring's east edge is `east + 360`, so it surrounds the box rather than the rest of the world, and `bboxFromGeoJSON` reads it back as the same box.
 
 ```ts
 const bbox = bboxFromGeoJSON(places);
@@ -80,6 +85,19 @@ if (bbox) {
     const bboxPolygon = polygonFromBBox(bbox);
     // use with GeometriesModule.show() or map.mapLibreMap.addSource(...)
 }
+```
+
+---
+
+## Aggregating points into cells
+
+### `aggregateIntoCells`
+
+Groups points into hexagons, squares or your own polygons and gives each cell statistics (`count`, `sum`, `mean`, `median`, `min`, `max`) over a numeric property, such as the median price per m² per hexagon. Returns the cells as a polygon `FeatureCollection` any map module draws. Full options, return types and the zoom pattern: `custom.md` § Aggregating points into areas. Guide: `guides/core/utilities/cells`.
+
+```ts
+const cells = aggregateIntoCells(listings, { grid: 'hex', cellSizeKM: 1, value: 'pricePerSquareMeter', stats: ['median', 'count'], minCount: 5 });
+// FeatureCollection<Polygon, { median: number; count: number }>
 ```
 
 ---
@@ -98,6 +116,9 @@ getPosition(place);                                 // → [lng, lat] from geome
 // Prefer building entrance over geometry centroid
 getPosition(place, { useEntryPoint: 'main-when-available' });
 ```
+
+`main-when-available` takes the entry point typed `'main'`, otherwise the first untyped one (reverse
+geocoding returns them untyped), otherwise the place's geometry.
 
 Returns `[longitude, latitude] | null`.
 
@@ -217,7 +238,7 @@ const slots = findBestWaypointInsertionIndices(route, existing, [stopA, stopB, s
 
 ### `getSectionBBox`
 
-Returns `[minLng, minLat, maxLng, maxLat]` for any route section, or any `RouteSpan` (uses start, mid, end points for speed), or `undefined` when the route has no coordinates or the indices are out of range or reversed.
+Returns `[west, south, east, north]` for any route section, or any `RouteSpan` (uses start, mid, end points for speed), or `undefined` when the route has no coordinates or the indices are out of range or reversed.
 
 ```ts
 const route = routes.features[0];
@@ -292,6 +313,46 @@ await routingModule.setSectionFocus(roads[0].sections.map((section) => section.i
   `sections.distinct`. `lengthInMeters` is that count.
 - `index` is the road's importance, that of its most important stretch: the lower, the more important.
 - A route calculated with a `sectionTypes` list that leaves out `importantRoadStretch` has no roads (`[]`).
+
+### `getCurveSections` / `getCurvyStretchSections` / `withCurveSections` / `isHairpin`
+
+The curves of a route and the curvy stretches they make up, found in its geometry. `calculateRoute`
+fills `sections.curve` and `sections.curvyStretch` when its `sectionTypes` names them, with the
+thresholds of its `curveDetection` or these defaults; call them for other thresholds, or on a route calculated
+without them. Use them to keep a motion-sick passenger off winding roads, or to send a motorcyclist down
+them, instead of computing bearings or radii yourself.
+
+```ts
+// CurveSectionsOptions: minHeadingChangeInDegrees (40), maxRadiusInMeters (250), maxStraightInMeters
+// (40, or 15% of a maxRadiusInMeters over 267)
+const hard = getCurveSections(route, { minHeadingChangeInDegrees: 90, maxRadiusInMeters: 50 });
+
+// CurvyStretchSectionsOptions: curves (sections.curve, else getCurveSections(route)), maxGapInMeters (500),
+// minCurveCount (3)
+const passes = getCurvyStretchSections(route, { curves: hard, minCurveCount: 5 });
+// CurveDetectionOptions, as calculateRoute's curveDetection takes it: a copy of the route with sections.curve and
+// sections.curvyStretch found again (dropped when none is found), its other sections kept; for a slider, no new request
+const tighter = withCurveSections(route, { curve: { maxRadiusInMeters: 100 }, curvyStretch: { minCurveCount: 4 } });
+const metersPerCurve = (pass: CurvyStretchSectionProps) => pass.lengthInMeters / pass.curveCount;
+// A bend of the road turning 140°+ on a radius of 40 m or less; a wider one is a horseshoe, a maneuver never one
+const hairpins = route.properties.sections.curve?.filter(isHairpin) ?? [];
+```
+
+- A curve ends where the road turns the other way (an S-bend is two curves) or at a straight longer than
+  `maxStraightInMeters`. A sharp corner between straights, as at most junctions, is no curve; a roundabout is.
+  Turning back at a waypoint (a dead-end road) makes none.
+- With guidance, a curve with a junction instruction on it carries its `maneuver` (depart, arrive, waypoint,
+  border and tollgate instructions set none, nor one keeping to the road, "Turn left to stay on the SS38", or with
+  no other way to take; a roundabout or U-turn always does), and such a curve ends a stretch, so turns through a town make
+  no stretch. Without guidance, a junction turn with a short approach can still show up as a curve.
+- Each curve's `severity` reads the route's `speedLimit` sections, when it has them, for the limit on the road
+  into it; without one it assumes a typical rural limit.
+- Rank stretches by `metersPerCurve` for how winding they are (some 200 on a mountain pass, where
+  `hairpinCount`, its curves `isHairpin` says yes to, runs high), or by
+  `curvinessScore` for how much riding they offer: roadcurvature.com's scale, its curves' metres weighted
+  by tightness, so it grows with length (over 1000 is very twisty).
+- `compareRoutes` weighs `curve` and `curvyStretch` by default, on routes that carry them: `adds.curve` is the curves on the roads only
+  this route takes, `avoids.curve` the reference's own. Compare the two to tell which winds more.
 
 ### `getSectionsWithin`
 

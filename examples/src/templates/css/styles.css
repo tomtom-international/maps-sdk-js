@@ -6,6 +6,7 @@
 /* Panels */
 @import url("panel/custom-panel.css");
 @import url("panel/search-panel.css");
+@import url("panel/disclosure.css");
 
 /* Form */
 @import url("form/field.css");

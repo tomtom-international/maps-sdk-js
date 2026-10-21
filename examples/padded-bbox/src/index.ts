@@ -1,5 +1,11 @@
 import { polygonFromBBox, TomTomConfig } from '@tomtom-org/maps-sdk/core';
-import { calculatePaddedBBox, calculatePaddedCenter, mapStyleLayerIDs, TomTomMap } from '@tomtom-org/maps-sdk/map';
+import {
+    calculatePaddedBBox,
+    calculatePaddedCenter,
+    MAP_REGULAR_FONT,
+    mapStyleLayerIDs,
+    TomTomMap,
+} from '@tomtom-org/maps-sdk/map';
 import type { GeoJSONSource, Map } from 'maplibre-gl';
 import './style.css';
 import type { Position } from 'geojson';
@@ -84,6 +90,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
             source: CENTER_SOURCE_ID,
             layout: {
                 'text-field': 'x',
+                'text-font': [MAP_REGULAR_FONT],
                 'text-size': 96,
                 'text-allow-overlap': true,
             },

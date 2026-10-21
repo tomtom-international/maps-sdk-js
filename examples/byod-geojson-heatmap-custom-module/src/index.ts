@@ -14,6 +14,9 @@ const map = new TomTomMap({
         center: [-1.7, 53.75],
         zoom: 9.5,
     },
+    attribution: {
+        credits: ['Listed buildings from <a href="https://dataworks.calderdale.gov.uk/">Calderdale Data Works</a>'],
+    },
 });
 
 const DATA_URL = 'https://dataworks.calderdale.gov.uk/download/2kyp8/hcj/listed%20buildings%20west%20yorkshire.json';

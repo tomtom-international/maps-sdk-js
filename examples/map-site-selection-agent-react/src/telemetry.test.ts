@@ -1,4 +1,4 @@
-import type { LanguageModelUsage } from 'ai';
+import { type LanguageModelUsage, toUIMessageStream } from 'ai';
 import { describe, expect, it, vi } from 'vitest';
 import { createAgentTelemetry, createTracker, type TelemetrySink, type TurnContext } from './telemetry';
 
@@ -17,6 +17,7 @@ vi.mock('ai', async (importOriginal) => {
         ...actual,
         validateUIMessages: vi.fn(async ({ messages }: { messages: unknown }) => messages),
         convertToModelMessages: vi.fn((messages: unknown) => messages),
+        toUIMessageStream: vi.fn(() => ({})),
     };
 });
 
@@ -170,15 +171,17 @@ type FakeToolCall = { toolName: string; input: unknown; toolCallId: string };
 type FakeToolResult = { toolCallId: string; output: unknown };
 type FakeStep = { toolCalls: FakeToolCall[]; toolResults: FakeToolResult[] };
 
+const fakeRunStream = {};
+
 function fakeAgent(opts: { steps?: FakeStep[]; usage?: Partial<LanguageModelUsage>; text?: string; reject?: unknown }) {
     return {
         tools: {},
-        stream: ({ onStepFinish }: { onStepFinish: (step: FakeStep) => void }) => {
-            for (const step of opts.steps ?? []) onStepFinish(step);
+        stream: ({ onStepEnd }: { onStepEnd: (step: FakeStep) => void }) => {
+            for (const step of opts.steps ?? []) onStepEnd(step);
             return {
-                totalUsage: Promise.resolve(opts.usage ?? { inputTokens: 1, outputTokens: 2, totalTokens: 3 }),
+                stream: fakeRunStream,
+                usage: Promise.resolve(opts.usage ?? { inputTokens: 1, outputTokens: 2, totalTokens: 3 }),
                 text: 'reject' in opts ? Promise.reject(opts.reject) : Promise.resolve(opts.text ?? 'ok'),
-                toUIMessageStream: () => ({}),
             };
         },
     } as unknown as Parameters<ReturnType<typeof createAgentTelemetry>['runInstrumentedTurn']>[0];
@@ -254,30 +257,36 @@ describe('createAgentTelemetry', () => {
         expect(success?.properties.stepCount).toBe('2');
 
         const toolEvents = events.filter((e) => e.name === 'AgentToolCall');
-        // step index increments per onStepFinish, not per tool call
+        // step index increments per onStepEnd, not per tool call
         expect(toolEvents.map((e) => e.properties.step)).toEqual(['1', '1', '2']);
         // every successful call is flagged isError=false
         expect(toolEvents.every((e) => e.properties.isError === 'false')).toBe(true);
     });
 
+    it("streams the run to the chat UI with the agent's tools", async () => {
+        const agent = fakeAgent({});
+        await createAgentTelemetry('conv-1', fakeSink().sink).runInstrumentedTurn(agent, userMessages);
+
+        expect(toUIMessageStream).toHaveBeenLastCalledWith({ stream: fakeRunStream, tools: agent.tools });
+    });
+
     it('records the FINAL step count when steps finish after the stream returns (regression)', async () => {
         const { sink, events } = fakeSink();
-        // The real SDK keeps firing onStepFinish as the stream is consumed — after sendMessages
+        // The real SDK keeps firing onStepEnd as the stream is consumed — after sendMessages
         // returns. Here steps fire on later microtasks and text resolves only once they're done, so
         // stepCount is still 0 when the outcome is wired. Guards against reading it by value.
         const asyncStepAgent = {
             tools: {},
-            stream: ({ onStepFinish }: { onStepFinish: (step: FakeStep) => void }) => {
+            stream: ({ onStepEnd }: { onStepEnd: (step: FakeStep) => void }) => {
                 const steps = (async () => {
                     for (let i = 0; i < 3; i += 1) {
                         await Promise.resolve();
-                        onStepFinish({ toolCalls: [], toolResults: [] });
+                        onStepEnd({ toolCalls: [], toolResults: [] });
                     }
                 })();
                 return {
-                    totalUsage: Promise.resolve({ inputTokens: 1, outputTokens: 1, totalTokens: 2 }),
+                    usage: Promise.resolve({ inputTokens: 1, outputTokens: 1, totalTokens: 2 }),
                     text: steps.then(() => 'done'),
-                    toUIMessageStream: () => ({}),
                 };
             },
         } as unknown as Parameters<ReturnType<typeof createAgentTelemetry>['runInstrumentedTurn']>[0];

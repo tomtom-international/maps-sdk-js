@@ -225,9 +225,9 @@ export const buildSiteTools = (): Record<string, ToolEntry | ToolEntryBuilder> =
     // Bring-your-own-data: load a customer GeoJSON layer (by URL), restyle it, and toggle/remove it.
     // Always-active (not classifier-gated) — an available capability, like the map controls.
     // addByodSource returns a data profile the agent uses to drive setByodLayers paint. This demo puts
-    // no host allowlist on the URL (any http(s) source is accepted); the toolkit still enforces its
-    // built-in scheme / size / timeout limits and strips customer string values from the profile it
-    // returns to the model. A production app should add its own policy via MapAgentOptions.byod.
+    // no host allowlist on the URL, so the toolkit's built-in policy accepts any public https source;
+    // it also enforces its size / timeout limits and strips customer string values from the profile it
+    // returns to the model. A production app can replace that via MapAgentOptions.byod.
     // validateSourceUrl (e.g. a signed-URL service or a tenant-origin check).
     addByodSource: builtin.addByodSource,
     setByodLayers: builtin.setByodLayers,

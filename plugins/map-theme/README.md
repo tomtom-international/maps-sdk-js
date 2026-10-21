@@ -2,6 +2,8 @@
 
 This plugin for the [TomTom Maps SDK for JavaScript](https://docs.tomtom.com/maps-sdk-js/introduction/overview) themes a `TomTomMap` from wherever a look comes from. That's a brand's colours, a website's, a described mood, an artist's palette or an image. It assigns them to the SDK's ten map colours, plus the accent that routes, geometries and pins take. Then `StylingFoundationsModule.setMapColors` applies them.
 
+> **Public preview.** This plugin is in [Public Preview](https://docs.tomtom.com/legal/public-preview) until its 1.0.0 release.
+
 | Function | From | To |
 | --- | --- | --- |
 | `deriveMapColors` | A handful of CSS colours | The map colours, `accent` included |
@@ -39,3 +41,7 @@ styling.setMapColors(await deriveMapColorsFromImage(fileInput.files[0], { mode: 
 ## License
 
 See `LICENSE.txt`.
+
+## Security
+
+To report a security vulnerability, follow [SECURITY.md](https://github.com/tomtom-international/maps-sdk-js/blob/main/SECURITY.md), which keeps it private.

@@ -32,6 +32,7 @@ import {
     useStops,
 } from './planner/stops';
 import { type RoutePlan, useRoutePlan } from './planner/useRoutePlan';
+import { useStopDrag } from './planner/useStopDrag';
 import { SearchBox } from './search/SearchBox';
 import { SearchOptions } from './search/SearchOptions';
 import { SearchResultsList } from './search/SearchResultsList';
@@ -89,7 +90,9 @@ export const App = () => {
     const [stops, dispatch] = useStops();
     const [options, setOptions] = useState(defaultRouteOptions);
     const [look, setLook] = useState(defaultLook);
-    const plan = useRoutePlan(modules, stops, options);
+    const [notice, setNotice] = useState<string>();
+    const drag = useStopDrag(modules, stops, options, dispatch, setNotice);
+    const plan = useRoutePlan(modules, stops, options, drag);
     const route = plan.routes?.features[plan.selectedIndex];
     const search = usePlaceSearch(
         modules,
@@ -101,7 +104,6 @@ export const App = () => {
     const [collapsed, setCollapsed] = useState(false);
     const [targetStopId, setTargetStopId] = useState<string>();
     const [popup, setPopup] = useState<PopupState>();
-    const [notice, setNotice] = useState<string>();
     const [pointedSectionId, setPointedSectionId] = useState<string>();
     // Section ids are new on every calculation, so a section's details hold for the route they were
     // opened on: a recalculation or another route's pick closes them.

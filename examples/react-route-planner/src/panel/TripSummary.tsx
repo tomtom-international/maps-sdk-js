@@ -1,5 +1,11 @@
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
-import { getImportantRoads, type Route, type Routes } from '@tomtom-org/maps-sdk/core';
+import {
+    getImportantRoads,
+    getSectionsWithin,
+    type Route,
+    type RouteSummary,
+    type Routes,
+} from '@tomtom-org/maps-sdk/core';
 import type { ReactNode } from 'react';
 import { clockTime, distance, duration, placeTitle } from '../format';
 import { filledStops, type Stop, stopBadge } from '../planner/stops';
@@ -75,6 +81,32 @@ const OwnRoads = ({ route, onPointAtRoad }: OwnRoadsProps) => {
     );
 };
 
+/**
+ * The curvy stretches only this route drives, most of each on roads no alternative takes, so not one running on a
+ * little past the fork; pointing at them rings them.
+ */
+const OwnCurves = ({ route, onPointAtRoad }: OwnRoadsProps) => {
+    const { curvyStretch } = getSectionsWithin(route, {
+        within: route.properties.sections.distinct ?? [],
+        types: ['curvyStretch'],
+    });
+    const stretches = curvyStretch?.sections.filter((_, index) => curvyStretch.shares[index] > 0.5) ?? [];
+    if (!stretches.length) return null;
+
+    return (
+        <span className="ui-alternative-roads">
+            <span
+                className="ui-road-chip"
+                onPointerEnter={() => onPointAtRoad(stretches.map((stretch) => stretch.id))}
+                onPointerLeave={() => onPointAtRoad(undefined)}
+            >
+                {stretches.length} curvy {stretches.length === 1 ? 'stretch' : 'stretches'}
+            </span>{' '}
+            of its own
+        </span>
+    );
+};
+
 const Alternatives = ({
     routes,
     selectedIndex,
@@ -116,6 +148,10 @@ const Alternatives = ({
                                 {comparedToSelected(versusSelected, minutesOf(route) === fastest)}
                             </span>
                             <OwnRoads route={route} onPointAtRoad={(sectionIds) => onPointAtRoute(index, sectionIds)} />
+                            <OwnCurves
+                                route={route}
+                                onPointAtRoad={(sectionIds) => onPointAtRoute(index, sectionIds)}
+                            />
                         </ToggleGroup.Item>
                     );
                 })}
@@ -129,6 +165,16 @@ const crossingLanes: LaneId[] = ['toll', 'ferry', 'tunnel', 'lowEmissionZone', '
 
 const optionalDuration = (seconds?: number): string | undefined =>
     seconds === undefined ? undefined : duration(seconds);
+
+const optionalDelay = (seconds?: number): string | undefined =>
+    seconds === undefined ? undefined : seconds >= 60 ? duration(seconds) : 'None';
+
+// The live travel time can come back below the free-flow one, hence the floor.
+const freeFlowGapOf = ({
+    liveTrafficIncidentsTravelTimeInSeconds: live,
+    noTrafficTravelTimeInSeconds: freeFlow,
+}: RouteSummary): number | undefined =>
+    live === undefined || freeFlow === undefined ? undefined : Math.max(0, live - freeFlow);
 
 const Crossings = ({ lanes }: { lanes: LaneId[] }) => (
     <span className="ui-crossings">
@@ -151,6 +197,8 @@ const RouteFacts = ({ route }: { route: Route }) => {
     const waiting = sections.leg.reduce((total, leg) => total + (leg.summary.stopTimeInSeconds ?? 0), 0);
     const countries = [...new Set(sections.country?.map((country) => country.countryCodeISO2))];
     const crossings = lanesCrossed(route, crossingLanes);
+    const curvyStretches = sections.curvyStretch ?? [];
+    const curvyLength = curvyStretches.reduce((total, stretch) => total + stretch.lengthInMeters, 0);
 
     const facts: [string, ReactNode][] = [
         ['Depart', clockTime(summary.departureTime)],
@@ -158,14 +206,21 @@ const RouteFacts = ({ route }: { route: Route }) => {
         ['Door to door', duration(summary.travelTimeInSeconds)],
         ['Driving', duration(summary.travelTimeInSeconds - waiting)],
         ['Staying', waiting ? duration(waiting) : undefined],
-        ['Traffic delay', summary.trafficDelayInSeconds >= 60 ? duration(summary.trafficDelayInSeconds) : 'None'],
+        ['Traffic events', optionalDelay(summary.trafficDelayInSeconds)],
         ['Distance', distance(summary.lengthInMeters)],
         // The traffic scenarios come back only with `computeTravelTimeFor: 'all'`.
+        ['Traffic delay', optionalDelay(freeFlowGapOf(summary))],
         ['Without traffic', optionalDuration(summary.noTrafficTravelTimeInSeconds)],
         ['Usual traffic', optionalDuration(summary.historicTrafficTravelTimeInSeconds)],
         ['Incidents only', optionalDuration(summary.liveTrafficIncidentsTravelTimeInSeconds)],
         ['Countries', countries.length > 1 ? countries.join(', ') : undefined],
         ['Crosses', crossings.length ? <Crossings lanes={crossings} /> : undefined],
+        [
+            'Curvy roads',
+            curvyStretches.length
+                ? `${curvyStretches.length} ${curvyStretches.length === 1 ? 'stretch' : 'stretches'}, ${distance(curvyLength)}`
+                : undefined,
+        ],
     ];
 
     return (

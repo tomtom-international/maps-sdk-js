@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Custom GeoJSON Module: Median Price per Hexagon</title>
+        <meta name="viewport" content="initial-scale=1">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">Price per square metre</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+            <div class="ui-panel-content">
+                <div class="ui-section">
+                    <p class="ui-instructions ui-description">
+                        5,000 mock listings, grouped into cells by <code>aggregateIntoCells</code>. Cells with fewer
+                        than five listings stay empty.
+                    </p>
+                    <div class="ui-legend" id="ui-legend" aria-hidden="true"></div>
+                    <div class="ui-legend-labels"><span id="ui-legendMin"></span><span id="ui-legendMax"></span></div>
+                </div>
+                <div class="ui-section">
+                    <label class="ui-form-label" for="ui-statistic">Colour by</label>
+                    <select class="ui-dropdown" id="ui-statistic">
+                        <option value="median" selected>Median</option>
+                        <option value="mean">Mean</option>
+                    </select>
+                </div>
+                <div class="ui-section">
+                    <span class="ui-form-label">Cells</span>
+                    <div class="ui-radio-group">
+                        <label class="ui-radio-label">
+                            <input type="radio" name="ui-shape" value="hex" checked>
+                            Hexagons
+                        </label>
+                        <label class="ui-radio-label">
+                            <input type="radio" name="ui-shape" value="square">
+                            Squares
+                        </label>
+                    </div>
+                </div>
+                <div class="ui-section">
+                    <label class="ui-form-label" for="ui-cellSize">Cell size</label>
+                    <div class="ui-slider-container">
+                        <input type="range" class="ui-slider" id="ui-cellSize" min="0.25" max="3" step="0.25" value="1">
+                        <span class="ui-slider-value" id="ui-cellSizeValue"></span>
+                    </div>
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" id="ui-followZoom">
+                        <span class="ui-toggle-switch"></span>
+                        Follow the zoom
+                    </label>
+                </div>
+                <div class="ui-section">
+                    <label class="ui-form-label" for="ui-selection">Hovered cell</label>
+                    <div id="ui-selection" class="ui-selection">Hover a cell.</div>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

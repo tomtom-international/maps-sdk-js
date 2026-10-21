@@ -1,7 +1,6 @@
 import { avoidableTypes } from '@tomtom-org/maps-sdk/core';
 import {
     arrivalSides,
-    type DepartArriveParams,
     type MaxNumberOfAlternatives,
     routeTypes,
     tollTransponderOptions,
@@ -10,6 +9,7 @@ import { keysOf } from '../keysOf';
 import {
     arrivalSideLabels,
     avoidLooks,
+    type InstantWhen,
     type RouteOptions,
     routeTypeLooks,
     tollTransponderLabels,
@@ -94,7 +94,7 @@ export const RouteOptionsPanel = ({ options, onChange }: RouteOptionsPanelProps)
     );
 };
 
-type Timing = DepartArriveParams['option'] | 'now';
+type Timing = InstantWhen['option'] | 'now';
 
 const timingLabels: Record<Timing, string> = { now: 'Leave now', departAt: 'Depart at', arriveBy: 'Arrive by' };
 
@@ -106,7 +106,7 @@ const toLocalInput = (date: Date): string =>
 
 const inAnHour = () => new Date(Date.now() + 60 * 60 * 1000);
 
-type TimingFieldProps = { when?: DepartArriveParams; onChange: (when?: DepartArriveParams) => void };
+type TimingFieldProps = { when?: InstantWhen; onChange: (when?: InstantWhen) => void };
 
 const TimingField = ({ when, onChange }: TimingFieldProps) => (
     <FieldGroup label="When">

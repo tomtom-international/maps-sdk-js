@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Seek or avoid curves</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">Innsbruck to Bolzano</span>
+                </h3>
+            </div>
+            <div class="ui-panel-content">
+                <div class="ui-section">
+                    <span class="ui-form-label">Curves</span>
+                    <div class="ui-radio-group ui-radio-group-horizontal">
+                        <label class="ui-radio-label">
+                            <input type="radio" name="ui-mood" value="avoid">
+                            Avoid them
+                        </label>
+                        <label class="ui-radio-label">
+                            <input type="radio" name="ui-mood" value="seek" checked>
+                            Seek them
+                        </label>
+                    </div>
+                </div>
+                <details class="ui-section ui-disclosure" open>
+                    <summary class="ui-form-label ui-disclosure-summary">Show</summary>
+                    <div class="ui-radio-group ui-disclosure-content">
+                        <label class="ui-radio-label">
+                            <input type="radio" name="ui-context" value="all" checked>
+                            All curves
+                        </label>
+                        <label class="ui-radio-label">
+                            <input type="radio" name="ui-context" value="openRoad">
+                            Open-road bends, outside towns and junctions
+                        </label>
+                        <label class="ui-radio-label">
+                            <input type="radio" name="ui-context" value="townTurns">
+                            Turns at junctions in towns
+                        </label>
+                        <label class="ui-radio-label">
+                            <input type="radio" name="ui-context" value="distinct">
+                            Curvy stretches only one route drives
+                        </label>
+                        <label class="ui-radio-label">
+                            <input type="radio" name="ui-context" value="tunnels">
+                            Curves in tunnels
+                        </label>
+                        <label class="ui-radio-label">
+                            <input type="radio" name="ui-context" value="hairpins">
+                            Hairpins
+                        </label>
+                    </div>
+                </details>
+                <details class="ui-section ui-disclosure">
+                    <summary class="ui-form-label ui-disclosure-summary">What counts as a curve</summary>
+                    <div class="ui-disclosure-content">
+                        <label class="ui-form-label ui-threshold-label" for="ui-minTurn">Turns at least</label>
+                        <div class="ui-slider-container">
+                            <input
+                                type="range"
+                                class="ui-slider"
+                                id="ui-minTurn"
+                                min="10"
+                                max="120"
+                                step="5"
+                                value="40"
+                            >
+                            <span class="ui-slider-value"></span>
+                        </div>
+                        <label class="ui-form-label ui-threshold-label" for="ui-maxRadius"
+                            >On a radius of at most</label
+                        >
+                        <div class="ui-slider-container">
+                            <input
+                                type="range"
+                                class="ui-slider"
+                                id="ui-maxRadius"
+                                min="50"
+                                max="600"
+                                step="10"
+                                value="250"
+                            >
+                            <span class="ui-slider-value"></span>
+                        </div>
+                        <label class="ui-form-label ui-threshold-label" for="ui-maxStraight"
+                            >With a straight within it of at most</label
+                        >
+                        <div class="ui-slider-container">
+                            <input
+                                type="range"
+                                class="ui-slider"
+                                id="ui-maxStraight"
+                                min="10"
+                                max="150"
+                                step="5"
+                                value="40"
+                            >
+                            <span class="ui-slider-value"></span>
+                        </div>
+                    </div>
+                </details>
+                <details class="ui-section ui-disclosure">
+                    <summary class="ui-form-label ui-disclosure-summary">What makes a curvy stretch</summary>
+                    <div class="ui-disclosure-content">
+                        <label class="ui-form-label ui-threshold-label" for="ui-minCurveCount"
+                            >At least this many curves</label
+                        >
+                        <div class="ui-slider-container">
+                            <input
+                                type="range"
+                                class="ui-slider"
+                                id="ui-minCurveCount"
+                                min="2"
+                                max="10"
+                                step="1"
+                                value="3"
+                            >
+                            <span class="ui-slider-value"></span>
+                        </div>
+                        <label class="ui-form-label ui-threshold-label" for="ui-maxGap"
+                            >With gaps between them of at most</label
+                        >
+                        <div class="ui-slider-container">
+                            <input
+                                type="range"
+                                class="ui-slider"
+                                id="ui-maxGap"
+                                min="100"
+                                max="1500"
+                                step="50"
+                                value="500"
+                            >
+                            <span class="ui-slider-value"></span>
+                        </div>
+                    </div>
+                </details>
+                <div class="ui-section">
+                    <span class="ui-form-label">Routes, by how winding they are</span>
+                    <div class="ui-route-cards" id="ui-route-cards"></div>
+                </div>
+                <div class="ui-section" id="ui-stretch">
+                    <span class="ui-form-label">Curvy stretch</span>
+                    <div class="ui-stretch-details">
+                        <strong class="ui-stretch-title" id="ui-stretch-title"
+                            >Click a curvy stretch, or step through them</strong
+                        >
+                        <span class="ui-stretch-detail" id="ui-stretch-places"></span>
+                        <span class="ui-stretch-detail" id="ui-stretch-along"></span>
+                        <span class="ui-stretch-detail" id="ui-stretch-shape"></span>
+                    </div>
+                    <div class="ui-button-group ui-button-group-horizontal">
+                        <button class="ui-button ui-button-outline ui-button-sm" id="ui-stretch-previous">
+                            Previous
+                        </button>
+                        <button class="ui-button ui-button-outline ui-button-sm" id="ui-stretch-next">Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

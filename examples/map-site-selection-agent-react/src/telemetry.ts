@@ -4,7 +4,7 @@ import {
     type ToolExecutionInfo,
 } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import type { ChatTransport, InferAgentUIMessage, LanguageModelUsage } from 'ai';
-import { convertToModelMessages, validateUIMessages } from 'ai';
+import { convertToModelMessages, toUIMessageStream, validateUIMessages } from 'ai';
 import { APPLICATIONINSIGHTS_CONNECTION_STRING } from './config';
 
 const APP_NAME = 'map-site-selection-agent-react';
@@ -176,11 +176,11 @@ function extractUserText(messages: readonly AgentUIMessage[]): string {
 function trackTurnOutcome(
     track: Tracker,
     ctx: TurnContext,
-    result: { totalUsage: PromiseLike<LanguageModelUsage>; text: PromiseLike<string> },
+    result: { usage: PromiseLike<LanguageModelUsage>; text: PromiseLike<string> },
     turnStartMs: number,
     getStepCount: () => number,
 ) {
-    void result.totalUsage.then((usage) => track.tokenUsage(ctx, usage));
+    void result.usage.then((usage) => track.tokenUsage(ctx, usage));
     void result.text.then(
         (text) => track.agentSuccess(ctx, text, Date.now() - turnStartMs, getStepCount()),
         (error: unknown) =>
@@ -219,7 +219,7 @@ async function runInstrumentedTurn(
     const result = await agent.stream({
         prompt: modelMessages,
         abortSignal,
-        onStepFinish: (step) => {
+        onStepEnd: (step) => {
             stepCount += 1;
             for (const toolCall of step.toolCalls) {
                 const toolResult = step.toolResults.find((r) => r.toolCallId === toolCall.toolCallId);
@@ -229,7 +229,7 @@ async function runInstrumentedTurn(
     });
 
     trackTurnOutcome(track, agentCtx, result, turnStartMs, () => stepCount);
-    return result.toUIMessageStream();
+    return toUIMessageStream({ stream: result.stream, tools: agent.tools });
 }
 
 export function createAgentTelemetry(conversationId: string, sink: TelemetrySink = defaultSink()) {

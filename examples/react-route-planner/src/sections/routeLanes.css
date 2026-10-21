@@ -48,6 +48,11 @@
     --ui-lane-color: #a5773f;
 }
 
+/* The rose the map bands curvy stretches with */
+.ui-lane-curvyStretch {
+    --ui-lane-color: #d6336c;
+}
+
 .ui-lane-country {
     --ui-lane-color: var(--ui-border-info-low-em);
 }

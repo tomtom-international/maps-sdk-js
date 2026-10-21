@@ -73,9 +73,6 @@ const focusLabel = (focus: number) => {
             pitch: INITIAL_PITCH,
             // MapLibre stops at 60° by default, which is where terrain starts to read as relief.
             maxPitch: 85,
-            // The depth of field reads the rendered map back as a texture, which MapLibre allows
-            // only when asked.
-            canvasContextAttributes: { preserveDrawingBuffer: true },
         },
     });
 

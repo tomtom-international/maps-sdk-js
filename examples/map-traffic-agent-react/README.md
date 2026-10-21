@@ -38,7 +38,7 @@ This example demonstrates the TomTom Maps SDK Agent Toolkit plugin set up as a t
    - **AZURE_DEPLOYMENT_ID**: Your deployment name (e.g., "model-router", "gpt-4o")
    - **AZURE_API_VERSION**: API version (defaults to "2024-12-01-preview" if not set)
 
-4. Install dependencies (requires AI SDK v6 and @ai-sdk/azure v3+):
+4. Install dependencies (requires AI SDK v7 and @ai-sdk/azure v4+):
    ```bash
    pnpm install
    ```

@@ -1,0 +1,43 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+@import "../../src/templates/css/form/field.css";
+@import "../../src/templates/css/form/dropdown.css";
+@import "../../src/templates/css/form/toggle.css";
+
+/* The cut between two cities. */
+.ui-fade {
+    position: absolute;
+    inset: 0;
+    background: #000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 600ms ease;
+}
+
+.ui-fade.ui-fade-out {
+    opacity: 1;
+}
+
+/* The lower third: the city and what the camera flies past. */
+.ui-caption {
+    position: absolute;
+    left: var(--ui-space-6);
+    bottom: var(--ui-space-6);
+    color: #fff;
+    font-family: var(--ui-font-gilroy);
+    font-size: 28px;
+    font-weight: 700;
+    text-shadow: 0 2px 12px rgb(0 0 0 / 60%);
+    pointer-events: none;
+}
+
+.ui-caption-city {
+    display: block;
+    font-size: var(--ui-font-body-s);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.85;
+}

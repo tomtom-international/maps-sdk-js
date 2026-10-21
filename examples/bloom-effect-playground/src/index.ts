@@ -23,8 +23,6 @@ const INITIAL_STYLE: StandardStyleID = 'monoDark';
             container: 'sdk-map',
             center: [longitude, latitude],
             zoom: 13,
-            // Bloom and capture read the map canvas back; MapLibre keeps it readable only when asked.
-            canvasContextAttributes: { preserveDrawingBuffer: true },
         },
     });
 

@@ -14,6 +14,13 @@ const mapLanguages: { text: string; value: Language }[] = [
     { text: 'French', value: 'fr-FR' },
     { text: 'Spanish (Castilian)', value: 'es-ES' },
     { text: 'Italian', value: 'it-IT' },
+    { text: 'Chinese (Simplified)', value: 'zh-Hans' },
+    { text: 'Chinese (Traditional)', value: 'zh-Hant' },
+    { text: 'Hebrew', value: 'he-IL' },
+    { text: 'Hindi', value: 'hi-IN' },
+    { text: 'Japanese', value: 'ja-JP' },
+    { text: 'Serbian', value: 'sr-RS' },
+    { text: 'Ukrainian', value: 'uk-UA' },
 ];
 const configLanguage: Language = 'nl-NL';
 

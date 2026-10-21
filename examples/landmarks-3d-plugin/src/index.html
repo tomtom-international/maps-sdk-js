@@ -22,36 +22,33 @@
 
             <div class="ui-panel-content">
                 <div class="ui-section">
-                    <div class="ui-form-field">
-                        <label class="ui-form-label" for="ui-basemap">Basemap theme:</label>
+                    <label class="ui-form-field">
+                        <span class="ui-form-label">Landmark</span>
+                        <select class="ui-dropdown" id="ui-place"></select>
+                    </label>
+                    <label class="ui-form-field">
+                        <span class="ui-form-label">Map style</span>
                         <select class="ui-dropdown" id="ui-basemap"></select>
-                    </div>
-
-                    <div class="ui-form-field">
-                        <label class="ui-form-label" for="ui-builtUp">Built-up colour:</label>
-                        <span class="ui-color-swatch"><input type="color" id="ui-builtUp"></span>
-                    </div>
-                    <button class="ui-button" id="ui-builtUp-reset">Style's built-up colour</button>
+                    </label>
                 </div>
 
                 <div class="ui-section">
-                    <span class="ui-form-label">Landmarks</span>
-                    <div class="ui-form-field">
-                        <label class="ui-form-label" for="ui-color">Colour</label>
-                        <span class="ui-color-swatch"><input type="color" id="ui-color"></span>
-                    </div>
-                    <div class="ui-form-field">
-                        <label class="ui-form-label" for="ui-opacity">Opacity</label>
-                        <div class="ui-slider-container">
-                            <input type="range" class="ui-slider" id="ui-opacity" min="0" max="1" step="0.05">
-                            <span class="ui-slider-value" id="ui-opacity-value"></span>
-                        </div>
-                    </div>
-                    <label class="ui-toggle-label">
-                        <input type="checkbox" class="ui-toggle-input" id="ui-verticalGradient">
-                        <span class="ui-toggle-switch"></span>
-                        Walls darken towards the ground
+                    <label class="ui-form-field">
+                        <span class="ui-form-label">Built-up colour</span>
+                        <span class="ui-color-swatch"><input type="color" id="ui-builtUp"></span>
                     </label>
+                    <button class="ui-button" id="ui-builtUp-reset">Style's built-up colour</button>
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" id="ui-buildings3D" checked>
+                        <span class="ui-toggle-switch"></span>
+                        Sunlit 3D buildings with shadows
+                    </label>
+                </div>
+
+                <div class="ui-section" id="ui-landmarks">
+                    <span class="ui-form-label">Landmarks</span>
+                </div>
+                <div class="ui-section">
                     <button class="ui-button" id="ui-follow">Follow the 3D buildings</button>
                 </div>
             </div>

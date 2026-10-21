@@ -38,17 +38,25 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         show: 'all-except',
         values: [],
     };
+    // The POIs hidden by a click, whatever their category.
+    let hiddenPOIIds: string[] = [];
+
+    // `updateConfig` replaces the whole of `filters`, so both filters go in every time.
+    const applyFilters = () =>
+        poisModule.updateConfig({
+            filters: { categories: categoryFilter, ids: { show: 'all-except', values: hiddenPOIIds } },
+        });
 
     const toggleCategoryFilter = (category: FilterablePOICategory, isChecked: boolean) => {
         isChecked
             ? categoryFilter.values.push(category)
             : (categoryFilter.values = categoryFilter.values.filter((cat) => cat != category));
-        poisModule.updateConfig({ filters: { categories: categoryFilter } });
+        applyFilters();
     };
 
     const changeFilterMode = (mode: FilterShowMode) => {
         categoryFilter.show = mode;
-        poisModule.updateConfig({ filters: { categories: categoryFilter } });
+        applyFilters();
     };
 
     const resetConfig = () => {
@@ -56,7 +64,8 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
             show: 'all-except',
             values: [],
         };
-        poisModule.updateConfig({ filters: { categories: categoryFilter } });
+        hiddenPOIIds = [];
+        applyFilters();
         filterInputs.forEach((input) => (input.checked = false));
         modeSelector.selectedIndex = 0;
     };
@@ -96,6 +105,10 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         },
     });
     poisModule = await POIsModule.get(map);
+    poisModule.events.on('click', (poi) => {
+        hiddenPOIIds.push(poi.properties.id);
+        applyFilters();
+    });
 
     modeSelector = document.getElementById('ui-modeSelector') as HTMLSelectElement;
     modeSelector?.addEventListener('change', (e) =>

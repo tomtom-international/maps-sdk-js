@@ -3,6 +3,7 @@ import { BaseMapModule, POIsModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { MapEffects } from '@tomtom-org/maps-sdk-plugin-map-effects';
 import './style.css';
 import { API_KEY } from './config';
+import { createPaperTile, drawPaperMargin, PAPER_COLOR } from './paper';
 import { WATERCOLOR_FRAGMENT } from './watercolor';
 
 // (Set your own API key when working in your own environment)
@@ -14,8 +15,6 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
             container: 'sdk-map',
             center: [12.3358, 45.4371],
             zoom: 14.5,
-            // Bloom and your own passes read the map canvas back; MapLibre keeps it readable only when asked.
-            canvasContextAttributes: { preserveDrawingBuffer: true },
         },
     });
 
@@ -43,6 +42,10 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     effects.addPass({
         id: 'watercolor',
         fragment: WATERCOLOR_FRAGMENT,
-        uniforms: () => ({ uScale: map.mapLibreMap.getPixelRatio() }),
+        uniforms: () => ({ uScale: map.mapLibreMap.getPixelRatio(), uPaperColor: PAPER_COLOR }),
+        textures: { uPaper: createPaperTile() },
     });
+
+    // Above every overlay, so the vignette darkens the painting but not the bare paper around it.
+    effects.addLayer({ id: 'paper-margin', placement: 'after-vignette', draw: drawPaperMargin });
 })();

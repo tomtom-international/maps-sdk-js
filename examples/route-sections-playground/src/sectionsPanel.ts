@@ -122,6 +122,14 @@ const rowMarkup = (type: DrawnSectionType): string => `
         <div class="section-knobs">${knobControls(type)}</div>
     </div>`;
 
+// A colour ramped over the type's data, as a curve's by its `severity`, ends on its `color` knob.
+const colorKnobOf = (paint: unknown): string | undefined => {
+    if (typeof paint === 'string') return paint;
+
+    const top = Array.isArray(paint) && paint[0] === 'interpolate' ? paint.at(-1) : undefined;
+    return typeof top === 'string' ? top : undefined;
+};
+
 // The per-type colour and opacity are the SDK's own, so the controls start where the rendered layer
 // already is. The state stays empty until a control moves, which keeps the config below showing
 // only what was actually asked for.
@@ -134,7 +142,8 @@ const seedControlsFromMap = (map: TomTomMap, types: readonly DrawnSectionType[])
         const opacity = map.mapLibreMap.getPaintProperty(layerID, 'line-opacity');
         const colorInput = controlFor(type, 'color');
         const opacityInput = controlFor(type, 'opacity');
-        if (colorInput && typeof color === 'string') colorInput.value = color;
+        const knobColor = colorKnobOf(color);
+        if (colorInput && knobColor) colorInput.value = knobColor;
 
         if (opacityInput && typeof opacity === 'number') opacityInput.value = String(Math.round(opacity * 100));
     }

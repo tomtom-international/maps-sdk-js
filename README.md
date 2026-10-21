@@ -66,6 +66,7 @@ This repository is where your feedback on the SDK reaches the team that builds i
 
 - [Open an issue](https://github.com/tomtom-international/maps-sdk-js/issues) to report a bug.
 - [Start a discussion](https://github.com/tomtom-international/maps-sdk-js/discussions) for questions and feature requests.
+- To report a security vulnerability, follow [SECURITY.md](./SECURITY.md) instead, which keeps it private.
 
 With the optional `tomtom-maps-sdk-js-feedback` skill from the quickstart, your coding agent drafts the report when the
 SDK gets in its way, and posts it here only after you approve that draft.

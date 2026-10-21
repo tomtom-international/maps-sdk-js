@@ -54,7 +54,7 @@ poi?.phone;                              // '+31 20 123 4567'
 poi?.url;                                // 'https://starbucks.com'
 poi?.brands;                             // ['Starbucks']
 poi?.categories;                         // POICategory[] — e.g. ['COFFEE_SHOP'] (standardized enum)
-poi?.localizedCategories;               // string[] — e.g. ['coffee shop'] (human-readable)
+poi?.localizedCategories;               // string[] — e.g. ['coffee shop'] (human-readable, English in every language)
 poi?.openingHours?.alwaysOpenThisPeriod; // boolean
 poi?.openingHours?.timeRanges;          // [{ start: { date, hour, minute }, end: {...} }]
 poi?.timeZone?.ianaId;                   // 'Europe/Amsterdam'
@@ -66,8 +66,8 @@ whether it is open now, compare it with the current time in `poi.timeZone`, whic
 ### Data source IDs (for follow-up calls)
 
 ```ts
-place.properties.dataSources?.geometry?.id;   // pass to geometryData()
-place.properties.dataSources?.poiDetails?.id; // pass to getPlaceDetails()
+place.id;                                   // pass to getPlaceDetails() as entityId
+place.properties.dataSources?.geometry?.id; // pass to geometryData()
 ```
 
 A reverse geocoded place has no `geometry` data source. To draw its boundary, search it by name
@@ -103,6 +103,8 @@ place.properties.entryPoints?.forEach(ep => {
 Reverse geocoding fills `entryPoints` too, from the points the service places on the road network,
 so `getPosition(place, { useEntryPoint: 'main-when-available' })` and routing's `useEntryPoints`
 work the same on a reverse geocoded address as on a search result.
+With `main-when-available`, a place with no entry point typed `'main'` uses its first untyped one, as
+reverse geocoding returns them. A place whose entry points are all `'minor'` keeps its own position.
 
 ### Related POIs (parent / child relationships)
 
@@ -144,10 +146,11 @@ const s: RouteSummary = route.properties.summary;
 
 s.lengthInMeters;                      // total distance
 s.travelTimeInSeconds;                 // total duration
-s.trafficDelayInSeconds;               // extra time due to traffic
-s.trafficLengthInMeters;               // traffic-affected distance
+s.trafficDelayInSeconds;               // number | undefined: delay of the traffic events along trafficLengthInMeters
+s.trafficLengthInMeters;               // number | undefined: distance those traffic events cover
 s.arrivalTime;                         // Date object
 s.departureTime;                       // Date object
+// The three travel times below need `computeTravelTimeFor: 'all'` on calculateRoute
 s.noTrafficTravelTimeInSeconds;        // free-flow time
 s.historicTrafficTravelTimeInSeconds;  // historical average
 s.liveTrafficIncidentsTravelTimeInSeconds; // with live incidents only
@@ -157,6 +160,11 @@ s.deviationPoint;                      // Position
 s.deviationDistanceInMeters;
 s.deviationTimeInSeconds;
 ```
+
+- `trafficDelayInSeconds` and `trafficLengthInMeters` are present only when the routing service sends them.
+- `trafficDelayInSeconds` is the delay of the traffic events along `trafficLengthInMeters`. For the gap to free-flow,
+  use `Math.max(0, liveTrafficIncidentsTravelTimeInSeconds - noTrafficTravelTimeInSeconds)`. The live time can fall
+  below the free-flow one, hence the floor. Never derive free-flow as `travelTimeInSeconds - trafficDelayInSeconds`.
 
 ### Sections
 
@@ -181,6 +189,17 @@ sections.lanes;              // LaneSectionProps[] — only with guidance; with 
 sections.speedLimit;         // SpeedLimitSectionProps[]
 sections.roadShields;        // RoadShieldSectionProps[]
 sections.importantRoadStretch; // ImportantRoadStretchProps[]
+sections.curve;              // CurveSectionProps[] — SDK-found bends, only when sectionTypes names them:
+                             // headingChangeInDegrees (+ right), radiusInMeters (where tightest), lengthInMeters,
+                             // curvinessScore (arc metres × 1 below 175 m radius, 1.3 < 100,
+                             // 1.6 < 60, 2 < 30; 0 wider), severity (0–1, how hard it is to drive for the
+                             // speed limit on the road into it, from sections.speedLimit when requested; a
+                             // turn/U-turn/roundabout maneuver counts as slow), maneuver? (a junction instruction on it; never
+                             // depart, arrive, waypoint, border or tollgate, nor "stay on" the same road
+                             // or one with no other way to take)
+sections.curvyStretch;       // CurvyStretchSectionProps[] — runs of 3+ close curves: curveCount, hairpinCount
+                             // (isHairpin: 140°+ on ≤40 m), lengthInMeters, minRadiusInMeters, curvinessScore
+                             // (its curves' summed; over 1000 is very twisty)
 sections.carpool;            // SectionProps[]; also carTrain, lowEmissionZone, vehicleRestricted
 
 // Sections have startPointIndex, endPointIndex (indices into route.geometry.coordinates; the pair alone is a RouteSpan);
@@ -221,7 +240,7 @@ sections.traffic?.forEach(t => {
     t.magnitudeOfDelay;    // DelayMagnitude
     t.delayInSeconds;      // number
     t.effectiveSpeedInKmh; // number
-    t.eventId;             // string — join key back to the traffic incident details service
+    t.eventId;             // string — the tail of the incident's id, not that id: match id.endsWith(eventId) (traffic.md)
     t.tec?.causes;         // TPEG2-TEC codes; `tec` is absent when the service has none, so guard it
 });
 ```
@@ -323,9 +342,10 @@ result.features.forEach((incident: TrafficIncident) => {
 ## Gotchas
 
 - `place.properties.poi?.categories` is `POICategory[]` (e.g. `'ITALIAN_RESTAURANT'`) — NOT raw strings
-- `place.properties.poi?.localizedCategories` is `string[]` (e.g. `'restaurant'`) — human-readable
+- `place.properties.poi?.localizedCategories` is `string[]` (e.g. `'restaurant'`) — human-readable, but in English whatever the request `language`; localized names come from `getPOICategories({ language })`, by `code`
 - `CommonPlaceProps` has NO `score` field — that is on `SearchPlaceProps` (search and geocoding results)
 - `RouteSummary.arrivalTime` / `departureTime` are `Date` objects — not ISO strings
 - `SectionsProps` has no index signature — access properties by name, not dynamic key
 - `DelayMagnitude` is a string union — not a number
 - Traffic incident geometry can be either `Point` (local) or `LineString` (road stretch)
+- `BBox` is `[west, south, east, north]`, and `west > east` means it crosses the antimeridian (RFC 7946 §5.2) — `place.bbox`, `route.bbox` and every bbox utility use that form, so don't read `[0]`/`[2]` as min/max longitude (see `core-utilities.md` → Bounding boxes)

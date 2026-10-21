@@ -18,8 +18,10 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     console.log(`Found ${results.features.length} results along the route\n`);
 
     results.features.forEach((place) => {
+        const { poi, address, detourTimeInSeconds, detourDistanceInMeters } = place.properties;
         console.log(
-            `${place.properties.poi?.name}\n${place.properties.address.freeformAddress}\n${place.geometry.coordinates}\n`,
+            `${poi?.name}\n${address.freeformAddress}\n${place.geometry.coordinates}\n` +
+                `Detour: ${detourTimeInSeconds} s, ${detourDistanceInMeters} m\n`,
         );
     });
 })();

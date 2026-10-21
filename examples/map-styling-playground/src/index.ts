@@ -1,4 +1,4 @@
-import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { defaultSectionTypes, TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import {
     applyMapPreset,
     BaseMapModule,
@@ -48,7 +48,8 @@ const showRouteAndPlaces = async (routing: RoutingModule, places: PlacesModule, 
         discoverOnePlace('Alamo Square, San Francisco'),
     ]);
     const [routes, museums, district] = await Promise.all([
-        calculateRoute({ locations: waypoints }),
+        // The curves of the winding roads over Twin Peaks, with every section the routes draw by default.
+        calculateRoute({ locations: waypoints, sectionTypes: [...defaultSectionTypes, 'curve', 'curvyStretch'] }),
         discoverPlaces({ filters: { poiCategories: ['MUSEUM'] }, geoBias: { position: [-122.43, 37.775] }, limit: 10 }),
         geocodeOne('Haight-Ashbury, San Francisco, CA').then((place) =>
             geometryData({ geometries: [place], zoom: 14 }),
@@ -84,7 +85,10 @@ const showRouteAndPlaces = async (routing: RoutingModule, places: PlacesModule, 
     const styling = await StylingFoundationsModule.get(map, { labels: { sizeFactor: 1.2 } });
     // A route, a few places and a district, whose labels follow the map's typeface until given their own.
     const area = await GeometriesModule.create(map, { fill: { opacity: 0.1 }, lineLabel: {} });
-    const routing = await RoutingModule.create(map);
+    // The curves keep their rose on any theme, while their kerbs follow the style's light or dark.
+    const routing = await RoutingModule.create(map, {
+        sections: { curve: { visible: true }, curvyStretch: { visible: true } },
+    });
     const places = await PlacesModule.create(map);
     void showRouteAndPlaces(routing, places, area);
 

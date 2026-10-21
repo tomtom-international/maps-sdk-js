@@ -12,7 +12,14 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
 const useCases: Record<string, MapEffectsConfig> = {
     'data-viz': { grade: { saturation: 0.35, brightness: 0.85 }, tint: { color: '#1f2937', opacity: 0.2 } },
     'night-driving': { bloom: { intensity: 0.6, radius: 14, threshold: 0.55 } },
+    // The glare's lights are the major roads by default; the bloom glows on the same colour.
+    'street-lights': {
+        glare: { intensity: 0.8, length: 48 },
+        bloom: { intensity: 0.5, radius: 10, threshold: 0.3, only: ['colors.roadMajor'] },
+    },
     focus: { vignette: { intensity: -0.45 }, edgeBlur: { intensity: 10, reach: 0.45 } },
+    // A pale air over the dark style, where the theme's own air is dark.
+    'milky-distance': { fog: { intensity: 0.7, reach: 0.5, color: '#dbe3ec' } },
 };
 
 const map = new TomTomMap({
@@ -25,9 +32,6 @@ const map = new TomTomMap({
         // every part of the ground is the same distance away and that knob has nothing to do.
         pitch: 60,
         maxPitch: 85,
-        // Bloom, the depth of field and capture all read the map canvas back; MapLibre keeps it
-        // readable only when asked.
-        canvasContextAttributes: { preserveDrawingBuffer: true },
     },
 });
 // Traffic tubes are what bloom lights up on a dark style.
@@ -72,9 +76,16 @@ const renderPanel = () => {
         field.className = 'ui-form-field';
         field.title = knob.description;
         if (knob.kind === 'color') {
-            field.innerHTML = `<span class="ui-form-label">${name}</span><span class="ui-color-swatch"><input type="color" value="${current}"></span>`;
+            field.innerHTML = `<span class="ui-form-label">${name} <span class="ui-form-hint"></span></span><span class="ui-color-swatch"><input type="color"></span>`;
             const input = field.querySelector('input') as HTMLInputElement;
-            input.addEventListener('input', () => setKnob(effects, effectKnobCatalogue, knob.id, input.value));
+            const hint = field.querySelector('.ui-form-hint') as HTMLElement;
+            // A colour knob with no default, `fog.color`, follows the map's theme until a colour is picked.
+            if (typeof current === 'string') input.value = current;
+            else hint.textContent = 'theme';
+            input.addEventListener('input', () => {
+                hint.textContent = '';
+                setKnob(effects, effectKnobCatalogue, knob.id, input.value);
+            });
         } else if (knob.kind === 'colors') {
             // One named source at a time; '' stands for the empty list, the whole frame.
             const selected = Array.isArray(current) ? (current[0] ?? '') : '';

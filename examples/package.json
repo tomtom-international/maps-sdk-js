@@ -1,6 +1,6 @@
 {
   "name": "@tomtom-org/maps-sdk-examples",
-  "version": "0.60.5",
+  "version": "0.60.6",
   "private": true,
   "type": "module",
   "description": "JavaScript library for examples of TomTom maps and location services",
@@ -26,6 +26,8 @@
     "react-dom": "catalog:"
   },
   "devDependencies": {
+    "@assistant-ui/react": "catalog:",
+    "@assistant-ui/react-ai-sdk": "catalog:",
     "@playwright/test": "catalog:",
     "@tailwindcss/node": "catalog:",
     "@tailwindcss/oxide": "catalog:",
@@ -36,7 +38,8 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
-    "js-yaml": "^5.4.3",
+    "js-yaml": "^5.5.0",
+    "rolldown": "catalog:",
     "rollup-plugin-visualizer": "catalog:",
     "sharp": "^0.35.5",
     "typescript": "catalog:",

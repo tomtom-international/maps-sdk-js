@@ -83,9 +83,6 @@ const DEPTH_OF_FIELD = { intensity: 20, band: 0.08, bokeh: 1 } as const;
             pitch: Number(pitch.value),
             // The fly-over lives above MapLibre's default 60° ceiling, where the relief closes in.
             maxPitch: 85,
-            // The depth of field reads the rendered map back as a texture, which MapLibre allows
-            // only when asked.
-            canvasContextAttributes: { preserveDrawingBuffer: true },
         },
     });
 

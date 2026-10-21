@@ -1,18 +1,29 @@
-import type { Page } from '@playwright/test';
+import type { ConsoleMessage, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
+const FAILED_REQUEST_PREFIX = 'Failed to load resource:';
+
 /**
- * What the page reports as an error that no example can act on, matched against the message text.
+ * What the page reports as an error that no example can act on, matched against the recorded error.
  *
  * Every entry buys silence back at the price of the check, so each one names a single known source
  * rather than a class of failure.
  */
 const IGNORED_MESSAGES: readonly RegExp[] = [
-    // The suite drives every example at the live APIs from parallel workers, so some requests are
-    // throttled on any given run. What an HTTP failure does to the page is caught where it belongs: a map that
-    // never paints fails `waitForMapPainted`, and one that paints wrong fails its snapshot.
-    /^Failed to load resource:/,
+    // The suite drives every example at the live TomTom APIs from parallel workers, so some requests
+    // are throttled on any given run. What a throttled request does to the page is caught where it
+    // belongs: a map that never paints fails `waitForMapPainted`, and one that paints wrong fails its snapshot.
+    /^Failed to load resource: the server responded with a status of 429 \([^)]*\) at https:\/\/([a-z]\.)?api\.tomtom\.com\//,
 ];
+
+// The browser names a failed request only in the message's location, whose query can carry the API key.
+const describeConsoleError = (message: ConsoleMessage): string => {
+    const { url } = message.location();
+    if (!message.text().startsWith(FAILED_REQUEST_PREFIX) || !URL.canParse(url)) return message.text();
+
+    const { origin, pathname } = new URL(url);
+    return `${message.text()} at ${origin}${pathname}`;
+};
 
 /**
  * Starts recording everything the page reports as an error, and returns the list it fills.
@@ -22,7 +33,7 @@ const IGNORED_MESSAGES: readonly RegExp[] = [
 export const recordPageErrors = (page: Page): string[] => {
     const errors: string[] = [];
     page.on('console', (message) => {
-        if (message.type() === 'error') errors.push(message.text());
+        if (message.type() === 'error') errors.push(describeConsoleError(message));
     });
     page.on('pageerror', (error) => errors.push(`${error.name}: ${error.message}`));
     return errors;

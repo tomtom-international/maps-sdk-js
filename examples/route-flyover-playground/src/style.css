@@ -3,6 +3,7 @@
 @import "../../src/templates/css/base/typography.css";
 @import "../../src/templates/css/panel/custom-panel.css";
 @import "../../src/templates/css/panel/search-panel.css";
+@import "../../src/templates/css/panel/disclosure.css";
 @import "../../src/templates/css/form/field.css";
 @import "../../src/templates/css/form/input.css";
 @import "../../src/templates/css/form/dropdown.css";
@@ -85,35 +86,8 @@
 /* The camera's modes, folded away. They are the part of this panel a visitor tunes second, and
    open they are half its height. */
 .ui-disclosure-summary {
-    cursor: pointer;
-    list-style: none;
-    display: flex;
-    align-items: center;
-    gap: var(--ui-space-2);
     font-family: var(--ui-font-gilroy);
     font-size: var(--ui-font-body-s);
     font-weight: var(--ui-font-weight-bold);
     color: var(--ui-text-med-em);
-}
-
-.ui-disclosure-summary::-webkit-details-marker {
-    display: none;
-}
-
-.ui-disclosure-summary::before {
-    content: "";
-    width: 0;
-    height: 0;
-    border-left: 5px solid currentcolor;
-    border-top: 4px solid transparent;
-    border-bottom: 4px solid transparent;
-    transition: transform var(--ui-transition-fast);
-}
-
-.ui-disclosure[open] .ui-disclosure-summary::before {
-    transform: rotate(90deg);
-}
-
-.ui-disclosure-content {
-    margin-top: var(--ui-space-3);
 }

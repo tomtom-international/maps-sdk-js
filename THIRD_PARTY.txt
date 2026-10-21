@@ -152,7 +152,7 @@ terms above.
 ---
 
 Name: maplibre-gl
-Version: 6.13.0
+Version: 6.15.0
 License: BSD-3-Clause
 Bundled: false (peer dependency)
 Required by: map
@@ -283,7 +283,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ---
 
 Name: zod
-Version: 4.6.5
+Version: 4.6.7
 License: MIT
 Bundled: false (peer dependency)
 Required by: services

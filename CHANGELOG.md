@@ -1,5 +1,183 @@
 # Changelog
 
+## 1.0.0-rc.4
+
+### Major Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** core, services: a route or leg summary's `trafficDelayInSeconds` and `trafficLengthInMeters` are optional, present only when the routing service sends them, rather than `0` when it leaves them out
+  
+  - core: `trafficDelayInSeconds` is the delay of the traffic events along `trafficLengthInMeters`. For the gap to free-flow, use `Math.max(0, liveTrafficIncidentsTravelTimeInSeconds - noTrafficTravelTimeInSeconds)`, with `computeTravelTimeFor: 'all'`
+  - agent-toolkit: the route shape `analyseData`, `processData`, `clusterIncidents` and `createTracker` give the model says what `trafficDelayInSeconds` measures and how to work out the gap to free-flow
+  - examples: `react-route-planner` shows the traffic delay against free flow, and the delay of the traffic events on a row of its own
+
+### Minor Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** core: the bbox utilities read and return a box crossing the antimeridian as `west > east`, as RFC 7946 and the services do, so fitting the map to results around Fiji frames Fiji rather than the whole world
+  
+  - **Breaking:** core: `bboxFromCoordsArray`, and `bboxFromGeoJSON` on points, return the box across the antimeridian when it is narrower than the one from the lowest to the highest longitude. A tie, or input spanning -180 to 180, keeps the latter, so every country in the world still gives `[-180, …, 180]`
+  - **Breaking:** core: `bboxFromGeoJSON` reads a line or ring along its edges, which don't wrap, so a ring past 180 gives the box across the antimeridian and one from -100 to 100 stays `[-100, …, 100]`
+  - **Breaking:** core: `bboxFromBBoxes`, and `bboxFromGeoJSON` on several features or parts, return the narrowest box containing every input, so merging a box across the antimeridian with another keeps both
+  - **Breaking:** core: `polygonFromBBox` draws a box across the antimeridian with its east edge at `east + 360`, around the box rather than the rest of the world, and `bboxFromGeoJSON` reads that ring back as the same box
+  - map: `TomTomMap.getBBox` with padding returns a view across the antimeridian as `west > east`, and a view wider than 180° whole
+  - services: `geometrySearch` ranks a polygon across the antimeridian by its own width when it keeps the largest 50
+  - agent-toolkit: `getTrafficAreaAnalytics` reads a `bbox` across the antimeridian as the area it covers, and the tools describe a bbox as `[west, south, east, north]`. It needs SDK 1.0.0-rc.4
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** core: `Language` holds every language the map labels carry, so `map.setLanguage('hi-IN')` labels the map in Hindi, and the services send each API a code it takes
+  
+  - **Breaking:** core: `Language` and `languages` gain `ca-ES`, `et-EE`, `eu-ES`, `gl-ES`, `he-IL`, `hi-IN`, `hr-HR`, `ja-JP`, `kk-KZ`, `lv-LV`, `ro-RO`, `sr-RS` and `uk-UA`, so a `Record<Language, …>` of your own needs an entry for each
+  - map: the map labels in each of them, and the traffic incident descriptions in Catalan, Estonian, Hebrew, Japanese, Latvian and Romanian
+  - services: a behaviour change. `zh-Hans` goes out as `zh-CN` and `zh-Hant` as `zh-TW`, so every service but traffic incidents, which lack Simplified Chinese, answers in that script, where it picked the script by place and answered Singapore in English. Search, geocoding, suggestions and POI categories take both, where they answered each with a 400
+  - services: search, geocoding and suggestions answer `hi-IN` and `ja-JP` in local names, and POI categories in English. All four answer `en-CA` in British English and `es-MX` in Latin American Spanish, where they answered each with a 400. POI categories take `ngt` and `ngt-Latn` too
+  - services: `trafficIncidentDetails` takes every `Language`, answering in the nearest language the incident tiles have, or in English, where it answered one it lacks, such as `en-AU` or `pt-BR`, with a 406
+  - examples: `map-language` offers Hebrew, Hindi, Japanese, Serbian and Ukrainian
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** core: `main-when-available` uses a place's first untyped entry point when none is typed `'main'`, so a reverse geocoded place routes to the road-snapped point the service returns rather than to the queried point
+  
+  - **Breaking:** core: `getPosition(place, { useEntryPoint: 'main-when-available' })` returns that entry point's position. A place whose entry points are all `'minor'` keeps its own position
+  - **Breaking:** services: `calculateRoute` with `useEntryPoints: 'main-when-available'` sends such a stop at that entry point
+  - **Breaking:** map: `RoutingModule` with `waypoints.entryPoints: 'main-when-available'` draws such a waypoint at that entry point
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** map: `styling.layers.query` selects style layers by exact id, derives a paint or layout value from the one beneath it, and narrows a layer's filter with one more clause, all kept across style switches; `POIsModule` hides or shows single POIs by id, which makes `filters.categories` optional
+  
+  - map: `LayerQuery` takes `ids`, the exact style layer ids to select
+  - map: `setPaint` and `setLayout` take a function `(valueUnder, layerId) => value` for any property, worked out from the style's own value, or the one a knob set, and again whenever that value changes
+  - map: `addFilterClause` and `removeFilterClause` add a clause to a layer's filter, `and`-ed with the style's own and with the filters other modules add, instead of replacing it as `setFilter` does
+  - map: `POIsModule`'s `filters.ids` takes a `ValuesFilter` of POI ids, beside `filters.categories`
+  - **Breaking:** map: `POIsModuleConfig`'s `filters.categories` is optional, so `filters` can hold `ids` alone. Code reading `config.filters.categories` must handle `undefined`
+  - examples: `map-styling-playground` adds a motorway name halo derived from the one beneath it and a road name filter clause, and `poi-filters` hides a POI you click
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - map: add a MapLibre custom layer with `map.addCustomLayer`, which keeps it in its place through style switches and lets its objects take clicks and hovers
+  - `beforeLayerConfig` places it as on a module. The new `'lowest3D'` anchor, `mapStyleLayerIDs.lowest3D`, puts a 3D layer under the style's 3D buildings, otherwise under the POIs, and module layers placed before `lowestLabel` stay below it, even the ones added later. Module layers at `'poi'` or `'top'` stay above it, also where it falls back to the POIs or the top
+  - An id the map already has throws, until that layer's `remove()`
+  - After every `setStyle`, before the modules restore, the layer goes back to its place, added again if the switch dropped it, and the module layers go back over or under it as they were. `remove()` takes it off for good
+  - A `hitTest` returns the objects under the pointer, topmost first. They join the map's user events in layer order, so the layer's `events`, priority, the hover cursor and the event states work as on a module's features, with `setState` to draw the states
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** map: drag features on every module and scope with the new `dragstart`, `drag` and `dragend` events, such as a route's waypoints, its lines or a place's pin
+  
+  - map: a drag handler makes its features draggable with the mouse or one finger. They show the new `cursorOnDraggable` cursor, `'grab'` by default, the map doesn't pan under the drag, and the release fires no `click`
+  - map: `RoutingModule` reports the drag on `events.waypoints` and `events.mainLines` and plans nothing, so you call `calculateRoute` and `showRoutes` with the moved or inserted stop, or let the route dragging plugin do it
+  - **Breaking:** map: `EventType` also holds the three drag types, so a `switch` or a `Record` over it needs them. Event states keep to the click and hover types, as `EventState` and `SetEventStateOptions.state` now say on their own
+  - examples: `react-route-planner` drags stops on the map and pulls new ones onto the route line through the route dragging plugin, re-planning the route as you drag
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - map: line up a custom layer's three.js or WebGL scene with the map, in metres around a place, with `localFrameMatrix`
+  - It turns `defaultProjectionData.mainMatrix` into a `Float64Array`, composed in double precision, which a three.js camera or a WebGL uniform takes
+  - `centerLatitude` scales heights at the map centre's latitude, as MapLibre scales its 3D buildings and terrain, and `units: 'mercatorMeters'` takes geometry authored in EPSG:3857 metres
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** map: `SectionLinePattern`, deprecated in 1.0.0-rc.3, is removed. Use `LinePattern`, the same type, which geometries and reachable range borders share too
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** map: `TomTomMap` takes a `transformRequest` that holds or rewrites each map request after the SDK's own, and may return a promise, so an app can wait for its proxy session or point tiles at its own cache
+  
+  - map: `transformRequest`, typed `MapRequestTransform`, gets the request the SDK built, with its URL, headers and credentials, and stays in place through `setLanguage` and `setGeopoliticalView`
+  - **Breaking:** map: the map no longer awaits `globalThis.__DEMOS_PROXY_ENSURE_SESSION__` before its requests. An app that set it passes the same function as `transformRequest` instead: `transformRequest: async (request) => { await ensureSession(); return request; }`
+  - examples: `map-request-transform` holds the map's tile requests behind a toggle and counts them
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** map: when the map's style fails to load, a module's `create()` or `get()` rejects with the style's `TomTomMapError`, the one the error handlers get, so an `await` on it lands in your `catch` instead of waiting forever
+  
+  - **Breaking:** map: after a style load fails, a module call that waits for the map, such as `showRoutes` or `show`, rejects with that error too, until a `setStyle` loads a style. Once one loads, create again only the modules whose `create()` or `get()` rejected: the others restore themselves
+  - map: a style, tile, sprite or glyph request that gets no response, offline or blocked, reaches the error handlers as `NETWORK_NOT_AVAILABLE`, which can be retried, instead of `STYLE_LOAD_FAILED` or `INTERNAL`
+  - examples: `multiple-maps-landmarks` logs a map whose style fails to load instead of leaving an unhandled rejection
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** services: `calculateRoute` returns the curves of each route as `sections.curve` and the winding stretches they make up as `sections.curvyStretch` when its `sectionTypes` names them, so you can keep a motion-sick passenger off winding roads or send a motorcyclist down them
+  
+  - **Breaking:** core: `SectionType`, `sectionTypes`, `inputSectionTypes` and `inputSectionTypesWithGuidance` include `'curve'` and `'curvyStretch'`. A `Record<SectionType, …>` needs an entry for each
+  - **Breaking:** services: `InputSectionType` includes them too
+  - **Breaking:** map: `DrawnSectionType`, `GeneratedSectionType`, `drawnSectionTypes` and `generatedSectionTypes` include them, so a `Record<DrawnSectionType, …>` needs an entry for each. `SectionKnobName` includes `'kerb'`, so a `Record<SectionKnobName, …>` needs one for it
+  - core: each curve has its `headingChangeInDegrees`, positive to the right, its `radiusInMeters` where it turns tightest, its `lengthInMeters` and a `curvinessScore`, its arc weighted by how tight it is as roadcurvature.com scores roads, a `severity` from 0 to 1, how much a driver slows down for it from the speed limit on the road into it, weighing its radius, how far it turns and whether it's a turn at a junction, and on a route with guidance the `maneuver` of a junction instruction on it. An instruction that keeps to the road, such as "Turn left to stay on the SS38" at a hairpin, names none
+  - core: each curvy stretch groups three or more curves within 500 m of each other, ended by a curve with a maneuver, with its `curveCount`, `hairpinCount` (its hairpins, curves turning 140° or more on a radius of 40 m or less, which the new `isHairpin` tells), `lengthInMeters`, `minRadiusInMeters` and `curvinessScore`, its curves' scores added up
+  - core: `getCurveSections` and `getCurvyStretchSections` find them with thresholds of your own. A curve's `severity` reads the route's `speedLimit` sections, so ask for them along with the curves
+  - services: `calculateRoute` takes those thresholds as `curveDetection`, a `CurveDetectionOptions` with the turn, radius and straight that make a curve and the curve count and gap that make a curvy stretch
+  - core: the new `withCurveSections` finds a route's curves and curvy stretches again with other thresholds, keeping its other sections, so you can tune them on routes you already have, with no new request
+  - core: `compareRoutes` and `getSectionsWithin` weigh `curve` and `curvyStretch` when you pass no `types`, on routes that carry them
+  - services: the SDK finds `curve` and `curvyStretch` in the route's geometry, only when a `sectionTypes` list names them, so a `calculateRoute` without `sectionTypes` does no more work than before. `inputSectionTypes` and `inputSectionTypesWithGuidance` name them, so a list built from those finds them too. It never sends them to the routing API
+  - core: the new `defaultSectionTypes` names the sections a `calculateRoute` without `sectionTypes` returns, so `sectionTypes: [...defaultSectionTypes, 'curve', 'curvyStretch']` keeps them all and adds the curves
+  - map: the routing module draws `curve` and `curvyStretch` as bands when you switch them on with `sections.curve: { visible: true }`, at the width of every other section band. The curves draw rose, a colour no traffic delay takes, deeper the higher their `severity`, above the stretch they make up, which draws the same rose fainter
+  - map: from zoom 12, a curve of 60 m radius or less carries a kerb, short stripes of a tint of its colour, nearly white on a light map and nearly black on a dark one. The new `sections.curve.kerb.color` knob sets the stripes' colour, and `sections.curve.kerb.visible: false` draws one plain line. `layers.sections.curve` takes the kerb as `routeSectionCurveKerb`
+  - examples: the new `route-curves` example ranks a mountain trip's routes by how winding they are and takes the straightest or the curviest. It shows all their curves, the open-road bends, the turns in towns, the curvy stretches each route has of its own, the curves in tunnels or the hairpins, with their speed limit signs, names how hard a curve you click is, and tells where a curvy stretch you click anywhere along starts, how long it takes and which towns it runs between. Its sliders, folded away under the picker, set what counts as a curve and a curvy stretch, and find them again on the routes shown. The `route-sections-playground` picker adds the Stelvio Pass, and `map-styling-playground` draws a route's curves over Twin Peaks
+  - examples: `react-route-planner` adds a Curvy roads lane and counts each alternative's curvy stretches of its own, and a Curvy route draws its curves and curvy stretches
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** map: the `maplibre-gl` peer dependency moves up to `^6.15.0`
+  - **Breaking:** services: the `zod` peer dependency moves up to `^4.6.7`.
+  - services: `geometryData` reports a `geometries` list over 20 as one issue on that field, not as a union mismatch.
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** services: along-route results from `discoverPlaces({ route })` carry their detour as typed `AlongRoutePlaceProps`, `detourTimeInSeconds` and `detourDistanceInMeters`, so you read them without a cast
+  
+  - **Breaking:** services: the untyped `properties.detourTime`, `detourDistance` and `detourOffset` are now `detourTimeInSeconds`, `detourDistanceInMeters` and `detourOffsetInMeters`. Either detour can be negative, when the route through the place is faster or shorter than the original
+  - services: `detourOffsetInMeters` comes with results sorted by `'detourOffset'`
+  - examples: `nodejs-along-route-search` prints each charger's detour
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** services: `geocodeOne` and `discoverOnePlace` reject with an `SDKError` coded `NOT_FOUND` when nothing matches, naming the `'Geocode'` or `'FuzzySearch'` service, so you can branch on `error.code` as for any other failed call
+  
+  - The message is unchanged. A `catch` that filters on `instanceof SDKError` now receives a miss too, where it used to get a plain `Error`.
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** services: request validation rejects a parameter the service doesn't know, and names it, so a misplaced key such as a top-level `poiCategories` fails with `INVALID_REQUEST` instead of being dropped silently
+  
+  - **Breaking:** services: an unknown parameter rejects with an `unrecognized_keys` issue, and one the service takes inside an object parameter points there: `poiCategories is not a parameter of AlongRouteSearch. Did you mean filters.poiCategories?`. The check reads only the parameters you pass, not the global configuration, and a parameter set to `undefined` counts as absent. `validateRequest: false` skips it
+  - **Breaking:** services: an along-route `discoverPlaces` with neither a `query` nor a filter other than `indexes` rejects in validation, rather than with the API's `400 "The requested route cannot be calculated"`
+  - services: `calculateRoute` validates `useEntryPoints`, `extendedRouteRepresentations` and `guidance`
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** services: a request a service can't build, such as a geometry type geometry search doesn't take sent with `validateRequest: false`, rejects with an `SDKError` coded `INVALID_REQUEST` instead of a plain `Error`, so you can branch on `error.code` as for any other failed call
+  
+  - What the request builder threw is on `cause`, and the message is unchanged.
+  - If the parameters passed validation and the request still can't be built, the code is `INTERNAL`.
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** services: a rate-limited (`429`) call backs off 447 ms before its first retry by default instead of retrying at once, and each wait is drawn between half and all of the backoff, so clients rate-limited together don't retry together
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** services: `when` takes a `localDateTime`, a wall-clock time such as `'2026-10-19T08:15:00'` that the routing API reads in the origin's time zone, so you can route at 08:15 in Tokyo from a browser anywhere without a UTC offset
+  
+  - With `arriveBy`, `calculateRoute` reads a `localDateTime` in the time zone of the route's final destination. `calculateReachableRange` takes it with `departAt`
+  - The format is `YYYY-MM-DDTHH:mm:ss`, typed as `LocalDateTime`. Request validation rejects a time without seconds, with an offset or a `Z`, a date that doesn't exist, and a `when` with both or neither of `date` and `localDateTime`
+  - **Breaking:** `DepartArriveParams` is a union of `{ date }` and `{ localDateTime }`, so code reading `when.date` off it gets `Date | undefined`. Narrow it first, for example with `Extract<DepartArriveParams, { date: Date }>`. Passing `{ option, date }` is unchanged
+
+### Patch Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - map: the style's 3D buildings have softened corners, rounded over the last metre of their walls, and the new `buildings3D.roundedCornerDistanceMeters` knob of `StylingFoundationsModule` sets how far the rounding reaches
+  
+  - map: `0` gives the sharp corners back, and a few metres rounds the buildings. A style that sets its own `fill-extrusion-rounded-corner-distance` keeps it
+  - examples: `map-styling-playground` adds a 3D buildings section with the knob
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - core: `aggregateIntoCells` groups your points into hexagons, squares or your own polygons, such as districts, and gives each cell the median, mean, count, sum, min or max of a value, as GeoJSON polygons any map module draws
+  
+  - core: each point's grid cell comes from its coordinates, so large data sets stay fast, and the cells across the antimeridian stay side by side. `minCount` leaves out the cells with too few points, and `gridOrigin` keeps the cells in place while your points change
+  - map: `TrafficAreaAnalyticsModule` finds each tile's hexagon or square from its coordinates on the same cell grid, instead of testing it against every cell, and draws the same cells as before
+  - examples: `byod-geojson-cells-custom-module` colours Berlin by the median asking price per square metre in each hexagon or square
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - core: `servesGeopoliticalView(view, api)` tells whether the SDK sends a geopolitical view to an API, so you can label a result with the view its request carried
+  
+  - core: `GeopoliticalViewAPI` names the APIs it answers for: `'mapTiles'`, `'search'`, `'placeDetails'`, `'reverseGeocoding'` and `'geocoding'`
+  - map, services: the map's tiles and every search, place details, reverse geocoding and geocoding request decide which view to send from it, so your label and the request always agree
+  - examples: `geopolitical-views-playground` labels each address with the view its reverse geocoding request carried
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - core, services, map: exported classes keep their names in the minified bundles, so `SDKError.name` is `'SDKError'`, `TomTomConfig.name` is `'TomTomConfig'` and `RoutingModule.name` is `'RoutingModule'`
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - map: Add your own credits to the map's attribution with `attribution: { credits }` on `TomTomMap`. They show next to TomTom's and stay across style switches.
+  
+  - examples: `byod-geojson-heatmap-custom-module` credits its listed-buildings dataset in the map's attribution
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - map: `setMapColors` paints city parks and sport grounds with `park` on every standard style, where `streetDark` and the mono styles gave them `artificial`'s colour
+  
+  - map: with `park` left unset, the parks keep the style's own colour whatever `artificial` is set to
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - map: `TrafficIncidentDetailsModule` fades every incident outside the focus set with the new `highlight.unfocusedOpacityFactor`, so the incidents you focus are the ones that stand out
+  
+  - map: it fades their lines, icons and delay text while a focus is set, multiplies `line.opacity`, leaves a hovered or clicked incident at full strength and survives a style change. It's `1` by default, which leaves them as they are, and the `highlight.unfocusedOpacityFactor` knob sets it by id
+  - examples: `traffic-incident-details` fades the other incidents when you click one
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - map: the map language labels the map in `zh-Hant`, `zh-Hans`, `ko-Latn-KR`, `ru-Latn-RU`, `ngt-Latn` and `nb-NO` too, where those showed the local name or the wrong script
+  
+  - examples: `map-language` offers Simplified and Traditional Chinese
+
+- Thanks [@AlvaroGraca-TomTom](https://github.com/AlvaroGraca-TomTom)! - map: with a proxy `commonBaseURL`, the map sends credentials and TomTom headers only to URLs on the proxy's own origin and under its path, not to a host or path that only starts with the same text
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - core, services, map: the `license` field reads `SEE LICENSE IN LICENSE.txt`, the form npm and license scanners recognise, so they point to the package's own `LICENSE.txt` instead of reporting an unknown license
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - services: `getSearchSuggestions` validates its own parameters before sending either request, so an invalid `filters.boundingBox` rejects under that name rather than `geoBias`, and an invalid call costs no request
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - services: geometry search sends a closed polygon ring of 50 vertices whole and samples a longer one to 50 evenly spaced vertices, where a ring just over a multiple of 50 sent as few as 26
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - services: `createLatestRequest({ supersede: 'on-answer' })` shows each answer of requests that start faster than they answer, such as a route re-planned during a drag, and never an older answer after a newer one
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - services: along-route `discoverPlaces` rejects a `maxDetourTimeSeconds` above `3600`, the service's maximum, in request validation rather than after a round trip
+
 ## 1.0.0-rc.3
 
 ### Minor Changes

@@ -1,6 +1,8 @@
 # Agent Toolkit Plugin
 
-This plugin is a headless conversational agent that gives large language models tool-based control over a [TomTom Map](https://docs.tomtom.com/maps-sdk-js/guides/map/tomtom-map) and TomTom location services. It's built on [Vercel AI SDK v6](https://ai-sdk.dev/).
+This plugin is a headless conversational agent that gives large language models tool-based control over a [TomTom Map](https://docs.tomtom.com/maps-sdk-js/guides/map/tomtom-map) and TomTom location services. It's built on [Vercel AI SDK v7](https://ai-sdk.dev/).
+
+> **Public preview.** This plugin is in [Public Preview](https://docs.tomtom.com/legal/public-preview) until its 1.0.0 release.
 
 The plugin has no UI, so you bring your own chat interface. It bundles no LLM provider, so you supply any AI SDK-compatible model.
 
@@ -85,7 +87,7 @@ For a full working app, see the [traffic agent example](https://docs.tomtom.com/
 
 ## Tools reference
 
-The plugin ships a `DEFAULT_TOOLS` registry that covers search, routing, traffic, reachable areas, BYOD GeoJSON, base-map control, MapLibre access and code-generated analysis. The agent gets every tool by default, and you can remove or replace each one through the [`tools` option](#composing-tool-sets). The [Agent Toolkit guide](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/tools) has the full per-tool reference.
+The plugin ships a `DEFAULT_TOOLS` registry that covers search, routing, traffic, reachable areas, BYOD GeoJSON, base-map control, MapLibre access and code-generated analysis. The agent gets every tool in it by default, and you can remove or replace each one through the [`tools` option](#composing-tool-sets). The [Agent Toolkit guide](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/tools) has the full per-tool reference.
 
 ### Location & search
 
@@ -147,11 +149,12 @@ The plugin ships a `DEFAULT_TOOLS` registry that covers search, routing, traffic
 | `analyseData` | Aggregate or chart entries (`places`, `routes`, `incidents`, `geometries`, `trafficAreaAnalytics`, `byod`) with dynamic JS. The scope the classifier emits narrows the schema each turn |
 | `processData` | Transform entries, with dynamic JS, into new `places`, `placeConnections`, `geometries`, `byod` or a `fitOnMap` camera move |
 | `monitorAnalysis` | Start or stop recomputing an `analyseData` analysis whenever its source entries change |
-| `executeMaplibreCode` | Run arbitrary MapLibre JS against the live `Map` instance, an escape hatch for custom layers, animations and raster overlays |
+
+`executeMaplibreCode` runs arbitrary MapLibre JS against the live `Map` instance, an escape hatch for custom layers, animations and raster overlays. Its code runs in your page with no sandbox, so it's not in `DEFAULT_TOOLS`. Add it with `tools: { executeMaplibreCode: createExecuteMaplibreCodeTool() }` only where you trust the model.
 
 > See [Code generation](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/code-generation) for the injected identifiers, output contracts and threat model, and [Scope-aware data tools](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/scope-aware-data-tools) for how the per-turn classifier scope keeps the prompt small.
 
-`analyseData`, `processData`, `createTracker` and `clusterIncidents` code is **always isolated in the browser**. It runs in a Web Worker inside a sandboxed, opaque-origin iframe with no DOM or network access, terminable on timeout. It needs no configuration, since the SDK lazily loads its own bundled turf and h3 for the worker. The environment, not a setting, decides where the code runs. The browser always isolates it, while Node and SSR always run it on the main thread. That boundary has no equivalent there, so the protection is defense-in-depth only. The optional `codeExecution` only tunes the isolated browser run:
+`analyseData`, `processData`, `createTracker` and `clusterIncidents` code is **isolated in the browser, or not run**, unless you opt into `codeExecution.allowMainThreadFallback`. It runs in a Web Worker inside a sandboxed, opaque-origin iframe with no DOM or network access, terminable on timeout. The SDK lazily loads its own bundled turf and h3 for the worker, so a page without a Content Security Policy needs no configuration. A page with one must allow what the sandbox needs, which the code-generation guide lists. The environment decides where the code runs. The browser isolates it, while Node and SSR always run it on the main thread. That boundary has no equivalent there, so the protection is defense-in-depth only. The optional `codeExecution` tunes the browser run:
 
 ```typescript
 const agent = createMapAgent(map, {
@@ -160,7 +163,7 @@ const agent = createMapAgent(map, {
 });
 ```
 
-> **Experimental.** The `e2e-tests/` suite verifies the isolation boundary (CSP egress-block, worker termination, opaque-origin isolation) and runs in CI as a dedicated job. If the iframe can't initialise, the code falls back to the main thread with a warning. The worker bundles `turf`, `h3` and `routeUtils`, so that code, route slicing included, runs fully in the browser. See the [code-generation guide](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/code-generation#data-tool-execution-isolation-experimental).
+> **Experimental.** The `e2e-tests/` suite verifies the isolation boundary (CSP egress-block, worker termination, opaque-origin isolation) and runs in CI as a dedicated job. If the iframe can't start, the code doesn't run. The tool returns an error to the model, and a call 30 seconds or more later tries again. `agent.getCodeExecutionMode()` reports where the code runs, and `codeExecution.allowMainThreadFallback: true` runs it in the page, not isolated, and does not retry the iframe. The worker bundles `turf`, `h3` and `routeUtils`, so that code, route slicing included, runs fully in the browser. See the [code-generation guide](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/code-generation#data-tool-execution-isolation-experimental).
 
 ### Map display
 
@@ -533,13 +536,14 @@ const agent = createMapAgent(map, {
 
 ### The `MapAgentInstance`
 
-`createMapAgent` returns a `ToolLoopAgent` (usable directly with `DirectChatTransport`) with two extra properties:
+`createMapAgent` returns a `ToolLoopAgent` (usable directly with `DirectChatTransport`) with three extra properties:
 
 ```typescript
 const agent = createMapAgent(map, { model });
 
-agent.state;     // Live state — typed as CS when custom state is provided, ToolState otherwise
-agent.destroy(); // Reset all state slices (call on unmount)
+agent.state;                  // Live state — typed as CS when custom state is provided, ToolState otherwise
+agent.getCodeExecutionMode(); // Where the code-generation tools run: not-started, iframe-worker, unavailable or main-thread
+agent.destroy();              // Reset all state slices (call on unmount)
 ```
 
 ## Public API exports
@@ -552,11 +556,11 @@ For the complete, always-current list of exports, including factories, tool-regi
 
 | Type | Package | Purpose |
 |---|---|---|
-| Peer | `@tomtom-org/maps-sdk@>=1.0.0-rc.0 <1.0.0` | TomTom Maps SDK (types, services, map modules) — its 1.0.0 release candidates |
+| Peer | `@tomtom-org/maps-sdk@^1.0.0-rc.4` | TomTom Maps SDK (types, services, map modules), from 1.0.0-rc.4 through every 1.x release |
 | Peer | `@tomtom-org/maps-sdk-plugin-map-theme@>=0.3.0` | Theming the map from a few colours or an image in `setMapStyling` |
-| Peer | `ai@^6` | Vercel AI SDK (ToolLoopAgent, tool types) |
-| Peer | `zod@^4` | Schema validation |
-| Peer | `maplibre-gl@^6` | Map rendering engine |
+| Peer | `ai@^7.0.143` | Vercel AI SDK (ToolLoopAgent, tool types) |
+| Peer | `zod@^4.6.7` | Schema validation |
+| Peer | `maplibre-gl@^6.15.0` | Map rendering engine |
 | Peer | `@turf/turf@^7` | Geospatial math (distance, bbox, bearing) used by the data tools |
 | Peer | `chart.js@^4` | Chart rendering for `analyseData` outputs |
 | Peer | `h3-js@^4` | H3 hexagonal grid for `processData` coverage / hexgrid visualizations |
@@ -571,10 +575,14 @@ For the complete, always-current list of exports, including factories, tool-regi
     - [Code generation](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/code-generation) — `analyseData` / `processData` / `createTracker` / `clusterIncidents` / `executeMaplibreCode` (threat model included)
     - [Scope-aware data tools](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/scope-aware-data-tools) — per-turn scope mechanism
     - [Bring your own data](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/byod) — ingest customer GeoJSON layers
-- [AI SDK v6 documentation](https://ai-sdk.dev/)
+- [AI SDK v7 documentation](https://ai-sdk.dev/)
 - [TomTom Maps SDK documentation](https://docs.tomtom.com/maps-sdk-js)
 - [Example application](https://docs.tomtom.com/maps-sdk-js/examples/map-traffic-agent-react) — full chat interface implementation
 
 ## License
 
 See `LICENSE.txt`.
+
+## Security
+
+To report a security vulnerability, follow [SECURITY.md](https://github.com/tomtom-international/maps-sdk-js/blob/main/SECURITY.md), which keeps it private.

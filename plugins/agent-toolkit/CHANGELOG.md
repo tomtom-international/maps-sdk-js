@@ -1,5 +1,79 @@
 # Changelog
 
+## 0.17.0
+
+### Minor Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** The agent runs on the Vercel AI SDK 7, so the `ai` peer dependency moves up to `^7.0.143`
+  - Move your own AI SDK calls to version 7 with its [migration guide](https://ai-sdk.dev/docs/migration-guides/migration-guide-7-0), for example `@ai-sdk/react` 4 and your model provider's next major.
+  - **Breaking:** `MapAgentOptions.prepareStep` takes the AI SDK 7 `PrepareStepFunction<ToolSet>`. An `instructions` or `messages` override it returns now carries over to the later steps of the turn.
+  - **Breaking:** The `maplibre-gl` peer dependency moves up to `^6.15.0`, and the `zod` peer dependency to `^4.6.7`.
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** `addByodSource` loads only public `https://` URLs unless you set `byod.validateSourceUrl`, so the model can no longer point it at your own origin, `localhost` or a private network address
+  
+  - **Breaking:** Without `byod.validateSourceUrl`, it refuses `http://` URLs, the page's own origin, `localhost`-style hostnames and loopback, private, link-local and other non-public IP addresses. To load from your origin or a local development server, allow those URLs in `byod.validateSourceUrl`, which replaces the default policy.
+  - **Breaking:** The fetch sends no cookies or other credentials and refuses redirects, and any failure returns one generic error to the model, with no HTTP status or part of the response.
+  - examples: the `map-site-selection-agent-react` code and README say its BYOD loads take any public https URL
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** `executeMaplibreCode` is no longer a default tool, because the code the model writes for it runs in your page with no sandbox. To keep it, add `tools: { executeMaplibreCode: createExecuteMaplibreCodeTool() }` to `createMapAgent`
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** agent-toolkit: a tool call carrying a top-level key the tool's `z.object` input schema doesn't declare fails with the key's name, which the model sees and can correct, instead of the key vanishing from `input`. This covers custom tools and the schemas a scope rebuilds
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** `setRoute` only calculates and shows a route; how it looks moves to the display and styling tools
+  
+  - **Breaking:** `setRoute` drops `showWaypoints` and `showSummaryBubbles`. Hide a route's pins with `updateRoutesDisplay({ waypoints: false })`, and its summary bubbles with `setMapStyling({ set: { "routes.summaryBubbles.visible": false } })`. A system prompt that names the old flags should name these instead
+  - `updateRoutesDisplay` takes `waypoints` to show or hide the pins of the entries it targets, the latest one when it names none. Hidden pins stay hidden each time the route shows again, through `RoutingState.setWaypointsShown`; `showEntry`'s `showWaypoints` still applies to that one show. With pins hidden, `addWaypointsToRoute` still extends the route
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** In the browser, `analyseData`, `processData`, `createTracker` and `clusterIncidents` return an error to the model when the code sandbox can't start, instead of running the generated code in the page, and a call 30 seconds or more later tries the sandbox again
+  - Set `codeExecution: { allowMainThreadFallback: true }` to run the code in the page, not isolated, when the sandbox can't start. That choice does not retry the sandbox.
+  - A page with a document but no `Worker` fails closed the same way, rather than running the code on the page.
+  - `agent.getCodeExecutionMode()` reports where generated code runs: `not-started`, `iframe-worker`, `unavailable` or `main-thread`.
+  - A page CSP that blocks the sandbox's worker or `'unsafe-eval'` now fails the start too, rather than every run. The code-generation guide lists the directives the sandbox needs.
+
+### Patch Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - The `discoverPlaces` schema the model reads caps `maxDetourTimeSeconds` at `3600`, the service's maximum
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - The `discoverPlaces` schema the model reads says a negative detour time, a route through the POI that is faster than the original one, sorts first
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - The places schema the model reads says `localizedCategories` is in English whatever the request language
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - The agent tells route alternatives apart and points out a route's tolls, jams or roads on the map, without writing code for either
+  
+  - Each route summary names the main roads it takes in `via`, and each alternative says what it adds and avoids against route 0 in `comparedToBest`, such as a toll road or a jam. `setRoute`, the waypoint tools and `recallState` return them, so the agent can answer "how do the routes differ?" from them, with no code to write
+  - `updateRoutesDisplay` takes `focus` to ring sections of the selected route and zoom to them: section types such as `tollRoad`, `traffic` or `distinct`, road numbers such as `A2`, and `pick` for the longest one, the jam with the most delay or one by its index. `focus: null` clears the ring. A monitored route keeps its selected alternative and its focus each time the monitor recalculates it
+  - `updateRoutesDisplay` switches the selected alternative without drawing the route again, so the summary bubbles stay put and an index the entry doesn't have is refused
+  - Routes come with their `curve` and `curvyStretch` sections, which the SDK finds in the geometry with no extra request. Each summary says how winding the route is in `timeInCurvesPercent`, the share of its travel time in curves. `focus` takes both types and `pick: 'curviest'`, and `setMapStyling` draws them with `routes.sections.curve.visible`. The agent plans without guidance, so a turn at a junction counts as a curve
+  - The sandbox's `routeUtils` adds `getSectionsWithin`, `getImportantRoads`, `compareRoutes` and `isHairpin`
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - `createTracker` costs the model fewer tokens: each turn offers only the entry kinds its rule reads
+  
+  - `createTracker` is now scopable like `analyseData`, so a tracker over incidents and places drops the other kinds' fields and schemas, about half to two thirds of its schema. It also leaves out the kinds `dataEntries` disables
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - The route shape that `analyseData` and `processData` give the model says a traffic section's `eventId` is the tail of an incident's `id`, so the code it writes matches incidents by that suffix
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** core: the bbox utilities read and return a box crossing the antimeridian as `west > east`, as RFC 7946 and the services do, so fitting the map to results around Fiji frames Fiji rather than the whole world
+  
+  - **Breaking:** core: `bboxFromCoordsArray`, and `bboxFromGeoJSON` on points, return the box across the antimeridian when it is narrower than the one from the lowest to the highest longitude. A tie, or input spanning -180 to 180, keeps the latter, so every country in the world still gives `[-180, …, 180]`
+  - **Breaking:** core: `bboxFromGeoJSON` reads a line or ring along its edges, which don't wrap, so a ring past 180 gives the box across the antimeridian and one from -100 to 100 stays `[-100, …, 100]`
+  - **Breaking:** core: `bboxFromBBoxes`, and `bboxFromGeoJSON` on several features or parts, return the narrowest box containing every input, so merging a box across the antimeridian with another keeps both
+  - **Breaking:** core: `polygonFromBBox` draws a box across the antimeridian with its east edge at `east + 360`, around the box rather than the rest of the world, and `bboxFromGeoJSON` reads that ring back as the same box
+  - map: `TomTomMap.getBBox` with padding returns a view across the antimeridian as `west > east`, and a view wider than 180° whole
+  - services: `geometrySearch` ranks a polygon across the antimeridian by its own width when it keeps the largest 50
+  - agent-toolkit: `getTrafficAreaAnalytics` reads a `bbox` across the antimeridian as the area it covers, and the tools describe a bbox as `[west, south, east, north]`. It needs SDK 1.0.0-rc.4
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - The `license` field reads `SEE LICENSE IN LICENSE.txt`, the form npm and license scanners recognise, so they point to the package's own `LICENSE.txt` instead of reporting an unknown license
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - Installs beside `@tomtom-org/maps-sdk` 1.0.0 and every later 1.x release: the peer range on the SDK runs up to `<2.0.0` instead of stopping below 1.0.0
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - The package page on npm and the API reference of its entry points say the plugin is in Public Preview until its 1.0.0 release, as its guides already do
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** core, services: a route or leg summary's `trafficDelayInSeconds` and `trafficLengthInMeters` are optional, present only when the routing service sends them, rather than `0` when it leaves them out
+  
+  - core: `trafficDelayInSeconds` is the delay of the traffic events along `trafficLengthInMeters`. For the gap to free-flow, use `Math.max(0, liveTrafficIncidentsTravelTimeInSeconds - noTrafficTravelTimeInSeconds)`, with `computeTravelTimeFor: 'all'`
+  - agent-toolkit: the route shape `analyseData`, `processData`, `clusterIncidents` and `createTracker` give the model says what `trafficDelayInSeconds` measures and how to work out the gap to free-flow
+  - examples: `react-route-planner` shows the traffic delay against free flow, and the delay of the traffic events on a row of its own
+
 ## 0.16.0
 
 ### Minor Changes

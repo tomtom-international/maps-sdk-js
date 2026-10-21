@@ -136,7 +136,7 @@ flyover.setMarker({ visible: false });
 ```
 
 - Default arrow: `ROUTE_LINE_OUTLINE_COLOR` fill, white outline. It does not follow a theme's accent; pass `fillColor: map.mapColors.accent` to match a themed route.
-- A MapLibre custom layer (one textured quad, re-added after style changes): `MapEffects` and captures include it.
+- A MapLibre custom layer (one textured quad, re-added after style changes): `MapEffects` and captures include it. Module layers at `'top'` go under it, even when added later.
 - Placed as each frame is drawn, on the terrain under its route point, independent of the camera.
 - Mercator projection only; a custom image URL on another origin needs CORS (it becomes a WebGL texture).
 

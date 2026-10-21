@@ -1,6 +1,6 @@
 import { formatDuration, type Routes, TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { RoutingModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
-import { calculateRoute } from '@tomtom-org/maps-sdk/services';
+import { calculateRoute, type LocalDateTime } from '@tomtom-org/maps-sdk/services';
 import { API_KEY } from './config';
 import './style.css';
 import { initTogglePanel } from './togglePanel';
@@ -28,13 +28,6 @@ const nextWeekday = (): string => {
     return day.toISOString().slice(0, 10);
 };
 
-// Amsterdam's offset from UTC on that day, such as "+02:00".
-const utcOffset = (day: string): string =>
-    new Intl.DateTimeFormat('en', { timeZone: TIME_ZONE, timeZoneName: 'longOffset' })
-        .formatToParts(new Date(`${day}T12:00:00Z`))
-        .find((part) => part.type === 'timeZoneName')
-        ?.value.replace('GMT', '') ?? '';
-
 const clockTime = (date: Date) => date.toLocaleTimeString('en-GB', { timeZone: TIME_ZONE, timeStyle: 'short' });
 
 const span = (className: string, textContent = '') =>
@@ -50,12 +43,14 @@ const span = (className: string, textContent = '') =>
     await routingModule.showWaypoints(locations);
 
     const day = nextWeekday();
-    const offset = utcOffset(day);
-    const departures = DEPARTURE_HOURS.map((hour) => new Date(`${day}T${String(hour).padStart(2, '0')}:00${offset}`));
-    dayText?.replaceChildren(departures[0].toLocaleDateString('en-GB', { timeZone: TIME_ZONE, dateStyle: 'full' }));
+    // Wall-clock times without an offset, which the routing API reads in the origin's time zone.
+    const departures = DEPARTURE_HOURS.map((hour) => `${day}T${String(hour).padStart(2, '0')}:00:00` as LocalDateTime);
+    dayText?.replaceChildren(
+        new Date(`${day}T12:00:00Z`).toLocaleDateString('en-GB', { timeZone: TIME_ZONE, dateStyle: 'full' }),
+    );
 
     const plans: Routes[] = await Promise.all(
-        departures.map((date) => calculateRoute({ locations, when: { option: 'departAt', date } })),
+        departures.map((localDateTime) => calculateRoute({ locations, when: { option: 'departAt', localDateTime } })),
     );
     const durations = plans.map((routes) => routes.features[0].properties.summary.travelTimeInSeconds);
     const fastestIndex = durations.indexOf(Math.min(...durations));

@@ -1,11 +1,14 @@
 /**
  * A watercolour fragment shader for `MapEffects.addPass`, repainting the map's own pixels: small washes,
- * paint wandering off the lines, pigment pooled where the colour breaks, and the paper's grain.
+ * paint wandering off the lines, pigment pooled where the colour breaks, and the paper showing through.
  *
- * Lengths are CSS pixels scaled by `uScale` (the device pixel ratio), sized for a thin brush.
+ * Lengths are CSS pixels scaled by `uScale` (the device pixel ratio), sized for a thin brush. The paper is
+ * the `uPaper` texture's fibres in the `uPaperColor` colour.
  */
 export const WATERCOLOR_FRAGMENT = `
 uniform float uScale;
+uniform vec3 uPaperColor;
+uniform sampler2D uPaper;
 
 const float STRENGTH = 1.0;       // how much of the paint replaces the map: lower it to let the map show through
 const float PATCH = 0.8;          // radius of one wash, never under one device pixel
@@ -15,9 +18,9 @@ const float BLEED = 0.5;          // how far colour creeps past its wash
 const float EDGE = 0.65;          // pigment pooled at colour breaks, as a share of the colour
 const float EDGE_SPAN = 0.5;      // where the edges are read, next to the edge itself
 const float GRAIN = 0.28;         // the paper's tooth
-const float GRAIN_PITCH = 2.4;
+const float GRAIN_PITCH = 2.4;    // CSS px per fibre
 
-// An integer hash, so the paper is the same on every GPU.
+// An integer hash, so the brush wanders the same way on every GPU.
 float hash(vec2 cell) {
     uvec2 bits = uvec2(ivec2(floor(cell)) + 4096);
     uint h = bits.x * 0x27d4eb2du + bits.y * 0x165667b1u;
@@ -105,8 +108,11 @@ void main() {
     paint *= 1.0 - EDGE * clamp(length(slope) * 3.0, 0.0, 1.0);
 
     // Pigment settles in the tooth, so the darker the paint the more of the paper shows through.
-    float tooth = fbm(cssPoint / GRAIN_PITCH) - 0.5;
+    vec2 fibre = cssPoint / (GRAIN_PITCH * vec2(textureSize(uPaper, 0)));
+    float tooth = texture(uPaper, fibre).r * 0.65 + texture(uPaper, fibre * 2.07 + 0.37).r * 0.35 - 0.5;
     paint *= 1.0 + GRAIN * tooth * (1.35 - luma(paint));
+    // Watercolour is transparent: the paper's colour shows through all of it.
+    paint *= uPaperColor;
 
     vec4 source = texture(uSource, vUv);
     fragColor = vec4(mix(source.rgb, clamp(paint, 0.0, 1.0), STRENGTH), source.a);

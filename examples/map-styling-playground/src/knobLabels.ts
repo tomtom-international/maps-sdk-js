@@ -11,8 +11,10 @@ export const labelOf = (knob: KnobEntry<string>): string => {
 // Everything before the last dot names the group: 'labels.sizeFactor' -> 'labels'.
 export const groupOf = (knob: KnobEntry<string>): string => knob.id.slice(0, knob.id.lastIndexOf('.'));
 
+const titles: Record<string, string> = { pois: 'POIs', buildings3D: '3D buildings' };
+
 // 'traffic flow' -> 'Traffic flow'.
 export const titleOf = (group: string): string => {
     const words = group.split('.').join(' ');
-    return words === 'pois' ? 'POIs' : words.charAt(0).toUpperCase() + words.slice(1);
+    return titles[words] ?? words.charAt(0).toUpperCase() + words.slice(1);
 };

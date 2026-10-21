@@ -1,5 +1,8 @@
 blank_issues_enabled: false
 contact_links:
+  - name: 🔒 Security vulnerability
+    url: https://github.com/tomtom-international/maps-sdk-js/security/policy
+    about: Report it privately, as the security policy describes, never in a public issue
   - name: 💡 Feature Request or Idea
     url: https://github.com/tomtom-international/maps-sdk-js/discussions/new?category=ideas
     about: Suggest new features or improvements through GitHub Discussions

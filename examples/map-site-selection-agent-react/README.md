@@ -36,7 +36,7 @@ A conversational **site-selection co-pilot** built on the TomTom Maps SDK Agent 
 The agent is not limited to fixed parameters or TomTom data:
 
 - **Session preferences** — catchment size, travel mode, scoring weights, and demand anchors live in shared agent state. Say "from now on use a 12-minute drive" or "always weight competition highest" and later analyses inherit it (`updateSitePreferences`); any single request can still override.
-- **Bring-your-own-data (BYOD)** — load your own GeoJSON layer by URL (`addByodSource`; this demo accepts any http(s) URL — a production app can restrict hosts via `MapAgentOptions.byod.validateSourceUrl`), then feed it into the analyses:
+- **Bring-your-own-data (BYOD)** — load your own GeoJSON layer by URL (`addByodSource`; this demo accepts any public https URL — a production app can restrict hosts via `MapAgentOptions.byod.validateSourceUrl`), then feed it into the analyses:
   - rank the **features of a BYOD layer** as candidate sites (points as-is, polygons/lines by centroid),
   - score the **Spend-power factor** from a BYOD demand/demographics layer,
   - scan whitespace against **your own demand points**,

@@ -133,21 +133,30 @@ is not a reproducible bug is a discussion:
 
 If two rows match, choose the discussion.
 
+**A security vulnerability is never posted**, as an issue, a discussion or a comment, whatever the
+table says. Tell the developer to report it privately, as the repository's
+[`SECURITY.md`](https://github.com/tomtom-international/maps-sdk-js/blob/main/SECURITY.md) describes,
+and leave it out of every draft.
+
 ## Step 5: Draft, show, post
 
 1. Write the draft from the `posting.md` template for what Step 2 decided (a new report's
-   destination, or a comment), following *Report style*. Save the body to
-   `$TMPDIR/feedback-draft.md` — the `posting.md` commands read it from there; never inline a body
-   on the command line.
+   destination, or a comment), following *Report style*. Give each draft a directory of its own
+   with `mktemp -d "${TMPDIR:-/tmp}/tomtom-feedback.XXXXXX"`; `<dir>` below and in `posting.md` is
+   the path it prints for that draft, written out in full in every command, since no other draft,
+   in this session or another, may share it. Save the body to `<dir>/draft.md` — the
+   `posting.md` commands read it from there; never inline a body on the command line.
 2. If the problem or its workaround is visible in the app, propose a screenshot (*Screenshots*).
 3. Redact with the `posting.md` §1 checklist.
 4. Show the developer the full title and body, every screenshot, the destination (issue,
    discussion plus category, or the report you comment on), and the method (`gh` under their
    account, or a prefilled URL they submit).
 5. Post only after an explicit yes to this draft. If they want changes, edit, redact again, and
-   show it again.
-6. Give them the URL and keep it for the rest of the session (Step 2 uses it). Delete the
-   `$TMPDIR/feedback-*` files once the report is posted or dropped.
+   show it again. Just before posting, read `<dir>/draft.md` back and check it is the body they
+   approved.
+6. Give them the URL and keep it for the rest of the session (Step 2 uses it). Delete `<dir>`
+   (`rm -r "<dir>"`) once the report is dropped, or posted with every screenshot the developer
+   drops in by hand uploaded; never a glob over the temp directory.
 
 Around the draft, say one or two sentences at most: no preamble, no summary of SDK shortcomings,
 no restating the finding. Then resume the developer's task.
@@ -164,7 +173,7 @@ interaction. Skip it for problems with nothing to see (type errors, service resp
 - Crop to the area that shows the problem, usually the map canvas — no address bar, devtools, tabs,
   app navigation or OS chrome. Never blur or paint over parts instead: crop, recapture, or leave
   it out.
-- Save to `$TMPDIR/feedback-<n>.png`, never inside the developer's project.
+- Save to `<dir>/<n>.png`, never inside the developer's project.
 
 | The screenshot | Action |
 |---|---|

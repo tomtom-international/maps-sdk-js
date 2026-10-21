@@ -1,0 +1,46 @@
+{
+  "name": "@examples/map-chat-agent-state-playground",
+  "description": "TomTom Maps SDK Agent Toolkit React example with Azure OpenAI",
+  "type": "module",
+  "scripts": {
+    "build": "vite build --config ./vite.config.ts",
+    "clean:dist": "rimraf ./dist",
+    "develop": "vite --config ./vite.config.ts",
+    "type-check": "tsc --noEmit",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test  --ui",
+    "test:e2e:update-snapshots": "playwright test --update-snapshots",
+    "start-test-server": "vite preview --port 9050"
+  },
+  "dependencies": {
+    "@ai-sdk/azure": "catalog:",
+    "@ai-sdk/react": "catalog:",
+    "@assistant-ui/react": "catalog:",
+    "@assistant-ui/react-ai-sdk": "catalog:",
+    "@microsoft/applicationinsights-web": "catalog:",
+    "@tomtom-org/maps-sdk": "catalog:",
+    "@tomtom-org/maps-sdk-plugin-agent-toolkit": "catalog:",
+    "ai": "catalog:",
+    "assistant-stream": "catalog:",
+    "chart.js": "catalog:",
+    "chartjs-plugin-zoom": "catalog:",
+    "marked": "catalog:",
+    "react": "catalog:",
+    "react-chartjs-2": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "devDependencies": {
+    "@playwright/test": "catalog:",
+    "@tailwindcss/vite": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "rimraf": "catalog:",
+    "rollup-plugin-visualizer": "catalog:",
+    "tailwindcss": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:"
+  }
+}

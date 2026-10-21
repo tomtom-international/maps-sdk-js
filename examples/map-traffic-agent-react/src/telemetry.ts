@@ -4,7 +4,7 @@ import {
     type ToolExecutionInfo,
 } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import type { ChatTransport, InferAgentUIMessage, LanguageModelUsage } from 'ai';
-import { convertToModelMessages, validateUIMessages } from 'ai';
+import { convertToModelMessages, toUIMessageStream, validateUIMessages } from 'ai';
 import { APPLICATIONINSIGHTS_CONNECTION_STRING } from './config';
 
 const APP_NAME = 'map-traffic-agent-react';
@@ -176,11 +176,11 @@ function extractUserText(messages: readonly AgentUIMessage[]): string {
 function trackTurnOutcome(
     track: Tracker,
     ctx: TurnContext,
-    result: { totalUsage: PromiseLike<LanguageModelUsage>; text: PromiseLike<string> },
+    result: { usage: PromiseLike<LanguageModelUsage>; text: PromiseLike<string> },
     turnStartMs: number,
     getStepCount: () => number,
 ) {
-    void result.totalUsage.then((usage) => track.tokenUsage(ctx, usage));
+    void result.usage.then((usage) => track.tokenUsage(ctx, usage));
     void result.text.then(
         (text) => track.agentSuccess(ctx, text, Date.now() - turnStartMs, getStepCount()),
         (error: unknown) =>
@@ -219,7 +219,7 @@ async function runInstrumentedTurn(
     const result = await agent.stream({
         prompt: modelMessages,
         abortSignal,
-        onStepFinish: (step) => {
+        onStepEnd: (step) => {
             stepCount += 1;
             for (const toolCall of step.toolCalls) {
                 const toolResult = step.toolResults.find((r) => r.toolCallId === toolCall.toolCallId);
@@ -231,10 +231,12 @@ async function runInstrumentedTurn(
     trackTurnOutcome(track, agentCtx, result, turnStartMs, () => stepCount);
 
     // Attach token usage to the finish message so the bridge can read it back. assistant-ui normalizes
-    // thread-message metadata to a fixed shape and drops arbitrary keys, but preserves `custom`, which
+    // thread-message metadata to a fixed shape and moves unknown keys under `custom`, which
     // getThreadMessageTokenUsage reads — this powers the per-test token usage while Foundry tracks the
     // per-agent token usage.
-    return result.toUIMessageStream({
+    return toUIMessageStream({
+        stream: result.stream,
+        tools: agent.tools,
         messageMetadata: ({ part }) => (part.type === 'finish' ? { custom: { usage: part.totalUsage } } : undefined),
     });
 }

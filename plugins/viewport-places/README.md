@@ -2,6 +2,8 @@
 
 This plugin for the [TomTom Maps SDK for JavaScript](https://docs.tomtom.com/maps-sdk-js/introduction/overview) keeps places in sync with the current map viewport. Each search you add gets its own place module, which searches again whenever the map moves.
 
+> **Public preview.** This plugin is in [Public Preview](https://docs.tomtom.com/legal/public-preview) until its 1.0.0 release.
+
 ## Docs & examples
 
 - Developer guide: https://docs.tomtom.com/maps-sdk-js/guides/plugins/viewport-places
@@ -48,3 +50,7 @@ The plugin renders place modules bottom-up in the order you add them. The first 
 ## License
 
 See `LICENSE.txt`.
+
+## Security
+
+To report a security vulnerability, follow [SECURITY.md](https://github.com/tomtom-international/maps-sdk-js/blob/main/SECURITY.md), which keeps it private.

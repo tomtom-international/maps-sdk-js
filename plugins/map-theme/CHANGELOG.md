@@ -1,5 +1,20 @@
 # @tomtom-org/maps-sdk-plugin-map-theme
 
+## 0.3.7
+
+### Patch Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - The `license` field reads `SEE LICENSE IN LICENSE.txt`, the form npm and license scanners recognise, so they point to the package's own `LICENSE.txt` instead of reporting an unknown license
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - map-theme: `deriveMapColors` picks `land` by OKLCH chroma and from the theme's side of mid-lightness, so a cream stays the land of a light theme and a navy the land of a dark one
+  
+  - map-theme: a colour of OKLCH chroma 0.08 or less can be `land`, where an HSL saturation of 0.4 or less was the bar, which left out pale creams HSL rates as saturated and gave their light themes a dark grey land
+  - map-theme: a dark theme takes a dark colour as `land` before a light neutral, and a light theme a light colour before a dark neutral
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - Installs beside `@tomtom-org/maps-sdk` 1.0.0 and every later 1.x release: the peer range on the SDK runs up to `<2.0.0` instead of stopping below 1.0.0
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - The package page on npm and the API reference of its entry points say the plugin is in Public Preview until its 1.0.0 release, as its guides already do
+
 ## 0.3.6
 
 ### Patch Changes

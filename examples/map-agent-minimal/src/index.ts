@@ -47,7 +47,7 @@ form.addEventListener('submit', async (event) => {
         });
         const result = await agent.stream({ messages });
         let replyText = '';
-        for await (const part of result.fullStream) {
+        for await (const part of result.stream) {
             if (part.type === 'error') throw part.error;
 
             if (part.type === 'text-delta') {
@@ -57,7 +57,7 @@ form.addEventListener('submit', async (event) => {
                 transcript.scrollTop = transcript.scrollHeight;
             }
         }
-        messages.push(...(await result.response).messages);
+        messages.push(...(await result.responseMessages));
     } catch (error) {
         reply.remove();
         addMessage('error', `Something went wrong: ${error instanceof Error ? error.message : String(error)}`);

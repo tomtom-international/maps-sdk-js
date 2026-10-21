@@ -1,5 +1,6 @@
 import {
     type CountrySectionProps,
+    type CurvyStretchSectionProps,
     type DelayMagnitude,
     getRouteProgressForSection,
     type Route,
@@ -25,6 +26,8 @@ type LaneDefinition = {
 export const isTraffic = (section: SectionProps): section is TrafficSectionProps => 'magnitudeOfDelay' in section;
 
 export const isCountry = (section: SectionProps): section is CountrySectionProps => 'countryCodeISO3' in section;
+
+export const isCurvyStretch = (section: SectionProps): section is CurvyStretchSectionProps => 'curveCount' in section;
 
 const trafficLabels: Record<DelayMagnitude, string> = {
     unknown: 'Traffic',
@@ -68,6 +71,11 @@ const laneDefinitions = {
     },
     urban: { label: 'Built-up', sections: (sections) => sections.urban, blockLabel: named('Built-up area') },
     unpaved: { label: 'Unpaved', sections: (sections) => sections.unpaved, blockLabel: named('Unpaved road') },
+    curvyStretch: {
+        label: 'Curvy roads',
+        sections: (sections) => sections.curvyStretch,
+        blockLabel: (section) => (isCurvyStretch(section) ? `${section.curveCount} curves` : 'Curvy road'),
+    },
     country: {
         label: 'Countries',
         sections: (sections) => sections.country,

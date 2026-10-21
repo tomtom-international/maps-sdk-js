@@ -16,7 +16,7 @@
     "node": ">=22"
   },
   "homepage": "https://docs.tomtom.com/maps-sdk-js/introduction/overview",
-  "license": "See in LICENSE.txt",
+  "license": "SEE LICENSE IN LICENSE.txt",
   "name": "maps-sdk-js-examples",
   "packageManager": "pnpm@11.13.1",
   "private": true,

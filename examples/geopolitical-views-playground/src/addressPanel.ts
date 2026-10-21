@@ -3,8 +3,9 @@ import type { RevGeoAddressProps } from '@tomtom-org/maps-sdk/core';
 const addressList = document.querySelector('#ui-address') as HTMLElement;
 const statusText = document.querySelector('#ui-status') as HTMLElement;
 
-export const showAddress = ({ address }: RevGeoAddressProps): void => {
+export const showAddress = ({ address }: RevGeoAddressProps, viewLabel: string): void => {
     addressList.innerHTML = [
+        ['View', viewLabel],
         ['Country', address.country ?? 'none'],
         ['Address', address.freeformAddress],
     ]

@@ -1,6 +1,6 @@
 {
   "name": "@examples/mixed-map-effects",
-  "description": "Example mixing a custom watercolour GPU pass with the map effects plugin's bloom, grade and vignette.",
+  "description": "Example mixing a custom watercolour GPU pass and a 2D layer with the map effects plugin's bloom, grade and vignette.",
   "type": "module",
   "scripts": {
     "build": "vite build --config ../example-vite.config.ts",

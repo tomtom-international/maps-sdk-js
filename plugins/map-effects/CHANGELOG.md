@@ -1,5 +1,58 @@
 # Changelog
 
+## 0.4.0
+
+### Minor Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** Give the fog an air colour of your own with `fog.color`, and push a blur or a grade past its slider's end
+  
+  - `fog.color` washes the rim towards your colour, and its lightness brightens or darkens the rim with it. A translucent colour thins both. If you don't set it, the fog keeps the air of the map's light/dark theme
+  - `fog.color` has no `default` in `effectKnobCatalogue`, so a `color` knob's `default` is now optional in `EffectKnob`. Code that reads it as a `string` handles `undefined` too
+  - `bloom.radius`, `bloom.onlyTolerance`, `glare.length`, `glare.onlyTolerance`, `grade.brightness`, `grade.contrast`, `grade.saturation`, `edgeBlur.intensity` and `depthOfField.intensity` now have `hard-min` bounds: `setKnob` still refuses a value below the minimum, and a value above the maximum applies
+  - The map effects playground adds a milky distance use case, and its panel shows `fog.color` following the theme until you pick a colour
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** the `maplibre-gl` peer dependency moves up to `^6.15.0`
+
+### Patch Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - The `license` field reads `SEE LICENSE IN LICENSE.txt`, the form npm and license scanners recognise, so they point to the package's own `LICENSE.txt` instead of reporting an unknown license
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - Glare makes the colours you name shine like street lamps through a lens, with `glare.*` knobs for the streaks' strength, length, ray count and angle
+  
+  - `glare.only` names the lights as `bloom.only` does, by style colour knob, group or CSS colour, and defaults to `colors.roadMajor`
+  - The glare runs on the GPU, after the depth of field and before a scoped bloom, so a bloom on the same colour glows along the streaks
+  - A `bloom.only` scope set before the map's first style loads now resolves once the style is in, where it lit the whole frame
+  - The plugin ships its shaders without their comments, so its bundle is smaller with the glare than it was without it
+  - The map effects playground adds a street lights use case
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - A bloom scoped with `bloom.only` keys and blurs the map on the GPU, so it no longer reads the frame back to the CPU on every render
+  
+  - The scoped bloom runs as the last stages of the WebGL2 chain, after your own passes and the depth of field. Without WebGL2 it draws no glow and warns once
+  - `bloom.radius` blurs in CSS pixels on a high-DPI screen, as its doc and `capture()` already did, where the live bloom blurred in device pixels
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - HTML markers sit above every effect, so a marker stays sharp over the edge blur, the tint, the vignette and the depth of field, whether you add it before or after the effects
+  
+  - To have a pin take the effects, draw it as a symbol layer instead
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - `MapEffects` passes take `vec3` and `vec4` uniforms, textures and mip levels, and `addLayer` puts your own 2D layer between the overlays
+  
+  - A pass uniform is a number, or an array of two to four numbers bound as `vec2` to `vec4`, so a colour goes in as one `vec3`
+  - `MapEffectsPass.textures` binds images, canvases, videos or any other `TexImageSource` as named `sampler2D`s, up to 15 per pass. A video or a canvas uploads on every draw, and an image or a bitmap once per object. A source that hasn't loaded skips the pass for that draw
+  - `MapEffectsPass.mipmapped` builds the picture's mip levels before your pass runs, for a pass that reads coarser levels with `textureLod`
+  - `addLayer({ id, placement, draw })` draws a 2D canvas layer of yours right above the overlay its `placement` names, from `after-bloom` to `after-vignette`, and `capture()` draws it in the same place. `removeLayer(id)` takes it off
+  - examples: `mixed-map-effects` paints its watercolour on a paper texture in a `vec3` paper colour, and leaves a bare paper margin around it as a layer
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - Map effects draw in the same frame as the map, so the map no longer needs `preserveDrawingBuffer: true`, and the browser stops copying its frame every frame
+  
+  - Bloom, the glare, the depth of field, your own passes, your layers and `capture()` read the map canvas inside its `render` event. The plugin no longer warns when `preserveDrawingBuffer` is off, and a map that still sets it keeps working
+  - A bloom, glare or depth-of-field knob change, or a pass you add or remove, asks the map for one frame and draws in it, so an idle map redraws once. A grade, tint, fog, edge blur or vignette change asks for none
+  - A frame the effects fail to draw, such as with a pass texture from another origin loaded without CORS, shows the map without them and warns once, and `capture()` rejects with the error
+  - examples: the map effects examples create their maps without `preserveDrawingBuffer`
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - Installs beside `@tomtom-org/maps-sdk` 1.0.0 and every later 1.x release: the peer range on the SDK runs up to `<2.0.0` instead of stopping below 1.0.0
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - The package page on npm and the API reference of its entry points say the plugin is in Public Preview until its 1.0.0 release, as its guides already do
+
 ## 0.3.1
 
 ### Patch Changes

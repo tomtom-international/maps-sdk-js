@@ -1,0 +1,52 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+@import "../../src/templates/css/panel/disclosure.css";
+@import "../../src/templates/css/button/button.css";
+@import "../../src/templates/css/button/groups.css";
+@import "../../src/templates/css/button/sizes.css";
+@import "../../src/templates/css/button/variants.css";
+@import "../../src/templates/css/button/option-card.css";
+@import "../../src/templates/css/form/radio.css";
+@import "../../src/templates/css/form/slider.css";
+@import "../../src/templates/css/maplibre/popup.css";
+
+.ui-route-cards {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ui-space-2);
+}
+
+/* Named here rather than inherited from .ui-body, which the cards don't pick up in the in-browser preview. */
+.ui-route-card {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: var(--ui-space-2) var(--ui-space-3);
+    font-family: var(--ui-font-gilroy);
+}
+
+.ui-stretch-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: var(--ui-space-2);
+    font-family: var(--ui-font-gilroy);
+}
+
+.ui-threshold-label {
+    margin-bottom: 0;
+}
+
+.ui-slider-container {
+    margin: 0 0 var(--ui-space-2);
+}
+
+.ui-route-card-detail,
+.ui-stretch-detail,
+.ui-threshold-label {
+    font-size: var(--ui-font-caption-m);
+    line-height: var(--ui-font-caption-m-lh);
+    color: var(--ui-text-med-em);
+}

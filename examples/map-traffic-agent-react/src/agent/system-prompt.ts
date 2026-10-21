@@ -48,7 +48,8 @@ export const TRAFFIC_MANAGER_PROMPT_OVERRIDES: SystemPromptSectionOverrides = {
         'analytics first and never report its staleness as "no live data available".\n' +
         '- Corridor / "between A and B": setRoute({ traffic: "historical", maxAlternatives: 2, monitor: true, ' +
         'showOnMap: false }) arms the live monitor; the app draws the corridor and reads on-route incidents. Showing ' +
-        'a monitored route yourself: showWaypoints: false, showSummaryBubbles: false.\n' +
+        'a monitored route yourself: updateRoutesDisplay({ waypoints: false }) and setMapStyling ' +
+        '"routes.summaryBubbles.visible": false.\n' +
         '- analyseData: this app renders chart output in a dedicated panel, so prefer outputFormat: "chart" for ' +
         'countable / comparable results (by type, road, delay bins); plain JSON only for a single scalar.\n' +
         '- BYOD areas / "per district": addByodSource ALONE first (its entry exists only once it returns — a ' +

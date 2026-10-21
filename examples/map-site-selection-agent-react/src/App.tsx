@@ -30,10 +30,12 @@ const SUGGESTED_PROMPTS = [
 const MIN_CHAT_WIDTH = 320; // px
 const DEFAULT_CHAT_WIDTH = 380; // px — initial width; drag the handle to resize
 
-// Pinned 8px from the map's bottom-right corner. Pointer events off so the map stays draggable under it.
+// Centred 8px above the map's bottom edge, clear of the panels along its sides and of the copyright attribution
+// in the bottom-right, which nothing may cover.
+// Pointer events off so the map stays draggable under it.
 function DemoOnlyPill() {
     return (
-        <div className="pointer-events-none absolute right-2 bottom-2 z-10 flex items-center gap-[4.5px] rounded-full bg-[#004B7F]/80 px-[9px] py-[4.5px] font-(family-name:--ui-font-proxima) text-[9.75px] leading-[13.5px] font-semibold text-white">
+        <div className="pointer-events-none absolute bottom-2 left-1/2 z-10 flex -translate-x-1/2 items-center gap-[4.5px] rounded-full bg-[#004B7F]/80 px-[9px] py-[4.5px] font-(family-name:--ui-font-proxima) text-[9.75px] leading-[13.5px] font-semibold text-white">
             <svg viewBox="0 0 24 24" width="13.5" height="13.5" fill="currentColor" aria-hidden="true">
                 <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeWidth="1.5" />
                 <path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z" transform="translate(12 12) scale(.62) translate(-11 -12)" />

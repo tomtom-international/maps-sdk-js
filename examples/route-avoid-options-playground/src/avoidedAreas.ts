@@ -1,6 +1,6 @@
 import type { BBox } from '@tomtom-org/maps-sdk/core';
 import { polygonFromBBox } from '@tomtom-org/maps-sdk/core';
-import { mapStyleLayerIDs } from '@tomtom-org/maps-sdk/map';
+import { MAP_REGULAR_FONT, mapStyleLayerIDs } from '@tomtom-org/maps-sdk/map';
 import { type GeoJSONSource, type Map as MapLibreMap, Popup } from 'maplibre-gl';
 
 export type AvoidedArea = { bbox: BBox; label: string };
@@ -52,6 +52,7 @@ export const setupAvoidedAreas = (
         source: SOURCE_ID,
         layout: {
             'text-field': ['get', 'label'],
+            'text-font': [MAP_REGULAR_FONT],
             'text-size': 12,
             'text-anchor': 'center',
         },

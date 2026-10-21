@@ -60,6 +60,20 @@
                         <input type="checkbox" class="ui-toggle-input" id="ui-trafficFlowEdit">
                         <span class="ui-toggle-switch"></span>Traffic flow blurred
                     </label>
+                    <label
+                        class="ui-toggle-label"
+                        title="styling.layers.query({ ids: ['TransitLabels - Road'] }).setPaint({ 'text-halo-color': (halo) => … }): built on the halo beneath, the label halo map colour's included"
+                    >
+                        <input type="checkbox" class="ui-toggle-input" id="ui-motorwayLabelsEdit">
+                        <span class="ui-toggle-switch"></span>Motorway names with an orange halo
+                    </label>
+                    <label
+                        class="ui-toggle-label"
+                        title="styling.layers.query({ group: 'roadLabels' }).addFilterClause(…): narrows the style's own filter"
+                    >
+                        <input type="checkbox" class="ui-toggle-input" id="ui-majorRoadLabelsEdit">
+                        <span class="ui-toggle-switch"></span>Names on major roads only
+                    </label>
                 </div>
                 <!-- One toggle per base-map layer group, generated from baseMapKnobCatalogue -->
                 <div id="ui-baseMapGroups"></div>

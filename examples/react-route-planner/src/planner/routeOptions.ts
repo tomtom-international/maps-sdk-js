@@ -1,14 +1,23 @@
 import type { Avoidable } from '@tomtom-org/maps-sdk/core';
-import type { ArrivalSide, CalculateRouteParams, RouteType, TollTransponder } from '@tomtom-org/maps-sdk/services';
+import type {
+    ArrivalSide,
+    CalculateRouteParams,
+    DepartArriveParams,
+    RouteType,
+    TollTransponder,
+} from '@tomtom-org/maps-sdk/services';
 import { Gauge, Ruler, Spline, Sprout } from 'lucide-react';
 import type { ChipLook } from '../panel/fields';
 import { roadIcons } from '../panel/icons';
 
+/** A departure or arrival as an instant, which is what the panel's `datetime-local` input picks. */
+export type InstantWhen = Extract<DepartArriveParams, { date: Date }>;
+
 /** The trip-wide options the panel edits, in the shape `calculateRoute` takes them. */
 export type RouteOptions = Pick<
     CalculateRouteParams,
-    'costModel' | 'when' | 'vehicle' | 'maxAlternatives' | 'arrivalSide' | 'useEntryPoints' | 'computeTravelTimeFor'
->;
+    'costModel' | 'vehicle' | 'maxAlternatives' | 'arrivalSide' | 'useEntryPoints' | 'computeTravelTimeFor'
+> & { when?: InstantWhen };
 
 export const defaultRouteOptions: RouteOptions = {
     costModel: { routeType: 'fast', traffic: 'live' },

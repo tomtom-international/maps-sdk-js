@@ -1,6 +1,8 @@
 import type { GeopoliticalView } from '@tomtom-org/maps-sdk/core';
 import { geopoliticalViews } from '@tomtom-org/maps-sdk/core';
 
+export const DEFAULT_VIEW_LABEL = 'Default for your country';
+
 const viewSelect = document.querySelector('#ui-viewSelect') as HTMLSelectElement;
 
 const countryNames = new Intl.DisplayNames(['en'], { type: 'region' });
@@ -12,7 +14,7 @@ export const initViewSelect = (
     onChange: (view: GeopoliticalView | undefined) => void,
 ): void => {
     viewSelect.append(
-        new Option('Default for your country', ''),
+        new Option(DEFAULT_VIEW_LABEL, ''),
         ...geopoliticalViews.map((view) => new Option(viewLabel(view), view)),
     );
     viewSelect.value = selected;

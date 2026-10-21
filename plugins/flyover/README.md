@@ -4,6 +4,8 @@ This plugin adds a camera that flies a route on a [TomTom Maps SDK for JavaScrip
 map. It follows the line, aims at the junctions ahead and frames them. It keeps clear of the terrain
 it crosses, and it parks the followed position, marked with an arrow, where you want it on screen.
 
+> **Public preview.** This plugin is in [Public Preview](https://docs.tomtom.com/legal/public-preview) until its 1.0.0 release.
+
 ## Docs & examples
 
 - Developer guide: https://docs.tomtom.com/maps-sdk-js/guides/plugins/flyover
@@ -52,3 +54,7 @@ never lands. With `loop: false`, it stops at the destination instead.
 ## License
 
 See [LICENSE.txt](./LICENSE.txt).
+
+## Security
+
+To report a security vulnerability, follow [SECURITY.md](https://github.com/tomtom-international/maps-sdk-js/blob/main/SECURITY.md), which keeps it private.

@@ -38,9 +38,6 @@ export const useMapModules = (initialStyle: StandardStyleID): MapModules | undef
                 container: 'sdk-map',
                 center: [7.6, 46.2],
                 zoom: 7.5,
-                // The fly-over's depth of field reads the rendered map back as a texture, which
-                // MapLibre allows only when asked.
-                canvasContextAttributes: { preserveDrawingBuffer: true },
             },
             style,
         });

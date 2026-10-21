@@ -110,6 +110,9 @@ map.mapLibreMap.on('click', async (event) => {
 The same `run` wraps a search re-run on `moveend` or a route planned again on each change — see
 `services-config.md`.
 
+A `Geography` result's `properties.geographyType` is a `GeographyType[]` in the names `geographyTypes` takes
+(`'Neighbourhood'`, `'PostalCodeArea'`), not the API's `areaType`, so compare the two directly.
+
 ---
 
 ## POI category search
@@ -152,7 +155,8 @@ const { poiCategories, unmatched } = await resolvePOICategories({ filters: ['caf
 ```
 
 - `filters.poiCategoryQuery` (`discoverPlaces` only, a string or an array) resolves through `resolvePOICategories`
-  in the call's `language`, so it never sits beside `poiCategories` (a type error).
+  in the call's `language` (English names for one the categories lack, such as `hi-IN` or `ja-JP`), so it never sits
+  beside `poiCategories` (a type error).
 - `resolvePOICategories` keeps each word's best three codes, merged round-robin and capped at the 10 a search takes,
   and returns the words nothing matched in `unmatched`. A code stays itself, and codes alone skip the catalog request and come back as given, never folded into a parent, with duplicates dropped.
   For a picker listing every close match, use `getPOICategoryCodes` instead.
@@ -222,6 +226,9 @@ await placesModule.show(places);
 if (boundary.bbox) map.mapLibreMap.fitBounds(boundary.bbox);
 ```
 
+The SDK has no lookup for an area's administrative subdivisions, such as every district of a city. Which
+levels hold data varies by country.
+
 ---
 
 ## Search within a circle or bounding box
@@ -261,7 +268,7 @@ const routes = await calculateRoute({ locations: waypoints });
 
 const evStations = await discoverPlaces({
     route: routes.features[0],          // Route Feature
-    maxDetourTimeSeconds: 600,          // required — positive integer
+    maxDetourTimeSeconds: 600,          // required — positive integer, at most 3600
     filters: { poiCategories: ['CHARGING_LOCATION'] },
     limit: 10,
 });
@@ -282,6 +289,12 @@ const stops = await discoverPlaces({
 });
 ```
 
+**Detour of each result:** Along-route results carry `detourTimeInSeconds` and `detourDistanceInMeters`, and either can be negative. Their properties are typed `AlongRoutePlaceProps` (from `@tomtom-org/maps-sdk/services`), so no cast is needed. A negative value means the route through the place is faster or shorter than the original. With `sortBy: 'detourOffset'`, results also carry `detourOffsetInMeters`, the distance from the route's start to where the detour leaves it; it is absent otherwise.
+
+```ts
+const minutes = Math.round(evStations.features[0].properties.detourTimeInSeconds / 60);
+```
+
 **Display on map:**
 
 ```ts
@@ -294,8 +307,10 @@ await placesModule.show(evStations);
 | Parameter | Required | Description |
 |-----------|----------|-------------|
 | `route` | Yes | `Route \| LineString \| Position[]` — the route to search along |
-| `maxDetourTimeSeconds` | Yes | Max allowed detour in seconds (positive integer) |
-| `sortBy` | No | `'detourTime'` (default) or `'detourOffset'` (position along route) |
+| `maxDetourTimeSeconds` | Yes | Max allowed detour in seconds (positive integer, at most `3600`) |
+| `sortBy` | No | `'detourTime'` (default) or `'detourOffset'` (position along route). A detour time is negative when the route through the place is faster than the original, so those places sort first |
+
+It needs a `query` or at least one filter other than `indexes`: without either, validation rejects it (`INVALID_REQUEST`), as the API would answer a misleading `400 "The requested route cannot be calculated"`. A filter passed top level, such as `poiCategories`, is rejected by name with a pointer to `filters.poiCategories` (`services-config.md` § per-call options).
 
 All common search parameters (`query`, `filters`, `limit`, `language`, etc.) also apply, except `filters.countries` and `cursor` — see [Search filters](#search-filters--everything-that-drops-results) and [Pagination](#pagination--opaque-cursor).
 
@@ -306,8 +321,9 @@ All common search parameters (`query`, `filters`, `limit`, `language`, etc.) als
 ## Place details — full details with opening hours
 
 ```ts
+const result = await discoverOnePlace('Rijksmuseum');
 const place = await getPlaceDetails({
-    entityId: feature.properties.id,
+    entityId: result.id, // a search result's id sits on the feature, not in properties
     openingHours: 'nextSevenDays',
 });
 
@@ -384,7 +400,13 @@ poisModule.events.on('click', (feature, lngLat) => {
     // feature.properties: id (a place id for getPlaceDetails), name, category, group, priority —
     // category and group are the style's lower-case values ('restaurant', 'eat_and_drink'), not POICategory codes
 });
+
+// Hide single POIs by id, keeping the category filter: updateConfig replaces the whole `filters`, so spread it
+const { filters } = poisModule.getConfig() ?? {};
+poisModule.updateConfig({ filters: { ...filters, ids: { show: 'all-except', values: [clickedPoiId] } } });
 ```
+
+`filters.ids` (`ValuesFilter<string>`, `show: 'only' | 'all-except'`) matches the `properties.id` the events and `getRenderedFeatures()` hand out, on every POI layer, micro markers included; a POI shows only when it passes both `filters.categories` and `filters.ids`. It is not a knob (the ids are free strings), so `poisKnobCatalogue` omits it.
 
 `POIsModule.get` returns the map's one shared instance (the POIs belong to the style); a config passed to a later `get` replaces the one it holds, as `applyConfig` does. `events.off(type)`
 removes every handler of that type; `on` returns an unsubscribe function for one.
@@ -419,7 +441,7 @@ lists them, `POIsKnobId` is their union.
 - `filters.categories.show`: enum, `only` or `all-except`; set it with
   `filters.categories.values`, enums over the `poiCategoryGroups` names, then every
   `MapStylePOICategory`. Both have no default: unset, every category shows.
-  `updateConfig({ filters: { categories } })` sets the pair at runtime; `filters` holds only `categories`.
+  `updateConfig({ filters: { categories } })` sets the pair at runtime; the `ids` filter beside it is no knob.
 - `sizeFactor`: factor 0.5–1.5, default `1` — the POI icons and their labels.
 - `minZoom`: number 3–18 — the zoom POIs appear from; unset, the style's (6). The micro markers keep their own.
 - `zoomShift`: number −3–3, default `0` — `+` shows each POI later (sparser), `−` earlier (denser).
@@ -608,7 +630,7 @@ const places = await PlacesModule.create(map, { beforeLayerConfig: { places: 'lo
 places.updateConfig({ beforeLayerConfig: 'top' }); // restacks at runtime, survives setStyle; resetConfig() restores the defaults
 ```
 
-A part keeps its own layers' order; sharing a target, the connections stay under the markers. A target the style lacks (satellite has no `lowestRoadLine`) puts the part on top.
+A part keeps its own layers' order; sharing a target, the connections stay under the markers. A target the style lacks (satellite has no `lowestRoadLine`) puts the part on top; a missing `lowest3D` goes under the POIs first.
 
 ### Custom category icons
 
@@ -905,9 +927,11 @@ await loadPage();
 loadMoreButton.onclick = () => loadPage(nextCursor);
 ```
 
-- Pass `nextCursor` back unchanged as `cursor`, with the same parameters. Never build or parse one;
-  a value the SDK did not mint throws `SDKError`. A new query or different `filters` is a new search: no `cursor`.
-- `nextCursor` is absent at the end, after an empty page, and once the next page would start past result 1900.
+- Pass `nextCursor` back unchanged as `cursor`, with the same parameters. Never build or parse one.
+  A value the SDK can't read as a cursor throws `SDKError`. The SDK doesn't tie a cursor to its search,
+  so with a new query or different `filters` it skips that search's first pages. Start a new search with no `cursor`.
+- `nextCursor` is absent once the next page would start at `totalResults`, after an empty page, and past result
+  1900. Fuzzy search's `totalResults` is at most 100 and lower at a larger `limit`, so its pagination ends there.
   Drive "has more" off `nextCursor`, not `totalResults`.
 - Fuzzy search (no `geometries`, no `route`) and `geocode` page this way; geometry and along-route
   responses carry no cursor.
@@ -948,10 +972,16 @@ for (const result of suggestions) {
 `refine(signal?)` and `refineParams`, no position; a category suggestion also carries its `category` code).
 Narrow on `kind`; there is no geometry until `resolve()`.
 `title` is a POI's name or an address's first line; `subtitles` are the remaining address lines, ending
-with the country only when it isn't the one the search is in (`['Rue du Moulin 26', '7800 Ath', 'Belgium']`).
+with the country (`['Rue du Moulin 26', '7800 Ath', 'Belgium']`) unless it is the *home* country: that of
+the place nearest `geoBias.position`, or without `geoBias`, the country most places are in, judged over the
+up to 10 places the search fetches, not only the suggestions returned. That isn't always the user's
+country: biased to Amsterdam, a search whose nearest place is Belgian leaves `Belgium` off every Belgian
+row and keeps `France` on French ones. To show the country whenever it differs from the user's, compare
+`address.countryCode` on the place `resolve()` returns, and append `address.country` only when the last
+subtitle isn't already it.
 
 `filters`: `kinds` (result kinds; also decides which arms run), `countries` (both arms), `poiTypes`, `areaTypes`,
-`boundingBox` (search arm only; with `geoBias` too, the box restricts and `geoBias.position` only measures distance; `refine()` keeps the box).
+`boundingBox` (`[west, south, east, north]`, a GeoJSON object or an array of them, not `{ bbox }`; search arm only; with `geoBias` too, the box restricts and `geoBias.position` only measures distance; `refine()` keeps the box).
 
 The blend follows Places Search v3: at most one brand or category, first, and only when the whole
 query names it from a word start (`pizz` → Pizzeria; `baker st`, `amster` → none). A brand also needs
@@ -981,7 +1011,7 @@ value.
 
 | Field | What it carries |
 | --- | --- |
-| `places.properties.totalResults` | Total matches beyond the page returned |
+| `places.properties.totalResults` | The count the search API reports. `geocode` counts beyond the page; fuzzy and geometry search report at most 100, and fuzzy's number can drop as `limit` grows; along-route reports the page's length. Show it as a total for `geocode` only |
 | `places.properties.fuzzyLevel` | How loosely the query was matched |
 | `places.properties.geoBias` | The position results were biased towards |
 | `places.properties.queryIntent` (fuzzy search) | Coordinates, what3words, "near X" and home or work bookmark detection |
@@ -989,6 +1019,7 @@ value.
 | `places.bbox` | Bounding box, on results covering an area |
 
 ```ts
+const results = await geocode({ query: 'Main Street' }); // geocode's totalResults counts beyond the page; discoverPlaces' stops at 100
 if (results.properties) {
     const { numResults, totalResults, nextCursor } = results.properties;
     const label = totalResults === undefined ? `${numResults} results` : `${numResults} of ${totalResults}`;
@@ -1005,7 +1036,7 @@ if (results.properties) {
 - Pass `query` as plain text to `geocode`, `discoverPlaces`, `getSearchSuggestions`, along-route search and geometry search. The SDK encodes it. A value you already passed through `encodeURIComponent` is encoded again and can resolve to a different place (`Los Angeles` becomes a street in Gijón).
 - `boundingBox`: `[west, south, east, north]`
 - `place.properties.poi?.categories` — `POICategory[]` (standardized enum, e.g. `'ITALIAN_RESTAURANT'`)
-- `place.properties.poi?.localizedCategories` — `string[]` (human-readable, e.g. `'restaurant'`)
+- `place.properties.poi?.localizedCategories` — `string[]` (human-readable, e.g. `'restaurant'`), in English whatever the request `language`. For names in that language, look each of `poi.categories` up by `code` in `getPOICategories({ language })`, keeping the English name where that returns an identifier such as `GeneralHospitalAndPolyclinic`
 - An `extraFeatureProps` entry is a JSON value or a `(place) => jsonValue` callback, read in `layers`
   expressions via `['get', 'propName']`. To have these,
   `label.title` and `icon.mapping.fn` typed for a narrower place shape, name it on the config —

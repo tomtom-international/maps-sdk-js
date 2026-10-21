@@ -20,8 +20,6 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
             container: 'sdk-map',
             center: [longitude, latitude],
             zoom: 13,
-            // Bloom reads the map canvas back; MapLibre keeps it readable only when asked.
-            canvasContextAttributes: { preserveDrawingBuffer: true },
         },
     });
 

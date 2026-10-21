@@ -1,5 +1,6 @@
 import { BaseMapModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { Landmarks3D } from '@tomtom-org/maps-sdk-plugin-landmarks-3d';
+import { aimAtGround } from './aimAtGround';
 import type { Landmark } from './landmarks';
 
 const PITCH = 60;
@@ -42,8 +43,14 @@ export const addLandmarkTile = (grid: HTMLElement, landmark: Landmark): Landmark
         mapLibre: { container, centerClampedToGround: false, ...cameraFor(container, landmark) },
     });
     // The base map's 3D buildings, hidden in most standard styles, stand around the landmark.
-    void BaseMapModule.get(map, { groups: { buildings3D: { visible: true } } });
+    void BaseMapModule.get(map, { groups: { buildings3D: { visible: true } } }).catch((error) =>
+        console.error('Failed to show the 3D buildings', error),
+    );
     new Landmarks3D(map);
+    // The reader moves the camera aimed at the ground, before the map's own handlers see the gesture.
+    for (const type of ['pointerdown', 'wheel', 'keydown']) {
+        container.addEventListener(type, () => aimAtGround(map.mapLibreMap), { capture: true });
+    }
 
     let current = landmark;
     setCaption(caption, current);
