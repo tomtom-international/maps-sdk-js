@@ -1,0 +1,268 @@
+---
+title: Curves
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.4"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+Curves tell you how winding a route is. Ask for them, and `calculateRoute` returns every bend of each route, with
+how far it turns and how tight it is, and the winding stretches those bends make up. Use them to keep a passenger
+prone to motion sickness off mountain roads, or to send a motorcyclist down them.
+
+The demo below plans a trip from Innsbruck to Bolzano and ranks its routes by how much of the drive is in curves.
+Pick **Seek them** or **Avoid them**, then click a curvy stretch to see where it runs. Open **What counts as a
+curve** and move its sliders to change the thresholds.
+
+<GuideDemo demo="route-curves" />
+
+## Ask for the curves
+
+Name `curve` and `curvyStretch` in `sectionTypes`:
+
+```javascript
+import { calculateRoute } from '@tomtom-org/maps-sdk/services';
+
+const innsbruckToBolzano = [[11.3933, 47.2692], [11.3548, 46.4983]];
+const routes = await calculateRoute({
+    locations: innsbruckToBolzano,
+    maxAlternatives: 2,
+    sectionTypes: ['curve', 'curvyStretch'],
+    guidance: { type: 'coded' },
+});
+```
+
+- The SDK finds the curves in each route's geometry, rather than asking the routing API. A request that doesn't
+  name them does no extra work.
+- A `sectionTypes` list replaces the default sections rather than adding to them. To keep those too, spread
+  `defaultSectionTypes` into the list:
+
+  ```javascript
+  import { defaultSectionTypes } from '@tomtom-org/maps-sdk/core';
+
+  const routes = await calculateRoute({
+      locations: innsbruckToBolzano,
+      sectionTypes: [...defaultSectionTypes, 'curve', 'curvyStretch'],
+  });
+  ```
+
+- With [guidance](./guidance.mdx), a curve at a junction carries its `maneuver`, so you can tell a turn in a town
+  from a bend in the road. Note that without guidance, a turn between short streets can still count as a curve.
+- Ask for `speedLimit` too, so each curve's [`severity`](#warn-about-the-hard-curves) reads the limit of its road.
+- [Section properties](../../core/routes.mdx#section-properties) lists what each curve and curvy stretch carries.
+
+## Choose what counts as a curve
+
+By default, a curve turns 40° or more on a radius of 250 m or less, and a curvy stretch holds three or more
+curves with gaps of 500 m or less between them. To change these thresholds, pass `curveDetection`:
+
+```javascript
+const routes = await calculateRoute({
+    locations: innsbruckToBolzano,
+    sectionTypes: ['curve', 'curvyStretch'],
+    // Only the hard curves, and the stretches of five or more of them
+    curveDetection: {
+        curve: { minHeadingChangeInDegrees: 60, maxRadiusInMeters: 100 },
+        curvyStretch: { minCurveCount: 5 },
+    },
+});
+```
+
+- `curve` takes `minHeadingChangeInDegrees`, `maxRadiusInMeters` and `maxStraightInMeters`, the longest
+  straight a curve can run through and still be one curve.
+  [Route utilities](../../core/utilities/routes.mdx#getcurvesections) lists their defaults.
+- `curvyStretch` takes `minCurveCount` and `maxGapInMeters`.
+- The thresholds also decide where each curve starts and ends, so they change how far it turns and how
+  tight it is. A wider `maxRadiusInMeters` can join two bends into one. Its `severity` and whether it's a
+  [hairpin](#find-the-hairpins) follow the same rules, applied to the curve the thresholds find.
+
+To try other thresholds on routes you already have, pass each route to `withCurveSections`. It finds the curves
+and curvy stretches again, with no new request:
+
+```javascript
+import { withCurveSections } from '@tomtom-org/maps-sdk/core';
+
+const wider = routes.features.map((route) => withCurveSections(route, { curve: { maxRadiusInMeters: 500 } }));
+```
+
+Note that `withCurveSections` reads the route as it came back. If you need each curve's `maneuver` and
+`severity`, ask for guidance and `speedLimit` sections when you calculate the route.
+
+## Rank routes by how winding they are
+
+To compare routes, add up the time each one drives in its curves and divide it by the route's travel time. A
+share of the drive reads better than a count of curves, because a longer route has more curves without being any
+more winding.
+
+```javascript
+import { getRouteProgressForSection } from '@tomtom-org/maps-sdk/core';
+
+const shareInCurves = (route) => {
+    const curves = route.properties.sections.curve ?? [];
+    const seconds = curves.reduce(
+        (total, curve) => total + (getRouteProgressForSection(route, curve)?.delta.travelTimeInSeconds ?? 0),
+        0,
+    );
+    return seconds / route.properties.summary.travelTimeInSeconds;
+};
+
+const straightestFirst = [...routes.features].sort((first, second) => shareInCurves(first) - shareInCurves(second));
+```
+
+## Avoid them
+
+To keep a passenger prone to motion sickness off winding roads, plan with the default `fast` route type and take
+the straightest route, `straightestFirst[0]`. To say what it spares them, compare it with the next one:
+
+```javascript
+import { compareRoutes, formatDistance } from '@tomtom-org/maps-sdk/core';
+
+const [straightest, next] = straightestFirst;
+// The service can return fewer alternatives than asked for
+if (next) {
+    const { avoids } = compareRoutes(straightest, next, { types: ['curve'] });
+    if (avoids.curve) {
+        console.log(`Avoids ${avoids.curve.sections.length} curves over ${formatDistance(avoids.curve.lengthInMeters)}`);
+    }
+}
+```
+
+`avoids.curve` holds the curves on the roads only the other route takes, and `adds.curve` the ones only this route
+takes.
+
+## Warn about the hard curves
+
+Each curve's `severity` says how hard it is to drive, from 0 for a curve a driver takes at the speed limit to
+nearly 1 for a hairpin. It weighs how tight the curve is and how far it turns against the limit on the road into
+it, and a turn at a junction counts as one the driver slows right down for.
+
+To warn a passenger about the hard curves ahead, keep those that score high:
+
+```javascript
+const [route] = (
+    await calculateRoute({
+        locations: innsbruckToBolzano,
+        sectionTypes: ['curve', 'speedLimit'],
+        guidance: { type: 'coded' },
+    })
+).features;
+const hardCurves = route.properties.sections.curve?.filter((curve) => curve.severity > 0.75) ?? [];
+```
+
+Note that the same bend scores higher on a fast road than in a town, since a driver slows down more for it there.
+Without `speedLimit` sections, `severity` takes a typical limit outside towns.
+
+## Seek them
+
+To send a motorcyclist down winding roads, plan a `thrilling` route, which takes interesting roads and as few
+motorways as possible, for trips of up to 900 km. Take the curviest route, then list its curvy stretches by their
+`curvinessScore`, their curves' scores added up:
+
+```javascript
+const thrilling = await calculateRoute({
+    locations: innsbruckToBolzano,
+    maxAlternatives: 2,
+    costModel: { routeType: 'thrilling' },
+    sectionTypes: ['curve', 'curvyStretch'],
+    // The maneuvers keep a roundabout or a turn at a junction from counting as a hairpin
+    guidance: { type: 'coded' },
+});
+const [curviest] = [...thrilling.features].sort((first, second) => shareInCurves(second) - shareInCurves(first));
+const bestStretches = [...(curviest.properties.sections.curvyStretch ?? [])].sort(
+    (first, second) => second.curvinessScore - first.curvinessScore,
+);
+```
+
+[Roadcurvature.com](https://roadcurvature.com) scores roads the same way. It lists them from a score of 300 and
+calls those over 1000 very twisty.
+
+## Find the hairpins
+
+A hairpin is a bend turning 140° or more on a radius of 40 m or less, as the numbered bends of a mountain pass do.
+To find them, filter the curves with `isHairpin`:
+
+```javascript
+import { isHairpin } from '@tomtom-org/maps-sdk/core';
+
+const hairpins = curviest.properties.sections.curve?.filter(isHairpin) ?? [];
+```
+
+Each curvy stretch counts its own hairpins in `hairpinCount`.
+
+## Tell where each curve is
+
+To tell a rider how far ahead a curvy stretch starts and how long it takes to drive, call
+`getRouteProgressForSection`:
+
+```javascript
+import { formatDistance, formatDuration } from '@tomtom-org/maps-sdk/core';
+
+const [stretch] = bestStretches;
+const progress = stretch && getRouteProgressForSection(curviest, stretch);
+if (progress) {
+    console.log(
+        `${formatDistance(progress.start.distanceInMeters)} ahead, ${formatDuration(progress.delta.travelTimeInSeconds)} to drive`,
+    );
+}
+```
+
+To read the curves against the rest of the road, ask for its other sections too, and call `getSectionsWithin`.
+For example, the curves in tunnels, where a driver sees neither the road ahead nor the oncoming traffic:
+
+```javascript
+import { getSectionsWithin } from '@tomtom-org/maps-sdk/core';
+
+const [route] = (
+    await calculateRoute({ locations: innsbruckToBolzano, sectionTypes: ['curve', 'curvyStretch', 'tunnel'] })
+).features;
+const { curve } = getSectionsWithin(route, { within: route.properties.sections.tunnel ?? [], types: ['curve'] });
+const curvesInTunnels = curve?.sections ?? [];
+```
+
+The same call with `urban` sections finds the curves in towns.
+
+## Show them on the map
+
+The routing module draws curves and curvy stretches once you switch them on:
+
+```javascript
+import { RoutingModule } from '@tomtom-org/maps-sdk/map';
+
+const routingModule = await RoutingModule.create(map, {
+    sections: { curve: { visible: true }, curvyStretch: { visible: true } },
+});
+await routingModule.showRoutes(routes);
+```
+
+- Curves draw in rose over their curvy stretch, deeper the higher their `severity`, and from zoom 12 a tight curve
+  carries a kerb. See
+  [Tight curves carry a kerb](../../map/routes-sections.mdx#tight-curves-carry-a-kerb).
+- To draw only some of the curves, such as the hairpins, show routes whose `sections.curve` holds those alone.
+- To ring a curvy stretch, pass its id to [`setSectionFocus`](../../map/routes-sections.mdx#focusing-sections).
+
+## API reference
+
+- [Route](/maps-sdk-js/api-reference/types/core.Route.html) – Where the curves sit in the response
+- [getRouteProgressForSection](/maps-sdk-js/api-reference/functions/core.getRouteProgressForSection.html) – How far
+  ahead a section starts and how long it takes
+- [RoutingModule](/maps-sdk-js/api-reference/classes/map.RoutingModule.html) – Drawing the curves
+
+## Related guides and examples
+
+### Related guides
+- [Route utilities](../../core/utilities/routes.mdx#curves) – Finding curves again with thresholds of your own
+- [Routes](../../core/routes.mdx#section-properties) – What each curve and curvy stretch carries
+- [Route sections](../../map/routes-sections.mdx) – Styling the curves on the map
+- [Route planning parameters](./parameters.mdx#cost-model) – Route types, `thrilling` included
+- [Agent toolkit tools](../../plugins/agent-toolkit/tools.mdx) – How a map agent ranks routes by their curves and
+  zooms to the curviest stretch
+
+### Related examples
+- [Seek or avoid curves](../../../examples/route-curves) – Routes ranked by how winding they are, their curves
+  shown outside towns, at junctions or at hairpins, and found again as you change the thresholds
+- [React route planner](../../../examples/react-route-planner) – A Curvy roads lane, and each alternative's curvy
+  stretches of its own

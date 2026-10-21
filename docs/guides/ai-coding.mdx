@@ -1,0 +1,91 @@
+---
+title: AI coding with the SDK
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.4"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The SDK ships a skill, `tomtom-maps-sdk-js`, for AI coding agents such as Claude Code, Cursor, GitHub Copilot, Windsurf and [many more](https://www.npmjs.com/package/skills#available-agents). It loads the SDK's patterns, coordinate conventions, service APIs and pitfalls into the agent's context, so the agent writes code against the real API instead of guessing it.
+
+## What the skill covers
+
+A skill is a set of curated reference documents the agent reads when a task needs them, rather than searching the web. This one has a document per area:
+
+| Area | What the agent learns |
+| --- | --- |
+| **Map setup** | `TomTomMap`, the two kinds of [modules](./map/modules.mdx), the base map, terrain, geopolitical views |
+| **Styles and styling** | `setStyle` and style switching, styling knobs, map colours, presets, theming from a website or an image |
+| **Events** | User events on each module, and module lifecycle events such as `config-change` |
+| **Places and search** | `discoverPlaces`, geocoding, reverse geocoding, `getSearchSuggestions`, POI categories, EV charging stations, `PlacesModule` |
+| **Routing** | `calculateRoute`, waypoints, alternatives, guidance, reachable ranges, `RoutingModule` |
+| **Traffic** | Flow, incidents, incident details, area analytics |
+| **Core types and utilities** | `Place`, `Route`, section types, `bboxFromGeoJSON`, `getPosition`, `formatDistance`, `formatDuration`, route progress |
+| **Services config** | API key, language, request validation, cancellation with `AbortSignal` and `createLatestRequest`, error classes |
+| **MapLibre and custom data** | When to use an SDK feature or raw MapLibre, layer placement, `CustomGeoJSONModule` |
+| **Plugins** | Map effects, fly-over, landmarks 3D, Map Theme, and the [Agent Toolkit](./plugins/agent-toolkit/overview.mdx) |
+
+## Installing the skill
+
+Run this once in your project root:
+
+```bash
+npx skills add tomtom-international/maps-sdk-js --skill tomtom-maps-sdk-js tomtom-maps-sdk-js-feedback
+```
+
+- It writes the skills into your agent's skills directory, such as `.claude/skills/`. Commit them so your team gets them.
+- `tomtom-maps-sdk-js-feedback` is optional. To leave it out, drop it from the command. [Reporting SDK problems](#reporting-sdk-problems) describes what it does.
+- It installs the skill of the latest SDK release. For the skill of the SDK version your project installs, from 0.46.2, add that version's tag: `npx skills add tomtom-international/maps-sdk-js#v<version> --skill tomtom-maps-sdk-js`.
+- From 1.0, the identifiers `tomtom-maps-sdk-js` and `tomtom-maps-sdk-js-feedback` follow the SDK's [versioning policy](../introduction/versioning-and-support-policy.mdx#what-counts-as-a-breaking-change) like any export, so they change only in a major release.
+
+## Invoking the skill
+
+The agent loads the skill itself when a task mentions the SDK. To load it explicitly, name it with one or more topics:
+
+```
+/tomtom-maps-sdk-js map-setup
+/tomtom-maps-sdk-js places routing
+```
+
+## What to expect
+
+With the skill loaded, the agent:
+
+- Writes positions as `[longitude, latitude]`, the order the whole SDK uses.
+- Awaits `Module.create(map)` for data-owned modules and `Module.get(map)` for style-owned ones before calling them ([Types of modules](./map/modules.mdx#types-of-modules)).
+- Calls `geocode()` when the number of results is open, and `geocodeOne()` when one result is expected.
+- Gives the map container explicit dimensions in the HTML and CSS it writes alongside the TypeScript.
+- Prefers an SDK feature over hand-written MapLibre layers where one exists.
+
+## Tips for best results
+
+- Describe what to show, not which API to call, and let the skill pick the services and modules:
+
+  > *"Show a route from Amsterdam to Utrecht with a stop at a fuel station, and the traffic incidents along it"*
+
+- Name the target environment. Services run in Node.js and React Native. Map runs only in the browser. "This is a Node.js script" or "this is a React app" picks the right imports.
+- If the agent drifts in a long session, invoke it again to reload the reference.
+
+## Reporting SDK problems
+
+The `tomtom-maps-sdk-js-feedback` skill lets the agent report what the SDK got wrong while it built for you, so the SDK team can fix it. For example, a guide left out a step, an API couldn't do what you asked or a call failed when used as documented.
+
+- At the start of a session, the `tomtom-maps-sdk-js` skill offers it. If you haven't installed it, the agent asks whether to install it first. If you don't answer, it asks once more the first time the SDK gets in its way.
+- To stop the install question in a project, tell the agent never to ask in this project. It adds a line saying so to your project's `AGENTS.md` or `CLAUDE.md`.
+- Before collecting anything, the agent asks for your consent, and says what a report holds and where it goes. You can turn it off at any point.
+- A report holds your goal in the agent's words, a minimal code sample, the SDK and environment versions and, where it helps, a cropped screenshot. The agent removes API keys, personal data, real locations and business code first.
+- When it hits a problem, the agent first checks whether an open report already covers it and tells you what it finds, workaround included. If that report covers only part of the problem, the agent drafts a comment with what's missing or a new report that links it.
+- The agent shows you each draft and posts only the ones you approve. It posts them under your GitHub account as an issue or a discussion in the public [`tomtom-international/maps-sdk-js`](https://github.com/tomtom-international/maps-sdk-js) repository, where anyone can read them.
+- TomTom uses reports only to improve the SDK, under its [privacy notice](https://www.tomtom.com/privacy/).
+
+To send a report yourself, tell the agent "report this".
+
+## Related guides
+
+- [AI and the SDK](../introduction/ai.mdx), for the Agent Toolkit that puts an LLM in front of your users
+- [Project setup](../introduction/project-setup.mdx), to install the SDK and set your API key
+- [How the SDK works](./how-the-sdk-works.mdx), for the Map, Services and Core bundles

@@ -1,0 +1,355 @@
+---
+title: User interaction events
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.4"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+Every map module that draws features has an `events` object for clicks, hovers and drags on them. All modules share one pipeline. Only the top-most feature under the pointer receives an event. Hover and long hover have built-in timing, and handlers receive your original typed data. The demo below opens a place on click, shows an incident's delay on a long hover and reverse geocodes a click on the rest of the map.
+
+<GuideDemo demo="map-events" />
+
+## Event types
+
+| Type | Fires when |
+|---|---|
+| `click` | The user clicks or taps a feature |
+| `contextmenu` | The user right-clicks a feature |
+| `hover` | The pointer arrives on a feature, or moves on to another one |
+| `hover-move` | The pointer moves along the feature it is already on |
+| `long-hover` | The pointer rests on a feature for the [long-hover delay](#long-hover-events) |
+| `dragstart` | A pressed feature starts to move with the pointer. See [Dragging features](#dragging-features) |
+| `drag` | The pointer moves during a drag |
+| `dragend` | The user releases a dragged feature |
+
+```javascript
+import { TrafficIncidentsModule } from '@tomtom-org/maps-sdk/map';
+
+const trafficIncidents = await TrafficIncidentsModule.get(map);
+
+const unsubscribe = trafficIncidents.events.on('click', (incident, lngLat, allEventFeatures, sourceWithLayers) => {
+    showIncident(incident.properties.description, lngLat);
+});
+
+unsubscribe(); // removes this handler only
+trafficIncidents.events.off('click'); // removes every click handler of the module
+```
+
+- `on` adds a handler, and all handlers for one type fire. To replace one, call `off`, then `on`.
+- A named scope's `off` also stops the module's own handlers of that type on the scope's features. After
+  `placesModule.events.places.off('click')`, a `placesModule.events.on('click', …)` handler no longer
+  fires on the places, but still does on their connections and entry points.
+- The arguments after the first are optional:
+  - The feature, in the module's own type. For modules that draw data you pass to `show`, it is your original feature, with its dates and nested objects intact instead of flattened by MapLibre.
+  - `lngLat` - Where the event happened. With the default `'box'` [precision](#map-level-configuration), it can be a few pixels off the feature.
+  - `allEventFeatures` - Every feature of the same module under the pointer, each once. The first is the top-most. To see the features of every module at that point, base map included, query MapLibre with the point in pixels:
+
+    ```javascript
+    const p = map.mapLibreMap.project(lngLat);
+    const all = map.mapLibreMap.queryRenderedFeatures([[p.x - 5, p.y + 5], [p.x + 5, p.y - 5]]);
+    ```
+
+  - `sourceWithLayers` - The source and layers that drew the feature.
+- Hidden features, and symbols MapLibre leaves out because they collide, receive no events. Nothing fires while the map is moving.
+- A module's [lifecycle events](./module-events.mdx), `config-change` and `shown-features`, use the same `on` and `off`.
+
+### Long-hover events
+
+`long-hover` fires once the pointer has rested on a feature. Use it for a tooltip that needs a request to fill:
+
+```javascript
+trafficIncidents.events.on('long-hover', (incident, lngLat) => showDelayPopup(incident, lngLat));
+```
+
+- The first long hover after the map moves waits `longHoverDelayAfterMapMoveMS` (800 ms by default), so panning does not open tooltips. The next ones on a still map wait `longHoverDelayOnStillMapMS` (300 ms). The [map-level configuration](#map-level-configuration) sets both.
+- There is no event for the pointer leaving a feature. [Ending a hover](#ending-a-hover) shows what to react to instead.
+
+### Dragging features
+
+A `dragstart`, `drag` or `dragend` handler makes the features it covers draggable, with the mouse or one finger. It works on every module and scope. To move a place pin, show it again where the pointer is:
+
+```javascript
+places.events.places.on('drag', async (place, lngLat) => {
+    const geometry = { type: 'Point', coordinates: lngLat.toArray() };
+    myPlaces = myPlaces.map((shown) => (shown.id === place.id ? { ...shown, geometry } : shown));
+    await places.show(myPlaces);
+});
+places.events.places.on('dragend', (place, lngLat) => savePosition(place.id, lngLat));
+```
+
+- Over a draggable feature, the cursor is `cursorOnDraggable`, which is `'grab'` by default.
+- The press becomes a drag once the pointer moves 3 pixels. `dragstart` fires then, followed by a `drag` on that move and on every move after it. A press released before that is a `click`.
+- The map doesn't pan while you drag a feature, and `map.mapLibreMap.dragPan` keeps the setting you gave it.
+- A drag fires no `click` on release, so a click handler on the same feature stays out of the way.
+- The handler gets the feature you pressed at `dragstart`, and `lngLat` is where the pointer is now. The SDK moves nothing itself.
+- If the pointer is released outside the map, `dragend` fires where it last was over the map. A second finger ends the drag too.
+- While you drag, no hover events fire, and drag events set no [event state](#event-states).
+
+[Editing a route by dragging](./routes.mdx#editing-a-route-by-dragging) moves waypoints and pulls new stops onto a route line. The [route dragging plugin](../plugins/route-dragging.mdx) does it for you.
+
+### Event priority
+
+The event goes to the module of the top-most feature under the pointer, and no further down. A drag starts the same way, on the top-most feature. Only the features a handler covers count. If a place pin covers a road, a places handler receives the click and the base map doesn't. With no places handler, the click reaches the road. Two [scopes](#scoping-events) of one module follow the same rule, whichever registered first. If a 3D building covers a road, a `buildings3D` scope fires and a `roads` scope does not.
+
+## Scoping events
+
+`events.where(scope, config?)` returns events for part of what a module covers. The optional `config` is that part's own [event configuration](#module-level-configuration). Use it to give two parts of one module different hover cursors.
+
+- A feature predicate works on every module:
+
+  ```javascript
+  trafficIncidents.events
+      .where((incident) => incident.properties.magnitudeOfDelay === 'major')
+      .on('click', showIncidentDetails);
+  ```
+
+- Layer groups work on `BaseMapModule`, whose [layer groups](./base-map.mdx#layer-groups) are a stable vocabulary. Its scope object also takes a `features` predicate, to narrow by both in one call:
+
+  ```javascript
+  baseMap.events
+      .where(
+          {
+              layerGroups: { show: 'only', values: ['roadLabels'] },
+              features: (feature) => feature.properties.name?.startsWith('A'),
+          },
+          { cursorOnHover: 'pointer' },
+      )
+      .on('click', (feature) => showRoadName(feature.properties.name));
+  ```
+
+- A predicate decides on the top-most feature the handler covers. If it rejects that feature, the feature looks inert: hovering it keeps the map cursor, nothing highlights it, and the handler doesn't run, even when a feature it accepts lies below. Narrow a route's line to `routeState === 'deselected'`, and only the alternatives react, also where an alternative runs under the selected route.
+- The handler's features are the matching ones under the pointer, the top-most first.
+- [Named scopes](#module-event-scopes) narrow the same way, for example `routing.events.tunnels.where(…)`.
+
+## Module event scopes
+
+A module that draws several kinds of feature has a named scope for each kind, with the same `on`, `off` and `where`. The module's own `events` covers all of them, plus the [lifecycle events](./module-events.mdx), which no scope has.
+
+| Module | Named scopes |
+| --- | --- |
+| `RoutingModule` | `mainLines`, `waypoints`, `summaryBubbles`, `countryCrossings`, `incidents`, `vehicleRestricted`, `ferries`, `tollRoads`, `tunnels`, `instructionLines`, plus one `<type>Sections` scope per [generated section type](./routes-sections.mdx#section-events-and-shown-data) |
+| `PlacesModule` | `places`, `connections`, `entryPoints` |
+| `GeometriesModule`, `ReachableRangesModule` | `geometry`, `geometryLabel` |
+| `CustomGeoJSONModule` | your own `sources` keys |
+
+Modules that draw one kind of feature — `BaseMapModule`, `POIsModule`, `TrafficFlowModule`, `TrafficIncidentsModule`, `TrafficIncidentDetailsModule`, `TrafficAreaAnalyticsModule` — have none, because their `events` is already that scope. `TerrainModule` and `StylingFoundationsModule` draw nothing to interact with, so they have lifecycle events only.
+
+### Places module events
+
+`places.events.places` covers only the pins and hands back the `Place` you showed. `places.events` also covers connection lines and entry points. [Places events](./places.mdx#user-events) has the details.
+
+```javascript
+places.events.places.on('click', (place) => showPlaceDetails(place.properties.poi?.name));
+```
+
+### Routing module events
+
+`routing.events.mainLines` covers the route lines and hands back each `Route`. The other scopes cover waypoints and each kind of section. [Routing events](./routes.mdx#events) has the details.
+
+```javascript
+routing.events.mainLines
+    .where((route) => route.properties.routeState === 'deselected')
+    .on('click', async (route) => await routing.selectRoute(route.properties.index));
+routing.events.waypoints.on('hover', (waypoint) => showTooltip(waypoint));
+```
+
+## Event states
+
+A user event on a feature that a handler covers sets its `properties.eventState` to `click`, `contextmenu`, `hover`, `long-hover` or [`recently-hovered`](#recently-hovered-features). The SDK draws the state, and your own layers can style it. Every module that draws data you pass to `show` lets you put, clear and read states yourself, to select a feature from a list or keep the map and your UI in sync:
+
+```javascript
+// Highlight a route as if clicked, taking the click off any other route
+routing.setEventState({ id: routeID, state: 'click' });
+
+// The ids with a state, by state, whoever put them
+const { click: [clickedID] = [], hover = [] } = routing.getEventStates();
+
+routing.clearEventState({ id: routeID });
+routing.clearEventStates({ states: ['hover'] });
+routing.clearEventStates(); // every state
+```
+
+A route's `click` state is not its selection: [`selectRoute`](./routes.mdx#events) clears it, and the selected route has `routeState: 'selected'`.
+
+The methods act on the module's main features, which `getShown()` returns, so they take any id read there or in a handler:
+
+| Module | Acts on | Hovered or clicked look |
+| --- | --- | --- |
+| `PlacesModule` | `places`, clustered or not | a larger pin, its label in the module's `color`, and its [entry points](./places-connections-and-entry-points.mdx#entry-points) |
+| `RoutingModule` | `mainLines`, the routes | a [wider outline](./routes.mdx#events) |
+| `GeometriesModule`, `ReachableRangesModule` | `geometry` | a [denser fill and wider border](./geometries.mdx#hovered-and-clicked-geometries) |
+| `CustomGeoJSONModule` | every source | what your layers draw with `['get', 'eventState']` ([example](./custom.mdx#events)) |
+| `TrafficIncidentDetailsModule` | `incidents` | the [focus highlight](./traffic-incident-details.mdx#customising-or-disabling-the-highlight) |
+| `TrafficAreaAnalyticsModule` | `hexgrid`, `square` and `heatmap` | an outlined cell, stronger when clicked |
+
+- `id` is the feature's `properties.id`, otherwise its top-level `id`. `index` is its position in its collection. If a module acts on several collections, each counts its own.
+- A [named scope](#module-event-scopes) of these modules has the same four methods for its own features only, such as `routing.events.waypoints`, `places.events.entryPoints` or `custom.events.<sourceName>`. This way, ids that repeat across sources never collide. A `where()` scope has none.
+- By default, `mode: 'put'` moves the state off the feature that had it. `'add'` leaves the others as they are. To batch several changes, defer drawing with `show: false`.
+- A user click or right click takes `click` and `contextmenu` off the other features of the source it lands on. A hover takes `hover`, `hover-move` and `long-hover` off them. This includes states you put, so a selection made in code moves on the next click. To let clicks add up, put the earlier ids back with `mode: 'add'` in the click handler.
+- States last through `setVisible`, configuration changes and a `setStyle` that [keeps state](./styles.mdx#keeping-or-dropping-state). A new `show`, a `clear` or a style switch with `resetState` drops them. To keep a selection across a new `show`, read it first and put it back.
+- Base map, POI and traffic tile features carry no event state.
+
+### Recently hovered features
+
+When the pointer leaves a feature that can carry a state, its `hover` turns into `recently-hovered` for `hoverGracePeriodMS` (400 ms by default), unless it is hovered or clicked again first. A value of `0` clears it at once, on the map or in one module's `events` configuration.
+
+- The SDK's own layers draw it as if the feature had no state. The [entry points of places](./places-connections-and-entry-points.mdx#entry-points) read it to stay drawn while the pointer moves to an entrance.
+- In your own layers, `['has', 'eventState']` matches it too. To leave it out, add `['!=', ['get', 'eventState'], 'recently-hovered']`.
+
+The demo colours each state, with sliders for the long-hover delay and the grace period:
+
+<GuideDemo demo="feature-event-states" />
+
+## Custom layer objects
+
+Register a hit tester for a custom layer, and its objects get the same click, hover and cursor handling as module features. Pass it as the `hitTest` of [`map.addCustomLayer`](./three-js-custom-layers.mdx#clicking-and-hovering-your-objects), then listen on the `events` of the layer it returns:
+
+```javascript
+const vehicles = map.addCustomLayer(vehiclesLayer, {
+    beforeLayerConfig: 'lowest3D',
+    hitTest: (point) => pickVehicles(point), // [{ id, properties }], the topmost first
+    setState: (id, state) => highlightVehicle(id, state),
+});
+
+vehicles.events.on('click', (vehicle) => showVehicle(vehicle.properties));
+```
+
+- The hits join the features under the pointer where the layer stands in the layer stack, so [event priority](#event-priority) holds. A vehicle over a road takes the click, and a place pin drawn over the vehicle takes it instead.
+- Handlers receive the objects your hit tester returned, the topmost first, and `where()` predicates take them too.
+- The layer has no feature state, so the SDK hands each object's [event state](#event-states) to `setState`. The states follow the same rules, `recently-hovered` included.
+- The hit tester owns the depth. If it compares screen positions, it also hits an object behind a 3D building.
+- Hits rank by the layer stack, not by what's drawn in front. With a handler on the 3D buildings, a click on a `'lowest3D'` object in front of a building goes to the building.
+
+## Event configuration
+
+### Map-level configuration
+
+The [`events`](/maps-sdk-js/api-reference/types/map.MapEventsConfig.html) option of the map applies to every module:
+
+```javascript
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+
+const map = new TomTomMap({
+    mapLibre: { container: 'map' },
+    events: { precisionMode: 'point-then-box', paddingBoxPx: 10, longHoverDelayOnStillMapMS: 500 },
+});
+```
+
+| Option | Default | Effect |
+|---|---|---|
+| `precisionMode` | `'box'` | `'box'` hit-tests a box of `paddingBoxPx` around the pointer. `'point'` tests the exact pixel, for dense data. `'point-then-box'` tests the pixel, then the box if that hits nothing |
+| `paddingBoxPx` | `5` | Half the box size, in pixels. Use more for touch screens |
+| `cursorOnHover` | `'pointer'` | Cursor over a feature a handler covers |
+| `cursorOnDraggable` | `'grab'` | Cursor over a feature a [drag](#dragging-features) handler covers, instead of `cursorOnHover` |
+| `cursorOnMap` | `'default'` | Cursor anywhere else |
+| `cursorOnMouseDown` | `'grabbing'` | Cursor while the button is down, and during a drag |
+| `longHoverDelayAfterMapMoveMS` | `800` | Delay of the first long hover after the map moved |
+| `longHoverDelayOnStillMapMS` | `300` | Delay of the next long hovers on a still map |
+| `hoverGracePeriodMS` | `400` | How long a left feature stays [`recently-hovered`](#recently-hovered-features) |
+
+#### Changing the configuration at runtime
+
+[`updateEventsConfig`](/maps-sdk-js/api-reference/classes/map.TomTomMap.html#updateeventsconfig) merges new values into the map's configuration. Values you leave out are unchanged. It applies from the next hover or click. A long hover or grace period already running keeps its delay:
+
+```javascript
+map.updateEventsConfig({ longHoverDelayOnStillMapMS: 600, hoverGracePeriodMS: 1000 });
+```
+
+### Module-level configuration
+
+A module's `events` configuration overrides `cursorOnHover`, `cursorOnDraggable` and `hoverGracePeriodMS` for its own features, and `updateEventsConfig` does not change it. A [scope](#scoping-events) takes its own as the second argument of `where`.
+
+```javascript
+import { PlacesModule } from '@tomtom-org/maps-sdk/map';
+
+const places = await PlacesModule.create(map, { events: { cursorOnHover: 'help', hoverGracePeriodMS: 0 } });
+```
+
+## Handling events on the rest of the map
+
+### Using BaseMapModule for background interactions
+
+`BaseMapModule` covers the style's own land, water, roads, buildings and labels. Only the [top-most feature](#event-priority) receives an event, so its handlers fire on clicks and hovers that no module drawn above it takes. Use them to clear a selection, close a popup or reverse geocode any point:
+
+```javascript
+import { BaseMapModule } from '@tomtom-org/maps-sdk/map';
+import { reverseGeocode } from '@tomtom-org/maps-sdk/services';
+
+const baseMap = await BaseMapModule.get(map, { events: { cursorOnHover: 'default' } });
+
+baseMap.events.on('click', async (feature, lngLat) => {
+    clearSelection();
+    showAddress(await reverseGeocode({ position: [lngLat.lng, lngLat.lat] }));
+});
+```
+
+To make some of the base map interactive and treat the rest as background, give each part a [scope](#scoping-events) over the shared module:
+
+```javascript
+const interactive = ['roads', 'roadLabels', 'buildings3D'];
+
+baseMap.events
+    .where({ layerGroups: { show: 'only', values: interactive } }, { cursorOnHover: 'pointer' })
+    .on('click', (feature) => showFeatureDetails(feature));
+
+baseMap.events
+    .where({ layerGroups: { show: 'all-except', values: interactive } }, { cursorOnHover: 'default' })
+    .on('click', () => clearSelection());
+```
+
+### Ending a hover
+
+No event says the pointer left a feature. It either moved on to another feature, which fires a `hover` there, or it left the map. To keep your own UI in step, such as a card lit up while its route is hovered, end the hover on the base map's `hover` under the routes and on MapLibre's `mouseout`:
+
+```javascript
+const baseMap = await BaseMapModule.get(map, { events: { cursorOnHover: 'default' } });
+const underRoutes = baseMap.events.where({
+    layerGroups: {
+        show: 'only',
+        values: ['land', 'water', 'buildings2D', 'roads', 'railways', 'ferries', 'borders'],
+    },
+});
+
+routing.events.mainLines.on('hover', (route) => highlightCard(route.properties.index));
+underRoutes.on('hover', () => highlightCard(undefined));
+map.mapLibreMap.on('mouseout', () => {
+    // The pointer left the map, say for your panel
+    highlightCard(undefined);
+    routing.clearEventStates({ states: ['hover'] });
+});
+```
+
+- A feature no handler covers lets the hover through to what lies below. A route's waypoint pin passes it to the route or the base map.
+- The base map's labels, shields and 3D buildings are drawn above the routes. Leave them out of every base map handler, `click` included, or a hover on one takes the hover off the route beneath.
+- A module with handlers of its own takes the hover the base map would get, so end the hover on that module's `hover` too.
+- When the pointer moves on to another feature or the rest of the map, the left feature's `hover` state turns into [`recently-hovered`](#recently-hovered-features), which the SDK draws as no state.
+- Leaving the map keeps the feature hovered, in case the pointer went into a popup of yours. Clear it with `clearEventStates({ states: ['hover'] })` when it shouldn't stay.
+- The SDK still takes that feature as the one under the pointer. Coming back onto it straight from outside the map fires no `hover`, so the route stays unlit until the pointer moves off it and back.
+- The [route with alternatives](../../examples/route-with-alternatives) example lights up a route and its card together this way.
+
+### Cursor behavior for background interactions
+
+Over every feature a handler covers, the cursor turns into `cursorOnHover`, which is `'pointer'` by default. On the base map, that is the whole map. To keep the pointer meaning "clickable", give the background handlers `cursorOnHover: 'default'`, on the module or on the scope as above. The [pin interaction](../../examples/pin-interaction) example combines this with places.
+
+## Related guides and examples
+
+### Related guides
+- **[Module lifecycle events](./module-events.mdx)** - `config-change` and `shown-features`
+- **[Base map](./base-map.mdx)** - Layer groups to scope events by
+- **[three.js custom layers](./three-js-custom-layers.mdx)** - Hit tests that make your own 3D objects clickable
+- **[Reverse geocoding](../services/places/reverse-geocoding.mdx)** - The address under a click
+
+### Related examples
+- **[Map events](../../examples/map-events)** - Clicks on places, long hovers on incidents, clicks on the rest of the map
+- **[Pin interaction](../../examples/pin-interaction)** - Clicks on pins versus the rest of the map
+- **[Route with alternatives](../../examples/route-with-alternatives)** - A hover ended by the rest of the map, keeping the routes and their cards in step
+- **[Feature event states](../../examples/feature-event-states)** - Your own GeoJSON coloured by `eventState`
+- **[React route planner](../../examples/react-route-planner)** - Stops dragged on the map, and new ones pulled onto the route line
+- **[Interactive map labels](../../examples/interactive-map-labels)** - Base-map layer groups as scopes
+- **[Reverse geocoding playground](../../examples/rev-geo-playground)** - Clicks that reverse geocode
+- **[three.js custom layer](../../examples/three-js-custom-layer)** - A `hitTest` that lights up three.js objects under the pointer and takes their clicks
