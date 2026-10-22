@@ -26,7 +26,7 @@ export const buildPopupHTML = ({ properties }: TrafficIncidentsModuleFeature): s
         averageSpeedKmph,
         timeValidity,
     } = properties;
-    const delay = formatDuration(delayInSeconds);
+    const delay = delayInSeconds ? formatDuration(delayInSeconds) : undefined;
 
     return `
         <div class="ui-incident-popup">

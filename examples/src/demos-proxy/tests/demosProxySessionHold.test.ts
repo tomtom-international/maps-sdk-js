@@ -34,6 +34,8 @@ describe("the demos-proxy bootstrap's transformRequest", () => {
         vi.stubEnv('DEMOS_PROXY_URL', PROXY_URL);
         vi.stubEnv('HCAPTCHA_SITEKEY', 'test-sitekey');
         vi.stubGlobal('__DEMOS_PROXY_READY__', undefined);
+        // Node's own lock manager is shared by the whole process, and a session left minting would hold it.
+        vi.stubGlobal('navigator', {});
         vi.stubGlobal('localStorage', { getItem: () => null, setItem: () => undefined, removeItem: () => undefined });
         vi.stubGlobal('hcaptcha', { render: () => 'widget', execute: async () => ({ response: 'token' }) });
         vi.stubGlobal('document', {

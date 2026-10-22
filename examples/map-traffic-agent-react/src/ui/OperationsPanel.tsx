@@ -268,7 +268,7 @@ function RouteCard({
                             <div className="text-[13px] leading-5 text-(--ui-text-med-em)">{descriptor}</div>
                             <div className="flex flex-wrap items-center gap-x-1 text-[13px] leading-5">
                                 <span className="font-semibold text-(--ui-text-high-em)">
-                                    {formatDuration(alt.travelTimeInSeconds) ?? '—'}
+                                    {formatDuration(alt.travelTimeInSeconds)}
                                 </span>
                                 <span className="text-(--ui-text-low-em)">·</span>
                                 <span className="font-semibold text-(--ui-text-high-em)">

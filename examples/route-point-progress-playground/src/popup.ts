@@ -38,7 +38,7 @@ export const buildPopupHTML = (
 
     return `
         <div class="progress-popup-row">
-            <span>${formatDuration(travelTimeInSeconds) ?? '—'}</span>
+            <span>${formatDuration(travelTimeInSeconds)}</span>
             <span class="progress-popup-row--right">${formatDistance(distanceInMeters)}</span>
             ${closeButton}
         </div>

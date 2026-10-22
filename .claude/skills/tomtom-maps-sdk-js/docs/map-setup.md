@@ -473,7 +473,7 @@ if (visibleBBox) {
 }
 ```
 
-A full-width element cuts from the top or bottom, a full-height one from the left or right, and any other, a panel touching one edge included, from its closest edge. On a rotated or tilted map the result is the box around the visible area.
+A full-width element cuts from the top or bottom, and a full-height one from the left or right. Any other element, whether it floats, sits in a corner or touches one edge, shrinks the visible area from the side that leaves the most of it visible. A toolbar inset from the left, right and top edges cuts from the top, and so does a wide, short panel touching only the left edge. If two sides leave the same area, the side nearest a map edge wins. On a rotated or tilted map the result is the box around the visible area.
 
 ### `calculateFittingBBox` — fit content into the visible area
 

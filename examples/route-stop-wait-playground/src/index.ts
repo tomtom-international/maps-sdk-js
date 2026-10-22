@@ -62,9 +62,9 @@ const showRoute = async (routingModule: RoutingModule, places: Place<GeocodingPr
 
         renderSummary([
             ['Distance', formatDistance(summary.lengthInMeters)],
-            ['Driving', formatDuration(drivingSeconds) ?? '—'],
-            ['Waiting', formatDuration(waitingSeconds) ?? 'none'],
-            ['Journey', formatDuration(summary.travelTimeInSeconds) ?? '—'],
+            ['Driving', formatDuration(drivingSeconds)],
+            ['Waiting', waitingSeconds ? formatDuration(waitingSeconds) : 'none'],
+            ['Journey', formatDuration(summary.travelTimeInSeconds)],
             ['Arrival', summary.arrivalTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })],
         ]);
         statusText.textContent = '';

@@ -1,5 +1,11 @@
 # @tomtom-org/maps-sdk-plugin-map-theme
 
+## 0.3.8
+
+### Patch Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - The README links the repository's security policy page, which sends a vulnerability report to TomTom's HackerOne program
+
 ## 0.3.7
 
 ### Patch Changes

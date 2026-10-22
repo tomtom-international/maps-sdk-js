@@ -2,9 +2,10 @@ import { loadEnv } from 'vite';
 import { DEMOS_PROXY_SERVER_SECRETS } from './src/demos-proxy/demosProxyEnv.ts';
 
 /**
- * Shared build-time env handling for BOTH example build configs:
+ * Shared build-time env handling for every example build config:
  *   - vite.config.ts            → the @tomtom-org/maps-sdk-examples package (the live editor)
  *   - example-vite.config.ts    → the standalone per-example dist/prod bundles
+ *   - the per-example preview config → each example's local live-editor preview
  *
  * It MUST stay a deny-by-default allowlist. `loadEnv(mode, dir, '')` returns the
  * ENTIRE process environment; `define`-ing that as `process.env` bakes every

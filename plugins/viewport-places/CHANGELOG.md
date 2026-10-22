@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.9
+
+### Patch Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - The README links the repository's security policy page, which sends a vulnerability report to TomTom's HackerOne program
+
 ## 0.5.8
 
 ### Patch Changes

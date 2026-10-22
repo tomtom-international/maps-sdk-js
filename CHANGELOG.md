@@ -1,5 +1,32 @@
 # Changelog
 
+## 1.0.0-rc.5
+
+### Minor Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** core: `formatDuration` returns a `string` for any `number`, so you can pass its result where a `string` is required with no fallback
+  
+  - **Breaking:** core: `0` gives `"0 min"` and any other duration under 30 seconds gives `"< 1 min"`, in your minute units, where it returned `undefined`. Only `undefined` still returns `undefined`, so where `undefined` hid a label for no delay or no wait, test the seconds before you format them
+  - map: `RoutingModule` still leaves out a traffic delay, a jam delay, a stop's wait and a duration difference that round to no minutes, and a summary bubble on a route under 30 seconds reads `"< 1 min"`
+  - examples: the route, traffic and store examples drop their fallbacks for a short duration
+
+### Patch Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - map: `calculatePaddedBBox`, `calculatePaddedCenter` and `calculateFittingBBox` cut an element short of the map's full width and height from the side that leaves the most of the map visible, so a toolbar inset from the map edges leaves the area below it visible rather than none
+  
+  - map: this changes the result for any such element whose closest map edge is not that side, whether it floats, sits in a corner or touches one edge. A 600 × 150 px panel against the left edge of a 1280 × 720 px map cuts from the top, and a short panel in the top-right corner cuts from the top rather than the right
+  - map: an element spanning the map's full width or height cuts as before. If two sides leave the same area, the side nearest a map edge wins
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - The README links the repository's security policy page, which sends a vulnerability report to TomTom's HackerOne program
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - map: waypoint labels win over the route's section icons, and the section focus ring outlines the route instead of crossing it
+  - A tunnel, closed-to-vehicles, ferry, toll-road or traffic icon under a stop's name gives way to it, as it does to the pin, rather than pushing the name aside.
+  - `setSectionFocus` draws its ring under the route's own lines, so on a road that doubles back, or where focused sections meet end to end, the route covers the ring rather than the ring crossing it.
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - services: `geocode` and `discoverPlaces` take a bare query string, the same as `{ query }`, as `geocodeOne` and `discoverOnePlace` already do
+  
+  - services: `discoverPlaces('coffee')` runs a fuzzy search and is typed as one
+
 ## 1.0.0-rc.4
 
 ### Major Changes

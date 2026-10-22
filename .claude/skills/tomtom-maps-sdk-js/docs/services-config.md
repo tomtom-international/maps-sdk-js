@@ -108,7 +108,7 @@ Call order: an already-aborted signal rejects first (nothing is sent) → global
 
 - Aborting cancels the in-flight HTTP request, including a pending `429` retry wait.
 - A deadline rejects with `SDKAbortError` too; `error.cause` (the signal's reason, a `TimeoutError` for `AbortSignal.timeout`) tells it apart from a manual abort.
-- `discoverOnePlace` / `geocodeOne` take the signal in their params form: `discoverOnePlace({ query, signal })`. `calculateReachableRanges` takes it as a second argument — see `routing.md`.
+- Where `discoverPlaces` / `discoverOnePlace` / `geocode` / `geocodeOne` take the signal — see `places.md` § Search → display on map. `calculateReachableRanges` takes it as a second argument — see `routing.md`.
 
 Validation rejects a parameter the service doesn't know, and names it (`INVALID_REQUEST`, an `unrecognized_keys` issue):
 
@@ -226,6 +226,6 @@ try {
 }
 ```
 
-**Tip:** `geocodeOne()` and `discoverOnePlace()` reject with a `NOT_FOUND` `SDKError` if no result — use `geocode()` / `discoverPlaces()`, or catch `error.code === 'NOT_FOUND'`, when the query might not be found. Both take a query string or the params object minus `limit` — `discoverOnePlace({ query, geoBias, signal })`.
+**Tip:** `geocodeOne()` and `discoverOnePlace()` reject with a `NOT_FOUND` `SDKError` if no result — use `geocode()` / `discoverPlaces()`, or catch `error.code === 'NOT_FOUND'`, when the query might not be found. The arguments all four take: `places.md` § Search → display on map.
 
 See [Request options and errors](https://docs.tomtom.com/maps-sdk-js/guides/services/request-options-and-errors.md).

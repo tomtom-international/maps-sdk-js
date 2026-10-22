@@ -803,8 +803,11 @@ routingModule.applyConfig({
   one, as `TrafficIncidentDetailsModule`'s `highlight.outline.color`.
 - `highlight.section.outline.widthFactor` × 2 to 4 px as the zoom grows, default 1, clamped 0.5–2.
 - `getShown().sectionFocus` holds the focused sections; `layers.sectionFocus.routeSectionFocusOutline`
-  overrides the selected route's ring, drawn over every route and section line under the direction
-  arrows, and `routeDeselectedSectionFocusOutline` a deselected route's, drawn under the selected route.
+  overrides the selected route's ring, drawn under that route's own lines (`beforeID: 'routeOutline'`) and
+  over the deselected routes, and `routeDeselectedSectionFocusOutline` a deselected route's, drawn under
+  that route's lines (`'routeDeselectedOutline'`). So where the road doubles back, or focused sections
+  meet end to end, the route covers the ring instead of the ring crossing the route. A section drawn
+  as a halo sits under the ring, so where the road doubles back the ring can still cross its band.
 - A leg of a route calculated without its polyline has no extent, so focusing it draws nothing.
 
 ### Every knob as data — `routingKnobCatalogue`
@@ -947,6 +950,8 @@ routingModule.events.tunnels.on('click', (section) => console.log(section.proper
   on the sides facing the waypoint icon's `icon-anchor` (2 elsewhere).
   - The default pin (`bottom`) pads the top; a `routeWaypointSymbol` override anchored at `center`,
     or by an expression, pads every side. A section layer's own `icon-padding` wins.
+  - **The waypoint labels win too**: `routeWaypointLabel` sits over every section icon and the border
+    crossing bubbles, so a sign under a stop's name is dropped rather than pushing the name aside.
 - **The section knobs reach the sign**: `visible: false` drops it with the line, and `icon`
   (`{ image, placement, sizeFactor }`) replaces it with a sprite image. There is no sign-only
   switch: the module sets every section layer's visibility each time it shows a route, so a
@@ -1054,9 +1059,9 @@ await routingModule.showRoutes(routes);   // the crossings draw themselves
   feature carries `fromCountryCode`, `toCountryCode` and the composed `label`; a
   **clicked** one also carries `fromSection` and `toSection`, the two `CountrySectionProps` it joins.
 - The layer is `routeCountryCrossing`, overridable under `layers.countryCrossings`. It is anchored
-  under the waypoint pins and the summary bubbles, and has no `allow-overlap`: where one covers it,
-  the crossing hides rather than squeezing in beside it, and of two crossings close together one
-  shows until the zoom parts them. A `beforeID` on that override restacks it.
+  under the waypoint pins, their labels and the summary bubbles, and has no `allow-overlap`: where
+  one covers it, the crossing hides rather than squeezing in beside it, and of two crossings close
+  together one shows until the zoom parts them. A `beforeID` on that override restacks it.
 
 Each section also gets an event scope and a `getShown()` entry. The twelve generated types are keyed
 `<type>Sections`; the other five keep their source names (`ferries`, `tollRoads`, `incidents`,

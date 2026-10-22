@@ -1,15 +1,9 @@
-import fs from 'node:fs';
 import path from 'node:path';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig, type Plugin } from 'vite';
 import { viteSingleFile } from 'vite-plugin-singlefile';
 import { resolveExampleEnv } from './exampleBuildEnv.ts';
-
-const workspaceYaml = fs.readFileSync(path.resolve(import.meta.dirname, '../pnpm-workspace.yaml'), 'utf-8');
-const maplibreVersion = new RegExp(/maplibre-gl:\s*\^?([\d.]+)/).exec(workspaceYaml)?.[1];
-if (!maplibreVersion) {
-    throw new Error('Could not find maplibre-gl version in pnpm-workspace.yaml');
-}
+import { sdkEntry, sdkMaplibreVersion } from './sdkEntry.ts';
 
 // Pinned to an exact version: unpkg resolves a floating `@2` to the newest 2.x, so any
 // 2.x release invalidates the `integrity` hash and the browser blocks the shim (the map
@@ -42,13 +36,12 @@ const ES_MODULE_SHIMS_INTEGRITY = 'sha384-XCYz0V79m/Nex83lKvfhMD2R7JHcINUuKrEt+x
  * sibling doesn't exist, so the worker 404s and the map paints a blank background.
  * jsDelivr mirrors the tarball as-is, so both the worker and the shared chunk resolve.
  */
-const MAPLIBRE_CDN_DIST = `https://cdn.jsdelivr.net/npm/maplibre-gl@${maplibreVersion}/dist`;
-const MAPLIBRE_IMPORT_MAP_SCRIPTS = `
+const maplibreImportMapScripts = (maplibreCdnDist: string): string => `
     <script src="https://unpkg.com/es-module-shims@${ES_MODULE_SHIMS_VERSION}/dist/es-module-shims.js" integrity="${ES_MODULE_SHIMS_INTEGRITY}" crossorigin="anonymous" id="import-es-module-shim"></script>
     <script type="importmap" id="import-maplibre-gl">
     {
         "imports": {
-            "maplibre-gl": "${MAPLIBRE_CDN_DIST}/maplibre-gl.mjs"
+            "maplibre-gl": "${maplibreCdnDist}/maplibre-gl.mjs"
         }
     }
     </script>
@@ -98,6 +91,8 @@ export default defineConfig(({ mode }) => {
     // Resolved build root (= the example's ./src), captured in configResolved
     // and used to identify the entry module for the bootstrap injection below.
     let entryRoot = '';
+    // The MapLibre this example's SDK was installed against, so a frozen example keeps its runtime MapLibre.
+    const maplibreCdnDist = `https://cdn.jsdelivr.net/npm/maplibre-gl@${sdkMaplibreVersion(process.cwd())}/dist`;
 
     return {
         root: './src',
@@ -129,7 +124,7 @@ export default defineConfig(({ mode }) => {
             {
                 name: 'inject-maplibre-import-map',
                 transformIndexHtml(html) {
-                    return html.replace('</head>', `${MAPLIBRE_IMPORT_MAP_SCRIPTS}</head>`);
+                    return html.replace('</head>', `${maplibreImportMapScripts(maplibreCdnDist)}</head>`);
                 },
             },
             inlineMapLibreWorker(),
@@ -169,8 +164,10 @@ export default defineConfig(({ mode }) => {
         ],
         resolve: {
             alias: {
+                // Rolldown can't resolve the SDK's core from inside the workspace map package; take the example's own copy.
+                '@tomtom-org/maps-sdk/core': sdkEntry(process.cwd(), 'core'),
                 // The SDK's worker entry loads MapLibre's worker from the import map's CDN copy, not node_modules.
-                'maplibre-gl/dist/maplibre-gl-worker.mjs': `${MAPLIBRE_CDN_DIST}/maplibre-gl-worker.mjs`,
+                'maplibre-gl/dist/maplibre-gl-worker.mjs': `${maplibreCdnDist}/maplibre-gl-worker.mjs`,
             },
         },
         define: {

@@ -57,7 +57,7 @@ const haversineMeters = (a: [number, number], b: [number, number]): number => {
             label: {
                 title: (connection) => {
                     const travelTime = connection.travelTime as number | undefined;
-                    if (typeof travelTime === 'number') return formatDuration(travelTime) ?? '';
+                    if (typeof travelTime === 'number') return formatDuration(travelTime);
                     return formatDistance(connection.distanceMeters as number);
                 },
             },

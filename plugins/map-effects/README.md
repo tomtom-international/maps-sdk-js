@@ -63,4 +63,4 @@ See `LICENSE.txt`.
 
 ## Security
 
-To report a security vulnerability, follow [SECURITY.md](https://github.com/tomtom-international/maps-sdk-js/blob/main/SECURITY.md), which keeps it private.
+To report a security vulnerability, follow our [security policy](https://github.com/tomtom-international/maps-sdk-js/security/policy), which keeps it private.

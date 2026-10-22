@@ -100,7 +100,7 @@ const storeSessionExpiry = (expiresAtMs: number | null): void => {
 
 // /session/status answers 204 while the cookie is valid, saving an hCaptcha + POST on
 // every later example load, and 401 without one. So it is asked only while the stored
-// expiry says a session may outlive the renewal margin, the only one establishSession
+// expiry says a session may outlive the renewal margin, the only one adoptExistingSession
 // adopts, and a first visit sends no request bound to fail.
 const checkExistingSession = async (): Promise<number | null> => {
     if (readStoredSessionExpiry() - SESSION_RENEWAL_MARGIN_MS <= Date.now()) return null;
@@ -129,22 +129,21 @@ const recordSessionExpiry = (remainingSeconds: number): void => {
     storeSessionExpiry(sessionExpiresAtMs);
 };
 
-// Adopt a live session if there is one, otherwise solve an invisible hCaptcha
-// and mint a fresh cookie. installDemosProxy owns the demos-proxy-mode check.
-const establishSession = async (): Promise<void> => {
-    if (globalThis.__DEMOS_PROXY_READY__) return;
-
-    // Only adopt a session with MORE life left than the renewal margin: a dying
-    // one records an expiry already inside the margin, so every
-    // ensureFreshSession call would "refresh" again — one status check per map
-    // request until the cookie truly expires.
+// Only adopt a session with MORE life left than the renewal margin: a dying
+// one records an expiry already inside the margin, so every
+// ensureFreshSession call would "refresh" again — one status check per map
+// request until the cookie truly expires.
+const adoptExistingSession = async (): Promise<boolean> => {
     const remainingSeconds = await checkExistingSession();
-    if (remainingSeconds !== null && remainingSeconds * 1000 > SESSION_RENEWAL_MARGIN_MS) {
-        globalThis.__DEMOS_PROXY_READY__ = true;
-        recordSessionExpiry(remainingSeconds);
-        return;
-    }
+    if (remainingSeconds === null || remainingSeconds * 1000 <= SESSION_RENEWAL_MARGIN_MS) return false;
 
+    globalThis.__DEMOS_PROXY_READY__ = true;
+    recordSessionExpiry(remainingSeconds);
+    return true;
+};
+
+// Solve an invisible hCaptcha and mint a fresh cookie.
+const mintSession = async (): Promise<void> => {
     await loadHCaptchaScript();
     const hcaptcha = globalThis.hcaptcha;
     if (!hcaptcha) throw new Error('hCaptcha API not available after script load');
@@ -174,6 +173,47 @@ const establishSession = async (): Promise<void> => {
     }
     globalThis.__DEMOS_PROXY_READY__ = true;
     recordSessionExpiry(expiresInSeconds(sessionResponse) ?? DEFAULT_SESSION_TTL_S);
+};
+
+// Each demo a docs page embeds runs its own copy of this module, out of the single-flight's reach.
+// The lock spans the origin's frames and tabs: one asks for a session at a time, and the ones
+// queued behind it adopt the session it stored rather than solve an hCaptcha of their own.
+const SESSION_LOCK_NAME = 'tomtom-demos-proxy-session';
+
+// A background tab can hold the lock on a challenge nobody sees until the reader returns to it.
+const SESSION_LOCK_WAIT_MS = 60_000;
+
+// A frame sandboxed without `allow-same-origin` has an opaque origin, which is refused the lock.
+// AbortController rather than AbortSignal.timeout, which Safari 15.4 to 15.6 lack.
+const withSessionLock = async (task: () => Promise<void>): Promise<void> => {
+    if (!globalThis.navigator?.locks || globalThis.origin === 'null') return task();
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), SESSION_LOCK_WAIT_MS);
+    let granted = false;
+    try {
+        return await navigator.locks.request(SESSION_LOCK_NAME, { signal: controller.signal }, () => {
+            granted = true;
+            clearTimeout(timer);
+            return task();
+        });
+    } catch (error) {
+        if (!granted && controller.signal.aborted) return task();
+        throw error;
+    } finally {
+        clearTimeout(timer);
+    }
+};
+
+// A live session is adopted without the lock; the check inside it catches one a neighbour just minted.
+// installDemosProxy owns the demos-proxy-mode check.
+const establishSession = async (): Promise<void> => {
+    if (globalThis.__DEMOS_PROXY_READY__) return;
+    if (await adoptExistingSession()) return;
+
+    await withSessionLock(async () => {
+        if (!(await adoptExistingSession())) await mintSession();
+    });
 };
 
 // Resolves once the session cookie exists; the resolved placeholder keeps

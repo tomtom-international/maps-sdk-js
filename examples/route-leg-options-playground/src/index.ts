@@ -78,7 +78,7 @@ const calculateAndShow = async (
     const summary = route.properties.summary;
     renderTotals([
         ['Distance', formatDistance(summary.lengthInMeters)],
-        ['Travel time', formatDuration(summary.travelTimeInSeconds) ?? '—'],
+        ['Travel time', formatDuration(summary.travelTimeInSeconds)],
     ]);
 
     return route.properties.sections.leg.map((leg) => ({

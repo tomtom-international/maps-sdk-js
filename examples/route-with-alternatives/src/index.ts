@@ -120,7 +120,7 @@ const weighed = ({ ferry, carTrain, toll, traffic, unpaved }: SectionsWithin): C
         title.textContent = index === 0 ? 'Recommended' : `Alternative ${index}`;
         const detail = document.createElement('span');
         detail.className = 'ui-route-card-detail';
-        const duration = formatDuration(route.properties.summary.travelTimeInSeconds) ?? '';
+        const duration = formatDuration(route.properties.summary.travelTimeInSeconds);
         detail.textContent = ownMeters ? `${duration} · ${formatDistance(ownMeters)} of its own` : duration;
         const card = document.createElement('button');
         card.className = 'ui-option-card ui-route-card';

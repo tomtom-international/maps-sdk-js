@@ -196,7 +196,7 @@ export const buildLegPanel = (
         costModels,
         setStats: (stats) => {
             stats.forEach((legStats, legIndex) => {
-                const driving = formatDuration(legStats.travelTimeInSeconds) ?? '—';
+                const driving = formatDuration(legStats.travelTimeInSeconds);
                 // A leg's travel time is driving only, so the stop at its end is shown next to it
                 // rather than folded in.
                 const stop = formatDuration(legStats.stopTimeInSeconds);

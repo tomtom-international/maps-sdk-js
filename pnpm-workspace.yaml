@@ -65,14 +65,14 @@ minimumReleaseAgeExclude:
   - "@tomtom-org/*"
 
 catalog:
-  "@tomtom-org/maps-sdk": 1.0.0-rc.4
-  "@tomtom-org/maps-sdk-plugin-agent-toolkit": 0.17.0
-  "@tomtom-org/maps-sdk-plugin-flyover": 0.1.0
-  "@tomtom-org/maps-sdk-plugin-landmarks-3d": 0.2.0
-  "@tomtom-org/maps-sdk-plugin-map-effects": 0.4.0
-  "@tomtom-org/maps-sdk-plugin-map-theme": 0.3.7
-  "@tomtom-org/maps-sdk-plugin-route-dragging": 0.0.1
-  "@tomtom-org/maps-sdk-plugin-viewport-places": 0.5.8
+  "@tomtom-org/maps-sdk": 1.0.0-rc.5
+  "@tomtom-org/maps-sdk-plugin-agent-toolkit": 0.17.1
+  "@tomtom-org/maps-sdk-plugin-flyover": 0.1.1
+  "@tomtom-org/maps-sdk-plugin-landmarks-3d": 0.2.1
+  "@tomtom-org/maps-sdk-plugin-map-effects": 0.4.1
+  "@tomtom-org/maps-sdk-plugin-map-theme": 0.3.8
+  "@tomtom-org/maps-sdk-plugin-route-dragging": 0.0.2
+  "@tomtom-org/maps-sdk-plugin-viewport-places": 0.5.9
   "@ai-sdk/azure": ^4.0.104
   "@ai-sdk/react": ^4.0.147
   "@assistant-ui/react": ^0.15.29

@@ -40,7 +40,7 @@ export const setupPanel = (onSearch: (params: SearchPanelParams) => Promise<void
 
     // Sync slider to the constant so the HTML never needs to be updated manually
     detourMinutesSlider.value = String(DEFAULT_DETOUR_MINUTES);
-    detourValue.textContent = formatDuration(DEFAULT_DETOUR_MINUTES * 60) ?? `${DEFAULT_DETOUR_MINUTES} min`;
+    detourValue.textContent = formatDuration(DEFAULT_DETOUR_MINUTES * 60);
 
     let checkedCategories: POICategory[] = [];
     let isLoading = false;
@@ -68,7 +68,7 @@ export const setupPanel = (onSearch: (params: SearchPanelParams) => Promise<void
 
     detourMinutesSlider.addEventListener('input', () => {
         const minutes = Number(detourMinutesSlider.value);
-        detourValue.textContent = formatDuration(minutes * 60) ?? `${minutes} min`;
+        detourValue.textContent = formatDuration(minutes * 60);
     });
 
     const getParams = (): SearchPanelParams => {
@@ -103,7 +103,7 @@ export const setupPanel = (onSearch: (params: SearchPanelParams) => Promise<void
             cb.checked = false;
         });
         detourMinutesSlider.value = String(DEFAULT_DETOUR_MINUTES);
-        detourValue.textContent = formatDuration(DEFAULT_DETOUR_MINUTES * 60) ?? `${DEFAULT_DETOUR_MINUTES} min`;
+        detourValue.textContent = formatDuration(DEFAULT_DETOUR_MINUTES * 60);
     };
 
     searchButton.addEventListener('click', triggerSearch);

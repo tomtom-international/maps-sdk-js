@@ -128,16 +128,19 @@ Returns `[longitude, latitude] | null`.
 
 ### `formatDuration`
 
-Formats seconds to a human-readable time string. Returns `undefined` if under 30 seconds.
+Formats seconds to a human-readable time string. A `number` always returns a `string` (overloaded), so no `??` fallback is needed; only `undefined` in gives `undefined` out (`number | undefined` in → `string | undefined`). Negative seconds format as their absolute value.
 
 ```ts
-formatDuration(0);       // undefined
+formatDuration(undefined); // undefined
+formatDuration(0);       // '0 min'
+formatDuration(20);      // '< 1 min' — anything under 30 s that isn't 0
 formatDuration(60);      // '1 min'
 formatDuration(1800);    // '30 min'
 formatDuration(3660);    // '1 hr 01 min'
 
 // Custom units
 formatDuration(3660, { hours: 'h', minutes: 'm' });  // '1 h 01 m'
+formatDuration(20, { minutes: 'm' });                // '< 1 m'
 
 // Route travel time
 const { travelTimeInSeconds } = routes.features[0].properties.summary;

@@ -16,8 +16,8 @@ export const clockTime = (date: Date): string => date.toLocaleTimeString([], { h
 
 export const addSeconds = (date: Date, seconds: number): Date => new Date(date.getTime() + seconds * 1000);
 
-// `formatDuration` leaves anything under 30 seconds out, and writes a whole hour as "1 hr 00 min".
-export const duration = (seconds: number): string => (formatDuration(seconds) ?? '0 min').replace(/ 00 min$/, '');
+// `formatDuration` writes a whole hour as "1 hr 00 min".
+export const duration = (seconds: number): string => formatDuration(seconds).replace(/ 00 min$/, '');
 
 export const distance = (meters: number): string => formatDistance(meters) ?? '0 m';
 

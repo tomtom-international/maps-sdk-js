@@ -25,9 +25,6 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
 const INITIAL_ORIGIN = 'Martigny, Switzerland';
 const INITIAL_DESTINATION = 'Aosta, Italy';
 
-// `formatDuration` reports nothing under half a minute, which the readout still has to fill.
-const durationLabel = (seconds: number) => formatDuration(seconds) ?? '0 min';
-
 // A shallow field: a thin band around the marker stays sharp, the tarmac rushing past and the ridges
 // beyond it soften hard, and lights out of focus open into discs.
 const DEPTH_OF_FIELD = { intensity: 20, band: 0.08, bokeh: 1 } as const;
@@ -120,7 +117,7 @@ const DEPTH_OF_FIELD = { intensity: 20, band: 0.08, bokeh: 1 } as const;
     let lastProgressLabel = '';
 
     const showProgress = ({ traveledDistanceInMeters, traveledTimeInSeconds }: FlyoverProgress) => {
-        const label = `${formatDistance(traveledDistanceInMeters)} · ${durationLabel(traveledTimeInSeconds)}`;
+        const label = `${formatDistance(traveledDistanceInMeters)} · ${formatDuration(traveledTimeInSeconds)}`;
         if (label !== lastProgressLabel) {
             lastProgressLabel = label;
             progressReadout.textContent = label;
@@ -208,7 +205,7 @@ const DEPTH_OF_FIELD = { intensity: 20, band: 0.08, bokeh: 1 } as const;
             await routingModule.showWaypoints([origin, destination]);
 
             const { lengthInMeters, travelTimeInSeconds } = route.properties.summary;
-            status.textContent = `${formatDistance(lengthInMeters)} · ${durationLabel(travelTimeInSeconds)}`;
+            status.textContent = `${formatDistance(lengthInMeters)} · ${formatDuration(travelTimeInSeconds)}`;
 
             if (flyover) {
                 flyover.setRoute(route);

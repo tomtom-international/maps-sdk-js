@@ -106,7 +106,7 @@ const storeByID = (id: string | undefined) => stores.features.find((store) => st
                 return `<li><button class="ui-store" data-store-id="${store.id}">
                     <span class="ui-store-name">${store.properties.name}</span>
                     <span class="ui-store-address">${store.properties.address.freeformAddress}</span>
-                    <span class="ui-store-trip">${formatDuration(travelTimeInSeconds) ?? 'under 1 min'} · ${formatDistance(lengthInMeters)}</span>
+                    <span class="ui-store-trip">${formatDuration(travelTimeInSeconds)} · ${formatDistance(lengthInMeters)}</span>
                 </button></li>`;
             })
             .join('');

@@ -41,6 +41,10 @@ await placesModule.clear();
 `geometrySearch` export. `discoverOnePlace('Rijksmuseum')` (a query or fuzzy params without `limit`)
 resolves with the first result and throws when there is none.
 
+All four of `discoverPlaces`, `discoverOnePlace`, `geocode` and `geocodeOne` take a bare query string, the
+same as `{ query }` (a fuzzy search for `discoverPlaces`), or the params object. A string carries no options:
+put `signal`, `geoBias` and the rest in the params form — `geocodeOne({ query, signal })`.
+
 ---
 
 ## What `show()` takes — no mapping, and two results it doesn't
@@ -85,7 +89,8 @@ await placesModule.show(place);
 const bbox = bboxFromGeoJSON(place); // undefined for an input with no extent
 if (bbox) map.mapLibreMap.fitBounds(bbox);
 
-// Multiple candidates. `filters` takes `countries` and `geographyTypes`, no POI filters
+// Multiple candidates, from a bare query or the params. `filters` takes `countries` and `geographyTypes`, no POI filters
+const candidates = await geocode('Paris');
 const places = await geocode({ query: 'Paris', limit: 5, filters: { countries: ['FR'] } });
 const nextPage = places.properties?.nextCursor
     && (await geocode({ query: 'Paris', limit: 5, filters: { countries: ['FR'] }, cursor: places.properties.nextCursor }));

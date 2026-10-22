@@ -14,6 +14,13 @@ import type {
 import { fullTrafficIncidentCategories, trafficIncidentRequestCategories } from '@tomtom-org/maps-sdk/core';
 ```
 
+GeoJSON types (`Position`, `Feature`, `FeatureCollection`, …) come from `geojson`, not the SDK: `import type { Position } from 'geojson'`.
+
+- `/core` names `Position` without exporting it, so importing it from there fails with `TS2459`.
+- `BBox` is the exception: import it from `@tomtom-org/maps-sdk/core`. Its `BBox` is exactly four numbers, the type `bboxCenter`, `polygonFromBBox` and the other bbox utilities take. GeoJSON's also allows six, so passing one fails with `TS2345`.
+- npm resolves `geojson` through `maplibre-gl`'s `@types/geojson`. pnpm doesn't expose that copy to the app's code, so under pnpm run `pnpm add -D @types/geojson`. Otherwise the import fails with `TS2307` and the type becomes `any`.
+- The SDK's own types need no `@types` package.
+
 ---
 
 ## Place object

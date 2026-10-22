@@ -135,7 +135,7 @@ If two rows match, choose the discussion.
 
 **A security vulnerability is never posted**, as an issue, a discussion or a comment, whatever the
 table says. Tell the developer to report it privately, as the repository's
-[`SECURITY.md`](https://github.com/tomtom-international/maps-sdk-js/blob/main/SECURITY.md) describes,
+[security policy](https://github.com/tomtom-international/maps-sdk-js/security/policy) describes,
 and leave it out of every draft.
 
 ## Step 5: Draft, show, post

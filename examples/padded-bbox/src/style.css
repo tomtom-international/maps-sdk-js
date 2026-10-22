@@ -27,16 +27,15 @@
 
 .panel-left {
     left: 16px;
-    top: 16px;
+    top: 82px;
     width: 150px;
     height: 300px;
 }
 
 .panel-top {
-    left: 50%;
-    transform: translateX(-50%);
+    left: 16px;
+    right: 16px;
     top: 16px;
-    width: 200px;
     height: 50px;
 }
 

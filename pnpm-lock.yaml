@@ -34,29 +34,29 @@ catalogs:
       specifier: ^4.3.3
       version: 4.3.3
     '@tomtom-org/maps-sdk':
-      specifier: 1.0.0-rc.4
-      version: 1.0.0-rc.4
+      specifier: 1.0.0-rc.5
+      version: 1.0.0-rc.5
     '@tomtom-org/maps-sdk-plugin-agent-toolkit':
-      specifier: 0.17.0
-      version: 0.17.0
+      specifier: 0.17.1
+      version: 0.17.1
     '@tomtom-org/maps-sdk-plugin-flyover':
-      specifier: 0.1.0
-      version: 0.1.0
+      specifier: 0.1.1
+      version: 0.1.1
     '@tomtom-org/maps-sdk-plugin-landmarks-3d':
-      specifier: 0.2.0
-      version: 0.2.0
+      specifier: 0.2.1
+      version: 0.2.1
     '@tomtom-org/maps-sdk-plugin-map-effects':
-      specifier: 0.4.0
-      version: 0.4.0
+      specifier: 0.4.1
+      version: 0.4.1
     '@tomtom-org/maps-sdk-plugin-map-theme':
-      specifier: 0.3.7
-      version: 0.3.7
+      specifier: 0.3.8
+      version: 0.3.8
     '@tomtom-org/maps-sdk-plugin-route-dragging':
-      specifier: 0.0.1
-      version: 0.0.1
+      specifier: 0.0.2
+      version: 0.0.2
     '@tomtom-org/maps-sdk-plugin-viewport-places':
-      specifier: 0.5.8
-      version: 0.5.8
+      specifier: 0.5.9
+      version: 0.5.9
     '@tsconfig/recommended':
       specifier: ^1.0.13
       version: 1.0.13
@@ -281,10 +281,10 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       '@tomtom-org/maps-sdk-plugin-landmarks-3d':
         specifier: 'catalog:'
-        version: 0.2.0(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(maplibre-gl@6.15.0)(three@0.170.0)
+        version: 0.2.1(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(maplibre-gl@6.15.0)(three@0.170.0)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -309,7 +309,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -334,7 +334,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -359,7 +359,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -384,7 +384,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -409,7 +409,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -434,10 +434,10 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       '@tomtom-org/maps-sdk-plugin-map-effects':
         specifier: 'catalog:'
-        version: 0.4.0(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(maplibre-gl@6.15.0)
+        version: 0.4.1(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(maplibre-gl@6.15.0)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -462,10 +462,10 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       '@tomtom-org/maps-sdk-plugin-landmarks-3d':
         specifier: 'catalog:'
-        version: 0.2.0(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(maplibre-gl@6.15.0)(three@0.170.0)
+        version: 0.2.1(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(maplibre-gl@6.15.0)(three@0.170.0)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -490,7 +490,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -518,7 +518,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -546,7 +546,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -574,7 +574,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -602,7 +602,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -627,16 +627,16 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       '@tomtom-org/maps-sdk-plugin-landmarks-3d':
         specifier: 'catalog:'
-        version: 0.2.0(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(maplibre-gl@6.15.0)(three@0.170.0)
+        version: 0.2.1(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(maplibre-gl@6.15.0)(three@0.170.0)
       '@tomtom-org/maps-sdk-plugin-map-effects':
         specifier: 'catalog:'
-        version: 0.4.0(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(maplibre-gl@6.15.0)
+        version: 0.4.1(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(maplibre-gl@6.15.0)
       '@tomtom-org/maps-sdk-plugin-map-theme':
         specifier: 'catalog:'
-        version: 0.3.7(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(culori@4.0.2)
+        version: 0.3.8(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(culori@4.0.2)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -661,16 +661,16 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       '@tomtom-org/maps-sdk-plugin-landmarks-3d':
         specifier: 'catalog:'
-        version: 0.2.0(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(maplibre-gl@6.15.0)(three@0.170.0)
+        version: 0.2.1(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(maplibre-gl@6.15.0)(three@0.170.0)
       '@tomtom-org/maps-sdk-plugin-map-effects':
         specifier: 'catalog:'
-        version: 0.4.0(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(maplibre-gl@6.15.0)
+        version: 0.4.1(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(maplibre-gl@6.15.0)
       '@tomtom-org/maps-sdk-plugin-map-theme':
         specifier: 'catalog:'
-        version: 0.3.7(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(culori@4.0.2)
+        version: 0.3.8(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(culori@4.0.2)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -695,7 +695,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -720,7 +720,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -745,7 +745,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -770,10 +770,10 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       '@tomtom-org/maps-sdk-plugin-viewport-places':
         specifier: 'catalog:'
-        version: 0.5.8(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))
+        version: 0.5.9(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -801,7 +801,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -829,7 +829,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -854,7 +854,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -879,7 +879,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -904,7 +904,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -929,7 +929,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -954,7 +954,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -979,7 +979,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -1004,7 +1004,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -1029,7 +1029,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -1054,7 +1054,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -1079,7 +1079,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -1107,10 +1107,10 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       '@tomtom-org/maps-sdk-plugin-landmarks-3d':
         specifier: 'catalog:'
-        version: 0.2.0(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(maplibre-gl@6.15.0)(three@0.170.0)
+        version: 0.2.1(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(maplibre-gl@6.15.0)(three@0.170.0)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -1135,7 +1135,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -1160,7 +1160,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -1185,7 +1185,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -1213,10 +1213,10 @@ importers:
         version: 4.0.104(zod@4.6.7)
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       '@tomtom-org/maps-sdk-plugin-agent-toolkit':
         specifier: 'catalog:'
-        version: 0.17.0(@tomtom-org/maps-sdk-plugin-map-theme@0.3.7(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(culori@4.0.2))(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(@turf/turf@7.4.0)(ai@7.0.143(zod@4.6.7))(chart.js@4.5.1)(h3-js@4.5.0)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 0.17.1(@tomtom-org/maps-sdk-plugin-map-theme@0.3.8(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(culori@4.0.2))(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(@turf/turf@7.4.0)(ai@7.0.143(zod@4.6.7))(chart.js@4.5.1)(h3-js@4.5.0)(maplibre-gl@6.15.0)(zod@4.6.7)
       ai:
         specifier: 'catalog:'
         version: 7.0.143(zod@4.6.7)
@@ -1259,10 +1259,10 @@ importers:
         version: 3.4.5(tslib@2.8.1)
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       '@tomtom-org/maps-sdk-plugin-agent-toolkit':
         specifier: 'catalog:'
-        version: 0.17.0(@tomtom-org/maps-sdk-plugin-map-theme@0.3.7(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(culori@4.0.2))(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(@turf/turf@7.4.0)(ai@7.0.143(zod@4.6.7))(chart.js@4.5.1)(h3-js@4.5.0)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 0.17.1(@tomtom-org/maps-sdk-plugin-map-theme@0.3.8(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(culori@4.0.2))(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(@turf/turf@7.4.0)(ai@7.0.143(zod@4.6.7))(chart.js@4.5.1)(h3-js@4.5.0)(maplibre-gl@6.15.0)(zod@4.6.7)
       ai:
         specifier: 'catalog:'
         version: 7.0.143(zod@4.6.7)
@@ -1341,10 +1341,10 @@ importers:
         version: 3.4.5(tslib@2.8.1)
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       '@tomtom-org/maps-sdk-plugin-agent-toolkit':
         specifier: 'catalog:'
-        version: 0.17.0(@tomtom-org/maps-sdk-plugin-map-theme@0.3.7(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(culori@4.0.2))(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(@turf/turf@7.4.0)(ai@7.0.143(zod@4.6.7))(chart.js@4.5.1)(h3-js@4.5.0)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 0.17.1(@tomtom-org/maps-sdk-plugin-map-theme@0.3.8(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(culori@4.0.2))(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(@turf/turf@7.4.0)(ai@7.0.143(zod@4.6.7))(chart.js@4.5.1)(h3-js@4.5.0)(maplibre-gl@6.15.0)(zod@4.6.7)
       ai:
         specifier: 'catalog:'
         version: 7.0.143(zod@4.6.7)
@@ -1408,7 +1408,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       culori:
         specifier: 'catalog:'
         version: 4.0.2
@@ -1439,7 +1439,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -1464,10 +1464,10 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       '@tomtom-org/maps-sdk-plugin-map-effects':
         specifier: 'catalog:'
-        version: 0.4.0(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(maplibre-gl@6.15.0)
+        version: 0.4.1(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(maplibre-gl@6.15.0)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -1492,7 +1492,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -1517,7 +1517,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -1542,7 +1542,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -1582,10 +1582,10 @@ importers:
         version: 3.4.5(tslib@2.8.1)
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       '@tomtom-org/maps-sdk-plugin-agent-toolkit':
         specifier: 'catalog:'
-        version: 0.17.0(@tomtom-org/maps-sdk-plugin-map-theme@0.3.7(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(culori@4.0.2))(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(@turf/turf@7.4.0)(ai@7.0.143(zod@4.6.7))(chart.js@4.5.1)(h3-js@4.5.0)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 0.17.1(@tomtom-org/maps-sdk-plugin-map-theme@0.3.8(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(culori@4.0.2))(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(@turf/turf@7.4.0)(ai@7.0.143(zod@4.6.7))(chart.js@4.5.1)(h3-js@4.5.0)(maplibre-gl@6.15.0)(zod@4.6.7)
       '@turf/turf':
         specifier: 'catalog:'
         version: 7.4.0
@@ -1658,7 +1658,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -1683,7 +1683,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       culori:
         specifier: 'catalog:'
         version: 4.0.2
@@ -1714,10 +1714,10 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       '@tomtom-org/maps-sdk-plugin-map-theme':
         specifier: 'catalog:'
-        version: 0.3.7(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(culori@4.0.2)
+        version: 0.3.8(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(culori@4.0.2)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -1757,10 +1757,10 @@ importers:
         version: 3.4.5(tslib@2.8.1)
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       '@tomtom-org/maps-sdk-plugin-agent-toolkit':
         specifier: 'catalog:'
-        version: 0.17.0(@tomtom-org/maps-sdk-plugin-map-theme@0.3.7(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(culori@4.0.2))(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(@turf/turf@7.4.0)(ai@7.0.143(zod@4.6.7))(chart.js@4.5.1)(h3-js@4.5.0)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 0.17.1(@tomtom-org/maps-sdk-plugin-map-theme@0.3.8(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(culori@4.0.2))(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(@turf/turf@7.4.0)(ai@7.0.143(zod@4.6.7))(chart.js@4.5.1)(h3-js@4.5.0)(maplibre-gl@6.15.0)(zod@4.6.7)
       ai:
         specifier: 'catalog:'
         version: 7.0.143(zod@4.6.7)
@@ -1830,7 +1830,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -1855,10 +1855,10 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       '@tomtom-org/maps-sdk-plugin-map-effects':
         specifier: 'catalog:'
-        version: 0.4.0(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(maplibre-gl@6.15.0)
+        version: 0.4.1(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(maplibre-gl@6.15.0)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -1883,7 +1883,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -1908,7 +1908,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -1933,10 +1933,10 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       '@tomtom-org/maps-sdk-plugin-landmarks-3d':
         specifier: 'catalog:'
-        version: 0.2.0(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(maplibre-gl@6.15.0)(three@0.170.0)
+        version: 0.2.1(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(maplibre-gl@6.15.0)(three@0.170.0)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -1961,7 +1961,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -1986,7 +1986,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2014,7 +2014,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2027,7 +2027,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2040,7 +2040,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2053,7 +2053,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2066,7 +2066,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2079,7 +2079,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2092,7 +2092,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2105,7 +2105,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2118,7 +2118,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2131,7 +2131,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2144,7 +2144,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2157,7 +2157,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2185,7 +2185,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2213,7 +2213,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2238,7 +2238,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2263,7 +2263,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2291,7 +2291,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2316,7 +2316,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2341,7 +2341,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2366,7 +2366,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2391,7 +2391,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2416,7 +2416,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2441,7 +2441,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2466,7 +2466,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2491,10 +2491,10 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       '@tomtom-org/maps-sdk-plugin-map-theme':
         specifier: 'catalog:'
-        version: 0.3.7(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(culori@4.0.2)
+        version: 0.3.8(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(culori@4.0.2)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2546,16 +2546,16 @@ importers:
         version: 5.104.4(@types/react@19.3.0)(react@19.3.1)
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       '@tomtom-org/maps-sdk-plugin-flyover':
         specifier: 'catalog:'
-        version: 0.1.0(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(@turf/turf@7.4.0)(maplibre-gl@6.15.0)
+        version: 0.1.1(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(@turf/turf@7.4.0)(maplibre-gl@6.15.0)
       '@tomtom-org/maps-sdk-plugin-map-effects':
         specifier: 'catalog:'
-        version: 0.4.0(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(maplibre-gl@6.15.0)
+        version: 0.4.1(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(maplibre-gl@6.15.0)
       '@tomtom-org/maps-sdk-plugin-route-dragging':
         specifier: 'catalog:'
-        version: 0.0.1(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(lodash-es@4.18.1)
+        version: 0.0.2(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(lodash-es@4.18.1)
       downshift:
         specifier: ^9.4.0
         version: 9.4.0(react@19.3.1)
@@ -2601,7 +2601,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2626,7 +2626,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2654,7 +2654,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2679,7 +2679,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2704,7 +2704,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2729,7 +2729,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2754,7 +2754,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2779,7 +2779,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2804,10 +2804,10 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       '@tomtom-org/maps-sdk-plugin-route-dragging':
         specifier: 'catalog:'
-        version: 0.0.1(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(lodash-es@4.18.1)
+        version: 0.0.2(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(lodash-es@4.18.1)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2832,13 +2832,13 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       '@tomtom-org/maps-sdk-plugin-flyover':
         specifier: 'catalog:'
-        version: 0.1.0(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(@turf/turf@7.4.0)(maplibre-gl@6.15.0)
+        version: 0.1.1(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(@turf/turf@7.4.0)(maplibre-gl@6.15.0)
       '@tomtom-org/maps-sdk-plugin-map-effects':
         specifier: 'catalog:'
-        version: 0.4.0(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(maplibre-gl@6.15.0)
+        version: 0.4.1(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(maplibre-gl@6.15.0)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2863,7 +2863,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2891,7 +2891,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2916,7 +2916,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2941,7 +2941,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2966,7 +2966,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -2991,7 +2991,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -3016,7 +3016,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -3044,7 +3044,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -3069,7 +3069,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -3097,7 +3097,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -3122,7 +3122,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -3147,7 +3147,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -3172,7 +3172,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -3197,7 +3197,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -3222,7 +3222,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -3247,7 +3247,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -3272,7 +3272,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -3297,7 +3297,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -3322,7 +3322,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -3347,7 +3347,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -3372,7 +3372,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -3400,7 +3400,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -3425,7 +3425,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       culori:
         specifier: 'catalog:'
         version: 4.0.2
@@ -3456,10 +3456,10 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       '@tomtom-org/maps-sdk-plugin-map-effects':
         specifier: 'catalog:'
-        version: 0.4.0(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(maplibre-gl@6.15.0)
+        version: 0.4.1(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(maplibre-gl@6.15.0)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -3484,7 +3484,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -3509,7 +3509,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       three:
         specifier: 'catalog:'
         version: 0.170.0
@@ -3540,7 +3540,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -3565,7 +3565,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -3590,7 +3590,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -3618,10 +3618,10 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       '@tomtom-org/maps-sdk-plugin-map-effects':
         specifier: 'catalog:'
-        version: 0.4.0(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(maplibre-gl@6.15.0)
+        version: 0.4.1(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(maplibre-gl@6.15.0)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -3646,7 +3646,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -3671,7 +3671,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -3696,7 +3696,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -3721,7 +3721,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -3746,7 +3746,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -3771,7 +3771,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -3796,7 +3796,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -3821,10 +3821,10 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       '@tomtom-org/maps-sdk-plugin-viewport-places':
         specifier: 'catalog:'
-        version: 0.5.8(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))
+        version: 0.5.9(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -3849,7 +3849,7 @@ importers:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -3877,7 +3877,7 @@ importers:
         version: 1.60.0
       '@tomtom-org/maps-sdk':
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       '@tsconfig/recommended':
         specifier: 'catalog:'
         version: 1.0.13
@@ -5929,8 +5929,8 @@ packages:
       '@types/react':
         optional: true
 
-  '@tomtom-org/maps-sdk-plugin-agent-toolkit@0.17.0':
-    resolution: {integrity: sha512-ZIQdPFqzgaVmwI9DUReD6nwM6F0ZslDvP2um7cC8aEUxyYsABiv+VToq25rxtFsGxW7sKaaWYIYZcYJUdqY8qQ==}
+  '@tomtom-org/maps-sdk-plugin-agent-toolkit@0.17.1':
+    resolution: {integrity: sha512-v+WVZJoNSHmOyB5Lyy8lO68gqW1sSk+2MBG7tXJGDGSwwGJCQ8eyza8imhnDf6ZoSJtG0tbc4bU4QPIFQM1Tsw==}
     peerDependencies:
       '@tomtom-org/maps-sdk': ^1.0.0-rc.4
       '@tomtom-org/maps-sdk-plugin-map-theme': '>=0.3.0'
@@ -5941,45 +5941,45 @@ packages:
       maplibre-gl: ^6.15.0
       zod: ^4.6.7
 
-  '@tomtom-org/maps-sdk-plugin-flyover@0.1.0':
-    resolution: {integrity: sha512-9o7mx3CVssYxEl4m5Jj7bIzKq5VvcMVamFbVocpyLz4wEvi/saXd74HEbmNhhBVZN3o+Bf7mzYROlELok/T8sQ==}
+  '@tomtom-org/maps-sdk-plugin-flyover@0.1.1':
+    resolution: {integrity: sha512-htEw5VslKvWlMBdirMTLW5BsZINgUbndh9lRu7B6rjVJqbUt/VIbUpe9JRiFmO+8dWGK+u1RcVLbhDxPOCSpBg==}
     peerDependencies:
       '@tomtom-org/maps-sdk': ^1.0.0-rc.4
       '@turf/turf': ^7.4.0
       maplibre-gl: ^6.15.0
 
-  '@tomtom-org/maps-sdk-plugin-landmarks-3d@0.2.0':
-    resolution: {integrity: sha512-s2MVUZx+OUcYHSSqZ8laJBI61xSnEiwGGW0tG3K46Z9axFwdt9tsgMfbPCNKfVqan/4S9IrLYwMkyXgSURgtXA==}
+  '@tomtom-org/maps-sdk-plugin-landmarks-3d@0.2.1':
+    resolution: {integrity: sha512-WyfI8eRbCxmPzV4eEGhsBSsz+TwVeJDVpHFCekZG76OJRxF6cdckyzPPoUSeDne6tCAlMTg1C6KaGdpirOxZXQ==}
     peerDependencies:
       '@tomtom-org/maps-sdk': ^1.0.0-rc.4
       maplibre-gl: ^6.15.0
       three: ^0.170.0
 
-  '@tomtom-org/maps-sdk-plugin-map-effects@0.4.0':
-    resolution: {integrity: sha512-+QQvEyXHCVVN/a6TqFYpnadUeeJ3tIujAObAnZvHeN3of/bUV/fYhWPXCvgaeuuGdHx4YtQwhdu2TsAPE7ZHEg==}
+  '@tomtom-org/maps-sdk-plugin-map-effects@0.4.1':
+    resolution: {integrity: sha512-dqcgeh6AXzmnCNTxdPZhvvkgYwd3G5iwWf6U57o/N45twmirOgVXu+GNhZfCHChz958JAenRgXEmIJra7c7pvg==}
     peerDependencies:
       '@tomtom-org/maps-sdk': ^1.0.0-rc.2
       maplibre-gl: ^6.15.0
 
-  '@tomtom-org/maps-sdk-plugin-map-theme@0.3.7':
-    resolution: {integrity: sha512-2FLwA4Dk5+3vlyaJy9z9YSvpktCW/b2vAyLkTV1v57VRh5uGaxiFSRQ0Ruu8MMVGCgt/R0nSHdne2norDg4Tcw==}
+  '@tomtom-org/maps-sdk-plugin-map-theme@0.3.8':
+    resolution: {integrity: sha512-zrVxog+HQ5vki3apAf+1Qmi+zME8eG22qvsEI4GSRYfDXvA+l6qyOxGDGCb/+nIwTF3mJq/rr5NI+c++EE2N6g==}
     peerDependencies:
       '@tomtom-org/maps-sdk': '>=0.64.0 <1.0.0 || ^1.0.0-rc.0'
       culori: ^4.0.2
 
-  '@tomtom-org/maps-sdk-plugin-route-dragging@0.0.1':
-    resolution: {integrity: sha512-L7eV3yiBLaiebJUSZN3S3p2hiX/Ncl6jidHH/wUQIUBHmrBeLsRibP3cPNPVOHrZQwyDJDBLKEEVN9Yt4DvhGQ==}
+  '@tomtom-org/maps-sdk-plugin-route-dragging@0.0.2':
+    resolution: {integrity: sha512-ClzcMQc4jlT8Qf4xG3af/JY7CKRx2VJEzla1MXbbgjnlhp/11IyHW03mj2LnH4OrD1AgTnt96k7Rhev9egfUXA==}
     peerDependencies:
       '@tomtom-org/maps-sdk': ^1.0.0-rc.4
       lodash-es: ^4.18.1
 
-  '@tomtom-org/maps-sdk-plugin-viewport-places@0.5.8':
-    resolution: {integrity: sha512-pxQqOAvfaJsGWHF/G75PWqupxHzT/CsM45h0KEpGj3FQc6RuWZPSLdvPQMe7Ji/tM2ZwjRKNDUX06UDVlbTk4A==}
+  '@tomtom-org/maps-sdk-plugin-viewport-places@0.5.9':
+    resolution: {integrity: sha512-Ag46TJun4tIL3DyaTOg0qPNJaiJaVvAqLMjlDrNbfC878FTtPTFsJ1furSarhGmsV7YP6adhsf8uKx47Q6kG/Q==}
     peerDependencies:
       '@tomtom-org/maps-sdk': '>=0.64.0 <1.0.0 || ^1.0.0-rc.0'
 
-  '@tomtom-org/maps-sdk@1.0.0-rc.4':
-    resolution: {integrity: sha512-q4NX8yE1Yr7KOSfVzFkUEigmjWMXt55xa775l4NWt+iF3NOMhXven2eU/tRMMaF6Z6SUAw1jYWJh2eV4w9AEIw==}
+  '@tomtom-org/maps-sdk@1.0.0-rc.5':
+    resolution: {integrity: sha512-IUAsGWEncbcjwfpNbWFOSTZYD6W90otrv6tVidFpjAQFDoR5q75xpSBc18DO54Dvmf1kQf31A7ox88kVakWbyA==}
     engines: {node: '>=22'}
     peerDependencies:
       '@turf/turf': ^7.4.0
@@ -9773,10 +9773,10 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.3.0
 
-  '@tomtom-org/maps-sdk-plugin-agent-toolkit@0.17.0(@tomtom-org/maps-sdk-plugin-map-theme@0.3.7(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(culori@4.0.2))(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(@turf/turf@7.4.0)(ai@7.0.143(zod@4.6.7))(chart.js@4.5.1)(h3-js@4.5.0)(maplibre-gl@6.15.0)(zod@4.6.7)':
+  '@tomtom-org/maps-sdk-plugin-agent-toolkit@0.17.1(@tomtom-org/maps-sdk-plugin-map-theme@0.3.8(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(culori@4.0.2))(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(@turf/turf@7.4.0)(ai@7.0.143(zod@4.6.7))(chart.js@4.5.1)(h3-js@4.5.0)(maplibre-gl@6.15.0)(zod@4.6.7)':
     dependencies:
-      '@tomtom-org/maps-sdk': 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
-      '@tomtom-org/maps-sdk-plugin-map-theme': 0.3.7(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(culori@4.0.2)
+      '@tomtom-org/maps-sdk': 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+      '@tomtom-org/maps-sdk-plugin-map-theme': 0.3.8(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(culori@4.0.2)
       '@turf/turf': 7.4.0
       ai: 7.0.143(zod@4.6.7)
       chart.js: 4.5.1
@@ -9784,38 +9784,38 @@ snapshots:
       maplibre-gl: 6.15.0
       zod: 4.6.7
 
-  '@tomtom-org/maps-sdk-plugin-flyover@0.1.0(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(@turf/turf@7.4.0)(maplibre-gl@6.15.0)':
+  '@tomtom-org/maps-sdk-plugin-flyover@0.1.1(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(@turf/turf@7.4.0)(maplibre-gl@6.15.0)':
     dependencies:
-      '@tomtom-org/maps-sdk': 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+      '@tomtom-org/maps-sdk': 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       '@turf/turf': 7.4.0
       maplibre-gl: 6.15.0
 
-  '@tomtom-org/maps-sdk-plugin-landmarks-3d@0.2.0(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(maplibre-gl@6.15.0)(three@0.170.0)':
+  '@tomtom-org/maps-sdk-plugin-landmarks-3d@0.2.1(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(maplibre-gl@6.15.0)(three@0.170.0)':
     dependencies:
-      '@tomtom-org/maps-sdk': 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+      '@tomtom-org/maps-sdk': 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       maplibre-gl: 6.15.0
       three: 0.170.0
 
-  '@tomtom-org/maps-sdk-plugin-map-effects@0.4.0(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(maplibre-gl@6.15.0)':
+  '@tomtom-org/maps-sdk-plugin-map-effects@0.4.1(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(maplibre-gl@6.15.0)':
     dependencies:
-      '@tomtom-org/maps-sdk': 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+      '@tomtom-org/maps-sdk': 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       maplibre-gl: 6.15.0
 
-  '@tomtom-org/maps-sdk-plugin-map-theme@0.3.7(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(culori@4.0.2)':
+  '@tomtom-org/maps-sdk-plugin-map-theme@0.3.8(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(culori@4.0.2)':
     dependencies:
-      '@tomtom-org/maps-sdk': 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+      '@tomtom-org/maps-sdk': 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       culori: 4.0.2
 
-  '@tomtom-org/maps-sdk-plugin-route-dragging@0.0.1(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(lodash-es@4.18.1)':
+  '@tomtom-org/maps-sdk-plugin-route-dragging@0.0.2(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(lodash-es@4.18.1)':
     dependencies:
-      '@tomtom-org/maps-sdk': 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+      '@tomtom-org/maps-sdk': 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       lodash-es: 4.18.1
 
-  '@tomtom-org/maps-sdk-plugin-viewport-places@0.5.8(@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))':
+  '@tomtom-org/maps-sdk-plugin-viewport-places@0.5.9(@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))':
     dependencies:
-      '@tomtom-org/maps-sdk': 1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
+      '@tomtom-org/maps-sdk': 1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
 
-  '@tomtom-org/maps-sdk@1.0.0-rc.4(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)':
+  '@tomtom-org/maps-sdk@1.0.0-rc.5(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)':
     dependencies:
       '@turf/turf': 7.4.0
       culori: 4.0.2
