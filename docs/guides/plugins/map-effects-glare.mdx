@@ -1,0 +1,100 @@
+---
+title: Glare
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.4.1"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+Glare is the [map effects plugin](./map-effects.mdx)'s light for dark styles. The colours you name shine the way street lamps do through a camera lens, casting streaks out of every light. By default, the lights are the major roads of the loaded style. In the playground below, pick the **Street lights** use case:
+
+<GuideDemo demo="map-effects-playground" />
+
+## Turning it on
+
+Glare is off until `glare.intensity` is above 0. The other knobs have defaults that work on the TomTom dark styles:
+
+```javascript
+import { MapEffects } from '@tomtom-org/maps-sdk-plugin-map-effects';
+
+const effects = new MapEffects(map);
+effects.updateConfig({ glare: { intensity: 0.8, length: 48 } });
+```
+
+| Knob | Range | Default |
+| --- | --- | --- |
+| `glare.intensity`, `glare.threshold` | 0–1 | 0 (off), 0.3 |
+| `glare.length` (CSS px) | 4–120 | 32 |
+| `glare.rays` | 2–8, in steps of 2 | 4 |
+| `glare.angle` (degrees) | 0–180 | 45 |
+| `glare.only` | list of style colour knobs, groups and CSS colours | `['colors.roadMajor']` |
+| `glare.onlyTolerance` | 0–1 | 0.15 |
+
+The ranges of `glare.length` and `glare.onlyTolerance` end where a slider would. `setKnob` refuses a value below the minimum, and a value above the maximum still applies.
+
+## Choosing the lights
+
+`glare.only` lists the colours that count as lights. It takes the same entries as [`bloom.only`](./map-effects-bloom.mdx#scoping-bloom-by-colour): style colour knobs, groups of them and CSS colours. Each name is read from the loaded style, so the lights follow a recolour or a style switch.
+
+```javascript
+import { setKnob } from '@tomtom-org/maps-sdk/map';
+import { effectKnobCatalogue } from '@tomtom-org/maps-sdk-plugin-map-effects';
+
+setKnob(effects, effectKnobCatalogue, 'glare.only', ['colors.roadMajor', 'pois.label.color']); // roads and place labels
+setKnob(effects, effectKnobCatalogue, 'glare.only', ['#1a73e8']);                               // the colour your routes are drawn in
+setKnob(effects, effectKnobCatalogue, 'glare.only', []);                                        // every bright pixel
+```
+
+- `glare.threshold` sets how bright a light must be to cast anything. With a scope, it can sit low, since the scope already keeps the rest of the city dark.
+- `glare.onlyTolerance` sets how far a pixel may be from a light's colour and still cast streaks. Raise it if the edges of a road drop out, or if a [pass of your own](./map-effects-custom-passes.mdx) shifts hues before the glare keys them.
+- On `monoDark` and `monoLight`, the major roads are grey, and a grey key matches every grey on the map. Name a colour of your own there.
+- An empty list lets every pixel above the threshold cast streaks, labels included.
+- A name that resolves to no colour also lights every bright pixel, with one console warning.
+
+The glare keys on colour, so a light's shape decides what you see. A small light, such as an icon or a dot, becomes a star. A lit line, such as a road, gets a soft sheen along its length, because the streaks from every point on it overlap.
+
+## Shaping the streaks
+
+`glare.rays` sets how many streaks each light casts, and `glare.angle` turns them:
+
+- 2 rays draw one line through each light, as an anamorphic lens does. At `glare.angle: 0` that line is horizontal.
+- 4 rays draw a cross, and 6 or 8 draw a star, as a star filter does. The rays share the turn evenly.
+- `glare.angle` is the first streak's direction, in degrees anticlockwise from the horizontal.
+- `glare.length` sets how far each streak reaches, in CSS pixels. A streak fades out over its length.
+
+## Glare with bloom
+
+Glare runs before a [bloom](./map-effects-bloom.mdx) scoped by colour, so the bloom glows along the streaks too. To light the major roads as street lamps would, scope both effects to the same colour:
+
+```javascript
+effects.updateConfig({
+    glare: { intensity: 0.8, length: 48 },
+    bloom: { intensity: 0.5, radius: 10, threshold: 0.3, only: ['colors.roadMajor'] },
+});
+```
+
+## How it renders
+
+The glare is two stages of the [GPU chain](./map-effects.mdx#how-it-renders). It runs after your passes and the [depth of field](./map-effects-depth-of-field.mdx), and before a scoped bloom:
+
+1. The first stage keys each pixel on the lights' colours and cuts it at `glare.threshold`, as a scoped bloom does.
+2. The second stage draws the streaks out of the lights along each ray, then lays them over the picture in `screen` mode at `glare.intensity`.
+
+- The glare needs a WebGL2 context, as the depth of field does. Without one, it draws no streaks, and the plugin warns once.
+- Its cost grows with the rays. Each pair of opposite rays reads 32 samples per pixel, so 8 rays read 128. [What each effect costs](./map-effects.mdx#what-each-effect-costs) compares it with the other effects.
+- `capture()` re-runs the glare with the rest of the chain, so what you capture is what was on screen.
+
+## Related guides and examples
+
+### Related guides
+- **[Map effects plugin](./map-effects.mdx)** - Setup, how the effects render, and every knob
+- **[Bloom](./map-effects-bloom.mdx#scoping-bloom-by-colour)** - The colour scope `glare.only` shares
+- **[Map styling](../map/styling.mdx#the-knob-catalogue)** - The map-wide colour ids `glare.only` names, and `getStyleColor`
+
+### Related examples
+- **[Map effects playground](../../examples/map-effects-playground)** - Every effect on one panel, with a street lights use case
+- **[Cinematic city fly-by](../../examples/cinematic-city-flyby)** - Night looks whose lit windows cast streaks

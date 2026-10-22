@@ -1,0 +1,117 @@
+---
+title: Versioning and support policy
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.5"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+This policy says what each release of the TomTom Maps SDK for JavaScript can change, how much notice you get before an API goes away, and how long each version gets fixes. It covers `@tomtom-org/maps-sdk` from 1.0.0. The [release notes](./release-notes.mdx#version-status) show the status and dates of each version.
+
+## Semantic versioning
+
+The SDK follows [semantic versioning](https://semver.org/). A version reads `MAJOR.MINOR.PATCH`:
+
+- A major release, such as 2.0.0, can carry [breaking changes](#what-counts-as-a-breaking-change). Its upgrade guide lists each one, with what to change in your code.
+- A minor release, such as 1.1.0, adds features and can [deprecate](#deprecations) APIs. Your code keeps compiling and running unchanged, within what [isn't breaking](#what-isnt-breaking), though a minor can ask for a newer version of a [peer dependency](#peer-dependencies).
+- A patch release, such as 1.1.1, fixes bugs and security issues only.
+
+A release candidate, such as `1.0.0-rc.3`, comes before its major. One candidate can still break code that ran on the one before, so this policy applies from the stable release.
+
+### What the public API is
+
+The public API is what the [API reference](/maps-sdk-js/api-reference/index.html) lists under the three entry points, `@tomtom-org/maps-sdk/core`, `/services` and `/map`. It also covers the module knob ids, the error codes, the module events and the identifiers of the [AI coding skills](../guides/ai-coding.mdx).
+
+These aren't part of it, so they can change in any release:
+
+- Names your editor offers that the API reference doesn't list.
+- The sources, layers and images the SDK adds to the MapLibre map, and their ids. [About MapLibre](../guides/map/about-maplibre.mdx) says what to use instead.
+- The text of log messages and error messages. Match on an error's `code`, not on its `message`.
+
+## What counts as a breaking change
+
+A change is breaking when code that compiled and ran on one release stops compiling, or behaves differently, on the next, outside the changes [that aren't breaking](#what-isnt-breaking). These changes ship only in a major release:
+
+- Removing or renaming an export, a type, a property, a method, a parameter, a configuration key or a knob id.
+- Changing a type so that a parameter accepts less than before, a new parameter or property is required, or a result property becomes optional or changes type.
+- Removing or renaming an error code, or giving a failure a different code.
+- Removing an event, changing its payload or changing when it fires.
+- Changing the value an option takes when you don't set it, such as the `retry` default, other than a default that sets how a module looks. Moving the map to a new major of the [Orbis map styles](#map-style-version), or below Orbis 1.0 to a new minor, is a breaking change too.
+- Adding a peer dependency, or dropping support for a major of one.
+- Raising the Node.js version the package needs, Node.js 22 today, or dropping a browser the SDK supports.
+- Renaming or removing the AI coding skills `tomtom-maps-sdk-js` and `tomtom-maps-sdk-js-feedback`.
+
+### What isn't breaking
+
+A minor release can add exports, optional parameters and optional properties. It can also add values to a list the SDK returns, such as a new error code, section type, POI category or knob kind. A `switch` with no default branch, or a `Record` keyed by every value of such a list, can then stop compiling: give them a default branch for values you don't know.
+
+A minor release can also refine how the map draws by default: the default values of the modules' colour, size and opacity options, and the [Orbis map style version](#map-style-version) within its major, or below Orbis 1.0 within its minor. The settings you pass keep applying, apart from edits by layer id.
+
+A patch release can fix the SDK so that it does what its documentation says, even if your code relied on the old behaviour.
+
+## Peer dependencies
+
+The SDK doesn't bundle its five peer dependencies, `maplibre-gl`, `zod`, `@turf/turf`, `lodash-es` and `culori`. Your package manager installs them next to the SDK. [Project setup](./project-setup.mdx#peer-dependency-requirements-by-bundle) lists the major each one needs.
+
+- A minor release can raise the lowest version of a peer the SDK accepts, within the same peer major. A patch release never does, and the changelog names each new floor.
+- When a peer ships a new major, an SDK minor release accepts it if the SDK can support both majors at once. Otherwise, the new peer major waits for the next SDK major.
+- `map.mapLibreMap` is MapLibre's own `Map`, and the `mapLibre` constructor option takes `MapLibreOptions`, MapLibre's `MapOptions` without the keys the SDK sets. These types follow MapLibre's versioning, within the range the SDK accepts. The SDK promises that `mapLibreMap` is a MapLibre `Map` from that range, and nothing more about its API.
+
+When a peer publishes a security fix within the range the SDK accepts, update that peer in your project. You don't need a new SDK release. If the fix ships only in a new major of the peer, the rule for a new peer major applies: the next SDK minor accepts it if the SDK can support both majors at once, and otherwise the next SDK major does. Either way, the release notes link the advisory and any workaround as soon as TomTom knows of it.
+
+## Map style version
+
+Each SDK release loads one fixed version of the Orbis map styles. A patch release never changes it. Below Orbis 1.0, a new minor of the styles counts as a new major.
+
+- A minor release can move to a later version within the same Orbis major. The base map can look slightly different, and your knobs and module settings keep applying. The changelog announces each style update.
+- A new Orbis major can change how the map looks significantly. It comes only with an SDK major, and that major's upgrade guide lists what changes.
+
+Layer ids, their expressions and which layers exist can change with any style update. An edit by layer id, through [`styling.layers`](../guides/map/styling-layers.mdx) or `map.mapLibreMap`, can therefore match nothing after an SDK minor release. Prefer a [knob](../guides/map/styling.mdx#knobs), which the SDK re-verifies on every style update.
+
+## Deprecations
+
+Before an API goes away, TomTom deprecates it in a minor release, wherever the old and the new API can exist side by side. This follows the [TomTom deprecation policy](https://docs.tomtom.com/deprecation-policy/overview).
+
+**A deprecated API keeps working for at least three months and at least one minor release after the release that deprecates it.** It goes away only in a major release.
+
+- In your editor, the API's `@deprecated` tag names its replacement and the major release that removes it. Most editors strike the name through.
+- In the changelog, each deprecation has an entry that opens with "Deprecated:". The upgrade guide of the major that removes the API lists it too.
+- A change with no old API to keep, such as a new default, gets the same notice. The changelog of a minor release announces it at least three months before the major that makes it.
+
+A security fix or a legal requirement can shorten the notice. The release notes then say why.
+
+## Support window
+
+Each major has a status, which the [release notes](./release-notes.mdx#version-status) show with its dates:
+
+| Status | Which versions | What they get |
+| --- | --- | --- |
+| Supported | The latest major | New features and all bug and security fixes |
+| Deprecated | The previous major, for 12 months after the next major ships | Fixes for security issues and critical bugs only |
+| End of life | Any major after its 12 months | No further releases |
+
+- Fixes ship as a patch release of the latest minor of a major. To get a fix, upgrade to the latest release of your major.
+- A critical bug stops a documented feature from working, with no workaround.
+- When a new major ships, the release notes add the end-of-life date of the previous one.
+- After its end of life, a version still installs from npm, and its documentation stays in the [documentation archive](https://tomtom-international.github.io/maps-sdk-js/).
+
+## Releases before 1.0.0 and plugins
+
+The 0.x releases, the 1.0.0 release candidates and the plugins before their own 1.0.0 are in [Public Preview](https://docs.tomtom.com/legal/public-preview), which the TomTom deprecation policy doesn't cover. A plugin whose data needs an entitlement on your API key, such as Landmarks 3D, is in [Private Preview](https://docs.tomtom.com/legal/private-preview) instead, under the same rules:
+
+- In a 0.x release, a minor can carry a breaking change, with no deprecation first. [Upgrading to 1.0](../guides/migration/upgrading-to-1-0.mdx) lists each one.
+- Only the latest release candidate gets fixes, in the next release candidate or in 1.0.0.
+- Each plugin has its own version. Before its 1.0.0, a minor can carry a breaking change and a patch never does. Only a plugin's latest release gets fixes.
+
+Each plugin declares the SDK versions it runs with as a peer range on `@tomtom-org/maps-sdk`. From SDK 1.0.0, that range covers every 1.x release from the first one the plugin needs, so an SDK minor or patch release doesn't need a new plugin release. Upgrade the plugins along with the SDK.
+
+## Related pages
+
+- [Release notes](./release-notes.mdx), with the status of each version
+- [Upgrading to 1.0 from a 0.x release](../guides/migration/upgrading-to-1-0.mdx)
+- The [changelog](https://github.com/tomtom-international/maps-sdk-js/blob/main/CHANGELOG.md)
+- The [TomTom deprecation policy](https://docs.tomtom.com/deprecation-policy/overview)

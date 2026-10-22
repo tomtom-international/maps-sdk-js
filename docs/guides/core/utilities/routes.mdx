@@ -1,0 +1,395 @@
+---
+title: Routes
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.5"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+These helpers read a calculated [route](../routes.mdx). They find where a new stop fits among the existing ones, a section's bounds, the stretches each route has to itself, the main roads it takes, its curves, how it differs from another route, the lanes to take into a maneuver, and the distance, time and position at any point along it. The examples below share this setup:
+
+```javascript
+import { calculateRoute } from '@tomtom-org/maps-sdk/services';
+
+const routes = await calculateRoute({ locations: [[4.9, 52.3], [5.1, 52.5]] });
+const route = routes.features[0];
+const waypoints = [[4.9, 52.3], [5.1, 52.5]];
+```
+
+## Inserting waypoints
+
+All four helpers project the stops onto the route line and place each new one by where it falls along the route. Waypoints are any `WaypointLike`: a `[longitude, latitude]`, a GeoJSON `Point` or a `Point` feature such as a place.
+
+| Helper | Takes | Returns |
+| --- | --- | --- |
+| `withInsertedWaypoint` | one new stop | a new array with it inserted |
+| `withInsertedWaypoints` | several new stops | a new array with all of them inserted, in along-route order |
+| `findBestWaypointInsertionIndex` | one new stop | the index to insert it at |
+| `findBestWaypointInsertionIndices` | several new stops | one index per stop, in input order |
+
+- An index of `0` means before the origin, and `waypoints.length` after the destination.
+- If the route has fewer than two coordinates, or there are fewer than two existing waypoints, every index is `0` and the helpers prepend new stops.
+- For several stops, **use the plural helpers** instead of the singular one in a loop. They project each stop once, and the result doesn't depend on the input order.
+
+### withInsertedWaypoint
+
+<GuideDemo demo="add-stops-to-route-playground" />
+
+```javascript
+import { withInsertedWaypoint } from '@tomtom-org/maps-sdk/core';
+
+const updated = withInsertedWaypoint(route, waypoints, [4.95, 52.35]);
+// [[4.9, 52.3], [4.95, 52.35], [5.1, 52.5]]
+
+const updatedRoutes = await calculateRoute({ locations: updated });
+```
+
+### withInsertedWaypoints
+
+<GuideDemo demo="add-stops-to-route" />
+
+`withInsertedWaypoints` inserts every new stop in one pass. Each goes to its slot between existing waypoints. Stops that share a slot follow the order in which they fall along the route. Ties keep their input order. Use it, for example, to merge the places `discoverPlaces` finds along a route:
+
+```javascript
+import { withInsertedWaypoints } from '@tomtom-org/maps-sdk/core';
+
+// Passed in any order; returned in along-route order
+const updated = withInsertedWaypoints(route, waypoints, [[5.05, 52.45], [4.95, 52.35]]);
+// [[4.9, 52.3], [4.95, 52.35], [5.05, 52.45], [5.1, 52.5]]
+```
+
+An empty list of new stops returns a copy of `waypoints`.
+
+### findBestWaypointInsertionIndex
+
+```javascript
+import { findBestWaypointInsertionIndex } from '@tomtom-org/maps-sdk/core';
+
+findBestWaypointInsertionIndex(route, waypoints, [4.95, 52.35]); // 1: between origin and destination
+```
+
+### findBestWaypointInsertionIndices
+
+```javascript
+import { findBestWaypointInsertionIndices } from '@tomtom-org/maps-sdk/core';
+
+findBestWaypointInsertionIndices(route, waypoints, [[5.05, 52.45], [4.95, 52.35]]); // [1, 1]
+```
+
+Several stops can share a slot. `withInsertedWaypoints` also orders them within it.
+
+## getSectionBBox
+
+The bounding box of a route [section](../routes.mdx#sections), or any `{ startPointIndex, endPointIndex }`, from its start, middle and end points:
+
+```javascript
+import { getSectionBBox } from '@tomtom-org/maps-sdk/core';
+
+for (const section of route.properties.sections.country ?? []) {
+    const bbox = getSectionBBox(route, section);
+    if (bbox) map.mapLibreMap.fitBounds(bbox, { padding: 40 });
+}
+```
+
+**Returns** `BBox | undefined`: `undefined` when the route has no coordinates, or the section's indices fall outside them or are reversed. Three points are fast, but a winding section can stray outside their box. For a tighter box, pass the section's slice of coordinates as a `LineString` to [`bboxFromGeoJSON`](./bounding-boxes.mdx#bboxfromgeojson).
+
+## getSectionOverlap
+
+The stretch two [sections](../routes.mdx#sections) of one route share, whatever their types, such as the tolls you pay in one country:
+
+```javascript
+import { getSectionOverlap } from '@tomtom-org/maps-sdk/core';
+
+const { country = [], toll = [] } = route.properties.sections;
+const france = country.find((section) => section.countryCodeISO3 === 'FRA');
+const tollsInFrance = france ? toll.filter((section) => getSectionOverlap(section, france)) : [];
+```
+
+**Returns** `RouteSpan | undefined`, the shared `{ startPointIndex, endPointIndex }`: `undefined` when the sections share no segment, as two sections meeting at one point don't.
+
+## getDistinctSections
+
+<GuideDemo demo="route-with-alternatives" />
+
+The stretches of each route that none of the other routes drives, which is what sets an alternative apart. `calculateRoute` already puts every one of them in [`sections.distinct`](../routes.mdx#section-types) when it returns two or more routes. To compare routes from separate calculations, or to keep only the stretches worth naming, call `getDistinctSections`. Routes match on a road where they carry the same coordinates along it, as the routes of one response do; routes from separate calculations may not.
+
+```javascript
+import { formatDistance, getDistinctSections } from '@tomtom-org/maps-sdk/core';
+
+const alternatives = await calculateRoute({ locations: waypoints, maxAlternatives: 2 });
+getDistinctSections(alternatives, { minLengthInMeters: 1000 }).forEach((sections, index) => {
+    const ownMeters = sections.reduce((total, section) => total + section.lengthInMeters, 0);
+    console.log(`Route ${index}: ${formatDistance(ownMeters)} of its own`);
+});
+```
+
+- Each section runs from the coordinate where its route leaves the others to the one where it rejoins them, and carries its `lengthInMeters`.
+- A segment counts as shared when another route drives it in either direction. A route crossing at a junction doesn't split a section.
+- `minLengthInMeters` leaves out the stretches too short to mention.
+- The routing module doesn't draw them. To ring them on the map, pass their ids to [`setSectionFocus`](../../map/routes-sections.mdx#focusing-sections). It looks the ids up on the shown routes, so pass `sections.distinct` rather than a list you recomputed.
+- **Returns** `DistinctSectionProps[][]`: one array per route, in input order. A route that shares every road with the others gets an empty array, and a single route is distinct end to end.
+
+## getImportantRoads
+
+The motorways and main roads a route takes, by road number and street name, which is how a driver tells routes apart. Pass a route's distinct sections as `within` to name the roads only that route takes:
+
+```javascript
+import { getImportantRoads } from '@tomtom-org/maps-sdk/core';
+
+for (const route of alternatives.features) {
+    const roads = getImportantRoads(route, { within: route.properties.sections.distinct, minLengthInMeters: 2000 });
+    console.log(`via ${roads.map((road) => road.name).filter(Boolean).join(', ')}`);
+}
+```
+
+- It reads the route's [`importantRoadStretch`](../routes.mdx#section-types) sections, which `calculateRoute` returns unless `sectionTypes` leaves them out.
+- A road is every stretch sharing its first road number, or its street name when it has no number. The routing API can rank the stretches of one motorway apart, and you still get the road once. Stretches with neither group by their `index` and still come back, with no `name`, so leave them out of what you print.
+- `within` counts only the parts of each road inside the spans you pass, any `{ startPointIndex, endPointIndex }` (`RouteSpan`) such as sections. Without it, the whole route counts, which is right for a route calculated alone: it has no `sections.distinct`, as all of it is its own. `minLengthInMeters` leaves out the roads the route barely touches.
+- Each road's `sections` are its stretches within the spans, whole. Pass their ids to [`setSectionFocus`](../../map/routes-sections.mdx#focusing-sections) to ring the road on the map.
+- **Returns** `ImportantRoad[]`: `{ index, name?, roadNumbers, streetName?, lengthInMeters, sections }` per road, in order along the route. `index` is its importance: the lower, the more important.
+
+## Curves
+
+<GuideDemo demo="route-curves" />
+
+Name `curve` and `curvyStretch` in the `sectionTypes` of `calculateRoute`, and it finds the curves of each route in its geometry and puts them in [`sections.curve` and `sections.curvyStretch`](../routes.mdx#section-properties). Each curve tells you how hard it is, by how far it turns and how tight its radius is, and scores what it offers a rider by both. Use them to warn a passenger prone to motion sickness, or to send a motorcyclist down the most winding road. The defaults keep the bends a driver slows down for. To find curves with other thresholds, pass [`curveDetection`](../../services/routing/curves.mdx#choose-what-counts-as-a-curve) to `calculateRoute`, or call these helpers on a route you already have. To rank routes by their curves, seek or avoid them and draw them, see [Curves](../../services/routing/curves.mdx).
+
+### getCurveSections
+
+```javascript
+import { getCurveSections } from '@tomtom-org/maps-sdk/core';
+
+// Only the hairpins and other hard curves
+const hard = getCurveSections(route, { minHeadingChangeInDegrees: 90, maxRadiusInMeters: 50 });
+```
+
+- `minHeadingChangeInDegrees` - How far the road has to turn. Defaults to 40°.
+- `maxRadiusInMeters` - How tight the curve has to be. Defaults to 250 m, which keeps a motorway's sweeping bends out.
+- `maxStraightInMeters` - The longest straight a curve can run through and still be one curve. Defaults to 40 m, or 15% of a `maxRadiusInMeters` above 267 m.
+- A curve ends where the road turns the other way, so an S-bend is two curves.
+- Where a route turns back at a waypoint, as at the end of a dead-end road, it makes no curve.
+- A sharp corner between two straights, as at most junctions, is no curve, but a roundabout is. On a route with [guidance](../../services/routing/guidance.mdx), a curve with an instruction at a junction on it carries its `maneuver`, so you can tell a bend in the road from a turn at a junction. Departure, arrival, waypoint, border and tollgate instructions mark no junction, so they set none, and neither does an instruction that keeps to the road, such as "Turn left to stay on the SS38" at a hairpin, or one with no other way to take. A roundabout and a U-turn always do. Note that without guidance, a turn at a junction between short roads can still count as a curve.
+- **Returns** `CurveSectionProps[]`, in order along the route.
+
+### getCurvyStretchSections
+
+The stretches where curves follow one another closely, such as a mountain pass. Rank them two ways:
+
+- How winding a stretch is: divide its length by its `curveCount`. The hairpins of a mountain pass come one every 200 m or so, and `hairpinCount` says how many of its curves are [hairpins](#ishairpin).
+- How much riding it offers: its `curvinessScore`, its curves' scores added up, so a longer stretch scores more. [Roadcurvature.com](https://roadcurvature.com), which scores roads the same way, lists them from 300 and calls those over 1000 very twisty.
+
+```javascript
+import { formatDistance, getCurvyStretchSections } from '@tomtom-org/maps-sdk/core';
+
+const thrilling = await calculateRoute({
+    locations: waypoints,
+    costModel: { routeType: 'thrilling' },
+    guidance: { type: 'coded' },
+});
+const passes = getCurvyStretchSections(thrilling.features[0], { minCurveCount: 5 });
+for (const pass of passes) {
+    console.log(
+        `${pass.curveCount} curves in ${formatDistance(pass.lengthInMeters)}, ${pass.hairpinCount} of them hairpins, ` +
+            `one every ${formatDistance(pass.lengthInMeters / pass.curveCount)}, curviness ${Math.round(pass.curvinessScore)}`,
+    );
+}
+```
+
+- `curves` - The curves to group. Defaults to the route's `sections.curve`, or, on a route without them, to `getCurveSections(route)` with its default thresholds. Pass the result of your own `getCurveSections` call to group curves found with other thresholds.
+- `maxGapInMeters` - The longest gap between two curves of one stretch. Defaults to 500 m.
+- `minCurveCount` - The fewest curves a stretch can have. Defaults to 3.
+- A curve with a `maneuver` ends a stretch, so on a route with guidance a series of turns through a town makes none. Without guidance, it can.
+- **Returns** `CurvyStretchSectionProps[]`, in order along the route.
+
+### withCurveSections
+
+A copy of a route with its curves and curvy stretches found again, with the same thresholds `calculateRoute` takes as `curveDetection`. Use it to tune the thresholds on routes you already have, with no new request.
+
+```javascript
+import { withCurveSections } from '@tomtom-org/maps-sdk/core';
+
+const hardCurvesOnly = routes.features.map((route) =>
+    withCurveSections(route, {
+        curve: { minHeadingChangeInDegrees: 60, maxRadiusInMeters: 100 },
+        curvyStretch: { minCurveCount: 5 },
+    }),
+);
+await routingModule.showRoutes({ ...routes, features: hardCurvesOnly });
+```
+
+- `curve` - The [`getCurveSections`](#getcurvesections) thresholds.
+- `curvyStretch` - The [`getCurvyStretchSections`](#getcurvystretchsections) thresholds, but `curves`: it groups the curves it has just found.
+- It reads the route as it came back, so a curve has a `maneuver` only on a route with guidance, and a `severity` that reads the speed limit only on a route with `speedLimit` sections.
+- **Returns** the route, with new `sections.curve` and `sections.curvyStretch`. Each one is left out when it finds none, and the other sections stay as they are.
+
+### isHairpin
+
+Whether a curve is a hairpin: a bend in the road turning 140° or more on a radius of 40 m or less, as the numbered bends of a mountain pass do.
+
+```javascript
+import { getCurveSections, isHairpin } from '@tomtom-org/maps-sdk/core';
+
+const hairpins = getCurveSections(route).filter(isHairpin);
+```
+
+- A wider bend that turns as far, as where a valley road swings round a spur, is a horseshoe a driver takes at speed, so it's no hairpin.
+- A curve with a `maneuver`, such as a roundabout or a turn at a junction, is no hairpin however far it turns.
+- A curvy stretch's `hairpinCount` counts the curves this returns `true` for.
+- **Returns** `boolean`.
+
+## getSectionsWithin
+
+A route's sections of every type within spans of it, such as the ferries, tolls and traffic on the roads only that route takes:
+
+```javascript
+import { formatDistance, getSectionsWithin } from '@tomtom-org/maps-sdk/core';
+
+for (const route of alternatives.features) {
+    const own = getSectionsWithin(route, { within: route.properties.sections.distinct, types: ['ferry', 'toll', 'traffic'] });
+    if (own.ferry) console.log(`Route ${route.properties.index} takes a ferry for ${formatDistance(own.ferry.lengthInMeters)}`);
+}
+```
+
+- Without `types`, it reports every section type the route has within the spans. Without `within`, the whole route counts.
+- A section counts when it shares a segment with a span, as [`getSectionOverlap`](#getsectionoverlap) finds. It comes back whole, so pass its id to [`setSectionFocus`](../../map/routes-sections.mdx#focusing-sections) to ring it.
+- **Returns** `SectionsWithin`: `{ sections, shares, lengthInMeters }` for each type the route has there. `lengthInMeters` counts only the parts within the spans, and `shares` gives each section's part within them, from 0 to 1. `traffic` holds the traffic sections: multiply a section's `delayInSeconds` by its share to count only the delay within the spans.
+- To weigh one route against another, use [`compareRoutes`](#compareroutes).
+
+## compareRoutes
+
+How a route differs from a reference route: what it takes on, and what it stays clear of. For example, weigh an alternative against the route a user selected:
+
+```javascript
+import { compareRoutes, formatDistance } from '@tomtom-org/maps-sdk/core';
+
+const [selected, alternative] = (await calculateRoute({ locations: waypoints, maxAlternatives: 1 })).features;
+// The service can return fewer alternatives than asked for
+if (alternative) {
+    const { adds, avoids } = compareRoutes(alternative, selected, { types: ['ferry', 'toll'] });
+    if (avoids.toll) console.log(`Avoids ${formatDistance(avoids.toll.lengthInMeters)} of tolls`);
+}
+```
+
+To tell why the fastest route goes the way it does, compare it with the route typical traffic would take. A route calculated with [`costModel: { traffic: 'historical' }`](../../services/routing/parameters.mdx#cost-model) still carries the live traffic along it, so the comparison names the jams and closures the live route avoids:
+
+```javascript
+const [live, usual] = await Promise.all([
+    calculateRoute({ locations: waypoints }),
+    calculateRoute({ locations: waypoints, costModel: { traffic: 'historical' } }),
+]);
+const { avoids } = compareRoutes(live.features[0], usual.features[0], { types: ['traffic'] });
+const closures = (avoids.traffic?.sections ?? []).filter((incident) => incident.categories.includes('road-closed'));
+```
+
+- It compares the two routes alone, rather than reading their `sections.distinct`, which were found against every route of their response.
+- Routes of separate calls compare where they carry the same coordinates along a road they share. Where they don't, that road counts as distinct on both sides.
+- It weighs every section type `calculateRoute` returns unless you pass `types`, leaving out `leg` and `distinct`. So on routes that carry their curves, `adds.curve` holds the curves on the roads only this route takes, and `avoids.curve` the ones only the reference takes: compare the two to tell which winds more.
+- A closed road holds no delay, so name a closure from its `categories` rather than timing it.
+- **Returns** `RouteComparison`: `{ distinct, referenceDistinct, adds, avoids }`. `distinct` and `referenceDistinct` are the stretches each route drives alone, both empty when the two take the same roads. `adds` is [`getSectionsWithin`](#getsectionswithin) on the route's stretches, and `avoids` on the reference's.
+- The [route with alternatives](../../../examples/route-with-alternatives) example weighs each route against the selected one, or against the usual route.
+
+## getInstructionLanes
+
+<GuideDemo demo="route-with-guidance" />
+
+Finds the [`lanes` section](../routes.mdx#section-types) leading to an instruction's maneuver, so you can show the lanes to take beside each step of a directions list. The routing module doesn't draw lanes on the map. `calculateRoute` returns `lanes` sections only when you request [guidance](../../services/routing/guidance.mdx).
+
+```javascript
+import { getInstructionLanes } from '@tomtom-org/maps-sdk/core';
+
+const guided = await calculateRoute({ locations: waypoints, guidance: { type: 'coded' } });
+const guidedRoute = guided.features[0];
+for (const instruction of guidedRoute.properties.guidance?.instructions ?? []) {
+    const lanes = getInstructionLanes(guidedRoute, instruction);
+    // lanes?.lanes lists each lane's directions, and the one to follow
+}
+```
+
+- Each lane carries its `directions` and, on the lanes to take, the `follow` direction. The [route with guidance](../../../examples/route-with-guidance) example draws them as a small SVG sign in its own code.
+- A section leads to the last instruction inside it or, when it ends at a stop line up to 100 m short of the junction, to the next one after it. Where several lead to one instruction, the closest wins, so the lanes go with one step.
+- **Returns** `LaneSectionProps | undefined`: `undefined` for a maneuver no section leads to, and for all but the first of the instructions sharing a point, such as a roundabout's exit after its entry.
+
+## Route progress
+
+These helpers read the route's [`progress`](../routes.mdx#progress) points, which routes have by default. Between two points, values follow the line's length rather than its vertex count, because vertices crowd into bends. Equal steps of distance cover equal ground, which is what an animation along the route needs.
+
+### calculateProgressAtRoutePoint
+
+The distance and time from the start at a coordinate index:
+
+```javascript
+import { calculateProgressAtRoutePoint } from '@tomtom-org/maps-sdk/core';
+
+const progress = calculateProgressAtRoutePoint(route, 10);
+// { distanceInMeters, travelTimeInSeconds } | undefined
+```
+
+**Returns** `RouteProgressAtPoint | undefined`: `undefined` when the index is out of range, the route has no progress, or the progress points around the index lack a value.
+
+### getRouteProgressBetween
+
+The progress at two coordinate indices and the difference between them:
+
+```javascript
+import { getRouteProgressBetween } from '@tomtom-org/maps-sdk/core';
+
+const segment = getRouteProgressBetween(route, 5, 20);
+if (segment) {
+    console.log(`${segment.delta.distanceInMeters} m, ${segment.delta.travelTimeInSeconds} s`);
+}
+```
+
+**Returns** `RouteSegmentProgress | undefined`: `{ start, end, delta }`, or `undefined` when either index cannot be interpolated.
+
+### getRouteProgressForSection
+
+`getRouteProgressBetween` over a section's `startPointIndex` and `endPointIndex`, or those of any `{ startPointIndex, endPointIndex }`, such as the one `getSectionOverlap` returns:
+
+```javascript
+import { getRouteProgressForSection } from '@tomtom-org/maps-sdk/core';
+
+for (const section of route.properties.sections.traffic ?? []) {
+    const progress = getRouteProgressForSection(route, section);
+    if (progress) console.log(`Incident from ${progress.start.distanceInMeters} m, ${progress.delta.travelTimeInSeconds} s to cross`);
+}
+```
+
+**Returns** `RouteSegmentProgress | undefined`, as `getRouteProgressBetween` does.
+
+### getCoordinateAtRouteProgress
+
+The position and progress at a point you give as exactly one of elapsed time, distance travelled or a clock time.
+
+```javascript
+import { getCoordinateAtRouteProgress } from '@tomtom-org/maps-sdk/core';
+
+const byTime = getCoordinateAtRouteProgress(route, { traveledTimeInSeconds: 600 });
+const byDistance = getCoordinateAtRouteProgress(route, { traveledDistanceInMeters: 5000 });
+// Elapsed time counted from route.properties.summary.departureTime
+const byClock = getCoordinateAtRouteProgress(route, { clockTime: new Date('2025-06-01T09:10:00Z') });
+
+if (byTime) console.log(`After 10 min: ${byTime.position}, ${byTime.distanceInMeters} m`);
+```
+
+- Values beyond either end of the route return its first or last point.
+- **Returns** `RouteCoordinateAtProgress | undefined`: `{ position, travelTimeInSeconds, distanceInMeters }`, or `undefined` when the route has no progress, a clock time is given but the route has no `departureTime`, the clock time is before the departure, or the progress points lack a value.
+
+### getProgressAtNearestRoutePoint
+
+Snaps any location to the nearest point on the route and returns the position and progress there, for hover or click interactions:
+
+```javascript
+import { formatDistance, getProgressAtNearestRoutePoint } from '@tomtom-org/maps-sdk/core';
+
+map.mapLibreMap.on('mousemove', (event) => {
+    const nearest = getProgressAtNearestRoutePoint(route, event.lngLat.toArray());
+    if (nearest) console.log(`${formatDistance(nearest.distanceInMeters)} from the start`);
+});
+```
+
+- The location is any `HasLngLat`: a `[longitude, latitude]`, a GeoJSON `Point` or a `Point` feature such as a place.
+- **Returns** `RouteCoordinateAtProgress | undefined`: `undefined` when the route has no progress or fewer than two coordinates, or the progress points around the snapped position lack a value.

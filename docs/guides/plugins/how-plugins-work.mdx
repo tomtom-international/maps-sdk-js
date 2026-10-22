@@ -1,0 +1,250 @@
+---
+title: How plugins work
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.5"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+Plugins add what the SDK itself doesn't have, such as post-processing effects, textured 3D landmarks or a map your users talk to. Each plugin is its own npm package, with its own version, its own releases and its own readiness status. You install only the plugins you use, next to the SDK they build on.
+
+```d2
+direction: down
+
+App: Your application {
+  style: {
+    stroke: "#f87171"
+    stroke-width: 3
+    border-radius: 8
+    font-size: 18
+  }
+  width: 300
+  height: 80
+}
+
+classes: {
+  plugin: {
+    width: 160
+    height: 50
+    style: {
+      fill: "#ffffff"
+      stroke: "#4a148c"
+      font-color: "#333"
+      border-radius: 4
+      font-size: 14
+    }
+  }
+}
+
+Plugins: "Plugins: one package each, @tomtom-org/maps-sdk-plugin-*" {
+  grid-columns: 3
+  horizontal-gap: 120
+  style: {
+    fill: "#f3e5f5"
+    stroke: "#4a148c"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 16
+  }
+
+  AgentToolkit: "Agent Toolkit" {class: plugin}
+  MapTheme: "Map theme" {class: plugin}
+  RouteDragging: "Route dragging" {class: plugin}
+  Flyover: "Fly-over" {class: plugin}
+  Landmarks3D: "Landmarks 3D" {class: plugin}
+  MapEffects: "Map effects" {class: plugin}
+  ViewportPlaces: "Viewport places" {class: plugin}
+}
+
+Peers: "Peer dependencies: one copy of each, installed by your application" {
+  label.near: bottom-center
+  style: {
+    stroke: "#333"
+    stroke-width: 2
+    fill: "#e8e8e8"
+    border-radius: 8
+    font-size: 16
+    font-color: "#333"
+  }
+
+  SDK: "Maps SDK for JavaScript\n@tomtom-org/maps-sdk" {
+    style: {
+      fill: "#fffde7"
+      stroke: "#ff6f00"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 16
+    }
+  }
+  MapLibre: "MapLibre GL JS\nmaplibre-gl" {
+    style: {
+      fill: "#295DAA"
+      stroke: "#295DAA"
+      font-color: white
+      border-radius: 6
+      font-size: 16
+    }
+    link: https://maplibre.org/maplibre-gl-js/docs/
+  }
+  Libraries: "Other libraries\nthree · culori · @turf/turf · lodash-es · ai · …" {
+    style: {
+      fill: "#e8f5e9"
+      stroke: "#1b5e20"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 16
+    }
+  }
+
+  SDK -> MapLibre: "peer dependency" {
+    style.stroke-dash: 3
+  }
+}
+
+App -> Plugins: "imports" {
+  style: {
+    stroke: "#f87171"
+    stroke-width: 3
+  }
+}
+App -> Peers: "installs and imports" {
+  style: {
+    stroke: "#f87171"
+    stroke-width: 3
+  }
+}
+Plugins.AgentToolkit -> Plugins.MapTheme: "peer dependency" {
+  style.stroke-dash: 3
+}
+Plugins -> Peers.SDK: "peer dependency" {
+  style: {
+    stroke-dash: 3
+    stroke-width: 2
+  }
+}
+Plugins -> Peers.MapLibre: "peer dependency\nof the plugins that need it" {
+  style: {
+    stroke-dash: 3
+    stroke-width: 2
+  }
+}
+Plugins -> Peers.Libraries: "peer dependency\nof the plugins that need it" {
+  style: {
+    stroke-dash: 3
+    stroke-width: 2
+  }
+}
+```
+
+The demo below runs three plugins on one map: Landmarks 3D draws the city, Map effects adds bloom and a depth of field, and Map theme colours each look.
+
+<GuideDemo demo="cinematic-city-orbit" />
+
+## The plugins
+
+| Plugin | What it adds | Status |
+| --- | --- | --- |
+| [Agent Toolkit](./agent-toolkit/overview.mdx) | A conversational agent that plans routes, searches places and styles the map through LLM tools | Public preview |
+| [Fly-over](./flyover.mdx) | A camera that flies along a route, framing the junctions ahead | Public preview |
+| [Landmarks 3D](./landmarks-3d.mdx) | Textured 3D models of well-known buildings, and the base map's buildings in 3D with windows, lights and shadows | Private preview. `Buildings3D` is in public preview |
+| [Map effects](./map-effects.mdx) | Post-processing over the rendered map, such as bloom, glare and depth of field, and high-DPI capture | Public preview |
+| [Map theme](./map-theme.mdx) | Map colours from a brand's colours, a stylesheet, a mood or an image | Public preview |
+| [Route dragging](./route-dragging.mdx) | Route editing by dragging, where a stop's pin moves the stop and the route line pulls a new stop off it | Public preview |
+| [Viewport places](./viewport-places.mdx) | Search results for the visible map area, searched again as the map moves | Public preview |
+
+## Each plugin is its own bundle
+
+A plugin ships as a separate package, `@tomtom-org/maps-sdk-plugin-<name>`, built and released apart from `@tomtom-org/maps-sdk`.
+
+- The SDK bundle holds no plugin code, so a plugin you don't install costs your app nothing.
+- Every plugin is free of side effects, so your bundler also drops each part of a plugin you install but don't import.
+- A plugin builds on the SDK's public API. It works on the `TomTomMap`, the modules and the `TomTomConfig` you already set up.
+- Plugins ship under the same license as the SDK.
+
+To add a plugin, install it next to the SDK and its other peer dependencies, then import it from its own package:
+
+```bash
+npm install @tomtom-org/maps-sdk maplibre-gl @tomtom-org/maps-sdk-plugin-map-effects
+```
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { MapEffects } from '@tomtom-org/maps-sdk-plugin-map-effects';
+
+TomTomConfig.instance.put({ apiKey: 'YOUR_API_KEY' });
+
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+const effects = new MapEffects(map, { vignette: { intensity: -0.5 } });
+```
+
+## Peer dependencies
+
+A plugin bundles none of the libraries it builds on. It declares the SDK, and each library the SDK or your app already needs, as a peer dependency. Your app installs one copy of each, and every plugin shares it.
+
+This matters most for the SDK. A plugin with its own copy would read its own `TomTomConfig`, without the API key and language you set.
+
+| Package | Peer dependencies besides the SDK |
+| --- | --- |
+| `@tomtom-org/maps-sdk-plugin-agent-toolkit` | `@tomtom-org/maps-sdk-plugin-map-theme`, `maplibre-gl`, `@turf/turf`, `ai`, `zod`, `chart.js`, `h3-js` |
+| `@tomtom-org/maps-sdk-plugin-flyover` | `maplibre-gl`, `@turf/turf` |
+| `@tomtom-org/maps-sdk-plugin-landmarks-3d` | `maplibre-gl`, `three` |
+| `@tomtom-org/maps-sdk-plugin-map-effects` | `maplibre-gl` |
+| `@tomtom-org/maps-sdk-plugin-map-theme` | `culori` |
+| `@tomtom-org/maps-sdk-plugin-route-dragging` | `lodash-es` |
+| `@tomtom-org/maps-sdk-plugin-viewport-places` | None |
+
+- A plugin can be another plugin's peer. The Agent Toolkit themes the map through the Map theme plugin, so you install both.
+- The SDK has peer dependencies of its own, such as `maplibre-gl` and `@turf/turf`, and a plugin shares the copies the SDK uses. [Project setup](../../introduction/project-setup.mdx#installing-peer-dependencies) lists them.
+
+## Versions and releases
+
+Each plugin follows semantic versioning on its own version line, apart from the SDK's. A plugin's version number says nothing about the SDK version it needs.
+
+- A plugin releases when the plugin itself changes. An SDK release doesn't release the plugins, and a plugin release doesn't release the SDK.
+- Each plugin keeps its own changelog, under `plugins/<plugin>/CHANGELOG.md` in the [public repository](https://github.com/tomtom-international/maps-sdk-js/tree/main/plugins).
+- Each plugin's guide describes the plugin's latest release, and the version label at its top is the plugin's version, not the SDK's.
+
+### Which SDK versions a plugin supports
+
+Each plugin declares the SDK versions it supports as a peer range in its `package.json`. If your SDK version falls outside that range, your package manager reports a peer dependency conflict when you install. To read the range of a plugin's latest release, run:
+
+```bash
+npm view @tomtom-org/maps-sdk-plugin-map-effects peerDependencies
+```
+
+Upgrade the SDK and your plugins together. TomTom tests every plugin against the current SDK on every change, so the latest releases are the combination that's tested.
+
+### Upgrading a plugin below 1.0.0
+
+Below 1.0.0, semantic versioning lets a minor release carry breaking changes, and the plugins use it that way. For example, a plugin can break its API from 0.3.x to 0.4.0. The changelog marks each such change **Breaking**. A patch release never breaks, and only a plugin's latest release gets fixes. The [versioning and support policy](../../introduction/versioning-and-support-policy.mdx#releases-before-100-and-plugins) has the full rules.
+
+npm's default caret range already stops at the next minor version below 1.0.0, so `^0.3.1` installs 0.3.x releases only. Read the changelog before you move to the next minor version.
+
+## Readiness
+
+Each plugin has its own readiness status, apart from the SDK's. The status shows at the top of each plugin's guide, next to its version.
+
+- **Public preview** - A plugin below 1.0.0 is in [Public Preview](https://docs.tomtom.com/legal/public-preview), unless its data needs an entitlement. It needs no extra access on your API key, and its API can still change between minor versions.
+- **Private preview** - A plugin whose data needs an entitlement on your API key is in [Private Preview](https://docs.tomtom.com/legal/private-preview), and its guide shows how to request access. Landmarks 3D is in private preview, while its `Buildings3D` layer needs no entitlement and is in public preview.
+- **Generally available** - A plugin leaves preview with its 1.0.0 release. From then on, only a major release breaks its API.
+
+A plugin can stay in preview after the SDK reaches 1.0.0.
+
+## Related guides and examples
+
+### Related guides
+- **[How the SDK works](../how-the-sdk-works.mdx)** - The SDK's three bundles that every plugin builds on
+- **[Map modules](../map/modules.mdx)** - The module contract that plugins such as Map effects follow
+- **[Versioning and support policy](../../introduction/versioning-and-support-policy.mdx)** - What counts as breaking, for the SDK and for plugins before their 1.0.0
+- **[Release notes](../../introduction/release-notes.mdx)** - The status of each SDK version
+
+### Related examples
+- **[Cinematic city orbit](../../examples/cinematic-city-orbit)** - Landmarks 3D, Map effects and Map theme on one map, in eight looks

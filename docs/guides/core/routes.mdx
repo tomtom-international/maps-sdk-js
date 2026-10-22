@@ -1,0 +1,143 @@
+---
+title: Routes
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.5"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+A route (`Route`) is a GeoJSON `Feature` whose `LineString` geometry is the path. Its properties carry the summary, sections, guidance and progress. `calculateRoute` returns `Routes`, a `FeatureCollection` of the main route and its alternatives.
+
+## Where routes are used
+
+- [Route calculation](../services/routing/quickstart.mdx) returns them, configured by the [route planning parameters](../services/routing/parameters.mdx).
+- The [routing module](../map/routes.mdx) displays them.
+- The [route utilities](./utilities/routes.mdx) read them for waypoint insertion, section bounds and progress along the route.
+
+## Route object structure
+
+- `id` - A unique string, distinguishing a route from its alternatives.
+- `bbox` - The bounding box of the route.
+- `geometry.coordinates` - The path, as `[longitude, latitude]` pairs.
+- `properties`:
+  - `index` - `0` for the main route, `1` and up for alternatives.
+  - `summary` - [Totals](#summary) for the whole route.
+  - `sections` - [Stretches with a characteristic](#sections), by type.
+  - `guidance` - [Turn-by-turn instructions](#guidance), if requested.
+  - `progress` - [Distance and time at points along the path](#progress).
+
+## Summary
+
+`route.properties.summary`:
+
+- Time and distance: `departureTime`, `arrivalTime` (both `Date`), `lengthInMeters`, `travelTimeInSeconds`.
+- Traffic: `trafficDelayInSeconds`, `trafficLengthInMeters`, present when the routing service sends them.
+- Alternative travel times, if [requested](../services/routing/parameters.mdx#traffic-based-travel-times): `noTrafficTravelTimeInSeconds`, `historicTrafficTravelTimeInSeconds`, `liveTrafficIncidentsTravelTimeInSeconds`.
+- Where an alternative forks off, on alternatives only: `deviationPoint`, and the `deviationDistanceInMeters` and `deviationTimeInSeconds` from the start to it.
+
+`trafficDelayInSeconds` is the delay of the traffic events along `trafficLengthInMeters`. For the gap to free-flow, use `Math.max(0, liveTrafficIncidentsTravelTimeInSeconds - noTrafficTravelTimeInSeconds)`. The live travel time can fall below the free-flow one, so keep the floor at 0.
+
+```ts
+const { liveTrafficIncidentsTravelTimeInSeconds: live, noTrafficTravelTimeInSeconds: freeFlow } =
+    route.properties.summary;
+const delayInSeconds = live !== undefined && freeFlow !== undefined ? Math.max(0, live - freeFlow) : undefined;
+```
+
+## Sections
+
+`route.properties.sections` groups the stretches of a route by type. Each section spans a range of indices into the route's coordinates. [`sectionTypes`](../services/routing/parameters.mdx#route-sections) sets which types a calculation returns. A requested type appears only where the route has such a stretch (no `ferry` without a water crossing). The [routing module](../map/routes-sections.mdx) draws them.
+
+### Section types
+
+- Structure:
+  - `leg` - From one stop to the next, with its own summary. Always present.
+  - `distinct` - The stretches no other route of the response drives. Present on every route when there are two or more. See [`getDistinctSections`](./utilities/routes.mdx#getdistinctsections).
+  - `country` - One per country crossed, covering the route end to end.
+  - `importantRoadStretch` - The street names and road numbers that identify the route's course. See [`getImportantRoads`](./utilities/routes.mdx#getimportantroads) for them road by road.
+- Road types: `motorway`, `ferry`, `carTrain`, `tunnel`, `pedestrian`, `urban`, `unpaved`.
+- Road shape, which the SDK finds in the route's geometry when `sectionTypes` names them:
+  - `curve` - Each bend where the road keeps turning the same way. See [`getCurveSections`](./utilities/routes.mdx#getcurvesections).
+  - `curvyStretch` - Where three or more curves follow one another closely, such as a mountain pass. See [`getCurvyStretchSections`](./utilities/routes.mdx#getcurvystretchsections).
+- Costs and restrictions:
+  - `toll` - Stretches charging a per-use toll, either a ticket or barrier motorway or a free-flow tolling point.
+  - `tollRoad` - Stretches that cost money by any scheme, including every `toll` section, vignette-only motorways and urban charge zones.
+  - `tollVignette` - One per country requiring a vignette.
+  - `carpool`, `lowEmissionZone`, `vehicleRestricted`.
+- Traffic and guidance:
+  - `traffic` - Stretches with a traffic incident.
+  - `lanes` - Lane configurations, only with guidance.
+  - `speedLimit`, `roadShields`.
+
+### Section properties
+
+Every section has `id`, `startPointIndex` and `endPointIndex` (inclusive). These types have more:
+
+- `leg`:
+  - `summary` - The leg's own totals, plus `stopTimeInSeconds` if the route waits at the stop it ends at.
+  - `originalWaypointIndex` - The entry of the request's `locations` this leg arrives at. A path location expands into legs of its own, so `legs[i]` is not reliably the leg arriving at `locations[i + 1]`. It is absent on the final leg and on legs ending where you did not ask, so handle `undefined`.
+- `distinct` - `lengthInMeters`, measured along the route.
+- `traffic`:
+  - `categories` - The same values as a traffic incident's category, e.g. `['jam']`.
+  - `magnitudeOfDelay` - `'unknown'`, `'minor'`, `'moderate'`, `'major'` or `'indefinite'`.
+  - `delayInSeconds`, `effectiveSpeedInKmh`.
+  - `eventId` - The routing service's id for the incident behind the section. To get the whole record, see [Find the incident of a route traffic section](../services/traffic/traffic-incident-details.mdx#find-the-incident-of-a-route-traffic-section).
+  - `tec` - TPEG2-TEC effect and cause codes, absent when the service has none.
+- `country` - `countryCodeISO2` (e.g. `'NL'`), `countryCodeISO3` (e.g. `'NLD'`). `tollVignette` sections carry the same.
+- `importantRoadStretch` - `index` (0 is the most important, and equal indices belong to one stretch), `streetName`, `roadNumbers` (e.g. `['A1', 'E30']`).
+- `curve`:
+  - `headingChangeInDegrees` - How far the road turns, positive to the right and negative to the left. A hairpin turns 140° or more on a radius of 40 m or less, and [`isHairpin`](./utilities/routes.mdx#ishairpin) tells one.
+  - `radiusInMeters` - The radius of the circle the curve follows where it turns tightest. The smaller, the tighter.
+  - `lengthInMeters`, measured along the route.
+  - `curvinessScore` - How much the curve has to offer a rider: the length of its arc, `radiusInMeters` times the heading change in radians, each metre counted 1 time below a radius of 175 m, 1.3 times below 100 m, 1.6 times below 60 m and 2 times below 30 m, as [roadcurvature.com](https://roadcurvature.com) scores roads. A curve wider than 175 m scores 0.
+  - `severity` - How hard the curve is to drive, from 0 to 1: how much a driver slows down for it from the speed limit on the road into it. The tighter the curve, the higher it scores. A shallow curve scores as a wider one, since a driver can straighten it across the lane, and a turn at a junction with a turn, U-turn or roundabout `maneuver` scores as one taken slowly. It reads the route's `speedLimit` sections, so ask for them with the curves. Without them, it takes a typical limit outside towns.
+  - `maneuver` - The guidance instruction on the curve, such as `'ROUNDABOUT_RIGHT'`, if the route has guidance. A curve with one is a turn at a junction rather than a bend in the road. Departure, arrival, waypoint, border and tollgate instructions mark no junction, so they set none, and neither does one that keeps to the road, such as "Turn left to stay on the SS38" where a side road leaves a hairpin, or one with no other way to take.
+- `curvyStretch`:
+  - `curveCount` and `lengthInMeters` - Together, how winding the stretch is: the hairpins of a mountain pass come one every 200 m or so.
+  - `hairpinCount` - How many of its curves are hairpins.
+  - `minRadiusInMeters` - The radius of its tightest curve.
+  - `curvinessScore` - Its curves' scores, added up. Roadcurvature.com lists roads from 300 and calls those over 1000 very twisty.
+- `lanes` - `lanes` (each with its possible `directions` and the one to `follow`), `laneSeparators`.
+- `speedLimit` - `maxSpeedLimitInKmh`.
+- `roadShields` - `roadShieldReferences`.
+
+## Progress
+
+Unless the calculation passed `extendedRouteRepresentations: []`, `route.properties.progress` gives the cumulative distance and time at points along the path.
+
+- `pointIndex` - An index into the route's coordinates. The first and last points are always included.
+- `distanceInMeters`, `travelTimeInSeconds` - From the start of the route.
+
+The [progress utilities](./utilities/routes.mdx#calculateprogressatroutepoint) interpolate between these points.
+
+## Guidance
+
+If you request [guidance](../services/routing/parameters.mdx#turn-by-turn-guidance), each of `route.properties.guidance.instructions` has:
+
+- `message` - The instruction text, localised by the service, e.g. `'Turn right onto Damrak'`.
+- `maneuver` - The maneuver code, e.g. `'TURN_RIGHT'`.
+- `maneuverPoint` - Where it happens, `[longitude, latitude]`. `pathPointIndex` is its index in the route's coordinates.
+- `routeOffsetInMeters` - Its distance from the start of the route.
+- `previousRoadInfo`, `nextRoadInfo` - The roads before and after it.
+
+## API reference
+
+[Route](/maps-sdk-js/api-reference/types/core.Route.html)
+
+## Related guides and examples
+
+### Related guides
+- [Routing quickstart](../services/routing/quickstart.mdx)
+- [Route planning parameters](../services/routing/parameters.mdx)
+- [Route utilities](./utilities/routes.mdx)
+
+### Map integration
+- [Routing module](../map/routes.mdx)
+
+### Related examples
+- [Route with waypoints](../../examples/route): calculate and show a route
+- [Route with alternatives](../../examples/route-with-alternatives): several route options, and the roads each one has to itself
+- [Seek or avoid curves](../../examples/route-curves): routes ranked by how winding they are, their curves shown outside towns, at junctions or at hairpins, and found again as you change the thresholds

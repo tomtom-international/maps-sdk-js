@@ -1,0 +1,109 @@
+---
+title: Custom GPU passes
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.4.1"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+`addPass` runs your own full-screen fragment shader inside the [map effects plugin](./map-effects.mdx)'s GPU chain. Every effect drawn over the chain (bloom, grade, fog, edge blur, tint, vignette) then works on your picture. Use it for a stylisation, such as a watercolour, a posterise, a split tone or a colour lookup. `addLayer` puts a 2D canvas of your own between those effects, such as a paper texture or film grain. The demo below paints the map in watercolour on a paper texture, lets bloom, a contrast grade and a vignette work on the painting, and leaves a margin of bare paper around it:
+
+<GuideDemo demo="mixed-map-effects" />
+
+## Your own GPU passes
+
+```javascript
+effects.addPass({
+    id: 'posterise',
+    fragment: `uniform float uLevels;
+        void main() {
+            vec4 colour = texture(uSource, vUv);
+            fragColor = vec4(floor(colour.rgb * uLevels) / uLevels, colour.a);
+        }`,
+    uniforms: { uLevels: 5 },
+});
+
+effects.removePass('posterise');
+```
+
+- The shader is GLSL ES 3.00 without its preamble. The plugin declares the version, the precisions, `uSource` (the picture so far), `vUv` and `fragColor`. Declaring any of them again is a compile error. You declare your uniforms and `main`.
+- `addPass` throws on a missing `id`. It also throws, with the compiler's log, on a shader that does not compile. It throws `RangeError` on an unknown `placement`. A browser without WebGL2 runs no pass, and the plugin warns once.
+- `uniforms` takes values by name, or a function that returns them, which the plugin calls on every draw. A pass uniform is a number, or an array of two to four numbers bound as `vec2` to `vec4`, such as a colour. You can't set an `int` or `bool` uniform, so declare numbers as `float`. A function that throws skips its pass for that draw, with one warning.
+- `placement` is `before-depth-of-field` (the default) or `after-depth-of-field`. Put a stylisation that the [lens](./map-effects-depth-of-field.mdx) should blur before it, and one that should stay crisp after it.
+- Passes run in the order you add them. Adding under an id in use replaces that pass in place. `removePass` ignores an id with no pass.
+- Redraws follow the map, so for a pass that animates on its own, request frames with `map.mapLibreMap.triggerRepaint()`.
+- `capture()` runs your passes too, at the capture's resolution. `getConfig()` does not list them, since passes are code rather than settings.
+- A pass that shifts hues runs before the bloom's and the glare's colour keys, so a [`bloom.only`](./map-effects-bloom.mdx#scoping-bloom-by-colour) or [`glare.only`](./map-effects-glare.mdx#choosing-the-lights) scope may need a wider `bloom.onlyTolerance` or `glare.onlyTolerance`.
+The demo below flies through eight cities and swaps the pass with each look. It removes the last look's pass by its id and adds the new one. A colour shift such as infrared film runs before the lens, which blurs it with the map. Film grain, scanlines and a lens flare run after it, and stay crisp:
+
+<GuideDemo demo="cinematic-city-flyby" />
+
+## Textures and mip levels
+
+A pass can sample textures of its own besides `uSource`, such as a paper grain, a noise tile or a colour lookup table. To give it one, declare a `uniform sampler2D` and pass the image under the same name in `textures`:
+
+```javascript
+const paper = new Image();
+paper.src = 'paper.png';
+
+effects.addPass({
+    id: 'paper-tone',
+    fragment: `uniform sampler2D uPaper;
+        uniform vec3 uTone;
+        void main() {
+            vec4 colour = texture(uSource, vUv);
+            float grain = texture(uPaper, gl_FragCoord.xy / vec2(textureSize(uPaper, 0))).r;
+            fragColor = vec4(colour.rgb * mix(uTone, vec3(1.0), grain), colour.a);
+        }`,
+    uniforms: { uTone: [0.95, 0.9, 0.8] },
+    textures: { uPaper: paper },
+});
+```
+
+- `textures` takes an image, a canvas, an `ImageBitmap`, a video or any other `TexImageSource`, or a function that returns one, which the plugin calls on every draw. A pass takes up to 15 textures, bound to texture units 1 to 15 in the order you list them. `uSource` keeps unit 0.
+- A video or a canvas is uploaded on every draw, since its pixels change under the same object. An image, an `ImageBitmap`, a `VideoFrame` or `ImageData` is uploaded once. To change its picture, hand a new object, for example from a `textures` function.
+- Redraws follow the map, so for a playing video, request frames with `map.mapLibreMap.triggerRepaint()`, for example from `video.requestVideoFrameCallback`.
+- A texture is uploaded the same way up as `uSource`, so `texture(uPaper, vUv)` lays it over the frame upright. It's sampled linearly, repeats past its edges and has no mip levels.
+- Until an image has loaded or a video has a frame, or while a function returns `undefined`, the pass sits that draw out. Redraws follow the map, so call `map.mapLibreMap.triggerRepaint()` once your image loads.
+- `removePass` frees the pass's textures, as does a function that hands a new object in place of the old one.
+- `uSource` has no mip levels by default, so `textureLod(uSource, vUv, lod)` reads level 0 at any `lod`. Set `mipmapped: true` for a pass that gathers from coarser levels with `textureLod`. The plugin then builds the picture's mip levels before your pass runs.
+
+## Layers between the effects
+
+`addLayer` draws a 2D canvas layer of your own at a place in the overlay stack, and `capture()` draws it in the same place. Use it for a paper texture, film grain, scanlines or a frame that some effects should work on and others not. This one lays the `paper` image from above over the map, under the tint and the vignette:
+
+```javascript
+effects.addLayer({
+    id: 'paper',
+    placement: 'after-edgeBlur',
+    draw: (context, { width, height }) => {
+        context.globalAlpha = 0.25;
+        context.fillStyle = context.createPattern(paper, 'repeat') ?? 'transparent';
+        context.fillRect(0, 0, width, height);
+    },
+});
+
+effects.removeLayer('paper');
+```
+
+- `placement` puts the layer right above the overlay it names: `after-bloom`, `after-grade`, `after-fog`, `after-edgeBlur`, `after-tint` or `after-vignette`, from the bottom. Every overlay above the layer works on it, and the ones at or below it don't. So `after-edgeBlur` puts a paper texture under the tint and the vignette, and `after-vignette` lays a watermark over every effect.
+- `draw` paints onto a cleared context the size of the map's canvas, in device pixels. `pixelRatio` is the device pixels per CSS pixel, so scale CSS lengths by it. The context's state is your own for the call.
+- A layer redraws with the map. For one that animates on its own, such as film grain, request frames with `map.mapLibreMap.triggerRepaint()`.
+- `capture()` calls `draw` once more at the capture's own size, and lays the result in the same place in the stack. `getConfig()` doesn't list layers.
+- `addLayer` throws on a missing `id`, and `RangeError` on an unknown `placement`. Adding under an id in use replaces that layer in place. Layers in one placement stack in the order you add them. A `draw` that throws leaves its layer empty for that draw, with one warning.
+- A layer needs no WebGL2 context, and it doesn't read the map canvas.
+
+## Related guides and examples
+
+### Related guides
+- **[Map effects plugin](./map-effects.mdx)** - Setup, how the effects render, and every knob
+- **[Depth of field](./map-effects-depth-of-field.mdx)** - The lens a pass runs before or after
+- **[Bloom](./map-effects-bloom.mdx)** - The glow that works on your pass's picture
+
+### Related examples
+- **[Mixed map effects](../../examples/mixed-map-effects)** - A watercolour pass of your own on a paper texture, with bloom, grade and vignette over it and a paper margin layer on top
+- **[Cinematic city fly-by](../../examples/cinematic-city-flyby)** - Eight cities flown in eighteen looks, most with a pass of their own
