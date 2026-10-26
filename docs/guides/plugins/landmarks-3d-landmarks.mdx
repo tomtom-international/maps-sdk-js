@@ -1,0 +1,220 @@
+---
+title: 3D landmarks
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.3.0"
+  color: "grey5"
+- label: "PRIVATE PREVIEW"
+  color: "grey5"
+---
+
+<Button
+    label="Request Access"
+    href="https://www.tomtom.com/contact-sales/?source_app=docs-portal&source_product=map-display-api-3d"
+    target="_blank">
+    Request Access
+</Button>
+
+<Blockquote type="warning">
+**Important note**
+3D Landmarks are in [Private Preview](https://docs.tomtom.com/legal/private-preview) and unavailable on a Freemium or Pay As You Grow (PAYG) basis.
+Click the **Request Access** button above to contact our Sales team.
+With a key that lacks the access, the map draws no landmarks, and its error handlers get one `INSUFFICIENT_PERMISSIONS` that names the access to request. See [Handle errors](#handle-errors).
+</Blockquote>
+
+`Landmarks3D`, part of the [Landmarks 3D plugin](./landmarks-3d.mdx), draws well-known buildings as detailed, textured 3D models. Stadiums, cathedrals and towers stand out as themselves, not as plain boxes. The example below shows landmarks in seven cities, with a control for each knob of their look:
+
+<GuideDemo demo="landmarks-3d-plugin" />
+
+## Use cases
+
+- City-scale 3D visualization - Recognizable buildings appear as detailed meshes instead of plain extrusions.
+- Blend with the base map - Landmarks take the look of the base map's 3D buildings and follow it as the map colours change, or wear a look of your own.
+- Show landmarks as they are - Landmarks wear the colours of their own stone, brick and roofs, under the map's light.
+
+## How it works
+
+- A MapLibre custom layer fetches the landmark tiles covering the viewport and renders them with Three.js, lit to match the map style.
+- The layer draws when the map draws and asks for a frame only when a tile arrives, so a still map stays idle. If you change a field on `landmarks.layer` yourself, call `map.mapLibreMap.triggerRepaint()`.
+- The layer sits below the POI layer, so POI labels and icons draw over the meshes and roads stay below.
+- Layers you add to a module with `beforeLayerConfig: 'poi'` go under the meshes too, even when you add them later. To draw a label over a landmark, place its layer at `'top'`.
+- `Landmarks3D` leaves the base map's 3D buildings shown or hidden as they are. Basemap buildings that overlap a landmark carry `has_landmark`, and the plugin filters them out so they don't clip through the meshes.
+- After `setStyle`, the plugin restores the layer, the filter and the look.
+- The plugin builds the tile URL from the global `TomTomConfig` (`apiKey`, `commonBaseURL`). Behind a credentialed proxy, tile requests send cookies like every other SDK request. `withCredentials` overrides that.
+- Three.js decodes KTX2 textures with the Basis Universal transcoder, two files the plugin ships beside its bundle: `basis_transcoder.js` and `basis_transcoder.wasm`. The plugin loads them with the first landmark tile, so no request goes to a CDN.
+  - By default, Vite and webpack 5 emit the two files with your build, so they load from your app's host. A bundler that doesn't emit the files a `new URL('./file', import.meta.url)` names, such as Rollup or esbuild on its own, needs `transcoderPath`.
+  - The Vite 7 dev server's pre-bundler moves the plugin away from the two files. Upgrade to Vite 8, or add the plugin to the `optimizeDeps.exclude` that the [project setup](../../introduction/project-setup.mdx#vite-projects) gives for the SDK: `exclude: ['@tomtom-org/maps-sdk', '@tomtom-org/maps-sdk-plugin-landmarks-3d']`.
+  - Set `transcoderPath` to serve the Basis Universal transcoder from your own host. Copy the two files from the plugin's `dist` folder, as the [configuration](#configuration) shows.
+  - A strict Content Security Policy needs `blob:` in `worker-src`, and the transcoder's host in `connect-src`: `'self'` by default, or the host `transcoderPath` names.
+
+## Get started
+
+Install the plugin and create a pitched map, as the [overview](./landmarks-3d.mdx#installation) shows. To have the landmarks stand in a 3D city, show the base map's 3D buildings too. Most standard styles ship the [`buildings3D` group](../map/base-map.mdx) hidden. Leave that step out for landmarks alone, or draw the city with [`Buildings3D`](./landmarks-3d-buildings.mdx) instead.
+
+```javascript
+import { BaseMapModule } from '@tomtom-org/maps-sdk/map';
+import { Landmarks3D } from '@tomtom-org/maps-sdk-plugin-landmarks-3d';
+
+await BaseMapModule.get(map, { groups: { buildings3D: { visible: true } } });
+const landmarks = new Landmarks3D(map);
+```
+
+## Set the look
+
+The look of the landmarks is a set of knobs, which follow the rules every part of the plugin follows ([Set the look with knobs](./landmarks-3d.mdx#set-the-look-with-knobs)). Set the ones you want, and leave the others to the base map or their defaults:
+
+```javascript
+import { resetKnob, setKnob } from '@tomtom-org/maps-sdk/map';
+import { landmarks3DKnobCatalogue } from '@tomtom-org/maps-sdk-plugin-landmarks-3d/knobs';
+
+landmarks.updateConfig({ color: '#c8b28a', opacity: 0.9 });               // the rest still follows the base map
+setKnob(landmarks, landmarks3DKnobCatalogue, 'verticalGradient', false); // a value held as data
+resetKnob(landmarks, landmarks3DKnobCatalogue, 'color');                 // back to the base map's colour
+landmarks.resetConfig();                                                 // every knob unset again
+```
+
+- The colour, opacity, wall gradient and zoom range you leave unset follow the style's 3D buildings, so landmarks blend in. They keep following them through `setStyle` and whatever restyles them: the [map colours](../map/styling-map-colors.mdx) `colors.artificial` and `colors.land`, as a [borrowed look](../map/styling-borrowed-looks.mdx) does, or a paint property you set on `3D - Building` yourself.
+- While a [`Buildings3D`](./landmarks-3d-buildings.mdx#with-3d-landmarks) on the same map shows, the unset `color`, `opacity` and `minZoom` follow its buildings instead, which take the place of the style's, and so do the unset `paletteMode`, `paletteIntensity` and `variation`, the `hover` and `click` looks, and the unset `palette` while `color` is unset too. The unset `maxZoom` is then 22, `texture` is `detail`, except on `streetSatellite`, where it stays `color`, and `verticalGradient` reports `false`, since its walls have no gradient.
+- Every standard style but `streetSatellite` has 3D buildings to follow. On `streetSatellite`, and on a style of your own without them, the knob takes the 3D building look of `streetLight`. Set `color` where that doesn't suit a dark style.
+- The colour followed is a single colour, or the standard styles' `match` on the buildings' `group`, inside the hover and click states the map adds. The opacity and gradient followed are a plain number and a plain `true` or `false`. Any other value, such as a `['coalesce', ['feature-state', 'color'], …]` colour written yourself, takes the `streetLight` look too, and a `Buildings3D` reads its walls' colour the same way. To colour single buildings and keep the landmarks following, call `setBuildingColors` on the [base map module](../map/base-map.mdx#hovered-clicked-and-coloured-3d-buildings).
+- `getKnob` returns the value in force: the one you set, otherwise the base map's, or the knob's default in the *Unset* column below.
+
+### Knobs
+
+| Knob | Values | Unset |
+|---|---|---|
+| `visible` | `true` or `false` | `true` |
+| `color` | a CSS colour | the colour of the base map's 3D buildings |
+| `palette` | CSS colours, or map colours by their knob ID such as `colors.accent`: each landmark takes one | none, or the walls' palette while a `Buildings3D` shows and `color` is unset |
+| `paletteMode`, `paletteIntensity`, `variation` | as the [walls' knobs](./landmarks-3d-buildings.mdx#vary-the-colours) of the same names | `pick`, `1` and `0`, or the walls' ones while a `Buildings3D` shows |
+| `hover.color`, `click.color` | a CSS colour: what the [hovered and the clicked landmark](#hover-click-and-colour-single-landmarks) turn towards | the map's `colors.accent`, otherwise blue, or the buildings' `hover.color` and `click.color` while a `Buildings3D` shows |
+| `hover.intensity`, `click.intensity` | 0 (no change) to 1 (the full colour) | `0.35` and `0.7`, or the buildings' ones while a `Buildings3D` shows |
+| `texture` | `mask`, `detail` or `color`: what each landmark's own texture adds to its outline. `mask` adds nothing, `detail` adds its light and shade over `color`, and `color` draws its own colours in place of `color` | `color` on `streetSatellite`; otherwise `mask`, or `detail` while a `Buildings3D` shows |
+| `opacity` | 0 to 1 | the opacity of the base map's 3D buildings |
+| `verticalGradient` | `true` or `false`: whether the walls darken towards the ground | as the base map's 3D buildings |
+| `minZoom`, `maxZoom` | 0 to 22: the lowest and highest whole zoom levels the landmarks are drawn at | the zoom range of the base map's 3D buildings |
+
+## Show the landmarks' own colours
+
+Each landmark comes with a texture of its own stone, brick, roofs and windows. By default, the texture only carves the landmark's outline, and the `color` knob paints it. Over satellite imagery, `streetSatellite`, the landmarks show their own colours instead, which sit better in a photograph. To draw the landmarks in their own colours on any style, set `texture` to `color`:
+
+```javascript
+landmarks.updateConfig({ texture: 'color' });
+```
+
+- `color` draws each landmark with its own textures, lit by the style light's colour and intensity, as the 3D buildings around it are. `opacity` and `verticalGradient` still apply.
+- The textures keep their daylight colours on a dark style. To dim or tint them for the night, set the styling module's [`view.light` knobs](../map/styling-globe-and-sky.mdx#the-light-on-3d-buildings), which light the 3D buildings too.
+- `detail` keeps the `color` knob and adds the texture's light and shade over it, so the landmarks match the city around them and still show their facades.
+- Under a [`Buildings3D`](./landmarks-3d-buildings.mdx#with-3d-landmarks), the textures take its sun, its sky and its shadows instead. There, `detail` is as strong as `facade.intensity`.
+
+## Terrain
+
+Landmarks stand on [3D terrain](../map/terrain.mdx#3d-elevation) without any configuration. The plugin lowers each one onto the lowest ground under its footprint, so no wall floats above a slope. Landmarks follow the terrain as it loads or its exaggeration changes.
+
+```javascript
+import { TerrainModule } from '@tomtom-org/maps-sdk/map';
+import { Landmarks3D } from '@tomtom-org/maps-sdk-plugin-landmarks-3d';
+
+await TerrainModule.get(map, { elevation: { visible: true }, hillshade: { visible: true } });
+const landmarks = new Landmarks3D(map);
+```
+
+## Several maps
+
+Create one `Landmarks3D` per map. Each one loads the tiles of its own map's view:
+
+```javascript
+const landmarks = maps.map((map) => new Landmarks3D(map));
+```
+
+- Each map takes a WebGL context, and a browser allows only so many per page (16 in Chrome). To show more landmarks than maps, move the maps you have instead of creating new ones.
+- With more than one map, Three.js warns about `Multiple active KTX2 loaders`. The landmarks still render.
+
+To frame a tall landmark, aim the camera at its mid-height instead of its foot. Set `centerClampedToGround: false` on the map and give the camera an `elevation` in metres. MapLibre's `flyTo` and `easeTo` leave the elevation where it was, so move with `jumpTo`:
+
+```javascript
+const map = new TomTomMap({
+    mapLibre: {
+        container: 'map',
+        centerClampedToGround: false,
+        center: [2.2945, 48.8584],
+        elevation: 165, // halfway up the Eiffel Tower
+        zoom: 15.4,
+        pitch: 60,
+    },
+});
+new Landmarks3D(map);
+
+map.mapLibreMap.jumpTo({ center: [-122.3493, 47.6205], elevation: 92 }); // on to the Space Needle
+```
+
+Aim at the ground again before the reader zooms in. MapLibre picks how detailed its tiles are from the camera's distance to the point it aims at, not to the streets. Closing in on a point halfway up a tower draws the streets in thousands of tiles, and the map stalls. On `pointerdown`, `wheel` and `keydown`, jump to the same view aimed at the ground under the middle of the screen, as the demo below does. Listen in the capture phase, so the jump comes before the gesture starts: a jump during a gesture cancels it.
+
+The demo below shows four landmarks of one kind, one per map:
+
+<GuideDemo demo="multiple-maps-landmarks" />
+
+## Hover, click and colour single landmarks
+
+`landmarks.events` reports the landmark under the pointer, and `setLandmarkColors` gives landmarks a colour of their own by the ids those events report:
+
+```javascript
+landmarks.events.on('hover', (landmark) => console.log(landmark.properties.position)); // [longitude, latitude]
+landmarks.events.on('click', (landmark) => landmarks.setLandmarkColors({ [landmark.id]: '#1faa59' }));
+```
+
+Landmarks and buildings share these events and colours, with or without a `Buildings3D` on the map. [Hover and click](./landmarks-3d-buildings.mdx#hover-and-click) and [Colour single buildings and landmarks](./landmarks-3d-buildings.mdx#colour-single-buildings-and-landmarks) cover them in full, with a demo.
+
+## Handle errors
+
+The landmark tiles report their failures to the map's [error handlers](../map/tomtom-map.mdx#map-errors), as the map's own tiles do. Each one is a `TomTomMapError` whose `sourceId` is the id of the landmarks layer, `landmarks.layer.id`. To tell the reader their key needs access, read its `privatePreviewAccess`:
+
+```javascript
+const landmarks = new Landmarks3D(map);
+map.addErrorHandler((error) => {
+    if (error.sourceId === landmarks.layer.id && error.privatePreviewAccess) {
+        const { product, requestAccessURL } = error.privatePreviewAccess;
+        showMessage(`${product} needs access on your API key: ${requestAccessURL}`);
+    }
+});
+```
+
+- A key refused with a `401` or a `403` is reported once. The plugin then requests no more tiles and draws no landmarks.
+- A `403` the key's domain restriction caused has `apiErrorCode` `'InvalidReferer'` and no `privatePreviewAccess`. See [A key refused access](../core/errors.mdx#a-key-refused-access).
+- A tile that fails for another reason is reported, and the other tiles keep loading. A tile whose error has `canRetry`, such as a `5xx` or a lost connection, is reported once until it loads, and requested again when the map moves over it, after one second, doubled with each failure, up to one minute. A tile the [Basis Universal transcoder](#how-it-works) failed to load for is retried the same way, though its `INTERNAL` error has no `canRetry`.
+
+## Configuration
+
+Pass the knobs to start with in the constructor, alongside `withCredentials` and `transcoderPath`. The first sends cookies with each tile request, and follows the SDK's proxy configuration unless you set it.
+
+```javascript
+const landmarks = new Landmarks3D(map, { minZoom: 16, opacity: 1 });
+```
+
+To load the texture transcoder from your own host, copy `basis_transcoder.js` and `basis_transcoder.wasm` from `node_modules/@tomtom-org/maps-sdk-plugin-landmarks-3d/dist` there. Then set `transcoderPath` to the path you serve them at, ending in `/`:
+
+```javascript
+const landmarks = new Landmarks3D(map, { transcoderPath: 'https://assets.example.com/basis/' });
+```
+
+Landmark tiles exist at zoom 15 only, so the landmarks show from zoom 15 at the earliest. A lower `minZoom` draws them from there.
+
+## API reference
+
+[`Landmarks3D`](/maps-sdk-js/api-reference/classes/plugins.Landmarks3D.html) · [`landmarks3DKnobCatalogue`](/maps-sdk-js/api-reference/variables/plugins.landmarks3DKnobCatalogue.html)
+
+## Related guides and examples
+
+### Related guides
+- **[Landmarks 3D plugin](./landmarks-3d.mdx)** - The plugin's three parts, its installation and the light they share
+- **[3D buildings](./landmarks-3d-buildings.mdx)** - The city around the landmarks, which draws them in its own scene
+- **[Map errors](../map/tomtom-map.mdx#map-errors)** - The error handlers the landmark tiles report to
+- **[Terrain](../map/terrain.mdx)** - Hillshade and 3D elevation
+
+### Related examples
+- **[Landmarks 3D plugin](../../examples/landmarks-3d-plugin)** - Landmarks in seven cities, with a control per look knob, their own colours among them, and a built-up colour they follow
+- **[3D landmarks of one kind](../../examples/multiple-maps-landmarks)** - Four towers, cathedrals, stadiums or monuments, each on its own map
+- **[3D terrain map](../../examples/3d-terrain)** - Landmarks standing on the relief
+- **[3D city: landmarks, buildings and surfaces](../../examples/landmarks-3d-city)** - The Eiffel Tower among the buildings round it, over the textured Champ de Mars

@@ -1,0 +1,266 @@
+---
+title: 3D buildings
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.3.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+`Buildings3D`, part of the [Landmarks 3D plugin](./landmarks-3d.mdx), draws the base map's buildings in 3D with Three.js. Their walls get windows, a sun or a moon casts shadows across the buildings and the streets, and the dark street and mono presets light some windows from inside. It extrudes the buildings of the vector tiles your map already loads and makes no requests of its own. It's in [Public Preview](https://docs.tomtom.com/legal/public-preview) and works with any API key.
+
+The playground below draws Manhattan's towers, with controls for their windows, colours, light and shadows, a style switch and a sun that crosses the day:
+
+<GuideDemo demo="buildings-3d-plugin-playground" />
+
+## Get started
+
+Install the plugin and create a pitched map, as the [overview](./landmarks-3d.mdx#installation) shows. Then create the class, with the knobs to start with if you like:
+
+```javascript
+import { Buildings3D } from '@tomtom-org/maps-sdk-plugin-landmarks-3d';
+
+const buildings = new Buildings3D(map, { facade: { pattern: 'office' } });
+```
+
+- While it shows, it takes the place of the style's own 3D buildings, so you don't need the `buildings3D` group. `buildings.setVisible(false)` gives the style's buildings their place back.
+- The style's buildings it hides leave `3D - Building` with nothing to query, so a [`buildings3D` scope](../map/user-events.mdx#using-basemapmodule-for-background-interactions) on `BaseMapModule` never fires. Listen to [`buildings.events`](#hover-and-click) instead.
+- It comes back after `setStyle`, in the look of the new style.
+- Its sun is the map's light once you place one, as for every part of the plugin ([Share the map's light](./landmarks-3d.mdx#share-the-maps-light)). Until then, it comes from the preset. The colour and strength of its light are its own `light` and `ambientLight` knobs.
+- Shadows reach 5 km from the map's centre and fade out on the streets before that, so in a steeply tilted view the farthest buildings stand unshadowed.
+- On [3D terrain](../map/terrain.mdx#3d-elevation), each building stands on the lowest ground under it. The streets' shadows fall on a flat plane, so there only the buildings take them.
+
+## With 3D landmarks
+
+With a [`Landmarks3D`](./landmarks-3d-landmarks.mdx) on the same map, the buildings draw the landmarks in their own scene, so the two stand in one city:
+
+- The buildings leave out those the landmarks replace.
+- The landmarks share the buildings' sun and sky, cast their shadows on the buildings and the streets, and catch the buildings' shadows.
+- The landmark knobs you leave unset take the buildings' wall colour, palette, variation, opacity and `minZoom`.
+- The landmarks' own stonework and windows show as facade detail, as strong as `facade.intensity`, with no gradient down the walls. On `streetSatellite`, the landmarks keep their own colours. Set the landmarks' [`texture`](./landmarks-3d-landmarks.mdx#show-the-landmarks-own-colours) to `color` to draw them in their own colours instead.
+- The landmarks' walls mirror a little of the street and the sky, their darker windows the most, as much as `reflections.intensity` sets.
+
+## Tune the buildings
+
+The look of the buildings is a set of knobs, which follow the rules every part of the plugin follows ([Set the look with knobs](./landmarks-3d.mdx#set-the-look-with-knobs)). A preset gives each knob you leave unset its value. By default, the preset is `auto`, which follows the map style. Light styles and `streetSatellite` get a sun and glass that mirrors the street and the sky, and the dark street and mono styles get a moon and lit windows.
+
+```javascript
+import { setKnob } from '@tomtom-org/maps-sdk/map';
+import { buildings3DKnobCatalogue } from '@tomtom-org/maps-sdk-plugin-landmarks-3d/knobs';
+
+buildings.updateConfig({ facade: { pattern: 'glass' } });                 // every building in glass
+setKnob(buildings, buildings3DKnobCatalogue, 'light.altitude', 12);      // a low sun with long shadows
+buildings.updateConfig({ preset: 'streetDark' });                        // a night city on any map
+buildings.resetConfig();                                                 // every knob back to the map style
+```
+
+- Walls take the style's 3D building colour of each kind of building, and follow the [map colours](../map/styling-map-colors.mdx) that restyle them, until you set `walls.color`. Roofs take a shade darker than the walls, palette included, until you set `roofs.color` or a `roofs.palette`.
+- If you leave them unset, `walls.color` reports the colour of the buildings of no named kind, and `roofs.color` the walls' colour, not the darker shade drawn.
+- `streetSatellite` has no 3D buildings to take colours from, so its preset brings walls and roofs of its own. The buildings draw where a street style draws its own: over the roads and bridges, under the labels.
+- `getKnob` returns the preset's value for a knob you leave unset, and the map's accent for `hover.color` and `click.color`. Unset, `light.direction` and `light.altitude` return the map's light once one is placed, the direction in whole degrees.
+
+The knobs belong to `Buildings3D` and draw its own layer. A few reach past it, into the style's 3D buildings and the landmarks, and the map's light feeds two of them:
+
+```d2
+direction: right
+
+Buildings: "Buildings3D: buildings3DKnobCatalogue" {
+  style: {
+    fill: "#f3e5f5"
+    stroke: "#4a148c"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 16
+  }
+}
+
+Landmarks: "Landmarks3D: its unset knobs" {
+  style: {
+    fill: "#fff3e0"
+    stroke: "#e65100"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 14
+  }
+}
+
+MapLibre: MapLibre map {
+  style: {
+    fill: "#e8eef8"
+    stroke: "#295DAA"
+    stroke-width: 2
+    font-color: "#295DAA"
+    border-radius: 8
+    font-size: 16
+  }
+
+  Layer: "tomtom-3d-buildings\nthe buildings and the landmarks, one scene" {
+    style: {
+      fill: "#295DAA"
+      stroke: "#295DAA"
+      font-color: white
+      border-radius: 4
+      font-size: 14
+    }
+  }
+  StyleBuildings: "3D - Building\nfiltered out" {
+    style: {
+      fill: "#295DAA"
+      stroke: "#295DAA"
+      font-color: white
+      border-radius: 4
+      font-size: 14
+    }
+  }
+  Light: "The map's light,\nset by view.light" {
+    style: {
+      fill: "#295DAA"
+      stroke: "#295DAA"
+      font-color: white
+      border-radius: 4
+      font-size: 14
+    }
+  }
+}
+
+Buildings -> MapLibre.Layer: "every knob" {
+  style.stroke-width: 2
+}
+Buildings -> MapLibre.StyleBuildings: "visible" {
+  style.stroke-width: 2
+}
+Buildings -> Landmarks: "walls.color · walls.palette*\nwalls.variation · hover · click\nopacity · minZoom" {
+  style.stroke-width: 2
+}
+Buildings -> MapLibre.Layer: "facade.intensity · reflections.intensity\nshadows.* on the landmarks too" {
+  style.stroke-width: 2
+  style.stroke-dash: 3
+}
+Landmarks -> MapLibre.Layer: "drawn among the buildings" {
+  style.stroke-width: 2
+}
+MapLibre.Light -> Buildings: "light.direction · light.altitude\nwhile unset" {
+  style.stroke: "#295DAA"
+  style.stroke-dash: 4
+}
+```
+
+### Knobs
+
+| Knob | Values | Unset |
+|---|---|---|
+| `visible` | `true` or `false` | `true` |
+| `preset` | `auto` or a standard style ID | `auto` |
+| `opacity` | 0 to 1 | `1` |
+| `minZoom` | 13 to 22 | `15` |
+| `facade.pattern` | `mixed`, `residential`, `office`, `glass` or `plain`. `mixed` picks one by the building's height | `mixed` |
+| `facade.intensity` | 0 (plain walls) to 1 | the preset's |
+| `facade.floorHeightMeters` | 2.5 to 6: the height of one storey, which spaces the rows of windows | `3.4` |
+| `walls.color`, `roofs.color` | a CSS colour | the style's 3D building colours |
+| `walls.palette` | CSS colours, or map colours by their knob ID such as `colors.artificial`: each building takes one | none |
+| `walls.paletteMode` | `pick` (one colour) or `blend` (a mix of two neighbouring ones) | `pick` |
+| `walls.paletteIntensity` | 0 (the wall colour) to 1 (the palette colour) | `1` |
+| `roofs.palette`, `roofs.paletteMode`, `roofs.paletteIntensity` | as the walls' ones, for the roofs | none, `pick` and `1`: the roofs follow the walls |
+| `walls.variation` | 0 (all alike) to 1: how much each building's shade differs from the next | `0.12` |
+| `hover.color`, `click.color` | a CSS colour: what the [hovered and the clicked building](#hover-and-click) turn towards | the map's `colors.accent`, otherwise blue |
+| `hover.intensity`, `click.intensity` | 0 (no change) to 1 (the full colour) | `0.35` and `0.7` |
+| `windows.color` | a CSS colour | the preset's |
+| `reflections.intensity` | 0 (matte) to 1: how much the window glass mirrors the street, the facades across it with their windows, and the sky, and catches the sun. The reflection slides across the glass as the camera moves. The street it mirrors takes the same sun and sky light, the sky glows on the sun's side, and panes in shadow lose the sun. Glass curtain walls reflect the most, and `ambientLight.color` is the sky they mirror | `0.7` |
+| `litWindows.color`, `litWindows.fraction`, `litWindows.intensity` | a CSS colour, then the share and brightness of the windows lit from inside, 0 to 1 | the preset's, no lit windows on light styles |
+| `light.direction`, `light.altitude` | 0 to 359 degrees clockwise from north, then 5 to 90 degrees above the horizon | the map's light, otherwise the preset's |
+| `light.color`, `light.intensity` | a CSS colour, then 0 to 1 | the preset's |
+| `ambientLight.color`, `ambientLight.intensity` | the light from the sky, which lights the walls in shade: a CSS colour, then 0 to 1 | the preset's |
+| `shadows.visible`, `shadows.intensity` | `true` or `false`, then 0 to 1 | the preset's |
+| `roadLabels.occluded`, `pois.occluded` | `true` draws the road names, or the style's POIs, under the buildings, so a building that covers a label hides it. A hidden POI still keeps other labels off its place, and the labels moved under give way to the ones above them where they collide | `false` |
+
+## Vary the colours
+
+By default, every building takes its wall colour in a shade a little lighter or darker than its neighbours. Give the walls a palette, an array of your own colours, and each building takes one of them instead:
+
+```javascript
+buildings.updateConfig({ walls: { palette: ['#b5654a', '#c47f5e', '#d2a98c'] } });              // brick and stucco
+buildings.updateConfig({ walls: { palette: ['#efe4cf', '#cdb07f'], paletteMode: 'blend' } });   // every shade in between
+buildings.updateConfig({ walls: { palette: ['colors.artificial', 'colors.land'], paletteIntensity: 0.3 } }); // a hint of the map's colours
+buildings.updateConfig({ roofs: { palette: ['#5b6770', '#8c5a44'] } });                         // roofs of their own
+buildings.updateConfig({ walls: { variation: 0.4 } });                                         // one colour, a shade per building
+```
+
+- A palette holds CSS colours, map colours by their knob ID, such as `colors.artificial` or `colors.accent`, or both. A map colour follows the map as a [map theme](./map-theme.mdx) or [`setMapColors`](../map/styling-map-colors.mdx) changes it. A map colour the map hasn't set, such as `colors.accent` with no theme, is left out.
+- `paletteMode` is `pick`, one colour per building, or `blend`, a mix of two neighbouring colours anywhere along the palette.
+- `paletteIntensity` moves each building from the wall colour, at 0, to its palette colour, at 1. Keep it low for a hint of the palette over the style's colours.
+- `variation` makes each building lighter or darker and a little warmer or cooler, with or without a palette.
+- Roofs follow the walls, palette included, until you give them a `roofs.palette`, with its own `roofs.paletteMode` and `roofs.paletteIntensity`, or a `roofs.color`. A palette draws with its first eight colours.
+- The landmarks take the walls' variation, and their palette too while you leave the landmarks' `color` unset. Set the landmarks' own [`palette` or `variation`](./landmarks-3d-landmarks.mdx#knobs) to tell them apart from the city.
+
+## Hover and click
+
+`buildings.events` and `landmarks.events` are [user events](../map/user-events.mdx), as on a map module. A handler gets the building or the landmark under the pointer as a `BuildingHit`, with its `id` and its `properties`:
+
+```javascript
+buildings.events.on('click', (building) => console.log(building.id, building.properties.height));
+landmarks.events.on('hover', (landmark) => console.log(landmark.properties.position)); // [longitude, latitude]
+```
+
+The example below picks buildings and landmarks over Amsterdam and paints the selected one:
+
+<GuideDemo demo="buildings-3d-interaction" />
+
+- While a handler listens, the hovered building turns towards `hover.color` and the clicked one towards `click.color`, until the next click lands elsewhere. A hover handler lights up the hovered building only. The clicked one needs a click handler.
+- Unset, both colours are the map's `colors.accent`, set by a [map theme](./map-theme.mdx) or [`setMapColors`](../map/styling-map-colors.mdx), and blue without one. The landmarks take the buildings' colours and intensities while you leave theirs unset.
+- A building's `properties` are its feature properties in the vector tiles, such as `height`. Not every building has a `height`. A landmark's `properties` hold its `position`.
+- The building or the landmark nearest the eye takes the pointer, so a building in front of a landmark hides it from the pointer too. Over the style's own 3D buildings, without a `Buildings3D`, a landmark takes the pointer wherever it shows.
+- The style's own 3D buildings take hover, click and colours by id through the [base map module](../map/base-map.mdx#hovered-clicked-and-coloured-3d-buildings) instead.
+
+## Colour single buildings and landmarks
+
+Give buildings and landmarks a colour of their own by the ids their events report:
+
+```javascript
+buildings.setBuildingColors({ 6183703601: '#e4572e', 6183703602: '#29335c' });
+landmarks.setLandmarkColors({ [landmark.id]: '#1faa59' });
+buildings.getBuildingColors(); // { 6183703601: '#e4572e', 6183703602: '#29335c' }
+landmarks.getLandmarkColors(); // { [landmark.id]: '#1faa59' }
+buildings.setBuildingColors({}); // every building back to its own colour
+```
+
+- Each call replaces the colours of the one before. To add a colour, pass the ones from `getBuildingColors()`, or `getLandmarkColors()` for landmarks, with it.
+- A building's colour takes the place of its wall colour, palette and variation, on its roof too. Its windows still show.
+- A building keeps its id across tiles and zoom levels, and a landmark in every session, so you can colour one before it loads.
+- The map data splits a building of several heights into parts. The plugin draws, colours and lights up the parts as one building, under the id of its whole outline, which its events report.
+- To colour buildings you know by place, get their ids from the base map: [`getBuildingIdAt`](../map/base-map.mdx#highlight-buildings-you-know-by-place) returns the id `setBuildingColors` takes here too, once the map is idle with the place in view.
+- Under `texture: 'color'`, a landmark you colour draws as under `detail`: your colour, with its texture's light and shade over it.
+- The hover and click colours show over the colours you give.
+
+## With map effects and a map theme
+
+The buildings and the landmarks pair with two other plugins. The [map effects plugin](./map-effects.mdx) makes lit windows glow and softens the city with distance, and the [map-theme plugin](./map-theme.mdx) gives the map colours the walls follow. The playground below circles the Empire State Building in eight looks, each setting the style, the colours, the buildings, the landmarks and the effects together:
+
+<GuideDemo demo="cinematic-city-orbit" />
+
+- [Bloom](./map-effects-bloom.mdx) brings out the lit windows of a dark preset.
+- The [depth of field](./map-effects-depth-of-field.mdx) treats the map as flat, so each part of a tower takes the depth of the ground behind it on screen, and its top blurs with the far ground. To keep a landmark sharp, raise `depthOfField.focus` towards the far ground.
+- Leave `walls.color` unset to have the walls follow the theme's `artificial` colour, and set the landmarks' `color` to make them stand out from the city.
+- Give the walls a palette of map colours, such as `['colors.artificial', 'colors.accent']`, at a low `paletteIntensity`, and the theme tints every building a little differently.
+
+## API reference
+
+[`Buildings3D`](/maps-sdk-js/api-reference/classes/plugins.Buildings3D.html) · [`buildings3DKnobCatalogue`](/maps-sdk-js/api-reference/variables/plugins.buildings3DKnobCatalogue.html)
+
+## Related guides and examples
+
+### Related guides
+- **[Landmarks 3D plugin](./landmarks-3d.mdx)** - The plugin's three parts, its installation and the light they share
+- **[3D landmarks](./landmarks-3d-landmarks.mdx)** - The landmarks the buildings draw among them
+- **[Base map](../map/base-map.mdx#hovered-clicked-and-coloured-3d-buildings)** - Hover, click and colours by id on the style's own 3D buildings
+- **[Map colours](../map/styling-map-colors.mdx)** - The colours the walls follow while you leave them unset
+
+### Related examples
+- **[Buildings 3D playground](../../examples/buildings-3d-plugin-playground)** - Manhattan's towers with windows, shadows, a day passing and the look's main knobs live
+- **[Interactive 3D buildings](../../examples/buildings-3d-interaction)** - Buildings and landmarks over Amsterdam lit up under the pointer, selected with a click and painted a colour of their own
+- **[Cinematic city orbit](../../examples/cinematic-city-orbit)** - The Empire State Building circled in eight looks, mixing landmarks, buildings, bloom, depth of field and a map theme
+- **[3D city at night](../../examples/night-3d-city)** - Westminster's lit windows on a dark style, glowing under bloom and glare
