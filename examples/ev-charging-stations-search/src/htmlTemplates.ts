@@ -6,14 +6,14 @@ import genericIcon from './ic-generic-24.svg?raw';
 export const escapeHtml = (value: string): string =>
     value.replaceAll(
         /[&<>"']/g,
-        (ch) =>
+        (character) =>
             ({
                 '&': '&amp;',
                 '<': '&lt;',
                 '>': '&gt;',
                 '"': '&quot;',
                 "'": '&#39;',
-            })[ch] as string,
+            })[character] as string,
     );
 
 export const connectorsHTML = (chargingPark: ChargingPark): string => {

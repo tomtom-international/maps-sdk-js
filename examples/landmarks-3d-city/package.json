@@ -1,0 +1,27 @@
+{
+  "name": "@examples/landmarks-3d-city",
+  "description": "Example drawing a whole 3D city with the Landmarks 3D plugin: textured water, lawns and trees, the base map's buildings and the Eiffel Tower, under one sun.",
+  "type": "module",
+  "scripts": {
+    "build": "vite build --config ../example-vite.config.ts",
+    "clean:dist": "rimraf ./dist",
+    "develop": "vite --config ../example-vite.config.ts",
+    "type-check": "tsc --noEmit",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test  --ui",
+    "test:e2e:update-snapshots": "playwright test --update-snapshots",
+    "start-test-server:prod": "vite serve dist/prod --port 9050"
+  },
+  "dependencies": {
+    "@tomtom-org/maps-sdk": "catalog:",
+    "@tomtom-org/maps-sdk-plugin-landmarks-3d": "catalog:"
+  },
+  "devDependencies": {
+    "@playwright/test": "catalog:",
+    "@types/node": "catalog:",
+    "rimraf": "catalog:",
+    "rollup-plugin-visualizer": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  }
+}

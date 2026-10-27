@@ -24,6 +24,8 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
 const LANDMARK_CENTER: [number, number] = [-73.9857, 40.7484];
 const LANDMARK_HEIGHT_METERS = 443;
 const ORBIT_DEGREES_PER_SECOND = 4;
+// The first frame after a stall, such as a hidden tab, turns no further than this.
+const MAX_FRAME_SECONDS = 0.1;
 // Aims at the landmark's middle rather than its foot, so the orbit turns around the whole tower.
 const ORBIT_CAMERA = { center: LANDMARK_CENTER, elevation: LANDMARK_HEIGHT_METERS / 2, zoom: 16, pitch: 60 };
 
@@ -120,7 +122,8 @@ const sliderLabels: Partial<Record<EffectKnobId, string>> = {
     let orbitFrame = 0;
     const orbitFrom = (previous: number) => (now: number) => {
         const { mapLibreMap } = map;
-        mapLibreMap.setBearing(mapLibreMap.getBearing() + ((now - previous) / 1000) * ORBIT_DEGREES_PER_SECOND);
+        const seconds = Math.min(MAX_FRAME_SECONDS, (now - previous) / 1000);
+        mapLibreMap.setBearing(mapLibreMap.getBearing() + seconds * ORBIT_DEGREES_PER_SECOND);
         orbitFrame = requestAnimationFrame(orbitFrom(now));
     };
     const setOrbiting = (orbiting: boolean) => {

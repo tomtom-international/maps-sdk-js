@@ -7,7 +7,7 @@ import { initTogglePanel } from './togglePanel';
 
 TomTomConfig.instance.put({ apiKey: API_KEY });
 
-const STOP_QUERIES = ['Barcelona, Spain', 'Mataró, Spain', 'Girona, Spain'];
+const STOP_QUERIES = ['Plaça de Sant Jaume, Barcelona, Spain', 'Mataró, Spain', 'Girona, Spain'];
 
 const element = <T extends HTMLElement>(selector: string): T => {
     const found = document.querySelector<T>(selector);

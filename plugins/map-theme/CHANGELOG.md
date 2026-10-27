@@ -1,5 +1,15 @@
 # @tomtom-org/maps-sdk-plugin-map-theme
 
+## 0.3.9
+
+### Patch Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - The package ships its `CHANGELOG.md`, as the SDK does, so you can read what changed between two releases from `node_modules`
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - CSS `var()` cycles and runaway expansion are bounded, and every property on a cycle is invalid, as in a browser
+  
+  - Image themes sample the whole image, so a wide image no longer reads only a few columns
+
 ## 0.3.8
 
 ### Patch Changes

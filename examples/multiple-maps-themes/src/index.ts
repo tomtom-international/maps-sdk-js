@@ -32,7 +32,9 @@ const INITIAL_STYLE: StandardStyleID = 'streetLight';
     const styleSelector = document.querySelector('#ui-map-style') as HTMLSelectElement;
     standardStyleIDs.forEach((id) => styleSelector.add(new Option(id, id, id === INITIAL_STYLE, id === INITIAL_STYLE)));
     styleSelector.addEventListener('change', () => {
-        const style = styleSelector.value as StandardStyleID;
+        const style = standardStyleIDs.find((id) => id === styleSelector.value);
+        if (!style) return;
+
         // Set before the switch, the themes carry into the new style and land with its first frame.
         applyThemes(style);
         maps.forEach((map) => map.setStyle(style));

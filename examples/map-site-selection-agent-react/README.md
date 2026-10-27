@@ -1,6 +1,6 @@
 # TomTom Maps SDK Agent Toolkit — Site Selection Agent
 
-A conversational **site-selection co-pilot** built on the TomTom Maps SDK Agent Toolkit plugin. It helps decide where to open, relocate, or close a physical retail/service location, drawing every analysis straight onto a live map and into rich side panels. It pairs bespoke domain tools (profile, rank, whitespace, cannibalization, report) with the toolkit's generic map/data/sandbox tools, a per-turn intent classifier, and a scoped system prompt.
+A conversational **site-selection co-pilot** built on the TomTom Maps SDK Agent Toolkit plugin. It helps decide where to open, relocate or close a physical retail/service location, drawing every analysis straight onto a live map and into rich side panels. It pairs bespoke domain tools (profile, rank, whitespace, cannibalization, report) with the toolkit's generic map/data/sandbox tools, a per-turn intent classifier and a scoped system prompt.
 
 ## Setup
 
@@ -15,18 +15,19 @@ A conversational **site-selection co-pilot** built on the TomTom Maps SDK Agent 
    AZURE_API_KEY=your-azure-api-key
    AZURE_DEPLOYMENT_ID=gpt-4o
    ```
-   (Or a comma-separated picker, which takes precedence: `AZURE_MODEL_IDS=gpt-4o,gpt-4o-mini`.)
-3. Install and run:
+   (Or `AZURE_MODEL_IDS=gpt-4o,gpt-4o-mini`, which takes precedence: the agent runs on its first model.)
+3. From the repository root, install, build the SDK and the plugins the example loads from their `dist/`, then run it:
    ```bash
    pnpm install
-   pnpm develop
+   pnpm build:sdk && pnpm build:plugins
+   cd examples/map-site-selection-agent-react && pnpm develop
    # → http://localhost:5173/
    ```
 
 ## What it can do
 
 - **Profile a site** — "Profile 425 Fremont St for a coffee shop" → catchment, competitors, parking, area make-up.
-- **Rank a shortlist** — "Rank these three addresses for a gym, weight competition highest" → a glass-box 4-factor score.
+- **Rank a shortlist** — "Rank these three addresses for a gym, weight competition highest" → a glass-box score over spend power, competition and accessibility.
 - **Find whitespace** — "Where in East Las Vegas is there demand but no gym within a 10-minute walk?"
 - **Check cannibalization** — "Would a store in Summerlin overlap my existing branches?"
 - **Compile a report** — assembles the analyses into a styled HTML report.
@@ -35,7 +36,7 @@ A conversational **site-selection co-pilot** built on the TomTom Maps SDK Agent 
 
 The agent is not limited to fixed parameters or TomTom data:
 
-- **Session preferences** — catchment size, travel mode, scoring weights, and demand anchors live in shared agent state. Say "from now on use a 12-minute drive" or "always weight competition highest" and later analyses inherit it (`updateSitePreferences`); any single request can still override.
+- **Session preferences** — catchment size, travel mode, scoring weights and demand anchors live in shared agent state. Say "from now on use a 12-minute drive" or "always weight competition highest" and later analyses inherit it (`updateSitePreferences`); any single request can still override.
 - **Bring-your-own-data (BYOD)** — load your own GeoJSON layer by URL (`addByodSource`; this demo accepts any public https URL — a production app can restrict hosts via `MapAgentOptions.byod.validateSourceUrl`), then feed it into the analyses:
   - rank the **features of a BYOD layer** as candidate sites (points as-is, polygons/lines by centroid),
   - score the **Spend-power factor** from a BYOD demand/demographics layer,

@@ -1,5 +1,6 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { bboxFromGeoJSON, defaultSectionTypes, type Routes, type WaypointLike } from '@tomtom-org/maps-sdk/core';
+import type { RoutingModule } from '@tomtom-org/maps-sdk/map';
 import { calculateRoute } from '@tomtom-org/maps-sdk/services';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useDebounce } from 'use-debounce';
@@ -88,6 +89,8 @@ export const useRoutePlan = (
     const lineHovered = pointed?.lineHovered;
 
     const draw = useMapQueue();
+    // The curve bands last set on the routing module: setting them rebuilds every routing layer, so only a change does.
+    const appliedCurveBands = useRef<{ routing: RoutingModule; visible: boolean }>(undefined);
     useEffect(() => {
         if (modules) void draw(() => modules.routing.showWaypoints(waypoints));
     }, [modules, waypoints, draw]);
@@ -99,7 +102,11 @@ export const useRoutePlan = (
             if (!plan) return modules.routing.clearRoutes();
 
             const visible = plan.seeksCurves;
-            modules.routing.updateConfig({ sections: { curve: { visible }, curvyStretch: { visible } } });
+            const applied = appliedCurveBands.current;
+            if (applied?.routing !== modules.routing || applied.visible !== visible) {
+                modules.routing.updateConfig({ sections: { curve: { visible }, curvyStretch: { visible } } });
+                appliedCurveBands.current = { routing: modules.routing, visible };
+            }
             return modules.routing.showRoutes(plan.routes);
         });
     }, [modules, plan, draw]);

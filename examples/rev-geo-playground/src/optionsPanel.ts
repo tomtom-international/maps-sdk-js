@@ -1,5 +1,5 @@
-import type { GeographyType, GeopoliticalView } from '@tomtom-org/maps-sdk/core';
-import { geographyTypes, geopoliticalViews } from '@tomtom-org/maps-sdk/core';
+import type { GeographyType } from '@tomtom-org/maps-sdk/core';
+import { geographyTypes, geopoliticalViews, servesGeopoliticalView } from '@tomtom-org/maps-sdk/core';
 import type { ReverseGeocodingOptionalParams } from '@tomtom-org/maps-sdk/services';
 import { element } from './dom';
 
@@ -22,7 +22,10 @@ const compassPoint = (degrees: number): string => COMPASS_POINTS[Math.round(degr
 // `geopoliticalViews` and `geographyTypes` are the SDK's own vocabularies, so the panel cannot offer a value
 // the service does not know.
 const fillControls = (): void => {
-    viewSelect.innerHTML = geopoliticalViews.map((view) => `<option value="${view}">${view}</option>`).join('');
+    viewSelect.innerHTML = geopoliticalViews
+        .filter((view) => servesGeopoliticalView(view, 'reverseGeocoding'))
+        .map((view) => `<option value="${view}">${view}</option>`)
+        .join('');
 
     areaTypeList.innerHTML = geographyTypes
         .map(
@@ -35,8 +38,8 @@ const fillControls = (): void => {
 };
 
 const selectedAreaTypes = (): GeographyType[] =>
-    [...areaTypeList.querySelectorAll<HTMLInputElement>('input:checked')].map(
-        (checkbox) => checkbox.value as GeographyType,
+    [...areaTypeList.querySelectorAll<HTMLInputElement>('input:checked')].flatMap((checkbox) =>
+        geographyTypes.filter((geographyType) => geographyType === checkbox.value),
     );
 
 const syncRadiusReadout = (): void => {
@@ -67,7 +70,7 @@ export const readOptions = (): ReverseGeocodingOptionalParams => {
         ...(radiusMeters > 0 && { radiusMeters }),
         ...(geographyTypes.length > 0 && { geographyTypes }),
         ...(!headingSlider.disabled && { heading: Number(headingSlider.value) }),
-        geopoliticalView: viewSelect.value as GeopoliticalView,
+        geopoliticalView: geopoliticalViews.find((view) => view === viewSelect.value),
     };
 };
 

@@ -1,9 +1,9 @@
 import { type Map as MapLibreMap, Marker } from 'maplibre-gl';
 import './clusterPins.css';
-import type { Cluster } from '../agent/types';
+import type { Cluster, ClusterTrend } from '../agent/types';
 import { formatDelay } from '../utils/format';
 
-const TREND_ICONS: Record<string, string> = {
+const TREND_ICONS: Record<ClusterTrend, string> = {
     growing: '↑',
     fading: '↓',
     steady: '→',
@@ -35,13 +35,13 @@ export class ClustersOverlay {
             const el = document.createElement('button');
             el.type = 'button';
             el.className = 'cluster-pin';
-            el.dataset.trend = c.trend ?? 'unknown';
+            el.dataset.trend = c.trend;
             el.title = `${c.headline} — ${c.incidentIds.length} incidents`;
             el.setAttribute('aria-label', `Cluster ${idx + 1}: ${c.headline} — ${c.incidentIds.length} incidents`);
 
             const delay =
                 c.totalDelaySeconds != null && c.totalDelaySeconds > 0 ? formatDelay(c.totalDelaySeconds) : null;
-            const trendIcon = TREND_ICONS[c.trend ?? 'unknown'] ?? '';
+            const trendIcon = TREND_ICONS[c.trend];
 
             el.innerHTML = [
                 '<span class="cluster-pin-bg"></span>',

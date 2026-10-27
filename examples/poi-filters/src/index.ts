@@ -50,7 +50,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     const toggleCategoryFilter = (category: FilterablePOICategory, isChecked: boolean) => {
         isChecked
             ? categoryFilter.values.push(category)
-            : (categoryFilter.values = categoryFilter.values.filter((cat) => cat != category));
+            : (categoryFilter.values = categoryFilter.values.filter((value) => value != category));
         applyFilters();
     };
 

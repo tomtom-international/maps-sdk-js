@@ -5,7 +5,7 @@ import { sanityE2ETest } from '../../src/e2e-test-utils/sanityE2ETest';
 test.describe('sanity', () => {
     test('sanity test - prod', { tag: TAG_PROD }, async ({ page }) => {
         // Each row counts the sections of its type on the route, and the traffic incidents among
-        // them change through the day. The chrome shot is compared at zero tolerance, so the counts
+        // them change through the day. The chrome shot is compared at near-zero tolerance, so the counts
         // are pinned and only their styling is what the baseline holds.
         await sanityE2ETest({ page, testInfo: test.info(), uiPinnedValues: { '.section-count': '00' } });
     });

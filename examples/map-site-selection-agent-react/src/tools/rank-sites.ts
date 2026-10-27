@@ -1,10 +1,10 @@
 import { getPosition, type PolygonFeatures } from '@tomtom-org/maps-sdk/core';
 import type { ReachableRange, ToolEntry, ToolEntryBuilder, ToolState } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import * as turf from '@turf/turf';
-import type { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
+import type { FeatureCollection } from 'geojson';
 import { z } from 'zod';
 import { byodCandidateSites, outerBoundary, requireByodFeatures, sumNumericInArea } from '../agent/byod-inputs';
-import { clipPolygons } from '../agent/geometry';
+import { type AreaFeature, clipPolygons } from '../agent/geometry';
 import {
     describeDefaultWeights,
     type FactorValues,
@@ -13,8 +13,9 @@ import {
     resolveWeights,
     scoreSites,
 } from '../agent/scoring';
-import { getSitePreferences, resolveCatchment } from '../agent/site-selection-state';
-import { countHouseholds, householdsEnabled, placeInfo, type SearchFeature } from '../demographics/households';
+import { getSitePreferences, type ResolvedCatchment, resolveCatchment } from '../agent/site-selection-state';
+import { householdsEnabled } from '../demographics/experimental-search';
+import { countHouseholds, placeInfo, type SearchFeature } from '../demographics/households';
 import { startProgress } from '../progress/progress-store';
 import { pointCollection, pointFeature, publishRanking, type RankedSiteProps } from '../results/results-store';
 import { rankedSiteColor } from '../viz/score-colors';
@@ -188,13 +189,10 @@ type ResolvedCandidate = { label: string; position: [number, number]; byod?: boo
 // An optional BYOD layer whose numeric `property` feeds the spend-power/demand factor.
 type DemandLayer = { features: FeatureCollection; property: string };
 
-const collectSite = async (
+export const collectSite = async (
     candidate: ResolvedCandidate,
     index: number,
-    options: {
-        walking: boolean;
-        walkReachMeters: number;
-        driveMinutes: number;
+    options: ResolvedCatchment & {
         concept: string;
         competitorCategories?: string[];
         includeParking: boolean;
@@ -220,10 +218,11 @@ const collectSite = async (
             ? sumNumericInArea(options.demandLayer.features, geometry, options.demandLayer.property).value
             : null;
 
-    // The reachable range can come back empty/degenerate (e.g. a non-drivable origin like a pedestrian
-    // zone). Then every count reads 0 and would falsely score as "no rivals" → top rank. Detect the
-    // near-zero area and mark the site unavailable so the scorer EXCLUDES it instead.
-    if (turf.area(catchment) / 1e6 < MIN_CATCHMENT_KM2) {
+    // The drive-time range can come back empty/degenerate (e.g. a non-drivable origin like a pedestrian
+    // zone); a walking circle never does, however small its radius. Then every count reads 0 and would
+    // falsely score as "no rivals" → top rank. Detect the near-zero area and mark the site unavailable
+    // so the scorer EXCLUDES it instead.
+    if (!options.walking && turf.area(catchment) / 1e6 < MIN_CATCHMENT_KM2) {
         return {
             id: `site-${index}`,
             label,
@@ -237,7 +236,7 @@ const collectSite = async (
             nearestParkingPosition: null,
             demand: null,
             byod,
-            unavailable: `no usable ${options.walking ? 'walking' : 'drive-time'} catchment from this site (the reachable area came back empty)`,
+            unavailable: 'no usable drive-time catchment from this site (the reachable area came back empty)',
         };
     }
 
@@ -275,11 +274,11 @@ const resolveCandidates = async (
 ): Promise<{
     candidates: ResolvedCandidate[];
     skipped: string[];
-    byodBoundary: Feature<Polygon | MultiPolygon> | null;
+    byodBoundary: AreaFeature | null;
 }> => {
     const candidates: ResolvedCandidate[] = [];
     const skipped: string[] = [];
-    let byodBoundary: Feature<Polygon | MultiPolygon> | null = null;
+    let byodBoundary: AreaFeature | null = null;
 
     for (const site of params.sites ?? []) {
         const place = await geocodeSite(site.address, state);
@@ -335,14 +334,19 @@ const confidenceOf = (sites: CollectedSite[]): 'high' | 'medium' | 'low' => {
 };
 
 // The aggregated map overlay for the whole ranked set: every site's competitor + parking pins, plus a
-// connector to each site's nearest competitor and nearest parking (with its distance).
-const buildRankedOverlay = (collected: CollectedSite[]): { points: OverlayPoint[]; lines: OverlayLine[] } => {
+// connector to each site's nearest competitor and nearest parking (with its distance). A place inside
+// several overlapping catchments gets one pin, not one per site.
+export const buildRankedOverlay = (collected: CollectedSite[]): { points: OverlayPoint[]; lines: OverlayLine[] } => {
     const points: OverlayPoint[] = [];
     const lines: OverlayLine[] = [];
+    const added = new Set<string>();
     const addPoints = (features: SearchFeature[], kind: OverlayPoint['kind'], fallbackName?: string): void => {
         for (const feature of features) {
+            const key = `${kind}:${feature.id}`;
+            if (added.has(key)) continue;
             const p = getPosition(feature);
             if (!p) continue;
+            added.add(key);
             const place = placeInfo(feature);
             points.push({ position: [p[0], p[1]], kind, name: place.name || fallbackName, info: place.category });
         }
@@ -446,9 +450,16 @@ const executeRankSites = (async (params: RankSitesInput, state: ToolState) => {
             if (result) collected.push(result);
             else skipped.push(candidate.label);
         }
-        if (collected.length === 0) {
+        const rankable = collected.filter((site) => !site.unavailable);
+        if (rankable.length < 2) {
             progress.done();
-            return { error: 'None of the sites could be resolved.' };
+            const unresolved = [...skipped, ...collected.filter((site) => site.unavailable).map((site) => site.label)];
+            return {
+                error:
+                    rankable.length === 0
+                        ? 'None of the sites could be resolved.'
+                        : `Need at least 2 sites to rank; only ${rankable[0].label} could be resolved (not: ${unresolved.join(', ')}).`,
+            };
         }
 
         progress.step(4);
@@ -491,8 +502,8 @@ const executeRankSites = (async (params: RankSitesInput, state: ToolState) => {
         const siteColors = rankedSites.map(rankedSiteColor);
         // Trim only the DRAWN range to the BYOD outer boundary (counts/scores stay over the full
         // range); falls back to the full range with no boundary or no intersection.
-        const drawnCatchment = (site: CollectedSite): Feature<Polygon | MultiPolygon> => {
-            const catchment = site.catchment as Feature<Polygon | MultiPolygon>;
+        const drawnCatchment = (site: CollectedSite): AreaFeature => {
+            const catchment = site.catchment;
             if (!byodBoundary) return catchment;
             const clipped = clipPolygons(catchment, byodBoundary);
             return clipped ? { ...clipped, properties: catchment.properties } : catchment;

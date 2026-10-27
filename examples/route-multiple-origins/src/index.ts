@@ -34,8 +34,8 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         origins.map((_, index) => RoutingModule.create(map, { color: routeColors[index % routeColors.length] })),
     );
 
-    for (const origin of origins) {
-        const routingModule = routingModules[origins.indexOf(origin)];
+    for (const [index, origin] of origins.entries()) {
+        const routingModule = routingModules[index];
         await routingModule.showWaypoints([origin]);
         const route = await calculateRoute({
             locations: [origin, destination],

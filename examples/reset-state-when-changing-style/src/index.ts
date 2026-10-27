@@ -3,7 +3,6 @@ import {
     PlacesModule,
     POIsModule,
     RoutingModule,
-    StandardStyleID,
     standardStyleIDs,
     TomTomMap,
     TrafficIncidentsModule,
@@ -59,9 +58,9 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'es-ES' });
     for (const id of standardStyleIDs) {
         stylesSelector.add(new Option(id));
     }
-    stylesSelector.addEventListener('change', async (event) => {
-        const style = (event.target as HTMLOptionElement).value as StandardStyleID;
-        await map.setStyle(style, { resetState: resetStateToggle.checked });
+    stylesSelector.addEventListener('change', async () => {
+        const styleId = standardStyleIDs.find((id) => id === stylesSelector.value);
+        if (styleId) await map.setStyle(styleId, { resetState: resetStateToggle.checked });
     });
 
     initTogglePanel();

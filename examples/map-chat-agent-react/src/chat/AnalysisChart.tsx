@@ -1,3 +1,4 @@
+import { isChartConfiguration } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import {
     ArcElement,
     BarController,
@@ -26,7 +27,7 @@ import zoomPlugin from 'chartjs-plugin-zoom';
 import { useMemo, useRef } from 'react';
 import { Chart } from 'react-chartjs-2';
 
-// Register every controller + element + scale we expose via `CHART_TYPES`.
+// Register every controller + element + scale the toolkit's `CHART_TYPES` needs.
 // Missing a controller produced a runtime "bar is not a registered controller"
 // error — explicitly listing them keeps the registration honest as new types
 // get added.
@@ -52,8 +53,6 @@ ChartJS.register(
     Filler,
     zoomPlugin,
 );
-
-const CHART_TYPES = new Set<ChartType>(['bar', 'line', 'pie', 'doughnut', 'radar', 'polarArea', 'scatter', 'bubble']);
 
 // Chart types that use cartesian scales — the zoom plugin only makes sense on these.
 // pie/doughnut/radar/polarArea have no x/y zoom semantics.
@@ -132,14 +131,59 @@ const withPaletteDefaults = (config: ChartConfiguration): ChartConfiguration => 
     return config;
 };
 
-const isChartConfiguration = (value: unknown): value is ChartConfiguration => {
-    if (!value || typeof value !== 'object') return false;
-    const v = value as { type?: unknown; data?: unknown };
+const isRegistered = (lookup: () => unknown): boolean => {
+    try {
+        lookup();
+        return true;
+    } catch {
+        return false;
+    }
+};
+
+type ScaleAxisOptions = { type?: string; axis?: unknown; position?: unknown };
+
+const isAxisId = (id: string): boolean => id === 'x' || id === 'y' || id === 'r';
+const AXIS_POSITIONS = new Set(['top', 'bottom', 'left', 'right']);
+const namesAxis = (options: ScaleAxisOptions): boolean =>
+    !!options.axis || (typeof options.position === 'string' && AXIS_POSITIONS.has(options.position));
+const hasScaleDefaults = (type: string): type is keyof typeof ChartJS.defaults.scales =>
+    type in ChartJS.defaults.scales;
+
+// Whether Chart.js can build a scale: its type is registered, and its axis can be told the way the config
+// merge tells it, from an id that is or starts with `x`, `y` or `r`, the scale's `axis` or side
+// `position`, a dataset bound to it, or its type's defaults.
+const isRenderableScale = (id: string, scale: ScaleAxisOptions, config: ChartConfiguration): boolean => {
+    const { type } = scale;
+    if (type !== undefined && !isRegistered(() => ChartJS.registry.getScale(type))) return false;
     return (
-        typeof v.type === 'string' &&
-        CHART_TYPES.has(v.type as ChartType) &&
-        typeof v.data === 'object' &&
-        v.data !== null
+        isAxisId(id) ||
+        (id.length > 1 && isAxisId(id[0].toLowerCase())) ||
+        namesAxis(scale) ||
+        config.data.datasets.some(
+            (dataset) =>
+                ('xAxisID' in dataset && dataset.xAxisID === id) || ('yAxisID' in dataset && dataset.yAxisID === id),
+        ) ||
+        (type !== undefined && hasScaleDefaults(type) && namesAxis(ChartJS.defaults.scales[type]))
+    );
+};
+
+/**
+ * Whether Chart.js can build the config: its datasets are an array of objects, every dataset type and
+ * scale it names is registered above, and each scale's axis can be told. Chart.js throws on anything
+ * else, such as a model's `logarithmic` axis, `area` dataset or scale id `delay` with no `axis`, and
+ * nothing above the chart catches that render error.
+ */
+export const isRenderableChart = (config: ChartConfiguration): boolean => {
+    const datasets: unknown = config.data.datasets;
+    if (!Array.isArray(datasets) || !datasets.every((dataset) => dataset !== null && typeof dataset === 'object')) {
+        return false;
+    }
+    const datasetTypes = config.data.datasets.map((dataset) => dataset.type);
+    return (
+        datasetTypes.every((type) => type === undefined || isRegistered(() => ChartJS.registry.getController(type))) &&
+        Object.entries(config.options?.scales ?? {}).every(
+            ([id, scale]) => !scale || typeof scale !== 'object' || isRenderableScale(id, scale, config),
+        )
     );
 };
 
@@ -239,7 +283,7 @@ export function AnalysisChart({ config, expanded = false }: AnalysisChartProps) 
     // from the assistant-ui state store, and layer defaults on top.
     const prepared = useMemo(
         () =>
-            isChartConfiguration(config)
+            isChartConfiguration(config) && isRenderableChart(config)
                 ? withInteractivityDefaults(withPaletteDefaults(structuredClone(config)))
                 : null,
         [config],

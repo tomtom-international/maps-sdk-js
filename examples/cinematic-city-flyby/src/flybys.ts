@@ -1,3 +1,5 @@
+import type { FlybyLook } from './themes';
+
 /**
  * A banked turn around a landmark, the camera glancing at it as it passes. The camera joins the circle on
  * the tangent from where the leg before ends, and leaves it on the tangent towards where the next one
@@ -10,6 +12,8 @@ export type LandmarkTurn = {
     heightMeters: number;
     radiusMeters: number;
     altitudeMeters: number;
+    /** The ground the landmark stands on, metres above sea level, over the 3D terrain; 0 if left out. */
+    groundMeters?: number;
 };
 
 /**
@@ -26,14 +30,23 @@ export type StreetRun = {
 export type FlightLeg = LandmarkTurn | StreetRun;
 
 /**
- * A loop through a city, opening on its first landmark: the camera flies straight from the end of each
- * leg to the start of the next, soaring higher the further apart they are.
+ * A loop through a city or over a landscape, opening on its first landmark: the camera flies straight from
+ * the end of each leg to the start of the next, soaring higher the further apart they are. A landscape is
+ * flown over the 3D terrain, its altitudes in metres above sea level, and `speedFactor` times faster, as its
+ * turns are kilometres across.
  */
-export type Flyby = { label: string; legs: [LandmarkTurn, ...FlightLeg[]] };
+export type Flyby = {
+    label: string;
+    /** The look that shows the place at its best, by its label, which picking the place applies. */
+    look: FlybyLook;
+    legs: [LandmarkTurn, ...FlightLeg[]];
+} & ({ group: 'Cities' } | { group: 'Landscapes'; speedFactor: number });
 
 export const flybys: Flyby[] = [
     {
         label: 'New York',
+        group: 'Cities',
+        look: 'Nordic',
         legs: [
             {
                 kind: 'landmark',
@@ -67,6 +80,8 @@ export const flybys: Flyby[] = [
     },
     {
         label: 'Las Vegas',
+        group: 'Cities',
+        look: 'Neon',
         legs: [
             {
                 kind: 'landmark',
@@ -99,6 +114,8 @@ export const flybys: Flyby[] = [
     },
     {
         label: 'Paris',
+        group: 'Cities',
+        look: 'Sunset',
         legs: [
             {
                 kind: 'landmark',
@@ -151,6 +168,8 @@ export const flybys: Flyby[] = [
     },
     {
         label: 'London',
+        group: 'Cities',
+        look: 'Moonlight',
         legs: [
             {
                 kind: 'landmark',
@@ -196,6 +215,8 @@ export const flybys: Flyby[] = [
     },
     {
         label: 'Singapore',
+        group: 'Cities',
+        look: 'Monsoon',
         legs: [
             {
                 kind: 'landmark',
@@ -235,6 +256,8 @@ export const flybys: Flyby[] = [
     },
     {
         label: 'Barcelona',
+        group: 'Cities',
+        look: 'Kodachrome',
         legs: [
             {
                 kind: 'landmark',
@@ -269,6 +292,8 @@ export const flybys: Flyby[] = [
     },
     {
         label: 'Rome',
+        group: 'Cities',
+        look: 'Desert',
         legs: [
             {
                 kind: 'landmark',
@@ -300,6 +325,8 @@ export const flybys: Flyby[] = [
     },
     {
         label: 'Sydney',
+        group: 'Cities',
+        look: 'Tilt-shift',
         legs: [
             {
                 kind: 'landmark',
@@ -325,6 +352,136 @@ export const flybys: Flyby[] = [
                 center: [151.2093, -33.8705],
                 heightMeters: 309,
                 radiusMeters: 380,
+                altitudeMeters: 300,
+            },
+        ],
+    },
+    {
+        label: 'Dolomites',
+        group: 'Landscapes',
+        look: 'Satellite',
+        speedFactor: 3,
+        legs: [
+            {
+                kind: 'landmark',
+                label: 'Tre Cime di Lavaredo',
+                center: [12.3048, 46.6187],
+                groundMeters: 2350,
+                heightMeters: 650,
+                radiusMeters: 1600,
+                altitudeMeters: 3300,
+            },
+            {
+                kind: 'landmark',
+                label: 'Lago di Misurina',
+                center: [12.2537, 46.5815],
+                groundMeters: 1750,
+                heightMeters: 30,
+                radiusMeters: 1000,
+                altitudeMeters: 2600,
+            },
+        ],
+    },
+    {
+        label: 'Lake Bled',
+        group: 'Landscapes',
+        look: 'Satellite',
+        speedFactor: 1.5,
+        legs: [
+            {
+                kind: 'landmark',
+                label: 'Bled Island',
+                center: [14.0905, 46.362],
+                groundMeters: 476,
+                heightMeters: 30,
+                radiusMeters: 650,
+                altitudeMeters: 780,
+            },
+            {
+                kind: 'landmark',
+                label: 'Bled Castle',
+                center: [14.1005, 46.3697],
+                groundMeters: 557,
+                heightMeters: 40,
+                radiusMeters: 450,
+                altitudeMeters: 820,
+            },
+        ],
+    },
+    {
+        label: 'Grand Canyon',
+        group: 'Landscapes',
+        look: 'Satellite',
+        speedFactor: 3,
+        legs: [
+            {
+                kind: 'landmark',
+                label: 'Colorado River',
+                center: [-112.095, 36.1003],
+                groundMeters: 774,
+                heightMeters: 1400,
+                radiusMeters: 2000,
+                altitudeMeters: 2500,
+            },
+            {
+                kind: 'landmark',
+                label: 'Mather Point',
+                center: [-112.1081, 36.0617],
+                groundMeters: 2168,
+                heightMeters: 20,
+                radiusMeters: 900,
+                altitudeMeters: 2450,
+            },
+        ],
+    },
+    {
+        label: 'Sahara',
+        group: 'Landscapes',
+        look: 'Satellite',
+        speedFactor: 2.5,
+        legs: [
+            {
+                kind: 'landmark',
+                label: 'Erg Chebbi',
+                center: [-3.9715, 31.146],
+                groundMeters: 737,
+                heightMeters: 150,
+                radiusMeters: 1500,
+                altitudeMeters: 1150,
+            },
+            {
+                kind: 'landmark',
+                label: 'Merzouga',
+                center: [-4.0118, 31.0993],
+                groundMeters: 697,
+                heightMeters: 15,
+                radiusMeters: 900,
+                altitudeMeters: 950,
+            },
+        ],
+    },
+    {
+        label: 'Dune du Pilat',
+        group: 'Landscapes',
+        look: 'Satellite',
+        speedFactor: 2,
+        legs: [
+            {
+                kind: 'landmark',
+                label: 'Dune du Pilat',
+                center: [-1.2155, 44.5895],
+                groundMeters: 0,
+                heightMeters: 105,
+                radiusMeters: 800,
+                altitudeMeters: 330,
+            },
+            {
+                kind: 'landmark',
+                label: 'Cap Ferret',
+                center: [-1.2495, 44.6427],
+                groundMeters: 10,
+                heightMeters: 50,
+                radiusMeters: 600,
                 altitudeMeters: 300,
             },
         ],

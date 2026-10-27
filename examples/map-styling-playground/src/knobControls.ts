@@ -11,23 +11,24 @@ const toHex = (cssColor: string): string | undefined => {
     return color && formatHex(color);
 };
 
-// A drag fires `input` far faster than a restyle can run. Coalesce the events into one apply per
-// animation frame with the last value winning, so the control keeps tracking the pointer, and
-// flush on `change` so the value the user released on is always the one that lands.
-const perFrameApplier = (apply: (value: string) => void) => {
-    let pending: string | undefined;
+// A drag fires `input` far faster than a restyle can run, and a reset fires a `config-change` per
+// knob. Coalesce the calls into one apply per animation frame with the last value winning, so a
+// control keeps tracking the pointer, and flush on `change` so the value the user released on is
+// always the one that lands.
+export const perFrameApplier = <T = void>(apply: (value: T) => void) => {
+    let pending: { value: T } | undefined;
     let frame = 0;
     const run = () => {
         frame = 0;
-        if (pending === undefined) return;
+        if (!pending) return;
 
-        const value = pending;
+        const { value } = pending;
         pending = undefined;
         apply(value);
     };
     return {
-        queue: (value: string) => {
-            pending = value;
+        queue: (value: T) => {
+            pending = { value };
             if (!frame) frame = requestAnimationFrame(run);
         },
         flush: () => {
@@ -70,7 +71,7 @@ export const controlFor = (
         if (hex) input.value = hex;
 
         // The native picker fires `input` continuously while the pointer moves over its gradient.
-        const applier = perFrameApplier(apply);
+        const applier = perFrameApplier<string>(apply);
         input.addEventListener('input', () => applier.queue(input.value));
         input.addEventListener('change', () => applier.flush());
     } else if (knob.range) {
@@ -81,7 +82,7 @@ export const controlFor = (
         const value = field.querySelector('.ui-slider-value') as HTMLElement;
         input.value = String(current ?? min);
         value.textContent = input.value;
-        const applier = perFrameApplier((next) => apply(Number(next)));
+        const applier = perFrameApplier((next: string) => apply(Number(next)));
         input.addEventListener('input', () => {
             // The readout follows the thumb on every event; the restyle waits for the frame.
             value.textContent = input.value;

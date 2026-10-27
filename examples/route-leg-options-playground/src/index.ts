@@ -8,7 +8,7 @@ import { initTogglePanel } from './togglePanel';
 
 TomTomConfig.instance.put({ apiKey: API_KEY });
 
-const STOP_QUERIES = ['Barcelona, Spain', 'Mataró, Spain', 'Girona, Spain', 'Figueres, Spain'];
+const STOP_QUERIES = ['Plaça de Sant Jaume, Barcelona, Spain', 'Mataró, Spain', 'Girona, Spain', 'Figueres, Spain'];
 
 // Fixed in code, not a control: the panel is about per-leg options, and a route that waits
 // somewhere is what makes each leg's reported stop time worth showing. The destination cannot wait.
@@ -26,7 +26,7 @@ const totalsList = element<HTMLElement>('#ui-totals');
 const statusText = element<HTMLElement>('#ui-status');
 
 const placeName = (place: Place<GeocodingProps>): string =>
-    place.properties.poi?.name ?? place.properties.address?.freeformAddress ?? 'Stop';
+    place.properties.poi?.name ?? place.properties.address?.municipality ?? 'Stop';
 
 const renderTotals = (rows: [string, string][]): void => {
     totalsList.innerHTML = rows
@@ -81,11 +81,7 @@ const calculateAndShow = async (
         ['Travel time', formatDuration(summary.travelTimeInSeconds)],
     ]);
 
-    return route.properties.sections.leg.map((leg) => ({
-        lengthInMeters: leg.summary.lengthInMeters,
-        travelTimeInSeconds: leg.summary.travelTimeInSeconds,
-        stopTimeInSeconds: leg.summary.stopTimeInSeconds,
-    }));
+    return route.properties.sections.leg.map((leg) => leg.summary);
 };
 
 (async () => {
@@ -106,7 +102,13 @@ const calculateAndShow = async (
     // The panel is driven by the legs of the calculated route, so it is only built once the first
     // route is in — the route says how many legs there are.
     statusText.textContent = 'Calculating…';
-    const initialStats = await calculateAndShow(routingModule, places, []);
+    let initialStats: LegStats[];
+    try {
+        initialStats = await calculateAndShow(routingModule, places, []);
+    } catch (error) {
+        statusText.textContent = error instanceof Error ? error.message : 'Could not calculate the route.';
+        return;
+    }
     statusText.textContent = '';
 
     const legNames = initialStats.map((_stats, legIndex): [string, string] => [

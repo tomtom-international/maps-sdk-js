@@ -39,7 +39,7 @@ TomTomConfig.instance.reset();
 | Key | Default | Notes |
 |---|---|---|
 | `apiKey` | `''` | |
-| `commonBaseURL` | `'https://api.tomtom.com'` | Only for routing every request (services, style, tiles, sprites, glyphs) through your own proxy. Leave `apiKey` unset too for proxy-credentials mode: no key sent, `credentials: 'include'`. Must be absolute and `https:`; `http:` only for loopback (`localhost`, `127.x`, `[::1]`), else `INSECURE_BASE_URL`, even with `validateRequest: false`. See [Proxying your API calls](https://docs.tomtom.com/maps-sdk-js/guides/security/proxying-api-calls.md). |
+| `commonBaseURL` | `'https://api.tomtom.com'` | Only for routing every request (services, style, tiles, sprites, glyphs) through your own proxy. Leave `apiKey` unset too for proxy-credentials mode: no key sent, `credentials: 'include'`. Must be absolute and `https:`; `http:` only for loopback (`localhost`, `*.localhost`, `127.x`, `[::1]`), else `INSECURE_BASE_URL`, even with `validateRequest: false`. See [Proxying your API calls](https://docs.tomtom.com/maps-sdk-js/guides/security/proxying-api-calls.md). |
 | `language` | unset → APIs answer in `NGT` (local language) | `Language` type; `languages` lists them. `Language` lists every language the map labels carry. A service that lacks one answers in local names: search, geocoding and reverse geocoding do for `hi-IN` and `ja-JP`, and route instructions, POI category names and incident descriptions come in the nearest language the API has, else English. The SDK sends each API a code it takes (`zh-Hans` goes out as `zh-CN`, `zh-Hant` as `zh-TW`) and leaves the language off where the API has none close to it, so never map codes yourself |
 | `geopoliticalView` | unset → caller's country default | [below](#geopolitical-view) |
 | `sendUserAgentHeader` | unset → sent, as `true` | `false` stops every service and map request from carrying the `tomtom-user-agent` header (`MapsSDKJS/<version>`; `MapsSDKJS-AgentToolkit/<plugin version>` on what the Agent Toolkit plugin requests). A map reads it at construction |
@@ -65,7 +65,7 @@ await reverseGeocode({ position, geopoliticalView: 'Unified' });   // one call o
 
 - `geopoliticalViews` (core) lists all 20 values of the `GeopoliticalView` type: `Unified` (international), `AE` (Arabic: Gulf states), and the country codes `AR`, `BN`, `CL`, `CN`, `DZ`, `IL`, `IN`, `KR`, `MA`, `MY`, `PH`, `PK`, `RS`, `RU`, `TR`, `TW`, `US`, `VN`.
 - Unset, each API uses the default view for the caller's country; callers in India only ever get `IN`.
-- A view an API does not serve is left out of its requests, so the call still succeeds in that default: map tiles skip `CN`, `RU`; search, place details and reverse geocoding skip `KR`, `US`; geocoding also skips `AE`, `BN`, `CL`, `DZ`, `MY`, `PH`, `VN`.
+- A view an API does not serve is left out of its requests, so the call still succeeds in that default: map tiles skip `CN`, `RU`; search, place details and reverse geocoding skip `KR`, `US`; geocoding skips `AE`, `BN`, `CL`, `DZ`, `KR`, `MY`, `PH`, `US`, `VN`.
 - `servesGeopoliticalView(view, api)` (core) tells whether the SDK sends `view` to that API, so you can label a result with the view its request carried. `api` is a `GeopoliticalViewAPI`: `'mapTiles'`, `'search'`, `'placeDetails'`, `'reverseGeocoding'` or `'geocoding'`. The map and the services read the same predicate, so never copy the table above into app code. It answers what was sent, not what the API applied: callers in India get `IN` either way.
 - `map.setGeopoliticalView(undefined)` returns the map to the caller's default view. It changes the map only: to keep map and services in agreement at runtime, call both `TomTomConfig.instance.put({ geopoliticalView })` and `map.setGeopoliticalView(geopoliticalView)`.
 
@@ -113,6 +113,7 @@ Call order: an already-aborted signal rejects first (nothing is sent) → global
 Validation rejects a parameter the service doesn't know, and names it (`INVALID_REQUEST`, an `unrecognized_keys` issue):
 
 - Only the params you pass are checked, not the merged global config. A key set to `undefined` counts as absent.
+- Only top-level names are checked: an unknown key inside an object param, such as `filters`, goes unreported.
 - A key the service takes one level down gets a pointer, as for the search filters that live under `filters`: `poiCategories is not a parameter of AlongRouteSearch. Did you mean filters.poiCategories?`
 - An along-route `discoverPlaces` (with `route`) also needs a `query` or at least one filter other than `indexes`.
 - `validateRequest: false` skips both checks; an unknown key is then dropped silently.
@@ -170,34 +171,21 @@ if (result.current) await routing.showRoutes(result.value);
 
 ## Error handling
 
-Every rejection is an `SDKError` with `.code` (`SDKErrorCode`, core — branch on it, never on
-`.message`; the TomTom Navigation SDK's names for the same failures), `.canRetry` (`true` for `RATE_LIMITED`,
-`LIVE_SERVICE_NOT_AVAILABLE`, `NETWORK_NOT_AVAILABLE`: retry later; any other code fails the same way again),
+Every rejection is an `SDKError` with `.code`, `.canRetry` and `.sdkVersion`, which every SDK error shares
+(`core-types.md` § SDK errors has the codes, retrying and a refused key), plus
 `.service` naming the service (`ServiceName`, a literal union: `'Geocode'`, `'FuzzySearch'`, `'GeometrySearch'`, `'AlongRouteSearch'`,
 `'DiscoverPlaces'`, `'Autocomplete'`, `'SearchSuggestions'`, `'PlaceDetails'`, `'POICategories'`, `'ReverseGeocode'`,
-`'GeometryData'`, `'Routing'`, `'ReachableRange'`, `'TrafficIncidentDetails'`, `'TrafficAreaAnalytics'`) and `.sdkVersion`. That includes a request the service cannot build at all, such as a geometry type geometry search does not take, sent with `validateRequest: false`: an `INVALID_REQUEST`.
+`'GeometryData'`, `'Routing'`, `'ReachableRange'`, `'TrafficIncidentDetails'`, `'TrafficAreaAnalytics'`).
 
-Two subclasses carry more:
+On a service call:
 
-| `code` | When |
-|---|---|
-| `INVALID_REQUEST` | SDK validation failed (`.issues` = Zod issues), a request sent with `validateRequest: false` could not be built, or API `400` / other `4xx` |
-| `INSECURE_BASE_URL` | `commonBaseURL` is neither `https:` nor `http:` on loopback (`localhost`, `127.x`, `[::1]`) |
-| `INVALID_CREDENTIALS` | API `401`: key missing, invalid or expired |
-| `INSUFFICIENT_PERMISSIONS` | API `403`: key valid but not allowed this request — `.apiErrorCode` `'Forbidden'` = API not enabled for the key (or a Private Preview API it lacks access to), `'InvalidReferer'` = the key's domain restriction refused the page |
-| `NOT_FOUND` | API `404`, or `geocodeOne` (`.service` `'Geocode'`) / `discoverOnePlace` (`'FuzzySearch'`) found no place |
-| `RATE_LIMITED` | API `429`, after the `retry` budget is spent |
-| `LIVE_SERVICE_NOT_AVAILABLE` | API `5xx` |
-| `NETWORK_NOT_AVAILABLE` | no response (offline, DNS, TLS, CORS); `.cause` = what `fetch` threw |
-| `ABORTED` | signal aborted — an `SDKAbortError`, `name === 'AbortError'`, `.cause` = abort reason |
-| `INTERNAL` | anything else, e.g. an unreadable response |
-
-- `SDKServiceError` (API error status) adds `.status` and `.apiErrorCode` (the API's `detailedError.code`, when
-  given); a `429` gets a standard `.message`, every other status keeps the API's.
-- **Private Preview APIs** (`calculateReachableRange(s)`): an `INSUFFICIENT_PERMISSIONS` that is not `'InvalidReferer'`
-  also carries `.privatePreviewAccess: { product, requestAccessURL }`, and its `.message` ends with the same plus
-  the [Private Preview terms](https://docs.tomtom.com/legal/private-preview) — show that to the developer rather
-  than "check the API key".
+- `INVALID_REQUEST` carries `.issues` (Zod issues) when SDK validation failed. A request the service cannot build
+  at all, such as a geometry type geometry search does not take, sent with `validateRequest: false`, gets it too.
+- `NOT_FOUND` also comes from `geocodeOne` (`.service` `'Geocode'`) / `discoverOnePlace` (`'FuzzySearch'`) finding no place.
+- `NETWORK_NOT_AVAILABLE`'s `.cause` = what `fetch` threw. `ABORTED` is an `SDKAbortError`, `name === 'AbortError'`,
+  `.cause` = abort reason.
+- `SDKServiceError` (API error status) adds `.status`, `.apiErrorCode` and `.privatePreviewAccess`
+  (`core-types.md` § SDK errors); a `429` gets a standard `.message`, every other status keeps the API's.
 - Under `createLatestRequest` a superseded call resolves `{ current: false }` instead, so the
   `ABORTED` that still reaches a `catch` is your own deadline.
 - The map reports its failures with the same codes, as `TomTomMapError` (`map-setup.md` § Map errors).

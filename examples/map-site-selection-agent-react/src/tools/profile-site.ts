@@ -1,6 +1,5 @@
 import {
     type BBox,
-    type BudgetType,
     getPosition,
     type Place,
     type PolygonFeature,
@@ -10,20 +9,19 @@ import { calculateReachableRange, geocodeOne, trafficAreaAnalytics } from '@tomt
 import type { ReachableRange, ToolEntry, ToolEntryBuilder, ToolState } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import { getViewportBias, locatePlace } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import * as turf from '@turf/turf';
-import type { Feature, GeoJsonProperties, MultiPolygon, Polygon } from 'geojson';
+import type { GeoJsonProperties } from 'geojson';
 import { z } from 'zod';
-import { km2 } from '../agent/geometry';
+import { type AreaFeature, km2 } from '../agent/geometry';
 import { resolveCatchment } from '../agent/site-selection-state';
-import { EVENING_HOURS, MORNING_HOURS, utcOffsetHours, weekdayPeakCongestion } from '../agent/traffic-peaks';
+import { analysedWindowOffsetHours, EVENING_HOURS, MORNING_HOURS, weekdayPeakCongestion } from '../agent/traffic-peaks';
 import { MOVE_PORTAL_KEY } from '../config';
+import { householdsEnabled, searchLimit } from '../demographics/experimental-search';
 import {
     countHouseholds,
-    householdsEnabled,
     nearestMeters,
     placeInfo,
     type SearchFeature,
     searchInGeometry,
-    searchLimit,
 } from '../demographics/households';
 import { startProgress } from '../progress/progress-store';
 import { type Counted, type ProfileSiteProps, pointFeature, publishProfile } from '../results/results-store';
@@ -47,7 +45,7 @@ export type Catchment = Awaited<ReturnType<typeof calculateReachableRange>>;
 // shape used across the toolkit state — same geometry, a stable `id`, and the required bbox (computed
 // with turf). Lets the result types store catchment/overlap/hex geometry that blends with toolkit state.
 export const toPolygonFeature = (
-    feature: Feature<Polygon | MultiPolygon>,
+    feature: AreaFeature,
     id: string,
     properties: GeoJsonProperties = {},
 ): PolygonFeature => ({
@@ -117,7 +115,7 @@ export const buildWalkCircle = (position: [number, number], meters: number): Cat
 };
 
 export const buildDriveIsochrone = (position: [number, number], minutes: number): Promise<Catchment> =>
-    calculateReachableRange({ origin: position, budget: { type: 'timeMinutes' as BudgetType, value: minutes } });
+    calculateReachableRange({ origin: position, budget: { type: 'timeMinutes', value: minutes } });
 
 // Below this the address geocoder may have matched a landmark name ("The Venetian") to an unrelated
 // street, town or building elsewhere, since landmarks are POIs it does not index.
@@ -283,7 +281,7 @@ const trafficNote = async (position: [number, number], timeZone: string | undefi
             return 'Traffic profile unavailable (no traffic data for this area).';
         }
         const average = result.features[0]?.properties?.timedData?.average ?? [];
-        const offsetHours = timeZone === undefined ? undefined : utcOffsetHours(timeZone, new Date());
+        const offsetHours = timeZone === undefined ? undefined : analysedWindowOffsetHours(timeZone, result.properties);
         const peak = (hours: readonly number[]) =>
             offsetHours === undefined ? null : weekdayPeakCongestion(average, hours, offsetHours);
         const am = peak(MORNING_HOURS);

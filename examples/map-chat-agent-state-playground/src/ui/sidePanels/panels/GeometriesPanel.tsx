@@ -91,7 +91,7 @@ export function GeometriesPanel({
     return (
         <PanelShell
             title="Custom geometries"
-            hint="Polygons produced by processGeometries — unions, buffers, h3 coverage. Pin to keep on the map or open details for analyses."
+            hint="Polygons produced by processData — unions, buffers, h3 coverage. Pin to keep on the map or open details for analyses."
             action={{ label: 'Hide all', onClick: clearShown }}
             controls={
                 <ModeRow>

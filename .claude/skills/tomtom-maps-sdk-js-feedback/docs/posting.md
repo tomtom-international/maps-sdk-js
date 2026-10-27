@@ -274,7 +274,7 @@ https://github.com/tomtom-international/maps-sdk-js/issues/new?template=bug_repo
 | Parameter | Value |
 |---|---|
 | `package` | Dropdown: the exact option label, e.g. `@tomtom-org/maps-sdk/map (Web maps)`. |
-| `platform` | Dropdown: `Web Browser`, `Node.js`, `React Native` or `Other`. |
+| `platform` | Dropdown: `Web Browser`, `Node.js` or `Other`. |
 | `code-sample` | Spelled with a hyphen. |
 | `additional` | The *Additional Context* section: goal, attempt trail, prevention. |
 

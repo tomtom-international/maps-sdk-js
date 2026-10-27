@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>3D city: landmarks, buildings and surfaces</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+        <div class="ui-customPanel">
+            <div class="ui-panel-content">
+                <label class="ui-form-field">
+                    <span class="ui-form-label">Time of day</span>
+                    <span class="ui-slider-container">
+                        <input type="range" class="ui-slider" id="ui-hour" min="6" max="20" step="1" value="16">
+                        <span class="ui-slider-value" id="ui-hour-value"></span>
+                    </span>
+                </label>
+                <label class="ui-toggle-label">
+                    <input type="checkbox" class="ui-toggle-input" id="ui-night">
+                    <span class="ui-toggle-switch"></span>
+                    Night
+                </label>
+            </div>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

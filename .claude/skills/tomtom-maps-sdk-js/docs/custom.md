@@ -162,7 +162,7 @@ markers: {
 },
 ```
 
-**Every text layer names a `text-font`** from `mapFonts`: `MAP_REGULAR_FONT`, `MAP_MEDIUM_FONT`, `MAP_BOLD_FONT`, `MAP_ITALIC_FONT` and the style's `NotoSerif-*` and `NotoSans-*Italic` faces, the only ones the TomTom glyph endpoint serves. The serif faces lack Arabic and the italics cover only Latin, Greek and Cyrillic, so end a stack naming one with the `Noto-*` face of the same weight. Without a `text-font`, MapLibre asks for `Open Sans Regular`, gets a 404, warns `Unable to load glyph range` and draws a local browser font.
+**Every text layer names a `text-font`** from `mapFonts`: `MAP_REGULAR_FONT`, `MAP_MEDIUM_FONT`, `MAP_BOLD_FONT`, `MAP_ITALIC_FONT` and the style's `NotoSerif-*` and `NotoSans-*Italic` faces, the ones a label can name. It leaves out the `NotoSans-Condensed*` faces the style draws some of its own labels in. The serif faces lack Arabic and the italics cover only Latin, Greek and Cyrillic, so end a stack naming one with the `Noto-*` face of the same weight. Without a `text-font`, MapLibre asks for `Open Sans Regular`, gets a 404, warns `Unable to load glyph range` and draws a local browser font.
 
 ---
 
@@ -251,6 +251,7 @@ incidents: {
 Layer specs live in `config.sources`, so `applyConfig` / `updateConfig` change them. The diff is by layer ID:
 
 - In old and new → **update** paint/layout/filter/zoom in place, and move it if its placement changed.
+- In old and new with a different `type` → **replace**: removed and added again, as MapLibre keeps a layer's type for life.
 - New only → **add**.
 - Old only → **remove**.
 

@@ -9,6 +9,7 @@ import {
     convertToModelMessages,
     type InferAgentUIMessage,
     type LanguageModelUsage,
+    type ModelMessage,
     toUIMessageStream,
     validateUIMessages,
 } from 'ai';
@@ -99,14 +100,27 @@ type InstrumentedTransportOptions = {
     onUsage?: (usage: LanguageModelUsage) => void;
 };
 
+function prependToLastUserMessage(modelMessages: ModelMessage[], note: string) {
+    const lastUserIdx = modelMessages.findLastIndex((message) => message.role === 'user');
+    const original = modelMessages[lastUserIdx];
+    if (original?.role === 'user') {
+        const originalContent = original.content;
+        const annotatedContent =
+            typeof originalContent === 'string'
+                ? `${note}\n\n${originalContent}`
+                : [{ type: 'text' as const, text: note }, ...originalContent];
+        modelMessages[lastUserIdx] = { ...original, content: annotatedContent };
+    }
+}
+
 export function createInstrumentedTransport(
     agent: ReturnType<typeof createMapAgent>,
     { onUsage }: InstrumentedTransportOptions = {},
 ): ChatTransport<AgentUIMessage> {
     // Snapshot of state as the LLM last saw it. We update it after every assistant turn finishes
     // (so the LLM's own tool calls are baked in) and diff it against the live state at the start
-    // of the next user turn — anything that moved in between is, by construction, UI-driven and
-    // gets surfaced to the LLM as a one-line context note.
+    // of the next user turn — anything that moved in between happened outside the conversation (the
+    // UI, or a background incident poll failing) and gets surfaced to the LLM as a one-line context note.
     let lastSyncedDigest: StateDigest = getStateDigest(agent.state);
 
     return {
@@ -122,56 +136,62 @@ export function createInstrumentedTransport(
             const runStartMs = Date.now();
             let stepCounter = 0;
 
-            const modelMessages = await convertToModelMessages(
-                await validateUIMessages({ messages, tools: agent.tools }),
-                { tools: agent.tools },
-            );
+            const reportFailure = (error: unknown) => {
+                if (abortSignal?.aborted) return; // Stop is not a failure.
+                trackAgentError(error instanceof Error ? error.message : String(error), Date.now() - runStartMs);
+            };
 
-            // If the user changed map state via the UI (clicked a recents shortcut, toggled a
-            // panel) since the last assistant turn, prepend the diff to the most recent user
-            // message so the LLM doesn't reason from a stale snapshot. We mutate only this
-            // request's copy; the persisted conversation history stays unaltered.
-            const currentDigest = getStateDigest(agent.state);
-            const uiContextNote = formatStateDigestDiff(lastSyncedDigest, currentDigest);
-            if (uiContextNote) {
-                const lastUserIdx = (() => {
-                    for (let i = modelMessages.length - 1; i >= 0; i--) {
-                        if (modelMessages[i].role === 'user') return i;
-                    }
-                    return -1;
-                })();
-                if (lastUserIdx !== -1) {
-                    const original = modelMessages[lastUserIdx];
-                    const originalContent = original.content;
-                    const annotatedContent =
-                        typeof originalContent === 'string'
-                            ? `${uiContextNote}\n\n${originalContent}`
-                            : [{ type: 'text' as const, text: uiContextNote }, ...originalContent];
-                    modelMessages[lastUserIdx] = { ...original, content: annotatedContent } as typeof original;
-                }
-            }
+            const startRun = async () => {
+                const modelMessages = await convertToModelMessages(
+                    await validateUIMessages({ messages, tools: agent.tools }),
+                    { tools: agent.tools },
+                );
 
-            const result = await agent.stream({
-                prompt: modelMessages,
-                abortSignal,
-                onStepEnd: (step) => {
-                    stepCounter += 1;
-                    for (const toolCall of step.toolCalls) {
-                        trackToolCall(stepCounter, toolCall);
-                    }
+                // If the user changed map state via the UI (clicked a recents shortcut, toggled a
+                // panel) since the last assistant turn, prepend the diff to the most recent user
+                // message so the LLM doesn't reason from a stale snapshot. We mutate only this
+                // request's copy; the persisted conversation history stays unaltered.
+                const currentDigest = getStateDigest(agent.state);
+                const uiContextNote = formatStateDigestDiff(lastSyncedDigest, currentDigest);
+                if (uiContextNote) prependToLastUserMessage(modelMessages, uiContextNote);
+
+                return agent.stream({
+                    prompt: modelMessages,
+                    abortSignal,
+                    onStepEnd: (step) => {
+                        stepCounter += 1;
+                        for (const toolCall of step.toolCalls) {
+                            trackToolCall(stepCounter, toolCall);
+                        }
+                    },
+                });
+            };
+            const result = await startRun().catch((error: unknown) => {
+                reportFailure(error);
+                throw error;
+            });
+
+            void result.usage.then(
+                (usage) => {
+                    trackTokenUsage(usage);
+                    onUsage?.(usage);
                 },
-            });
-
-            void result.usage.then((usage) => {
-                trackTokenUsage(usage);
-                onUsage?.(usage);
-            });
-            void result.text.then((text) => {
-                trackAgentSuccess(text, Date.now() - runStartMs, stepCounter);
-                // Re-baseline once the assistant is done — this absorbs every tool call the LLM
-                // made during the turn, so only future UI changes show up as a diff next time.
-                lastSyncedDigest = getStateDigest(agent.state);
-            });
+                () => undefined, // A failed run is reported once, from the text below.
+            );
+            void result.text.then(
+                (text) => {
+                    trackAgentSuccess(text, Date.now() - runStartMs, stepCounter);
+                    // Re-baseline once the assistant is done — this absorbs every tool call the LLM
+                    // made during the turn, so only future UI changes show up as a diff next time.
+                    lastSyncedDigest = getStateDigest(agent.state);
+                },
+                (error: unknown) => {
+                    // Once a step has run, the model has read this turn's note and made its own tool
+                    // calls, so both are its; before that, the note never reached it and must go again.
+                    if (stepCounter > 0) lastSyncedDigest = getStateDigest(agent.state);
+                    reportFailure(error);
+                },
+            );
             return toUIMessageStream({ stream: result.stream, tools: agent.tools });
         },
         async reconnectToStream() {

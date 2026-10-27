@@ -58,13 +58,13 @@ map.setStyle({
 
 `include` takes `StylePart`s, the optional parts of a standard style: `'trafficFlow'`, `'trafficIncidents'` and `'terrain'` (the elevation data hillshade and 3D terrain draw from), all listed in `styleParts`. Leave it out for all of them, pass `[]` for none. Loaded parts stay hidden until their module shows them. A part left out is added back by its module's `get()` (`TrafficFlowModule`, `TrafficIncidentsModule`, `TerrainModule`), which reloads the style with it — a `setStyle` that runs the style change handlers. A switch that carries state, to a style naming no `include`, keeps the previous style's parts.
 
-`map.getStyleInput()` returns the `StyleInput` last given to the map, as given: a style id or the object above. It is not the resolved style specification: read that with `map.mapLibreMap.getStyle()`, or `StylingFoundationsModule.exportStyle()` for one with the styling knobs applied.
+`map.getStyleInput()` returns the `StyleInput` last given to the map, a style id or the object above, with the previous style's `include` merged in when a switch that carries state names none: `setStyle('streetDark')` after the call above returns `{ type: 'standard', id: 'streetDark', include: ['trafficFlow', 'trafficIncidents', 'terrain'] }`. After a switch whose style failed to load, it returns the style the map kept. It is not the resolved style specification: read that with `map.mapLibreMap.getStyle()`, or `StylingFoundationsModule.exportStyle()` for one with the styling knobs applied.
 
 `setStyle(style, options?: SetStyleOptions)` returns `Promise<void>`:
 
 - Resolves once the style has loaded and every style change handler, the SDK modules' included, has finished.
-- Rejects if the style itself fails to load: the map keeps its previous style and `map.mapReady` stays `false`, and module `create()` / `get()` and the module calls that wait for the map reject with the same error until a later `setStyle` loads a style (called before the first style loaded, it finishes that one and the map is ready). A failing tile or source does not fail the switch.
-- A second `setStyle` while one is in flight supersedes it: only the last style is applied, and both promises resolve.
+- Rejects if the style itself fails to load: the map keeps its previous style and `map.mapReady` stays `false`, and module `create()` / `get()` and the module calls that wait for the map reject with the same error until a later `setStyle` loads a style (called before the first style loaded, or once the style of a switch it superseded has loaded, it finishes that one, running the handlers with that switch's context, and the map is ready; the promise still rejects). A failing tile or source does not fail the switch.
+- A second `setStyle` while one is in flight supersedes it: only the last style is applied, and the superseded promise resolves.
 - Passing the style already loaded runs the lifecycle without reloading it.
 - Between a light style and its dark counterpart (`streetLight`/`streetDark`, `streetLightDriving`/`streetDarkDriving`, `monoLight`/`monoDark`) the loaded base-map and traffic tiles stay: the two declare the same sources, so MapLibre diffs one into the other and fetches only the style JSON, its sprite and the SDK's pin-category sprite. With hillshade shown, its tiles are requested again (usually from the browser cache).
 

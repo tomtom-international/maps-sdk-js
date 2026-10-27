@@ -1,6 +1,6 @@
 {
   "name": "@examples/route-sections-playground",
-  "description": "Route sections — one set of knobs for every section type, and the raw layer spec beneath",
+  "description": "Route sections — one set of knobs for every section type",
   "type": "module",
   "scripts": {
     "build": "vite build --config ../example-vite.config.ts",
@@ -10,7 +10,7 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test  --ui",
     "test:e2e:update-snapshots": "playwright test --update-snapshots",
-    "start-test-server": "vite preview --port 9050"
+    "start-test-server:prod": "vite serve dist/prod --port 9050"
   },
   "dependencies": {
     "@tomtom-org/maps-sdk": "catalog:"

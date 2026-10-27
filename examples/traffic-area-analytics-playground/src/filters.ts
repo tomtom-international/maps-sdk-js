@@ -51,8 +51,9 @@ const daysBetween = (startIso: string, endIso: string): number =>
 
 const validateDateRange = (start: string, end: string): string | null => {
     if (!start || !end) return 'Pick both a start and end date.';
-    if (parseIsoDay(start).getTime() > parseIsoDay(end).getTime()) return 'Start date must be before end date.';
-    if (daysBetween(start, end) + 1 > MAX_RANGE_DAYS) return `Date range cannot exceed ${MAX_RANGE_DAYS} days.`;
+    // The service takes an end date one to 31 days after the start date.
+    if (daysBetween(start, end) < 1) return 'Start date must be before end date.';
+    if (daysBetween(start, end) > MAX_RANGE_DAYS) return `Date range cannot exceed ${MAX_RANGE_DAYS} days.`;
     return null;
 };
 
@@ -94,9 +95,9 @@ export const initFilters = (state: AnalyticsFilters, onChange: () => void): Init
 
     const refreshDateBounds = (): void => {
         // Constrain the opposite picker to the 31-day window so the lite API limit is impossible to violate.
-        startInput.min = state.endDate ? addDays(state.endDate, -(MAX_RANGE_DAYS - 1)) : '';
-        const maxFromStart = state.startDate ? addDays(state.startDate, MAX_RANGE_DAYS - 1) : maxAllowedIso;
-        endInput.min = state.startDate;
+        startInput.min = state.endDate ? addDays(state.endDate, -MAX_RANGE_DAYS) : '';
+        const maxFromStart = state.startDate ? addDays(state.startDate, MAX_RANGE_DAYS) : maxAllowedIso;
+        endInput.min = state.startDate ? addDays(state.startDate, 1) : '';
         endInput.max = maxFromStart < maxAllowedIso ? maxFromStart : maxAllowedIso;
     };
 
@@ -224,6 +225,7 @@ export const initFilters = (state: AnalyticsFilters, onChange: () => void): Init
     });
 
     return {
+        // No road class or no hour selected analyses them all, as a city picked with that selection does.
         isValid: () => dateError_ === null,
     };
 };

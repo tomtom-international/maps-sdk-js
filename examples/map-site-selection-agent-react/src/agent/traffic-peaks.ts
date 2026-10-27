@@ -23,6 +23,10 @@ export const utcOffsetHours = (timeZone: string, at: Date): number => {
     return Math.round(match[1] === '-' ? -hours : hours);
 };
 
+/** {@link utcOffsetHours} at the middle of the analysed days, whose average week the peaks read. */
+export const analysedWindowOffsetHours = (timeZone: string, window: { startDate: Date; endDate: Date }): number =>
+    utcOffsetHours(timeZone, new Date((window.startDate.getTime() + window.endDate.getTime()) / 2));
+
 /**
  * Mean weekday congestion over `hours` of the site's day, or null when no entry falls in them.
  * Area Analytics labels its average week in UTC, so each entry first moves `offsetHours` onto the

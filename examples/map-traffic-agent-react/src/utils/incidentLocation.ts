@@ -42,25 +42,21 @@ export const formatEndpoints = (from?: string, to?: string): string => {
 
 /**
  * Builds a coordinate → label resolver backed by the given reverse-geocoder, memoising each
- * rounded coordinate (including failures) so repeated/nearby lookups hit the cache. The
- * reverse-geocoder is injected so the resolver is unit-testable without the network.
+ * rounded coordinate's lookup (in flight, resolved or failed) so repeated/nearby lookups share
+ * one request. The reverse-geocoder is injected so the resolver is unit-testable without the network.
  */
 export const createCoordResolver = (
     reverseGeocode: ReverseGeocodeFn,
 ): ((coord?: Coord) => Promise<string | undefined>) => {
-    const cache = new Map<string, string | null>();
+    const cache = new Map<string, Promise<string | undefined>>();
     return async (coord) => {
         if (!coord) return undefined;
         const key = coordKey(coord);
-        const cached = cache.get(key);
-        if (cached !== undefined) return cached ?? undefined;
-        try {
-            const label = addressLabel(await reverseGeocode({ position: coord }));
-            cache.set(key, label ?? null);
-            return label ?? undefined;
-        } catch {
-            cache.set(key, null);
-            return undefined;
+        let label = cache.get(key);
+        if (!label) {
+            label = reverseGeocode({ position: coord }).then(addressLabel, () => undefined);
+            cache.set(key, label);
         }
+        return label;
     };
 };

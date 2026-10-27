@@ -54,7 +54,9 @@ export const useRouteHoverProgress = (
 
             const passingAt = addSeconds(route.properties.summary.departureTime, progress.travelTimeInSeconds);
             content.innerHTML = `<strong>${clockTime(passingAt)}</strong><span>${progressInto(progress)}</span>`;
-            popup.setLngLat([progress.position[0], progress.position[1]]).addTo(map.mapLibreMap);
+            popup.setLngLat([progress.position[0], progress.position[1]]);
+            // Adding an open popup again removes and rebuilds it, at every pointer move.
+            if (!popup.isOpen()) popup.addTo(map.mapLibreMap);
         };
 
         const hoverLine = (line: Route<DisplayRouteProps>, lngLat: LngLat) => {

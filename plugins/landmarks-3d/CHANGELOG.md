@@ -1,5 +1,97 @@
 # Changelog
 
+## 0.3.0
+
+### Minor Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** Read the knob catalogues from `@tomtom-org/maps-sdk-plugin-landmarks-3d/knobs`, which imports nothing from three.js, so your app can check values or describe the knobs at startup and still load the plugin the first time it draws 3D
+  
+  - **Breaking:** `landmarks3DKnobCatalogue`, `buildings3DKnobCatalogue`, `landmarks3DKnobIds`, `buildings3DKnobIds`, `buildingsPresets`, `facadePatterns`, `landmarkTextureUses`, `paletteModes`, `paletteMapColors` and their types come from `/knobs` only, no longer from the package root
+  - examples: `landmarks-3d-plugin` and `buildings-3d-plugin-playground` import their catalogues from `/knobs`
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** landmarks-3d: takes three.js `^0.186.1` as its peer, in place of `^0.170.0`, so upgrade `three` with the plugin
+  
+  - `Buildings3D` draws its shadows with three's `PCFShadowMap`, as three 0.186 removed `PCFSoftShadowMap`, and gives three's shadow pass MapLibre's whole depth range
+  - `GLSurfaces`'s trees read the buildings' shadow map as the depth texture three now draws it as
+  - Landmark textures still decode with the transcoder files the plugin ships, which three's `KTX2Loader` now asks for by its own full URL
+
+### Patch Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - `Buildings3D` takes its sun from the map's light, which the styling module's `view.light` knobs set: its `light.direction` and `light.altitude` each follow it while unset
+  
+  - `GLSurfaces` follows the same light, so the shadows and the textured ground agree. On satellite, with no map light, both take the day sun at 215°/35°, as the imagery is a daylit photograph
+  - On the standard styles, which place no light of their own, the presets still light the buildings
+  - It needs `@tomtom-org/maps-sdk` 1.0.0-rc.6 or later
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - `Buildings3D` stands each building on 3D terrain, on the lowest ground under it, where it used to draw at sea level with hills covering the lower floors
+  
+  - The buildings stand again as finer terrain tiles load and as the exaggeration changes
+  - The streets' shadows fall on a flat plane, so over terrain only the buildings take them
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - landmarks-3d: on `streetSatellite`, the 3D buildings of the Landmarks 3D plugin's `Buildings3D` draw over the roads and bridges, where the street styles draw theirs, instead of under them
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - `Buildings3D` draws its shadow map again only once the sun, the camera's view of the ground or the buildings in it change, so a frame another layer redraws, such as one of wind on the water and trees of `GLSurfaces`, reuses it
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - `Buildings3D` shadows start at the foot of each wall, where they used to leave a lit strip a few metres wide between a building and its shadow
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - `Buildings3D` and `Landmarks3D` are interactive: `buildings.events` and `landmarks.events` report the building or landmark under the pointer with its id and properties, the hovered and clicked one light up in the `hover` and `click` colours, and `setBuildingColors` and `setLandmarkColors` give the ones you pick by id a colour of their own
+  
+  - The hover and click colours follow the map's `colors.accent`, and the landmarks follow the buildings' ones while you leave theirs unset
+  - A building the map data splits into parts is one building, under the id of its whole outline: one hover, click, colour and palette colour for all its parts
+  - The new `buildings-3d-interaction` example hovers, selects and paints buildings and landmarks over Amsterdam
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - `Buildings3D` and `Landmarks3D` paint each building and landmark a little differently: set `walls.palette`, `roofs.palette` or the landmarks' `palette` to an array of your own colours, and each one takes a colour of its own, picked or blended from your CSS colours or from the map's colours such as `colors.accent`, and `walls.variation` or `variation` gives each one its own shade
+  
+  - Roofs follow the walls, wall palette included, until you set `roofs.color` or a `roofs.palette`, with its own `roofs.paletteMode` and `roofs.paletteIntensity`
+  - `walls.paletteIntensity` and `paletteIntensity` mix the palette over the wall colour, for a hint of it
+  - Landmarks among a `Buildings3D` take its walls' `variation` while theirs is unset, so they now vary in shade as its buildings do; set `variation: 0` to keep them alike
+  - The buildings and landmarks playgrounds build palettes colour by colour, the buildings one for the roofs too, and the cinematic city orbit and fly-by looks use them
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - landmarks-3d: `GLSurfaces` textures the standard styles' water, land cover, built-up ground and roads with WebGL materials, in the style's own colours
+  
+  - Water ripples with the wind in waves of a few metres, scaled to the distance it's seen from, mirrors the map's sky towards the horizon and glitters in the sun, or the moon on dark styles, its sparkles shimmering and its wave faces lit from the light's side. Out at sea the waves run down the wind; near an open shore they turn to come in towards it and break in foam, and gusts drift across open water between brighter slicks, while canals, ponds and harbours stay calmer and mirror the sky more
+  - Forests show broadleaf crowns and conifers with leaf clumps and shadows up close, lawns are mown in stripes and meadows dotted with flowers, farmland breaks into field parcels, sand into dunes with wet sand along the water, and roads take on smooth asphalt, softly streaked along each road, with wheel paths in its lanes up close
+  - Glaciers show snow drifts and crevasses, scrub its bushes, mud flats their creeks and puddles, and shingle its stones. Squares, platforms and piers are paved, car parks and runways asphalt, and built-up ground takes a faint wear, each surface with knobs of its own
+  - 3D trees grow on woods, parks, gardens, meadows and orchards, each as densely as its kind of ground, sway in the wind and cast shadows: broadleaf trees, conifers, bushes, columnar trees such as poplars and cypresses, and umbrella trees such as stone pines, in a mix the ground and where it lies decide, few conifers in the tropics and more towards the poles and up mountains towards the treeline, and a knob per kind scales
+  - The trees go under the labels and under the routes, places and geometries drawn there, whichever came first, and `beforeLayerConfig` moves them, as the map modules' `beforeLayerConfig` does
+  - Roads, paths, railways and streams through a wood keep the crowns off them, and show over the crowns in front of them in a tilted view
+  - Each tree keeps its own size. As the view moves, it grows in, and only after several frames without a place shrinks away slowly, rather than blinking or changing size where a path or an edge crosses the pixels its place is read from, or where the trees' level of detail changes in flight
+  - Every part is coloured for a `season`, `spring`, `summer`, `autumn`, `winter` or `snow`, from the style's own colours, and each of its shades has a colour knob of its own
+  - Over satellite imagery, the water and the roads are textured and the trees grow, each in the colours of the crowns the imagery shows under it, under the day sun and the day sky the imagery was taken in
+  - Over 3D terrain, the textures follow the raised ground and the trees stand on it
+  - The sun is the map's light, which the styling module's `view.light` knobs set, shared with `Buildings3D`
+  - Every look is a knob in `glSurfacesKnobCatalogue`, set by id with the SDK's `setKnob`. The catalogue, `surfaceKinds` and `surfaceSeasons` come from `@tomtom-org/maps-sdk-plugin-landmarks-3d/knobs`, beside the other catalogues, which imports nothing from three.js
+  - On a screen of 1.5 or more pixels per CSS pixel, the materials shade one pixel for each 2 by 2, as their details fade out by CSS pixels anyway, which cuts their cost by about a third, and blends them back up smoothly
+  - It draws with Three.js, through the renderer `Landmarks3D` and `Buildings3D` share, so a map with `GLSurfaces` alone needs the `three` peer too
+  - `remove()` takes the surfaces and the trees off the map, with the WebGL resources they hold
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - Landmark tiles that fail to load reach the map's `addErrorHandler` as a `TomTomMapError`, with the same `code`, `apiErrorCode` and `privatePreviewAccess` a service call gives a refused key
+  - A key refused with a `401` or a `403` is reported once, with the API's own message, and the plugin then requests no more tiles. A key without Orbis 3D Landmarks access gets `privatePreviewAccess`, which names where to request it.
+  - A tile that fails for another reason is reported, coded by its status, as `NETWORK_NOT_AVAILABLE` with no response, or as `INTERNAL` when it can't be read.
+  - A tile whose error has `canRetry`, such as a `5xx`, a `429` or a lost connection, is reported once until it loads, and requested again when the map moves over it, after one second, doubled with each failure, up to one minute.
+  - The plugin needs `@tomtom-org/maps-sdk` 1.0.0-rc.6 or later.
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - landmarks-3d: on `streetSatellite`, the landmarks of the Landmarks 3D plugin show their own colours while their `texture` knob is unset, under a `Buildings3D` too, as `getKnob` reports
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - landmarks-3d: `Landmarks3D` and `Buildings3D` share one Three.js renderer, so a `Buildings3D` draws the landmarks without uploading their meshes and textures a second time
+  
+  - On a 3D terrain, the landmarks read the ground under them again only once the terrain changes, not every frame
+  - `Buildings3D` follows a moving map light by moving its sun alone, without resolving its whole look again
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - The package ships its `CHANGELOG.md`, as the SDK does, so you can read what changed between two releases from `node_modules`
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - Buildings rebuild when their source changes, and a failed texture transcoder load is retried
+  
+  - Hidden translucent buildings no longer cost the translucent render passes
+  - The landmarks keep their renderer across style changes rather than upload every tile again
+  - A building tile MapLibre reloads is extruded from its new copy
+  - Occluded labels go back above the buildings once their knob is off, even after a restyle put one of them back
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - landmarks-3d: the 3D trees of the Landmarks 3D plugin's `GLSurfaces` stand in the shadows of its `Buildings3D` on the same map
+  
+  - A tree crown in a building's shade loses its sunlit side, as dark as `Buildings3D`'s `shadows.intensity`, and none while its `shadows.visible` is off
+  - Both take one sun by default: the map's light once it's placed, otherwise the theme's sun, or the day sun on `streetSatellite`. Only their own `light.*` knobs, or a `Buildings3D` `preset` of another theme than the map's, give them different suns, and then the trees leave the buildings' shadows out
+
 ## 0.2.1
 
 ### Patch Changes

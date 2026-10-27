@@ -1,6 +1,5 @@
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import {
-    StandardStyleID,
     standardStyleIDs,
     TerrainModule,
     TomTomMap,
@@ -27,13 +26,12 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
 
     type ModuleWithVisibility = { setVisible: (visible: boolean) => void };
     const setupLazyToggle = (id: string, loadModule: () => Promise<ModuleWithVisibility>) => {
-        let module: ModuleWithVisibility | null = null;
-        document.querySelector(id)?.addEventListener('change', async (event) => {
-            const checked = (event.target as HTMLInputElement).checked;
-            if (!module) {
-                module = await loadModule();
-            }
-            module.setVisible(checked);
+        // Held as a promise, so a toggle flipped again before its part has loaded loads it only once.
+        let module: Promise<ModuleWithVisibility> | undefined;
+        const toggle = document.querySelector(id) as HTMLInputElement;
+        toggle.addEventListener('change', async () => {
+            module ??= loadModule();
+            (await module).setVisible(toggle.checked);
         });
     };
 
@@ -46,9 +44,10 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
 
     const stylesSelector = document.querySelector('#ui-mapStyles') as HTMLSelectElement;
     standardStyleIDs.forEach((id) => stylesSelector.add(new Option(id)));
-    stylesSelector.addEventListener('change', (event) =>
-        map.setStyle((event.target as HTMLOptionElement).value as StandardStyleID),
-    );
+    stylesSelector.addEventListener('change', () => {
+        const styleId = standardStyleIDs.find((id) => id === stylesSelector.value);
+        if (styleId) map.setStyle(styleId);
+    });
 
     initTogglePanel();
 })();

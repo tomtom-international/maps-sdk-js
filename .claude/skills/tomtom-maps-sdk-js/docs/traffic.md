@@ -392,7 +392,8 @@ const analyticsModule = await TrafficAreaAnalyticsModule.create(map, {
         speed: { palette: 'heat' },
     },
 });
-// From here on, getConfig() holds displayMode, activeMetric and every metric's settings, defaults filled in;
+// From here on, getConfig() holds displayMode, activeMetric and every metric's palette and height, defaults filled in
+// (a height you pass replaces the default whole, its unset fields left out);
 // a field a setter clears with undefined is left out until the next applyConfig, updateConfig or knob write
 
 // 3. Fetch and display

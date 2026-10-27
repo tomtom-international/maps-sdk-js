@@ -45,7 +45,7 @@ export const methodology = (): MethodologyEntry[] => [
         id: 'demand',
         term: 'Demand (whitespace scan)',
         method:
-            'For each grid cell, the number of "demand-anchor" POIs (the categories chosen as proxies for what draws the concept\'s customers, e.g. café, supermarket, university) within the walk radius of the cell\'s centre. A bring-your-own-data demand layer, when supplied, adds its own points to that count.' +
+            "For each grid cell, the number of \"demand-anchor\" POIs (the categories chosen as proxies for what draws the concept's customers, e.g. café, supermarket, university) within the walk radius of the cell's centre, leaving out the concept's own peers that a broad anchor category also returns. A bring-your-own-data demand layer, when supplied, adds its own points to that count." +
             (householdsEnabled()
                 ? ' For resident-serving concepts (daycare, pharmacy, GP), household-demand mode also blends in RESIDENTIAL density (address points per cell, 50/50 with the anchor signal).'
                 : '') +
@@ -136,7 +136,9 @@ export const methodologyPromptBlock = (): string => {
     );
 };
 
-const escapeHtml = (value: string): string => value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+/** Text safe to place in HTML markup, attribute values included. */
+export const escapeHtml = (text: string): string =>
+    text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 /** Methodology section for the HTML report (same content as the prompt block). */
 export const methodologyReportHtml = (): string => {

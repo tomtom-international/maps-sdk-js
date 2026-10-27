@@ -1,7 +1,6 @@
 import { geographyTypes, type Place, TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { GeometriesModule, PlacesModule, POIsModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { createLatestRequest, discoverPlaces, geometryData } from '@tomtom-org/maps-sdk/services';
-import { without } from 'lodash-es';
 import { type LngLatBoundsLike, Popup } from 'maplibre-gl';
 import './style.css';
 import { ViewportPlaces } from '@tomtom-org/maps-sdk-plugin-viewport-places';
@@ -78,14 +77,16 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         mapBasePOIs.setVisible(false);
 
         const search = await latestSearch.run(async (signal) => {
-            const areaToSearch =
-                areaTextBox.value &&
-                (await discoverPlaces({
-                    query: areaTextBox.value,
-                    filters: { geographyTypes: without(geographyTypes, 'Country') },
-                    limit: 1,
-                    signal,
-                }));
+            const areaMatches = areaTextBox.value
+                ? await discoverPlaces({
+                      query: areaTextBox.value,
+                      filters: { geographyTypes: geographyTypes.filter((type) => type !== 'Country') },
+                      limit: 1,
+                      signal,
+                  })
+                : undefined;
+            // An area that matches nothing has no bbox to frame and no geometry to search in.
+            const areaToSearch = areaMatches?.features.length ? areaMatches : undefined;
 
             areaToSearch && map.mapLibreMap.fitBounds(areaToSearch.bbox as LngLatBoundsLike, fitBoundsOptions);
             const geometryToSearch = areaToSearch && (await geometryData({ geometries: areaToSearch, signal }));
@@ -146,17 +147,25 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
             '#ui-minPowerKWSearchedEVStations',
         ) as HTMLInputElement;
         minPowerKWSearchedEVStationsInput.value = String(minPowerKWSearchedEVStations);
-        minPowerKWMapEVStationsInput.addEventListener('keyup', async () => {
-            minPowerKWMapEVStations = Number(minPowerKWMapEVStationsInput.value);
+        // Only an edit that leaves a number searches again: not a caret move, and not a stray letter.
+        const minPowerKWOf = (input: HTMLInputElement): number | undefined => {
+            const value = input.value.trim();
+            return value && !Number.isNaN(Number(value)) ? Number(value) : undefined;
+        };
+        minPowerKWMapEVStationsInput.addEventListener('input', async () => {
+            const minPowerKW = minPowerKWOf(minPowerKWMapEVStationsInput);
+            if (minPowerKW === undefined) return;
+
+            minPowerKWMapEVStations = minPowerKW;
             await placesLayers.update({
                 id: mapEVStationsId,
                 searchOptions: { filters: { minPowerKW: minPowerKWMapEVStations } },
             });
         });
-        minPowerKWSearchedEVStationsInput.addEventListener(
-            'keyup',
-            () => (minPowerKWSearchedEVStations = Number(minPowerKWSearchedEVStationsInput.value)),
-        );
+        minPowerKWSearchedEVStationsInput.addEventListener('input', () => {
+            const minPowerKW = minPowerKWOf(minPowerKWSearchedEVStationsInput);
+            if (minPowerKW !== undefined) minPowerKWSearchedEVStations = minPowerKW;
+        });
     };
 
     listenToMapUserEvents();

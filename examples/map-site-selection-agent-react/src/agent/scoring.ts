@@ -122,7 +122,7 @@ export const scoreSites = (
         usedFactors.push(factor);
     }
 
-    // 3. Weighted composite + per-factor points contribution (sums ≈ score) for the glass-box view.
+    // 3. Weighted composite + per-factor points contribution (sums to the score) for the glass-box view.
     const scoreOne = (site: SiteForScoring): ScoredSite => {
         const excludedReason = excluded.get(site.id);
         if (excludedReason) return { id: site.id, score: 0, breakdown: [], excluded: { reason: excludedReason } };
@@ -136,11 +136,21 @@ export const scoreSites = (
             contributions.push({ factor, weight, norm });
             weightTotal += weight;
         }
-        const breakdown: FactorContribution[] = contributions.map((entry) => ({
+        const exactPoints = contributions.map((entry) =>
+            weightTotal > 0 ? ((entry.weight * entry.norm) / weightTotal) * 100 : 0,
+        );
+        const score = Math.round(exactPoints.reduce((sum, points) => sum + points, 0));
+        const breakdown: FactorContribution[] = contributions.map((entry, index) => ({
             factor: entry.factor,
-            points: weightTotal > 0 ? Math.round(((entry.weight * entry.norm) / weightTotal) * 100) : 0,
+            points: Math.round(exactPoints[index]),
         }));
-        const score = breakdown.reduce((sum, entry) => sum + entry.points, 0);
+        // Rounding each part can drift from the rounded total; the largest part absorbs the difference.
+        const drift = score - breakdown.reduce((sum, entry) => sum + entry.points, 0);
+        const largest = breakdown.reduce<FactorContribution | undefined>(
+            (best, entry) => (!best || entry.points > best.points ? entry : best),
+            undefined,
+        );
+        if (largest) largest.points += drift;
         return { id: site.id, score, breakdown };
     };
 

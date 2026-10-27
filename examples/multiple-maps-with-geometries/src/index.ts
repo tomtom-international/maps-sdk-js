@@ -1,7 +1,6 @@
-import { PolygonFeatures, TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { type PolygonFeature, TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { GeometriesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { discoverPlaces, geometryData } from '@tomtom-org/maps-sdk/services';
-import type { Feature, MultiPolygon, Polygon } from 'geojson';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 import './style.css';
 import { API_KEY } from './config';
@@ -12,7 +11,7 @@ const mapsElement = document.querySelector('#ui-maps-container') as HTMLElement;
 TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
 
 (async () => {
-    const initMap = async (geometry: Feature<Polygon | MultiPolygon>, index: number) => {
+    const initMap = async (geometry: PolygonFeature, index: number) => {
         const div = document.createElement('div');
         div.id = `map${index}`;
         div.className = 'ui-map';
@@ -31,7 +30,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
                 fill: { style: 'inverted', color: 'white', opacity: 0.75 },
                 line: { opacity: 0 },
             })
-        ).show({ type: 'FeatureCollection', features: [geometry] } as PolygonFeatures);
+        ).show({ type: 'FeatureCollection', features: [geometry] });
     };
 
     const places = await discoverPlaces({

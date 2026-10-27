@@ -135,10 +135,10 @@ flyover.setMarker({ image: { type: 'custom', image: carSvg }, size: 56 });
 flyover.setMarker({ visible: false });
 ```
 
-- Default arrow: `ROUTE_LINE_OUTLINE_COLOR` fill, white outline. It does not follow a theme's accent; pass `fillColor: map.mapColors.accent` to match a themed route.
+- Default arrow: `#105287` fill (the SDK's default route outline colour), white outline. It does not follow a theme's accent; pass `fillColor: map.mapColors.accent` to match a themed route.
 - A MapLibre custom layer (one textured quad, re-added after style changes): `MapEffects` and captures include it. Module layers at `'top'` go under it, even when added later.
 - Placed as each frame is drawn, on the terrain under its route point, independent of the camera.
-- Mercator projection only; a custom image URL on another origin needs CORS (it becomes a WebGL texture).
+- Mercator projection only; a custom image from another origin, a URL or a loaded `<img>`, needs CORS (it becomes a WebGL texture).
 
 ## Methods
 
@@ -165,7 +165,7 @@ flyover.setMarker({ visible: false });
 
 - **Critically damped springs** move heading, zoom, pitch, anchor and altitude: no overshoot, no velocity jump on a new target, a speed ramp on start. Solved exactly, so identical at 30, 60 or 120 fps.
 - **Five times a second** the flight decides the heading (changes under 2.5° ignored, turns capped at 22°/s), the framing and the terrain clearance; per frame it only steps springs and moves the camera.
-- `onProgress` fires on that tick, on `seek()` and on the arriving frame of a `loop: false` flight, not per frame.
+- `onProgress` fires on that tick, on every outright placement (`seek()`, `setRoute()` while running, `setCamera()` while paused on the route) and on the arriving frame of a `loop: false` flight, not per frame.
 
 ## Gotchas
 

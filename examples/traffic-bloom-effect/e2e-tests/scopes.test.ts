@@ -1,6 +1,7 @@
 import { expect, type Page, test } from '@playwright/test';
 import { TAG_PROD } from '../../src/e2e-test-utils/e2eTestConstants';
 import { loadProdExample } from '../../src/e2e-test-utils/loadProdExample';
+import { expectNoPageErrors } from '../../src/e2e-test-utils/pageErrors';
 
 /**
  * What `bloom.only` does over a live map, measured as the light bloom adds to the map canvas.
@@ -63,7 +64,7 @@ const bloomLight = (page: Page): Promise<number> =>
 
 test.describe('bloom scopes', () => {
     test('each scope lights strictly less of the map than the one above it', { tag: TAG_PROD }, async ({ page }) => {
-        const consoleErrors = await loadExample(page);
+        const pageErrors = await loadExample(page);
 
         const light: Record<string, number> = {};
         for (const scope of SCOPES) {
@@ -75,7 +76,7 @@ test.describe('bloom scopes', () => {
         expect(light.traffic).toBeGreaterThan(light.major);
         // Major jams are dark, but a scope still has to light what it names.
         expect(light.major).toBeGreaterThan(0);
-        expect(consoleErrors).toHaveLength(0);
+        expectNoPageErrors(pageErrors);
     });
 
     test('the first scope picked after load narrows the glow', { tag: TAG_PROD }, async ({ page }) => {

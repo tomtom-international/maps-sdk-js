@@ -1,5 +1,90 @@
 # Changelog
 
+## 1.0.0-rc.6
+
+### Minor Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** map: The attribution shows the TomTom and OpenStreetMap credits as logos, each keeping its credit's link, with any other credit after them as text.
+  
+  - `attribution` takes `position` (the corner) and `padding` to place the logos. It only places them: no value turns them off or swaps them for plain text
+  - The logos are black with a white outline on every style, light and dark
+  - A soft, blurred backdrop sits behind the logos so they stand out from map labels. It follows the style's theme across `setStyle`. `backdrop: false` removes it, and the logos stay
+  - Your own `credits` follow the logos
+  - **Breaking:** CSS or layout code aimed at `.maplibregl-ctrl-attrib` no longer finds the attribution: place the logos clear of your layout with `position` and `padding`
+  - examples: `attribution-playground` places the logos in each corner, over every standard style, with or without their backdrop
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** core, services, map: a refused API key reads the same on the map as on a service call, so `PrivatePreviewAccess`, which both errors now carry, is imported from `@tomtom-org/maps-sdk/core`, not `@tomtom-org/maps-sdk/services`
+  - core: `APIErrorDetails` declares `apiErrorCode` and `privatePreviewAccess` once, for one function to read a service call's error and the map's alike
+  - map: `TomTomMapError` implements it, as `SDKServiceError` does
+  - map: a style, tile, sprite or glyph refused with a JSON body names the API's own code in `apiErrorCode`, `'InvalidReferer'` when the key's domain restriction refused the page and `'Forbidden'` when the API isn't enabled for the key, and adds the API's own message to `message`
+  - map: the message of a failed style, tile, sprite or glyph request shows the API key in its URL as `key=…`, so the message is safe to log
+  - map: a plugin's data that fails to load, such as the Landmarks 3D tiles, reaches `addErrorHandler` as a `TomTomMapError` under the plugin's source, coded by status like the map's own tiles
+
+### Patch Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - map: `BaseMapModule` lights up the style's own 3D buildings: `buildings3D.hover` and `buildings3D.click` set the colour a hovered or clicked building turns towards, and `setBuildingColors` gives the buildings you pick by id a colour of their own
+  
+  - A building reacts while a `BaseMapModule` handler reaches the `buildings3D` group, and stays as drawn while you leave both colours unset
+  - A building the map data splits into parts lights up and takes its colour whole, by the id of any of its parts
+  - `getBuildingIdAt` names the building standing at a position, to highlight buildings you know by place
+  - Features of the base map, the POIs and the traffic tiles now carry their `eventState` as a feature state, for your own `styling.layers` paint to read
+  - The 3D buildings' `fill-extrusion-color` is now an expression around the style's colour on every map, so `getPaintProperty` and an exported style return that expression; the style's own colour is its output at intensity 0
+  - The four settings are knobs of `baseMapKnobCatalogue`, `buildings3D.{hover,click}.{color,intensity}`
+  - The new `base-map-buildings-interaction` example hovers, selects and paints buildings over Midtown Manhattan
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - map: `getMapLight` reads where the map's light comes from, as a compass direction and an altitude, so a layer of your own can light its surfaces from the same direction as the 3D buildings
+  
+  - With neither `view.light.direction` nor `view.light.altitude` set, the light knobs leave MapLibre's position unset, so a colour, intensity or alignment on its own, and a clean style switch, leave `getMapLight` `undefined` instead of writing the 210°/60° default
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - services: an unknown POI category logs its id, not the name the service sent
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - core: geometry helpers handle routes, boxes and cells across the antimeridian, and a new stop slots into a round trip where it belongs
+  
+  - core: `bboxFromGeoJSON` gives the narrowest box around shapes on both sides of the antimeridian, and `undefined` for a geometry missing its coordinates
+  - core: route positions, owned polygons and hexagon cells wrap past ±180° instead of jumping across the map
+  - core: departure, arrival, waypoint, border and tollgate instructions carry no lanes
+  - core: `findBestWaypointInsertionIndex` and `withInsertedWaypoints` slot a new stop on a round trip between the right passes of its origin and destination
+  - core: `calculateProgressAtRoutePoint`, `getRouteProgressBetween` and `getRouteProgressForSection` return `undefined` for a path index that is no whole number, where they returned `NaN` values
+  - core: `formatDuration` rounds a half minute up, and `formatDistance` and `formatDuration` keep the global units for an option left `undefined`
+  - core: bundlers drop `TomTomConfig` from an app that never reads it
+  - core: a junction's instruction keeps its lanes where a waypoint instruction shares its path point
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - map: `setLanguage` also translates style labels that read their name inside an expression, such as POIs, states, peaks and ferries
+  
+  - map: a sourceless map error is `STYLE_LOAD_FAILED` only while a style loads, and `INTERNAL` otherwise
+  - map: colour knobs refuse colour forms MapLibre can't paint, instead of drawing nothing
+  - map: `CustomGeoJSONModule.applyConfig` replaces a layer whose type changes instead of throwing
+  - map: a failed or superseded style switch finishes cleanly, and a switch to the same style resets knobs and raw edits
+  - map: route summary bubbles stay above their route on a rotated map, hidden sections stay hidden, and section icons follow their size knob
+  - map: places keep another module's config properties, draw a mapped category icon, and rebuild once per knob batch
+  - map: traffic incident icons keep their visibility across config changes, opacities clamp to 0–1, and area analytics grids take regions across the antimeridian
+  - map: `setLanguage` relabels only the map style's own labels, so module and app layers keep the text they were given
+  - map: `calculateFittingBBox` expands latitudes in Web Mercator, as `fitBounds` frames them, so its south and north move
+  - map: a custom `icon.default` image repositions the place labels, a hovered `base-map` place draws once, and a clicked `pin-clustered` micro dot stays drawn
+  - map: `invertFeature` shades a polygon's holes, a MultiPolygon's title sits on its outer ring, and an expression `fill.color` falls through to `color`
+  - map: shown-features handlers keep firing after one of them unsubscribes
+  - map: custom images load from an SVG file's URL, from SVG markup with text past Latin-1 and from another origin that allows CORS
+  - map: each `where()` scope over one source keeps its own hover and cursor, `off` also removes the handlers on a source a config change dropped, and an unsubscribe removes only the registration it came from
+  - map: routes, places, area analytics and traffic filters reload only the sources a change reaches
+  - map: a clean switch to the style already loaded removes the traffic flow and incident filters, as it does the POI ones
+  - map: the map look reads a page background the browser reports in `oklch()` as painted
+  - map: POI and place category icon offsets apply where the style's own icon offset is a zoom ramp
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - services: a `geoBias` with both a point and a bounding box fails validation as `INVALID_REQUEST`, and error statuses survive bodies the SDK can't read
+  
+  - services: search results map their fields, opening hours and polygon boxes as the service sends them, and keep area-scoped brands
+  - services: an XML error over HTTP/2 names its status, and an unread error body is freed
+  - services: a zero `Retry-After` still backs off before the next try
+  - services: suggestions pick their concept independently of `limit`
+  - services: traffic area analytics checks its date rules before the request, rejecting a call that breaks them as `INVALID_REQUEST`
+  - services: an along-route search whose filters hold only keys it doesn't declare fails validation, as one with no filter does
+  - services: a route leaves out `vehicleRestricted` when it has none, as it does every other section type, and `sectionTypes: ['lanes']` without `guidance` requests no sections
+  - services: `geometryData` sends a footprint that several places share once, and gives it the first place's properties, where the last place's won
+  - services: an `INVALID_REQUEST` message lists its issues without the `Issues:` JSON, which stays in the error's `issues`
+  - services: fuzzy search drops a query intent it doesn't know, and reverse geocoding an area type it doesn't know, rather than returning `undefined`
+  - services: `trafficIncidentDetails` sends a polygon cut at 180° as one box across the antimeridian, not one around the world
+  - services: a cached `getPOICategories` call rejects an insecure base URL, as an uncached one does
+
 ## 1.0.0-rc.5
 
 ### Minor Changes

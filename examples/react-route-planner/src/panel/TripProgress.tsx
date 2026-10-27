@@ -57,8 +57,14 @@ const useRouteMarker = (map: TomTomMap, position: number[] | undefined) => {
     const [longitude, latitude] = position ?? [];
 
     useEffect(() => {
-        if (longitude === undefined || latitude === undefined) marker.remove();
-        else marker.setLngLat([longitude, latitude]).addTo(map.mapLibreMap);
+        if (longitude === undefined || latitude === undefined) {
+            marker.remove();
+            return;
+        }
+
+        marker.setLngLat([longitude, latitude]);
+        // Adding a marker already on the map removes and rebuilds it, at every step.
+        if (!marker.getElement().isConnected) marker.addTo(map.mapLibreMap);
     }, [map, marker, longitude, latitude]);
 
     useEffect(() => () => void marker.remove(), [marker]);

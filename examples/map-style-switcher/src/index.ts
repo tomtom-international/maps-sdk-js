@@ -1,5 +1,5 @@
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
-import { type StandardStyleID, standardStyleIDs, TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { standardStyleIDs, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import './style.css';
 import { API_KEY } from './config';
 import { initTogglePanel } from './togglePanel';
@@ -16,8 +16,9 @@ const map = new TomTomMap({
 
 const stylesSelector = document.querySelector('#ui-mapStyles') as HTMLSelectElement;
 standardStyleIDs.forEach((id) => stylesSelector.add(new Option(id)));
-stylesSelector.addEventListener('change', (event) =>
-    map.setStyle((event.target as HTMLOptionElement).value as StandardStyleID),
-);
+stylesSelector.addEventListener('change', () => {
+    const styleId = standardStyleIDs.find((id) => id === stylesSelector.value);
+    if (styleId) map.setStyle(styleId);
+});
 
 initTogglePanel();

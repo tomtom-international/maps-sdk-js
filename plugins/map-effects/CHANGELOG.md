@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.4.2
+
+### Patch Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - The package ships its `CHANGELOG.md`, as the SDK does, so you can read what changed between two releases from `node_modules`
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - Captures run one at a time and wait for loading tiles, and a failed frame hides the artwork and the bloom and warns once
+  
+  - `onlyTolerance: 0` lights the key colours, and a negative value counts as 0
+  - The depth of field warns when WebGL2 is missing
+  - `capture()` rejects with a `RangeError` for a `pixelRatio` that isn't a positive number
+  - Render targets are freed when the effects chain drops to one stage or none
+  - App layers keep drawing while the effects chain fails
+  - A layer whose `draw()` throws part-way is left empty rather than half drawn
+  - `capture()` skips a tint whose colour the live overlay can't paint either, rather than filling with the colour drawn before it
+
 ## 0.4.1
 
 ### Patch Changes

@@ -70,7 +70,7 @@ const useSeedStops = (dispatch: Dispatch<StopsAction>) => {
             const places = await Promise.all(SEED_STOPS.map(({ query }) => discoverOnePlace({ query })));
             if (places.every((place) => place)) {
                 dispatch({
-                    type: 'replace',
+                    type: 'seed',
                     stops: places.map((place, index) => createStop(place, SEED_STOPS[index].pauseDurationSeconds)),
                 });
             }

@@ -62,12 +62,9 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         }
         index++;
         if (index > orderedSteps.length - 1) {
-            // Iterating through negative indexes shows the default map:
             index = -3;
         }
     }, 1000);
 
     map.mapLibreMap.zoomTo(18, { duration: 200000 });
-
-    (window as any).map = map;
 })();

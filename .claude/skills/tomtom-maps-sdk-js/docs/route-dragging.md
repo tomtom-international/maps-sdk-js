@@ -59,7 +59,7 @@ The plugin registers the `dragstart` / `drag` / `dragend` handlers on `routing.e
 | `showOnMap` | the plugin shows the dragged waypoints and the planned routes on the routing module | `true` |
 | `onWaypointsChange(waypoints, drag)` | every step of a drag, with the waypoints it leaves and a `WaypointDrag` | — |
 | `onRoutes(routes, waypoints)` | each planned answer, in order, with the waypoints it was planned for | — |
-| `onError(error)` | a failed plan | a `console.warn` |
+| `onError(error)` | a failed plan, a failed `showWaypoints` of the moved stops, or a failed `showRoutes` or `clearRoutes` | a `console.warn` |
 
 ```ts
 type WaypointDrag = {
@@ -87,7 +87,7 @@ new RouteDragging(routing, {
 });
 ```
 
-- `locations` are the waypoints without their `null` placeholders. A moved stop keeps its id and properties, so its `pauseDurationSeconds` and the like still plan.
+- `locations` are the waypoints without their `null` placeholders. A moved stop keeps its `id`, `pauseDurationSeconds` and `legCostModel`, so it still plans as it did; the rest stays behind (see Gotchas).
 - The requests overlap rather than cancel each other (`createLatestRequest({ supersede: 'on-answer' })`, `services-config.md`): a route slower than `planIntervalMS` still shows mid-drag, and an older answer arriving after a newer one is dropped. To send fewer requests, raise `planIntervalMS`.
 
 ## Headless: your app owns the state (`showOnMap: false`)

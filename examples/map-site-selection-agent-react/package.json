@@ -1,6 +1,6 @@
 {
   "name": "@examples/map-site-selection-agent-react",
-  "description": "TomTom Maps SDK Agent Toolkit React conversational map agent (plain base) with Azure OpenAI",
+  "description": "TomTom Maps SDK Agent Toolkit React site-selection agent with Azure OpenAI",
   "type": "module",
   "scripts": {
     "build": "vite build --config ./vite.config.ts",

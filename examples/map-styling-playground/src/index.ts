@@ -4,14 +4,12 @@ import {
     BaseMapModule,
     baseMapKnobCatalogue,
     GeometriesModule,
-    type MapPresetId,
     mapPresetCatalogue,
     PlacesModule,
     POIsModule,
     poisKnobCatalogue,
     RoutingModule,
     resetKnob,
-    StandardStyleID,
     StylingFoundationsModule,
     standardStyleIDs,
     stylingFoundationsKnobCatalogue,
@@ -128,6 +126,16 @@ const showRouteAndPlaces = async (routing: RoutingModule, places: PlacesModule, 
     const baseMapGroups = initBaseMapGroupsPanel(baseMap);
     const resetTypefaces = initTypefacePanel({ styling, routing, places, area });
 
+    // Map presets are named bundles of knob settings across the modules, listed by their catalogue too.
+    const presetsSelector = document.querySelector('#ui-presets') as HTMLSelectElement;
+    for (const preset of mapPresetCatalogue) {
+        presetsSelector.add(new Option(preset.name, preset.id));
+    }
+    presetsSelector.addEventListener('change', () => {
+        const preset = mapPresetCatalogue.find(({ id }) => id === presetsSelector.value);
+        if (preset) applyMapPreset(map, preset.id);
+    });
+
     // Resets every look knob and typeface, keeping traffic and hillshade shown.
     document.querySelector('#ui-reset')?.addEventListener('click', () => {
         for (const { module, catalogue, isLook } of lookSources) {
@@ -135,24 +143,20 @@ const showRouteAndPlaces = async (routing: RoutingModule, places: PlacesModule, 
         }
         baseMap.resetConfig();
         resetTypefaces();
-    });
-
-    // Map presets are named bundles of knob settings across the modules, listed by their catalogue too.
-    const presetsSelector = document.querySelector('#ui-presets') as HTMLSelectElement;
-    for (const preset of mapPresetCatalogue) {
-        presetsSelector.add(new Option(preset.name, preset.id));
-    }
-    presetsSelector.addEventListener('change', () => {
-        if (presetsSelector.value) applyMapPreset(map, presetsSelector.value as MapPresetId);
+        // So picking the preset shown before the reset applies it again.
+        presetsSelector.value = '';
     });
 
     const stylesSelector = document.querySelector('#ui-mapStyles') as HTMLSelectElement;
     for (const id of standardStyleIDs) {
         stylesSelector.add(new Option(id));
     }
-    stylesSelector.addEventListener('change', async (event) => {
+    stylesSelector.addEventListener('change', async () => {
+        const styleId = standardStyleIDs.find((id) => id === stylesSelector.value);
+        if (!styleId) return;
+
         // Knob settings survive the switch: the module re-applies them on the new style.
-        await map.setStyle((event.target as HTMLOptionElement).value as StandardStyleID);
+        await map.setStyle(styleId);
         panel.render();
         baseMapGroups.render();
     });

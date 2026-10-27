@@ -111,27 +111,43 @@ export function createInstrumentedTransport(
             const runStartMs = Date.now();
             let stepCounter = 0;
 
-            const modelMessages = await convertToModelMessages(
-                await validateUIMessages({ messages, tools: agent.tools }),
-                { tools: agent.tools },
-            );
+            const reportFailure = (error: unknown) => {
+                if (abortSignal?.aborted) return; // Stop is not a failure.
+                trackAgentError(error instanceof Error ? error.message : String(error), Date.now() - runStartMs);
+            };
 
-            const result = await agent.stream({
-                prompt: modelMessages,
-                abortSignal,
-                onStepEnd: (step) => {
-                    stepCounter += 1;
-                    for (const toolCall of step.toolCalls) {
-                        trackToolCall(stepCounter, toolCall);
-                    }
+            const startRun = async () => {
+                const modelMessages = await convertToModelMessages(
+                    await validateUIMessages({ messages, tools: agent.tools }),
+                    { tools: agent.tools },
+                );
+                return agent.stream({
+                    prompt: modelMessages,
+                    abortSignal,
+                    onStepEnd: (step) => {
+                        stepCounter += 1;
+                        for (const toolCall of step.toolCalls) {
+                            trackToolCall(stepCounter, toolCall);
+                        }
+                    },
+                });
+            };
+            const result = await startRun().catch((error: unknown) => {
+                reportFailure(error);
+                throw error;
+            });
+
+            void result.usage.then(
+                (usage) => {
+                    trackTokenUsage(usage);
+                    onUsage?.(usage);
                 },
-            });
-
-            void result.usage.then((usage) => {
-                trackTokenUsage(usage);
-                onUsage?.(usage);
-            });
-            void result.text.then((text) => trackAgentSuccess(text, Date.now() - runStartMs, stepCounter));
+                () => undefined, // A failed run is reported once, from the text below.
+            );
+            void result.text.then(
+                (text) => trackAgentSuccess(text, Date.now() - runStartMs, stepCounter),
+                reportFailure,
+            );
             return toUIMessageStream({ stream: result.stream, tools: agent.tools });
         },
         async reconnectToStream() {

@@ -64,9 +64,12 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     (document.getElementById('map-pois-toggle') as HTMLInputElement).addEventListener('change', (event) =>
         pois.setVisible((event.target as HTMLInputElement).checked),
     );
-    searchResultsToggle.addEventListener('change', () =>
-        searchResultsToggle.checked ? searchViewport() : searchResults.clear(),
-    );
+    searchResultsToggle.addEventListener('change', () => {
+        if (searchResultsToggle.checked) return searchViewport();
+
+        latestSearch.cancel();
+        return searchResults.clear();
+    });
 
     applyCategoryIcons();
     await searchViewport();

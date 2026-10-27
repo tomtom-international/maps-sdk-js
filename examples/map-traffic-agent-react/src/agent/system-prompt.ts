@@ -5,8 +5,8 @@
  * {@link SystemPromptSectionOverrides}: it replaces the sections that define this persona (identity,
  * capabilities, scope, formatting, data-confidence) and EXTENDS the base `toolExecution` /
  * `sessionState` sections — reading their defaults from `SYSTEM_PROMPT_SECTIONS` and appending the
- * traffic-specific flow hints and live-data rules. The overrides are deliberately terse so the
- * assembled prompt stays no larger than the old full-string version.
+ * traffic-specific flow hints and live-data rules. The overrides are deliberately terse to keep
+ * the assembled prompt short.
  *
  * The tools and the classifier still carry their own mechanics (when to fetch, monitor, cluster,
  * focus, build a corridor); this only sets persona, voice, and the honest-read constraints the tools
@@ -46,10 +46,10 @@ export const TRAFFIC_MANAGER_PROMPT_OVERRIDES: SystemPromptSectionOverrides = {
         '- Anything about NOW ("right now", "currently", "worst / busiest at the moment") is an incidents question: ' +
         'area analytics aggregates completed days and lags a day or two, so it can never answer it — never reach for ' +
         'analytics first and never report its staleness as "no live data available".\n' +
-        '- Corridor / "between A and B": setRoute({ traffic: "historical", maxAlternatives: 2, monitor: true, ' +
-        'showOnMap: false }) arms the live monitor; the app draws the corridor and reads on-route incidents. Showing ' +
-        'a monitored route yourself: updateRoutesDisplay({ waypoints: false }) and setMapStyling ' +
-        '"routes.summaryBubbles.visible": false.\n' +
+        '- Corridor / "between A and B": setRoute({ parameters: { costModel: { traffic: "historical" }, ' +
+        'maxAlternatives: 2 }, monitor: true, showOnMap: false }) arms the live monitor; the app draws the corridor ' +
+        'and reads on-route incidents. Showing a monitored route yourself: updateRoutesDisplay({ waypoints: false }) ' +
+        'and setMapStyling "routes.summaryBubbles.visible": false.\n' +
         '- analyseData: this app renders chart output in a dedicated panel, so prefer outputFormat: "chart" for ' +
         'countable / comparable results (by type, road, delay bins); plain JSON only for a single scalar.\n' +
         '- BYOD areas / "per district": addByodSource ALONE first (its entry exists only once it returns — a ' +

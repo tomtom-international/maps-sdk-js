@@ -36,17 +36,22 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
 
     // What the map was last themed from, so switching light/dark re-themes the same source.
     let current: Derive | undefined;
+    // Each theming bumps this, so one still deriving or switching style yields to a newer one.
+    let latestTheming = 0;
 
     // Deriving throws on colours it cannot parse and on files it cannot read; show that instead.
     const themeMap = async (derive: Derive) => {
         current = derive;
+        const theming = ++latestTheming;
         const mode = mapThemeModes.find((candidate) => candidate === modeSelector.value) ?? 'auto';
         try {
             const colors = await derive(mode);
+            if (theming !== latestTheming) return;
             // A dark theme recolours a dark style, whose own shades then stay in range.
             const lightDark = mapColorsLightDark(colors);
             if (lightDark !== map.styleLightDarkTheme) {
                 await map.setStyle(lightDark === 'dark' ? 'streetDark' : 'streetLight');
+                if (theming !== latestTheming) return;
             }
             styling.setMapColors(colors);
             showSwatches(swatches, colors);

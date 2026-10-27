@@ -6,7 +6,7 @@ import {
     TrafficIncidentDetailsModule,
     trafficIncidentDetailsKnobCatalogue,
 } from '@tomtom-org/maps-sdk/map';
-import { geocodeOne, geometryData, trafficIncidentDetails } from '@tomtom-org/maps-sdk/services';
+import { createLatestRequest, geocodeOne, geometryData, trafficIncidentDetails } from '@tomtom-org/maps-sdk/services';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 import './style.css';
 import { API_KEY } from './config';
@@ -64,17 +64,26 @@ const INITIAL_QUERY = 'London';
         }
     };
 
+    // A newer search drops the chain of calls still running for an earlier one.
+    const latestSearch = createLatestRequest();
+
     const renderIncidentsFor = async (query: string) => {
         setStatus(`Searching '${query}'…`);
         popup.remove();
         try {
-            const place = await geocodeOne(query);
-            // A city boundary clips the incidents to its shape; without one, or if it fails to load, the bbox is queried
-            const boundary = place.properties.dataSources?.geometry
-                ? await geometryData({ geometries: [place] }).catch(() => undefined)
-                : undefined;
-            const area = boundary?.features.length ? { polygon: boundary } : { bbox: place };
-            const result = await trafficIncidentDetails({ ...area, timeValidityFilter: ['present'] });
+            const search = await latestSearch.run(async (signal) => {
+                const place = await geocodeOne({ query, signal });
+                // A city boundary clips the incidents to its shape; without one, or if it fails to load, the bbox is queried
+                const boundary = place.properties.dataSources?.geometry
+                    ? await geometryData({ geometries: [place], signal }).catch(() => undefined)
+                    : undefined;
+                const area = boundary?.features.length ? { polygon: boundary } : { bbox: place };
+                const result = await trafficIncidentDetails({ ...area, timeValidityFilter: ['present'], signal });
+                return { place, boundary, result };
+            });
+            if (!search.current) return;
+
+            const { place, boundary, result } = search.value;
             await incidentDetailsModule.show(result);
             if (boundary) {
                 await boundaryOutline.show(boundary);

@@ -1,6 +1,7 @@
 import type { MapEffectsPass } from '@tomtom-org/maps-sdk-plugin-map-effects';
 
-// Read every draw: the animated passes move with the clock, and the screen-sized ones measure in CSS pixels.
+// Read every draw: the animated passes move with the clock while the map redraws, and the screen-sized ones
+// measure in CSS pixels.
 const uniforms = () => ({ uTime: performance.now() / 1000, uPixelRatio: devicePixelRatio });
 
 const HASH = 'float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }';
@@ -257,5 +258,28 @@ void main() {
     print *= mix(vec3(1.0), vec3(1.0, 0.45, 0.65), pink * 0.7);
     print *= mix(vec3(1.0), vec3(0.2, 0.35, 0.8), blue * 0.85);
     fragColor = vec4(mix(colour.rgb, print, 0.55), colour.a);
+}`,
+};
+
+/**
+ * A manga page: every edge inked in black, the shadows and the darker walls in a screentone of dots on
+ * a 45° grid, growing as the tone darkens, the darkest in solid ink, and the lit faces left white.
+ */
+export const mangaInk: MapEffectsPass = {
+    id: 'manga-ink',
+    placement: 'after-depth-of-field',
+    uniforms,
+    fragment: `uniform float uPixelRatio;
+${EDGE}
+void main() {
+    vec4 colour = texture(uSource, vUv);
+    float light = luma(vUv);
+    vec2 onScreen = vUv * vec2(textureSize(uSource, 0)) / uPixelRatio;
+    vec2 cell = fract(mat2(0.7071, -0.7071, 0.7071, 0.7071) * onScreen / 4.0) - 0.5;
+    float tone = clamp((0.92 - light) / 0.8, 0.0, 1.0);
+    float radius = sqrt(tone) * 0.48;
+    float screen = 1.0 - smoothstep(radius - 0.08, radius + 0.08, length(cell));
+    float ink = max(max(screen * step(0.05, tone), smoothstep(0.12, 0.06, light)), smoothstep(0.14, 0.34, edge(vUv)));
+    fragColor = vec4(vec3(mix(0.98, 0.06, ink)), colour.a);
 }`,
 };

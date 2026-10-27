@@ -8,21 +8,19 @@ import { marked } from 'marked';
 import { useState } from 'react';
 import agentsDemoIconRaw from './assets/agents-demo-icon.svg?raw';
 import { Icon } from './icon';
+import { renderMarkdown } from './markdown';
 import { ToolCall, ToolDisclosure } from './ToolCall';
 
-// User turns are static, so a one-shot marked() render is fine.
+// User turns are static, so a one-shot renderMarkdown() render is fine.
 const MarkdownText: TextMessagePartComponent = ({ text }) => (
-    <div dangerouslySetInnerHTML={{ __html: marked(text) as string }} />
+    <div dangerouslySetInnerHTML={{ __html: renderMarkdown(text) }} />
 );
 
-// Assistant turns render markdown with marked() → innerHTML, styled by the existing
-// `.message.assistant` CSS — same as the user/welcome turns and the sibling agent examples.
-// We intentionally avoid @assistant-ui/react-markdown's MarkdownTextPrimitive: it pulls in the
-// unified/remark/vfile chain, and vfile's `#minpath` package-`imports` subpath can't be resolved
-// by the live editor's in-browser bundler (same class as the `#mcp-stdio` seam pinned in
-// pnpm-workspace.yaml), which crashed this example's live-editor preview.
+// Assistant turns share the user turns' renderMarkdown() path, so `.message.assistant` applies.
+// MarkdownTextPrimitive (@assistant-ui/react-markdown) pulls in vfile, whose `#minpath` package
+// `imports` subpath the live editor's in-browser bundler cannot resolve (same class as `#mcp-stdio`).
 const AssistantText: TextMessagePartComponent = ({ text }) => (
-    <div className="message assistant" dangerouslySetInnerHTML={{ __html: marked(text) as string }} />
+    <div className="message assistant" dangerouslySetInnerHTML={{ __html: renderMarkdown(text) }} />
 );
 
 // AI SDK error results can be primitives, Error instances, Zod issues, or plain
@@ -135,6 +133,10 @@ const ToolCallContent: ToolCallMessagePartComponent = ({ toolName, args, result,
     );
 };
 
+// One object for every render: assistant-ui re-renders each finished part whenever this changes.
+const ASSISTANT_PARTS = { Text: AssistantText, tools: { Fallback: ToolCallContent } };
+const USER_PARTS = { Text: MarkdownText };
+
 // The copy control below an agent reply. The button itself is the hit zone — 32px square around a
 // 16px icon ("extended hit zone") — so the tappable area is far larger than the glyph.
 function ActionIcon({ label, onClick, children }: { label: string; onClick: () => void; children: React.ReactNode }) {
@@ -230,7 +232,8 @@ export function MessageComponent() {
                     <span className="chat-welcome-spark" aria-hidden="true">
                         <Icon raw={agentsDemoIconRaw} />
                     </span>
-                    <div dangerouslySetInnerHTML={{ __html: marked(welcomeMarkdown) as string }} />
+                    {/* The welcome is the app's own copy, inline HTML included, so it skips the escaping. */}
+                    <div dangerouslySetInnerHTML={{ __html: marked.parse(welcomeMarkdown, { async: false }) }} />
                     <hr className="chat-welcome-divider" />
                 </section>
             </MessagePrimitive.Root>
@@ -240,7 +243,7 @@ export function MessageComponent() {
     if (role === 'user') {
         return (
             <MessagePrimitive.Root className={hasContent ? 'message user' : ''}>
-                <MessagePrimitive.Content components={{ Text: MarkdownText }} />
+                <MessagePrimitive.Content components={USER_PARTS} />
             </MessagePrimitive.Root>
         );
     }
@@ -251,12 +254,7 @@ export function MessageComponent() {
             {/* The turn's tool calls collapsed into the "Used N tools" pill — it expands to the
                 per-tool rows. Rendered above the answer text. */}
             <ToolGroup toolCalls={extractToolCalls(content as readonly unknown[] | undefined)} />
-            <MessagePrimitive.Content
-                components={{
-                    Text: AssistantText,
-                    tools: { Fallback: ToolCallContent },
-                }}
-            />
+            <MessagePrimitive.Content components={ASSISTANT_PARTS} />
             {/* Action row beneath the reply. Only on turns that produced answer
                 text — tool-only turns get none. */}
             {answerText.trim() && <AssistantActions text={answerText} />}

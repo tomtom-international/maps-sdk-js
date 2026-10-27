@@ -1,7 +1,8 @@
 import type { TrafficFlowModuleFeature } from '@tomtom-org/maps-sdk/map';
 import { Popup } from 'maplibre-gl';
 
-const formatLabel = (value: string) => value.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+const formatLabel = (value: string) =>
+    value.replace(/_/g, ' ').replace(/\b\w/g, (character) => character.toUpperCase());
 
 const row = (label: string, value: string) => `
     <div class="ui-flow-row">

@@ -1,7 +1,7 @@
 import { formatDuration } from '@tomtom-org/maps-sdk/core';
 import type { Tracker, TrackerEvent } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import { useEffect, useState } from 'react';
-import type { MonitoredRoute } from '../hooks/useRouteMonitor';
+import type { MonitoredRoute } from '../agent/monitoredRoutes';
 import type { WatchedArea } from '../hooks/useTrackers';
 import { FeedRow, IconButton, PanelCard, Switcher, Toggle } from './components';
 import { playbook } from './lib/playbook-tokens';

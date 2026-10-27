@@ -35,7 +35,7 @@ function groupByArea(agent: AgentInstance, trackers: readonly Tracker[]): Groupi
     const ungrouped: Tracker[] = [];
 
     for (const tracker of trackers) {
-        // Trackers carry their own input ids now (decoupled from the Analyses registry).
+        // Trackers carry their own input ids, apart from the Analyses registry.
         const areaIds = tracker.affectedEntryIds.filter((id) => incidentEntryIds.has(id));
         // Single-area → nest under that area; multi-area or area-less → "Other".
         if (areaIds.length !== 1) {
@@ -126,7 +126,7 @@ export function useTrackers(agent: AgentInstance | undefined) {
     const setEnabled = (trackerId: string, enabled: boolean) => agent?.state.trackers.setEnabled(trackerId, enabled);
 
     const clearTracker = (trackerId: string) => {
-        // unregister tears down the tracker's job; there is no separate analysis to remove anymore.
+        // unregister tears down the tracker's job; there is no separate analysis to remove.
         agent?.state.trackers.unregister(trackerId);
     };
 
@@ -136,7 +136,7 @@ export function useTrackers(agent: AgentInstance | undefined) {
         if (!agent) return;
         const bbox = agent.state.trafficIncidents.entries.find((e) => e.id === entryId)?.params.bbox;
         if (!bbox || !isBBoxWithArea(bbox)) return;
-        frameBounds(agent.state.baseMap.mapLibreMap, bbox as [number, number, number, number]);
+        frameBounds(agent.state.baseMap.mapLibreMap, bbox);
     };
 
     return {

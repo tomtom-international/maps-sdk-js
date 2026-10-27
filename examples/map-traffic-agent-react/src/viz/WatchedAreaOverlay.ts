@@ -1,4 +1,4 @@
-import type { BBox, PolygonFeature } from '@tomtom-org/maps-sdk/core';
+import { type BBox, isBBoxWithArea, type PolygonFeature } from '@tomtom-org/maps-sdk/core';
 import { GeometriesModule, type GeometriesModuleConfig, type TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { Marker } from 'maplibre-gl';
 import { playbook } from '../ui/lib/playbook-tokens';
@@ -12,7 +12,7 @@ import { playbook } from '../ui/lib/playbook-tokens';
  * The box rides a single {@link GeometriesModule} (one FeatureCollection of all areas, re-shown on
  * change); the pills are HTML MapLibre markers (an outline can't carry a corner chip), diffed by entry id.
  */
-export type WatchedArea = { id: string; bbox: BBox; label: string };
+export type WatchedAreaBox = { id: string; bbox: BBox; label: string };
 
 // Brand success-green — mirrors the `--ui-surface-success` token. Hard-coded as a hex because MapLibre
 // paint properties can't resolve CSS custom properties; the DOM pill below uses the token directly.
@@ -59,9 +59,6 @@ const roundedRectFromBBox = (bbox: BBox): PolygonFeature => {
     return { type: 'Feature', bbox, properties: {}, geometry: { type: 'Polygon', coordinates: [ring] } };
 };
 
-// A zero-width or zero-height bbox has nothing to outline.
-const hasArea = (b: BBox): boolean => b[2] !== b[0] && b[3] !== b[1];
-
 // The "Live · <label>" pill — a white rounded chip with a green status dot, anchored to the box's
 // top-left corner. Inline styles so the overlay needs no separate stylesheet.
 const buildPillEl = (label: string): HTMLElement => {
@@ -71,7 +68,7 @@ const buildPillEl = (label: string): HTMLElement => {
         'box-shadow:0 1px 4px rgba(0,0,0,0.2);white-space:nowrap;pointer-events:none;' +
         `font-family:${playbook.font.headings};font-weight:700;font-size:12px;line-height:16px;color:#000;`;
     const dot = document.createElement('span');
-    dot.style.cssText = `width:8px;height:8px;border-radius:50%;flex:none;background:${AREA_COLOR};`;
+    dot.style.cssText = 'width:8px;height:8px;border-radius:50%;flex:none;background:var(--ui-surface-success);';
     const text = document.createElement('span');
     text.textContent = `Live · ${label}`;
     el.append(dot, text);
@@ -89,11 +86,11 @@ export class WatchedAreaOverlay {
     }
 
     /** Replace the set of highlighted areas. Boxes are re-shown wholesale; pills are diffed by id. */
-    async setAreas(areas: readonly WatchedArea[]): Promise<void> {
+    async setAreas(areas: readonly WatchedAreaBox[]): Promise<void> {
         if (this.removed) return;
-        const drawable = areas.filter((a) => hasArea(a.bbox));
+        const drawable = areas.filter((a) => isBBoxWithArea(a.bbox));
 
-        // Lazy-init the box module on first use; GeometriesModule.get is async, so re-check `removed`.
+        // Lazy-init the box module on first use; GeometriesModule.create is async, so re-check `removed`.
         this.module ??= await GeometriesModule.create(this.ttMap, AREA_CONFIG);
         if (this.removed) return;
         await this.module.show({

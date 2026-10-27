@@ -40,3 +40,14 @@ describe('ranking weights', () => {
         );
     });
 });
+
+describe('score', () => {
+    it('stays within 100 and equals the sum of its breakdown', () => {
+        const best: SiteForScoring = { id: 'best', values: { competition: -1, accessibility: -50 } };
+        const worst: SiteForScoring = { id: 'worst', values: { competition: -9, accessibility: -600 } };
+        const [top] = scoreSites([best, worst], { ...DEFAULT_WEIGHTS, competition: 25, accessibility: 15 }).ranked;
+
+        expect(top.score).toBe(100);
+        expect(top.breakdown.reduce((sum, entry) => sum + entry.points, 0)).toBe(100);
+    });
+});

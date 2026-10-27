@@ -1,26 +1,22 @@
 import { getPosition, type POICategory } from '@tomtom-org/maps-sdk/core';
 import { discoverPlaces, type TimeZoneRequest } from '@tomtom-org/maps-sdk/services';
-import type { MultiPolygon, Polygon } from 'geojson';
+import type { AreaGeometry } from '../agent/geometry';
 import type { Counted } from '../results/results-store';
-import { householdsEnabled, searchLimit } from './experimental-search';
+import { searchLimit } from './experimental-search';
 
 // The example's own search queries. The household ("Reach" / residential-density) address lookup
 // needed a 10 000-result ceiling to differentiate and the backend that provided it has been removed,
 // so countHouseholds / searchAddresses report null / an empty sample and callers hide every
 // household surface. See experimental-search.ts.
 
-// Re-exported so the tools keep one import site for the search plumbing.
-export { householdsEnabled, searchLimit };
-
 // The Places API rejects a request whose categorySet holds more IDs than this.
 export const MAX_CATEGORY_CODES = 10;
 
-type AreaGeometry = Polygon | MultiPolygon;
 export type SearchFeature = Awaited<ReturnType<typeof discoverPlaces>>['features'][number];
 
 /**
  * Address (≈household) count within the catchment. Always `count: null` — the household signal has
- * no backend. Callers gate their UI on {@link householdsEnabled}, not on this null.
+ * no backend. Callers gate their UI on `householdsEnabled`, not on this null.
  */
 export const countHouseholds = async (_geometry: AreaGeometry): Promise<Counted> => ({
     count: null,
@@ -77,16 +73,10 @@ const prettifyCategory = (value: string): string =>
         : value;
 
 /** A POI's display name + primary category, for click popups + legends. Defensive — shapes vary. */
-export const placeInfo = (feature: SearchFeature): { name: string; category: string } => {
-    const props = (feature.properties ?? {}) as {
-        poi?: { name?: string; categories?: string[] };
-        address?: { freeformAddress?: string };
-    };
-    return {
-        name: props.poi?.name ?? props.address?.freeformAddress ?? 'Unnamed place',
-        category: prettifyCategory(props.poi?.categories?.[0] ?? ''),
-    };
-};
+export const placeInfo = ({ properties }: SearchFeature): { name: string; category: string } => ({
+    name: properties.poi?.name ?? properties.address?.freeformAddress ?? 'Unnamed place',
+    category: prettifyCategory(properties.poi?.categories?.[0] ?? ''),
+});
 
 /** Nearest feature distance (metres) from a point, or null when none. */
 export const nearestMeters = (

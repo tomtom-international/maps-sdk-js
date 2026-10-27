@@ -1,6 +1,7 @@
 import type { KeyboardEvent } from 'react';
 import { ChevronRightIcon, TrashIcon } from '../Icons';
 import { type VisibilityMode, VisibilityToggle } from '../VisibilityToggle';
+import { isRowActivationKey } from './rowActivation';
 
 /**
  * Generic list-of-entries renderer used by Places / Routes / Ranges panels. Keeps the per-panel
@@ -42,10 +43,9 @@ export function EntryList({
     }
     const sorted = [...items].sort((a, b) => b.timestamp - a.timestamp);
     const handleKeyDown = (event: KeyboardEvent<HTMLLIElement>, id: string) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            onShowDetails(id);
-        }
+        if (!isRowActivationKey(event)) return;
+        event.preventDefault();
+        onShowDetails(id);
     };
     return (
         <ul className="flex flex-col gap-2">

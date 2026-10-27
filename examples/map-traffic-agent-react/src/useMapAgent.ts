@@ -15,8 +15,6 @@ import { useTrackers } from './hooks/useTrackers';
 import { useTrafficAnalytics } from './hooks/useTrafficAnalytics';
 import { useWatchedAreaOverlay } from './hooks/useWatchedAreaOverlay';
 
-export type { AnalyticsState, FocusState, IncidentsSnapshot, SelectedIncident } from './hooks/types';
-
 type UseMapAgentOptions = {
     deploymentId: string;
 };
@@ -27,7 +25,7 @@ type UseMapAgentOptions = {
  * tree mirrors the panel tree in App.tsx.
  */
 export function useMapAgent(options: UseMapAgentOptions) {
-    const { agent, transport, isReady } = useAgentBootstrap(options);
+    const { agent, transport } = useAgentBootstrap(options);
 
     const { analyticsState } = useTrafficAnalytics(agent);
     const { selectedIncident, selectIncident, pageIncident, clearSelectedIncident } = useSelectedIncident(agent);
@@ -101,7 +99,6 @@ export function useMapAgent(options: UseMapAgentOptions) {
     return {
         agent,
         transport,
-        isReady,
         analyticsState,
         selectedIncident,
         selectIncident,
@@ -131,11 +128,9 @@ export function useMapAgent(options: UseMapAgentOptions) {
         snapshotCount: monitor.snapshotCount,
         // route monitor (corridor mode)
         monitoredRoutes: routeMonitor.monitoredRoutes,
-        routeMonitorLabel: routeMonitor.routeMonitorLabel,
         routeLastTickAt: routeMonitor.routeLastTickAt,
         routeTickCount: routeMonitor.routeTickCount,
         stopRoute: routeMonitor.stopRoute,
-        stopRouteMonitor: routeMonitor.stopRouteMonitor,
         focusRoute,
         // viz
         vizMode,

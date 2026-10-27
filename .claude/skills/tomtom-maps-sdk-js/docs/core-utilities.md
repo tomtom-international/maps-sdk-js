@@ -342,7 +342,7 @@ const hairpins = route.properties.sections.curve?.filter(isHairpin) ?? [];
 ```
 
 - A curve ends where the road turns the other way (an S-bend is two curves) or at a straight longer than
-  `maxStraightInMeters`. A sharp corner between straights, as at most junctions, is no curve; a roundabout is.
+  `maxStraightInMeters`. A corner on one vertex between long straights is no curve; a junction corner drawn round its kerb is one, and so is a roundabout.
   Turning back at a waypoint (a dead-end road) makes none.
 - With guidance, a curve with a junction instruction on it carries its `maneuver` (depart, arrive, waypoint,
   border and tollgate instructions set none, nor one keeping to the road, "Turn left to stay on the SS38", or with
@@ -410,9 +410,9 @@ const closures = (why?.sections ?? []).filter((incident) => incident.categories.
 ### `getInstructionLanes`
 
 `getInstructionLanes(route, instruction)` → the `lanes` section leading to the maneuver, or `undefined`. A
-section leads to the last instruction inside it, else to the next one within 100 m after its end (lanes stop
+section leads to the last instruction at a junction inside it, else to the next one within 100 m after its end (lanes stop
 at the stop line, short of the junction); the closest section wins; of instructions sharing a point (a roundabout's entry
-and `EXIT_ROUNDABOUT`) only the first gets lanes. `lanes`
+and `EXIT_ROUNDABOUT`) only the first gets lanes; departure, arrival, waypoint, border and tollgate instructions get none. `lanes`
 sections come only with `guidance`, and `RoutingModule` draws no lanes: drawing them in a panel is the app's own
 code, as in the `route-with-guidance` example.
 

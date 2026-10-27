@@ -1,4 +1,4 @@
-import { methodologyReportHtml, notMeasuredReportHtml } from '../agent/methodology';
+import { escapeHtml, methodologyReportHtml, notMeasuredReportHtml } from '../agent/methodology';
 import { type FactorWeights, scoreFactors } from '../agent/scoring';
 import { householdsEnabled } from '../demographics/experimental-search';
 import {
@@ -17,8 +17,6 @@ import {
 // mandatory "Not measured" caveats are always appended.
 
 export type ReportSpec = { title: string; concept?: string; area?: string; date: string };
-
-const esc = (value: string): string => value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
 const STYLE = `
   :root { --ink:#111827; --muted:#5c5c5c; --line:#e5e5e5; --accent:#0a3653; --warn-bg:#fff7ed; --warn-line:#fdba74; }
@@ -58,13 +56,13 @@ const rankingSection = (ranking: RankingResult): string => {
     const rows = ranking.sites.features
         .map(({ properties: site }) => {
             if (site.excluded) {
-                return `<tr><td>#${site.rank}</td><td>${esc(site.label)}</td><td colspan="${excludedColspan}" class="excluded">Excluded: ${esc(site.excluded.reason)}</td></tr>`;
+                return `<tr><td>#${site.rank}</td><td>${escapeHtml(site.label)}</td><td colspan="${excludedColspan}" class="excluded">Excluded: ${escapeHtml(site.excluded.reason)}</td></tr>`;
             }
             const breakdown = site.breakdown.map((b) => `${FACTOR_LABELS[b.factor]} ${b.points}`).join(' + ');
             return `<tr>
-              <td>#${site.rank}</td><td>${esc(site.label)}</td>
+              <td>#${site.rank}</td><td>${escapeHtml(site.label)}</td>
               <td class="n"><strong>${site.score}</strong></td>
-              <td class="muted">${esc(breakdown)}</td>
+              <td class="muted">${escapeHtml(breakdown)}</td>
               ${householdsEnabled() ? `<td class="n">${formatNumber(site.households)}</td>` : ''}
               <td class="n">${formatCounted(site.competitors)}</td>
             </tr>`;
@@ -74,10 +72,10 @@ const rankingSection = (ranking: RankingResult): string => {
         ? `<p class="muted">Not scored: ${ranking.skipped.map((s) => `${FACTOR_LABELS[s.factor]} (${skippedReason(s).toLowerCase()})`).join(', ')}.</p>`
         : '';
     const gates = ranking.gates.length
-        ? `<p class="muted">Gates applied: ${ranking.gates.map(esc).join('; ')}.</p>`
+        ? `<p class="muted">Gates applied: ${ranking.gates.map(escapeHtml).join('; ')}.</p>`
         : '';
-    return `<h2>Ranked shortlist: ${esc(ranking.concept)}</h2>
-      <p class="muted">${esc(ranking.mode)} catchments · weights ${esc(factorList(ranking.weights))} · confidence ${ranking.confidence}.</p>
+    return `<h2>Ranked shortlist: ${escapeHtml(ranking.concept)}</h2>
+      <p class="muted">${escapeHtml(ranking.mode)} catchments · weights ${escapeHtml(factorList(ranking.weights))} · confidence ${ranking.confidence}.</p>
       <table><thead><tr><th>#</th><th>Site</th><th class="n">Score</th><th>Points</th>${householdsHeader}<th class="n">Competitors</th></tr></thead><tbody>${rows}</tbody></table>
       ${gates}${skipped}`;
 };
@@ -85,15 +83,15 @@ const rankingSection = (ranking: RankingResult): string => {
 const profileSection = (profile: NonNullable<ReturnType<typeof getResultsSnapshot>['profile']>): string => {
     const p = profile.site.properties;
     const makeup = p.areaMakeup
-        .map((bucket) => `<tr><td>${esc(bucket.label)}</td><td class="n">${formatCounted(bucket)}</td></tr>`)
+        .map((bucket) => `<tr><td>${escapeHtml(bucket.label)}</td><td class="n">${formatCounted(bucket)}</td></tr>`)
         .join('');
     // The households KPI renders only when the household signal produced a value (experimental search on).
     const householdsKpi = p.households
         ? `<div class="kpi"><div class="v">${formatCounted(p.households)}</div><div class="l">Households (reach)</div></div>
         `
         : '';
-    return `<h2>Site profile: ${esc(p.label)}</h2>
-      <p class="muted">${esc(p.mode)} · ${esc(p.basis)} · ${p.catchmentKm2} km²</p>
+    return `<h2>Site profile: ${escapeHtml(p.label)}</h2>
+      <p class="muted">${escapeHtml(p.mode)} · ${escapeHtml(p.basis)} · ${p.catchmentKm2} km²</p>
       <div class="kpis card">
         ${householdsKpi}<div class="kpi"><div class="v">${formatCounted(p.competitors)}</div><div class="l">Competitors${p.competitors.nearestMeters !== null ? ` · nearest ${p.competitors.nearestMeters} m` : ''}</div></div>
         <div class="kpi"><div class="v">${p.parking ? formatCounted(p.parking) : '—'}</div><div class="l">Parking${p.parking?.nearestMeters != null ? ` · nearest ${p.parking.nearestMeters} m` : ''}</div></div>
@@ -105,11 +103,11 @@ const overlapSection = (overlap: NonNullable<ReturnType<typeof getResultsSnapsho
     const rows = overlap.pairs
         .map(
             (pair) =>
-                `<tr><td>${esc(pair.existing.properties.label)}</td><td class="n">${pair.overlapKm2} km²</td><td class="n">${pair.pctOfProposed}%</td><td class="n">${pair.pctOfExisting}%</td></tr>`,
+                `<tr><td>${escapeHtml(pair.existing.properties.label)}</td><td class="n">${pair.overlapKm2} km²</td><td class="n">${pair.pctOfProposed}%</td><td class="n">${pair.pctOfExisting}%</td></tr>`,
         )
         .join('');
-    return `<h2>Cannibalization: ${esc(overlap.proposed.properties.label)}</h2>
-      <p class="muted">${overlap.proposedSharedPct}% of the proposed catchment (${overlap.proposed.properties.catchmentKm2} km²) is already covered by the existing network. ${esc(overlap.basis)}.</p>
+    return `<h2>Cannibalization: ${escapeHtml(overlap.proposed.properties.label)}</h2>
+      <p class="muted">${overlap.proposedSharedPct}% of the proposed catchment (${overlap.proposed.properties.catchmentKm2} km²) is already covered by the existing network. ${escapeHtml(overlap.basis)}.</p>
       <table><thead><tr><th>Existing site</th><th class="n">Overlap</th><th class="n">% of proposed</th><th class="n">% of theirs</th></tr></thead><tbody>${rows}</tbody></table>
       <p class="muted">Geographic reach overlap only, not a revenue or customer-loss estimate.</p>`;
 };
@@ -117,26 +115,26 @@ const overlapSection = (overlap: NonNullable<ReturnType<typeof getResultsSnapsho
 const whitespaceSection = (whitespace: NonNullable<ReturnType<typeof getResultsSnapshot>['whitespace']>): string => {
     const closestOf = (pocket: WhitespaceResult['pockets']['features'][number]): string =>
         pocket.properties.nearestDemand.length
-            ? pocket.properties.nearestDemand.map((poi) => `${esc(poi.name)} (${poi.meters} m)`).join(', ')
+            ? pocket.properties.nearestDemand.map((poi) => `${escapeHtml(poi.name)} (${poi.meters} m)`).join(', ')
             : '—';
     const rows = whitespace.pockets.features
         .map((pocket, index) => {
             const w = pocket.properties;
-            return `<tr><td>#${index + 1} ${esc(w.color)}</td><td class="n">${w.opportunity}</td><td class="n">${w.demand}</td><td class="n">${formatNumber(w.nearestTargetMeters, ' m')}</td><td>${w.beyondWalk ? 'genuine gap' : 'least-served'}</td><td>${closestOf(pocket)}</td></tr>`;
+            return `<tr><td>#${index + 1} ${escapeHtml(w.color)}</td><td class="n">${w.opportunity}</td><td class="n">${w.demand}</td><td class="n">${formatNumber(w.nearestTargetMeters, ' m')}</td><td>${w.beyondWalk ? 'genuine gap' : 'least-served'}</td><td>${closestOf(pocket)}</td></tr>`;
         })
         .join('');
     // Demand make-up: how many POIs of each category drive the demand signal (fuller than the legend).
     const compRows = whitespace.demandComposition
-        .map((entry) => `<tr><td>${esc(entry.category)}</td><td class="n">${entry.count}</td></tr>`)
+        .map((entry) => `<tr><td>${escapeHtml(entry.category)}</td><td class="n">${entry.count}</td></tr>`)
         .join('');
     const composition = whitespace.demandComposition.length
         ? `<table><thead><tr><th>Demand category</th><th class="n">POIs</th></tr></thead><tbody>${compRows}</tbody></table>`
         : '';
-    return `<h2>Opportunity whitespace: ${esc(whitespace.area)}</h2>
-      <p class="muted">Goal: ${esc(whitespace.goal)} · ${whitespace.pocketsMeetingGoal} of ${whitespace.pockets.features.length} pockets meet it.</p>
+    return `<h2>Opportunity whitespace: ${escapeHtml(whitespace.area)}</h2>
+      <p class="muted">Goal: ${escapeHtml(whitespace.goal)} · ${whitespace.pocketsMeetingGoal} of ${whitespace.pockets.features.length} pockets meet it.</p>
       <table><thead><tr><th>Pocket</th><th class="n">Opportunity</th><th class="n">Demand</th><th class="n">Nearest peer</th><th>Type</th><th>Closest demand POIs</th></tr></thead><tbody>${rows}</tbody></table>
       <h3>Demand make-up</h3>
-      <p class="muted">Demand is a count of these nearby POIs: ${esc(whitespace.anchorsMatchedBy.replace('categories: ', ''))}.</p>
+      <p class="muted">Demand is a count of these nearby POIs: ${escapeHtml(whitespace.anchorsMatchedBy.replace('categories: ', ''))}.</p>
       ${composition}`;
 };
 
@@ -150,17 +148,17 @@ export const buildReportHtml = (spec: ReportSpec): string => {
     if (snapshot.whitespace) sections.push(whitespaceSection(snapshot.whitespace));
 
     const metaRows = [
-        spec.concept && `Concept: ${esc(spec.concept)}`,
-        spec.area && `Area: ${esc(spec.area)}`,
-        `Date: ${esc(spec.date)}`,
+        spec.concept && `Concept: ${escapeHtml(spec.concept)}`,
+        spec.area && `Area: ${escapeHtml(spec.area)}`,
+        `Date: ${escapeHtml(spec.date)}`,
         'Data: TomTom location services',
     ]
         .filter(Boolean)
         .join(' · ');
 
     return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>${esc(spec.title)}</title><style>${STYLE}</style></head><body>
-    <h1>${esc(spec.title)}</h1>
+    <title>${escapeHtml(spec.title)}</title><style>${STYLE}</style></head><body>
+    <h1>${escapeHtml(spec.title)}</h1>
     <div class="meta">${metaRows}</div>
     ${sections.join('\n') || '<p class="muted">No analyses have been run yet. Run a profile, ranking, comparison or whitespace scan first.</p>'}
     ${methodologyReportHtml()}

@@ -8,8 +8,6 @@ import { buildSiteAgentOptions } from '../agent/site-agent';
 import { API_KEY, createDemoAzure } from '../config';
 import { type AgentUIMessage, createAgentTelemetry } from '../telemetry';
 
-export type AgentInstance = ReturnType<typeof createMapAgent>;
-
 type BootstrapOptions = {
     deploymentId: string;
 };
@@ -18,17 +16,16 @@ type BootstrapOptions = {
 const LAS_VEGAS_CENTRE: [number, number] = [-115.155, 36.14];
 
 /**
- * Owns map + agent lifecycle. The map is created once; the agent re-instantiates when the
- * deployment id changes so users can swap models in-session without losing the camera.
+ * Owns map + agent lifecycle. The map is created once, and the agent is built on it for
+ * `deploymentId`; a different id rebuilds only the agent, so the camera stays where it is.
  *
- * SCOPED co-pilot: the agent configuration (scoped system prompt, the seven domain tools, the
+ * SCOPED co-pilot: the agent configuration (scoped system prompt, the eight domain tools, the
  * hand-picked non-overlapping generic tools, and the meta-tool-preserving classifier) lives in
  * `../agent/site-agent` so the shipped agent and the scenario tests build the exact same thing —
- * here we only add the runtime map, model, and the `onClassify` UI hook.
+ * here we only add the runtime map, model, and the `onClassify` and `onToolExecute` telemetry hooks.
  */
 export function useAgentBootstrap({ deploymentId }: BootstrapOptions) {
     const [map, setMap] = useState<TomTomMap | undefined>(undefined);
-    const [agent, setAgent] = useState<AgentInstance | undefined>(undefined);
     const [transport, setTransport] = useState<ChatTransport<AgentUIMessage> | undefined>(undefined);
 
     useEffect(() => {
@@ -62,17 +59,15 @@ export function useAgentBootstrap({ deploymentId }: BootstrapOptions) {
             onToolExecute: telemetry.onToolExecute,
         });
 
-        setAgent(created);
         setTransport(telemetry.instrumentTransport(created));
         setActiveToolState(created.state); // let panels drive the map (click-to-focus, re-profile)
 
         return () => {
-            setAgent(undefined);
             setTransport(undefined);
             setActiveToolState(null);
             created.destroy();
         };
     }, [map, deploymentId]);
 
-    return { agent, transport, isReady: transport !== undefined };
+    return { transport };
 }

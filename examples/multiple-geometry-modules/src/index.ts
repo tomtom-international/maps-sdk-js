@@ -13,7 +13,6 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
         mapLibre: {
             container: 'sdk-map',
             minZoom: 2,
-            zoom: 13,
             bounds: mainPlace.bbox,
         },
     });

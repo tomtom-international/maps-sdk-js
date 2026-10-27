@@ -18,7 +18,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     const searchBox = document.getElementById('ui-searchBox') as HTMLInputElement;
     const refinementsList = document.getElementById('ui-refinementResults') as HTMLUListElement;
     const placesList = document.getElementById('ui-placeResults') as HTMLUListElement;
-    const searchThisAreaButton = document.getElementById('ui-searchThisArea') as HTMLInputElement;
+    const searchThisAreaButton = document.getElementById('ui-searchThisArea') as HTMLDivElement;
     const loadMoreSlot = document.getElementById('ui-loadMore') as HTMLDivElement;
 
     const map = new TomTomMap({
@@ -188,7 +188,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
 
     (document.querySelector('#ui-clearButton') as HTMLButtonElement).addEventListener('click', clearAll);
 
-    searchBox.addEventListener('keyup', () => {
+    searchBox.addEventListener('input', () => {
         selectedRefinement = undefined;
         const query = searchBox.value.trim();
         if (query === '') {

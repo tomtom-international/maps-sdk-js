@@ -1,6 +1,6 @@
 {
   "name": "@examples/cinematic-city-flyby",
-  "description": "Example flying a looping bird's-eye camera round landmarks and down famous streets, banking into the turns, in eight cities and eighteen themes mixing 3D buildings, map effects with their own GPU passes, and map-theme colours.",
+  "description": "Example flying a looping bird's-eye camera round landmarks and down famous streets, banking into the turns, over eight cities and five terrain landscapes, in twenty themes mixing 3D buildings, textured surfaces and trees, map effects with their own GPU passes, and map-theme colours.",
   "type": "module",
   "scripts": {
     "build": "vite build --config ../example-vite.config.ts",

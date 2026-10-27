@@ -1,6 +1,6 @@
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { type BaseMapLayerGroupName, BaseMapModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
-import { type ReverseGeocodingResponse, reverseGeocode } from '@tomtom-org/maps-sdk/services';
+import { createLatestRequest, type ReverseGeocodingResponse, reverseGeocode } from '@tomtom-org/maps-sdk/services';
 import { distance } from '@turf/turf';
 import type { Feature, FeatureCollection, Position } from 'geojson';
 import { Map, type PointLike } from 'maplibre-gl';
@@ -59,6 +59,8 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
     };
 
     let clickedFeature: Feature<any, any> | undefined;
+    // A later click, on a road or off them, drops the addresses still on their way for an earlier one.
+    const latestAddresses = createLatestRequest();
 
     // The parts of the map we let the user explore. This scope keeps the default pointer cursor.
     const interactiveGroups = baseMap.events.where({
@@ -79,23 +81,24 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
         selectedSource.setData(createInvertedBuffer(clickedFeature, pxToMeters(15, mapLibreMap), 'meters'));
         setTitleAndSubtitle(clickedFeature);
 
-        if (clickedFeature.geometry.type == 'LineString') {
-            const coordinates = clickedFeature.geometry.coordinates;
-            showRevGeoResponses(
-                await Promise.all([
-                    reverseGeocode({ position: coordinates[0] }),
-                    reverseGeocode({ position: coordinates.at(-1) as Position }),
-                ]),
-            );
-        } else if (clickedFeature.geometry.type == 'Point') {
-            showRevGeoResponses([
-                await reverseGeocode({
-                    position: clickedFeature.geometry.coordinates,
-                }),
-            ]);
-        } else {
-            addressesElement.innerHTML = '';
+        const { geometry } = clickedFeature;
+        let positions: Position[] = [];
+        if (geometry.type == 'LineString') {
+            positions = [geometry.coordinates[0], geometry.coordinates.at(-1) as Position];
+        } else if (geometry.type == 'Point') {
+            positions = [geometry.coordinates];
         }
+
+        if (!positions.length) {
+            latestAddresses.cancel();
+            addressesElement.innerHTML = '';
+            return;
+        }
+
+        const addresses = await latestAddresses.run((signal) =>
+            Promise.all(positions.map((position) => reverseGeocode({ position, signal }))),
+        );
+        if (addresses.current) showRevGeoResponses(addresses.value);
     });
 
     const setPlaceholderText = () => {
@@ -120,6 +123,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
     });
 
     restOfTheMap.on('click', () => {
+        latestAddresses.cancel();
         clickedFeature = undefined;
         hoveredSource.setData(emptyFeatureCollection);
         selectedSource.setData(emptyFeatureCollection);

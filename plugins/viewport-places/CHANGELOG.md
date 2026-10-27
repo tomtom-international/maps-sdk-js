@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.5.10
+
+### Patch Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - The package ships its `CHANGELOG.md`, as the SDK does, so you can read what changed between two releases from `node_modules`
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - A `maxZoom` of 0 is honoured, and `update()` rebuilds the places layers only when it is given a places config
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - `new ViewportPlaces(map, { onError })` hands you a refresh on map move that fails, as the search's `SDKError` or the map's `TomTomMapError`, instead of only logging it
+
 ## 0.5.9
 
 ### Patch Changes

@@ -12,7 +12,8 @@ export const placeTitle = (place: Place): string =>
 export const placeSubtitle = (place: Place): string | undefined =>
     place.properties?.poi?.name ? place.properties.address?.freeformAddress : undefined;
 
-export const clockTime = (date: Date): string => date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+const clockFormat = new Intl.DateTimeFormat([], { hour: '2-digit', minute: '2-digit' });
+export const clockTime = (date: Date): string => clockFormat.format(date);
 
 export const addSeconds = (date: Date, seconds: number): Date => new Date(date.getTime() + seconds * 1000);
 

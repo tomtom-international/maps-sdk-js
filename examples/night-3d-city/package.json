@@ -1,0 +1,28 @@
+{
+  "name": "@examples/night-3d-city",
+  "description": "Example drawing Westminster at night with the Landmarks 3D and map-effects plugins: lit windows, the Houses of Parliament on the Thames, and glowing streets.",
+  "type": "module",
+  "scripts": {
+    "build": "vite build --config ../example-vite.config.ts",
+    "clean:dist": "rimraf ./dist",
+    "develop": "vite --config ../example-vite.config.ts",
+    "type-check": "tsc --noEmit",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test  --ui",
+    "test:e2e:update-snapshots": "playwright test --update-snapshots",
+    "start-test-server:prod": "vite serve dist/prod --port 9050"
+  },
+  "dependencies": {
+    "@tomtom-org/maps-sdk": "catalog:",
+    "@tomtom-org/maps-sdk-plugin-landmarks-3d": "catalog:",
+    "@tomtom-org/maps-sdk-plugin-map-effects": "catalog:"
+  },
+  "devDependencies": {
+    "@playwright/test": "catalog:",
+    "@types/node": "catalog:",
+    "rimraf": "catalog:",
+    "rollup-plugin-visualizer": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  }
+}

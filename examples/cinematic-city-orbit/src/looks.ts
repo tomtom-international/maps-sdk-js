@@ -1,15 +1,25 @@
 import type { StandardStyleID } from '@tomtom-org/maps-sdk/map';
-import type { Buildings3DConfig, Landmarks3DConfig } from '@tomtom-org/maps-sdk-plugin-landmarks-3d';
+import { type Buildings3DConfig, type Landmarks3DConfig } from '@tomtom-org/maps-sdk-plugin-landmarks-3d';
 import type { MapEffectsConfig } from '@tomtom-org/maps-sdk-plugin-map-effects';
 import type { MapThemeMode } from '@tomtom-org/maps-sdk-plugin-map-theme';
+
+// The wall palettes the looks draw from: CSS colours, and map colours by knob id, which follow the theme.
+const PALETTES = {
+    sandstone: ['#efe4cf', '#e2cfa8', '#cdb07f', '#d9c7a6'],
+    pastel: ['#f3c5b5', '#f5e2a0', '#bfdccb', '#c6d4ee', '#e9c3d8'],
+    nordic: ['#f4f1ea', '#dcd7cb', '#c9cfd4', '#aab5bf', '#e7c9a9'],
+    terracotta: ['#f1e5d0', '#e3bf94', '#cf8f60', '#b96c48'],
+    dusk: ['#2b2f4a', '#3a2f55', '#24384d', '#463049'],
+    foundations: ['colors.artificial', 'colors.land', 'colors.park', 'colors.water'],
+};
 
 /** One look of the city: the map style and its colours, the 3D buildings and landmarks, and the effects over them. */
 export type CityLook = {
     label: string;
     style: StandardStyleID;
     /**
-     * The colours the map's own are derived from: a neutral, a text colour and a few accents. The light
-     * neutral needs an HSL saturation of 0.4 or less, or the theme takes a grey for the land.
+     * The colours the map's own are derived from: a neutral, a text colour and a few accents. The land
+     * comes from the neutral, toned down when it is saturated.
      */
     theme: { colors: string[]; mode: MapThemeMode };
     buildings: Buildings3DConfig;
@@ -24,7 +34,14 @@ export const cityLooks: CityLook[] = [
         // Sand, sea, olive, burnt orange and espresso.
         theme: { colors: ['#efe8dc', '#3d7ea6', '#8aa35c', '#d9822b', '#3b2a1e'], mode: 'light' },
         buildings: {
-            // A low warm sun on one side, the cool blue of the sky in the shade on the other.
+            // A low warm sun on one side, the cool blue of the sky in the shade on the other, over walls
+            // of sun-baked plaster, from cream to clay.
+            walls: {
+                palette: PALETTES.terracotta,
+                paletteMode: 'blend',
+                paletteIntensity: 0.6,
+                variation: 0.25,
+            },
             windows: { color: '#6f8aa3' },
             light: { direction: 215, altitude: 12, color: '#ffb36b', intensity: 1 },
             ambientLight: { color: '#c3d0e2', intensity: 0.55 },
@@ -46,7 +63,7 @@ export const cityLooks: CityLook[] = [
         buildings: {
             // Near-black towers of glass, most of it lit: the bloom glows only as wide as the bright area it spreads.
             facade: { pattern: 'glass', intensity: 1 },
-            walls: { color: '#161a2e' },
+            walls: { color: '#161a2e', palette: PALETTES.dusk, paletteIntensity: 0.7, variation: 0.3 },
             windows: { color: '#151a33' },
             litWindows: { color: '#9ef6ff', fraction: 0.8, intensity: 1 },
             light: { color: '#7a5cff', intensity: 0.25 },
@@ -69,6 +86,8 @@ export const cityLooks: CityLook[] = [
         theme: { colors: ['#f3f1ec', '#8fd0e8', '#a9dc9a', '#f2907b', '#3d3d3d'], mode: 'light' },
         buildings: {
             facade: { pattern: 'residential', intensity: 0.6 },
+            // Every house painted its own pastel, as on a model railway.
+            walls: { palette: PALETTES.pastel, paletteIntensity: 0.85, variation: 0.2 },
             light: { direction: 200, altitude: 55, intensity: 0.9 },
             shadows: { intensity: 0.6 },
         },
@@ -85,7 +104,8 @@ export const cityLooks: CityLook[] = [
         // Midnight, navy, pine, steel blue, frost and graphite.
         theme: { colors: ['#0f1a2b', '#1d3557', '#2a4d3a', '#7fa7d9', '#dce6f2', '#141414'], mode: 'dark' },
         buildings: {
-            walls: { color: '#2a3346' },
+            // A hint of the theme's own navy, pine and steel blue in the walls.
+            walls: { color: '#2a3346', palette: PALETTES.foundations, paletteIntensity: 0.3, variation: 0.2 },
             litWindows: { color: '#ffe2b0', fraction: 0.15, intensity: 0.7 },
             light: { direction: 120, altitude: 25, color: '#9fb8e8', intensity: 0.4 },
         },
@@ -124,6 +144,7 @@ export const cityLooks: CityLook[] = [
         // Pale mist, slate water, sage, blush and a cool charcoal.
         theme: { colors: ['#e9edf0', '#7f9db5', '#9db59a', '#e8a9a0', '#2f3a45'], mode: 'light' },
         buildings: {
+            walls: { palette: PALETTES.nordic, paletteMode: 'blend', paletteIntensity: 0.5, variation: 0.15 },
             windows: { color: '#9fb2c4' },
             light: { direction: 95, altitude: 8, color: '#ffc9b8', intensity: 0.8 },
             ambientLight: { color: '#dfe7f0', intensity: 0.7 },
@@ -143,7 +164,8 @@ export const cityLooks: CityLook[] = [
         // Greys only: the grade takes the last of the colour out.
         theme: { colors: ['#121212', '#1c1c1c', '#3a3a3a', '#8a8a8a', '#e6e6e6'], mode: 'dark' },
         buildings: {
-            walls: { color: '#6e6e6e' },
+            // No palette, only each building's own shade of grey.
+            walls: { color: '#6e6e6e', variation: 0.4 },
             litWindows: { color: '#fff4d6', fraction: 0.25, intensity: 0.9 },
             // A hard, low key light on the faces towards the camera, and deep shadows.
             light: { direction: 210, altitude: 25, color: '#ffffff', intensity: 1 },
@@ -166,6 +188,7 @@ export const cityLooks: CityLook[] = [
         theme: { colors: ['#ece5dc', '#4f7ca3', '#b5a26a', '#e2643a', '#40261c'], mode: 'light' },
         buildings: {
             // The last of the sun, almost level, under a violet sky; the first windows coming on.
+            walls: { palette: PALETTES.sandstone, paletteMode: 'blend', paletteIntensity: 0.8, variation: 0.2 },
             windows: { color: '#3e4f6b' },
             litWindows: { color: '#ffd08a', fraction: 0.12, intensity: 0.6 },
             light: { direction: 280, altitude: 5, color: '#ff8a4c', intensity: 1 },

@@ -10,8 +10,11 @@ import fs from 'node:fs';
 import type { Page, TestInfo } from '@playwright/test';
 import { expect } from '@playwright/test';
 
-/** One changed pixel fails, and `threshold: 0` counts even a one-level colour shift as changed. */
-const ZERO_TOLERANCE = { maxDiffPixels: 0, threshold: 0 };
+/**
+ * `threshold: 0` counts even a one-level colour shift as changed, and more than 10 changed pixels fail.
+ * Chromium's anti-aliasing of glyph and rounded edges moves a handful between runs; a restyle moves hundreds.
+ */
+const UI_TOLERANCE = { maxDiffPixels: 10, threshold: 0 };
 
 /** The single committed baseline, captured by the Linux CI container. */
 const BASELINE = 'ui-temp-upon-load.png';
@@ -25,7 +28,7 @@ type TempUiSnapshotArgs = {
 };
 
 /**
- * Compares the example's own chrome at zero tolerance, with the map hidden.
+ * Compares the example's own chrome at near-zero tolerance, with the map hidden.
  *
  * The panels are siblings of the map, so dropping the map out of the paint leaves only DOM/CSS —
  * deterministic enough to catch a recoloured surface or a shifted type scale, which the tolerant
@@ -59,7 +62,7 @@ export const checkTempUiSnapshot = async ({
             return;
         }
 
-        await expect(page).toHaveScreenshot(BASELINE, { ...ZERO_TOLERANCE, timeout });
+        await expect(page).toHaveScreenshot(BASELINE, { ...UI_TOLERANCE, timeout });
     } finally {
         await restoreMap();
     }

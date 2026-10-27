@@ -48,8 +48,10 @@ export const initCellSelection = (
     analyticsModule.events.on('click', () => {});
 
     busiestCellButton.addEventListener('click', () => {
-        const [busiest] = cellsOf(grid).toSorted(
-            (cell, other) => (other.properties.congestionLevel ?? 0) - (cell.properties.congestionLevel ?? 0),
+        const busiest = cellsOf(grid).reduce<Cell | undefined>(
+            (best, cell) =>
+                !best || (cell.properties.congestionLevel ?? 0) > (best.properties.congestionLevel ?? 0) ? cell : best,
+            undefined,
         );
         if (!busiest) return;
 
@@ -73,9 +75,15 @@ export const initCellSelection = (
         if (!selected) return;
 
         const selectedCentre = centreOf(selected);
-        const [nearest] = cellsOf(grid).toSorted(
-            (cell, other) => distanceBetween(cell, selectedCentre) - distanceBetween(other, selectedCentre),
-        );
+        let nearest: Cell | undefined;
+        let nearestDistance = Number.POSITIVE_INFINITY;
+        for (const cell of cellsOf(grid)) {
+            const distance = distanceBetween(cell, selectedCentre);
+            if (distance < nearestDistance) {
+                nearest = cell;
+                nearestDistance = distance;
+            }
+        }
         if (nearest) analyticsModule.setEventState({ id: nearest.properties.id, state: 'click' });
     });
 };

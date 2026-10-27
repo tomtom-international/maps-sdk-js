@@ -252,7 +252,7 @@ const { click: [clickedID] = [], hover = [] } = routing.getEventStates(); // ids
 - Tuning: Routing `highlight.outline.widthFactor` (default 1.2, range 1–1.25), and for the ring `setSectionFocus` draws `highlight.section.outline.color` (unset: black on light, white on dark) and `highlight.section.outline.widthFactor` (1, 0.5–2); Geometries / ReachableRanges `highlight.fill.opacityFactor` (2, 1–4) and `highlight.line.widthFactor` (1.75, 1–3) — catalogue knobs multiplying the opacity and width in force; `1` turns that look off. Details module `highlight.outline.color` and `highlight.line.widthFactor` (1.6, 1–1.8), `highlight: false` off.
 - A MapLibre layer configured in place of the default is drawn as given: Places `layers.selected`, Routing `layers.mainLines.routeOutline` `line-width`, Geometries `layers.line` `line-width`.
 - States survive `setVisible`, config changes and `setStyle`; a new `show()`, `clear()` or `setStyle(…, { resetState: true })` drops them — read the selection first and put it back after re-showing.
-- Base map, POIs and traffic tile modules have no event states.
+- Base map, POIs and traffic tile features take the state as the feature state `eventState` (not `properties`), only when the tile gives the feature an id, and have no methods to put or read it. Read it with `['feature-state', 'eventState']` in a raw layer edit. The base map's 3D buildings draw it once `buildings3D.hover` / `buildings3D.click` has a colour: `map-setup.md` § BaseMapModule.
 
 ### `recently-hovered`
 

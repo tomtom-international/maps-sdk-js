@@ -1,12 +1,12 @@
 import type { ToolEntry, ToolEntryBuilder, ToolState } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import { z } from 'zod';
-import { describeDefaultWeights } from '../agent/scoring';
+import { describeDefaultWeights, scoreFactors } from '../agent/scoring';
 import type { SiteSelectionPatch, SiteToolState } from '../agent/site-selection-state';
 import { householdsEnabled } from '../demographics/experimental-search';
 
 // updateSitePreferences is a state-only tool: it changes the session defaults the analysis tools read
 // (catchment, weights, demand anchors) so the user's standing choices stick across turns without being
-// restated each time. It fetches and computes nothing. See the PR description.
+// restated each time. It fetches and computes nothing.
 
 // The Reach (households) factor exists only when the experimental-search flag enables the household
 // signal — otherwise it is absent from the schema so the agent can never mention it. Built per agent
@@ -64,9 +64,13 @@ export const updateSitePreferences: ToolEntryBuilder = () => ({
     execute: (async (params: UpdateSitePreferencesInput, state: ToolState) => {
         const patch: SiteSelectionPatch = params;
         const updated = (state as SiteToolState).siteSelection.update(patch);
+        // Only the factors that score reach the model, so a hidden one is never mentioned.
+        const scoringWeights = Object.fromEntries(
+            scoreFactors().map((factor) => [factor, updated.scoringWeights[factor]]),
+        );
         return {
             ok: true as const,
-            preferences: updated,
+            preferences: { ...updated, scoringWeights },
             headline: 'Updated the session defaults for future analyses.',
             hint: 'Confirm the change in ONE short sentence; the new defaults apply to the next profile/rank/whitespace run unless overridden.',
         };

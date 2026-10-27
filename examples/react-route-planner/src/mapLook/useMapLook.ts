@@ -14,8 +14,11 @@ import { hillshadeLooks, type MapLook, type POIFocus, poiFocuses, themes } from 
 const applyLook = async ({ map, baseMap, pois }: MapModules, look: MapLook, previous?: MapLook) => {
     const changed = (...keys: (keyof MapLook)[]) => !previous || keys.some((key) => previous[key] !== look[key]);
 
-    // A switch carries the routes, the places and every setting below onto the new style.
-    if (look.style !== map.getStyleInput()) await map.setStyle(look.style);
+    // A switch carries the routes, the places and every setting below onto the new style. Once a module adds
+    // its style part, the style input is an object, so only the first look compares with it.
+    const styleInput = map.getStyleInput();
+    const currentStyle = typeof styleInput === 'string' ? styleInput : styleInput?.id;
+    if (previous ? changed('style') : look.style !== currentStyle) await map.setStyle(look.style);
 
     if (changed('theme', 'labelSize', 'roadWidth', 'terrain')) {
         const styling = await StylingFoundationsModule.get(map);

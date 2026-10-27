@@ -1,5 +1,5 @@
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
-import { CustomGeoJSONModule, type StandardStyleID, standardStyleIDs, TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { CustomGeoJSONModule, standardStyleIDs, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import type { FeatureCollection, Point } from 'geojson';
 import './style.css';
 import { API_KEY } from './config';
@@ -63,9 +63,10 @@ const initSelectionPanel = (customGeoJSON: CustomGeoJSONModule<Sources>) => {
 const initStyleSelector = () => {
     const selector = document.querySelector('#ui-mapStyles') as HTMLSelectElement;
     standardStyleIDs.forEach((id) => selector.add(new Option(id)));
-    selector.addEventListener('change', (event) =>
-        map.setStyle((event.target as HTMLOptionElement).value as StandardStyleID),
-    );
+    selector.addEventListener('change', () => {
+        const styleId = standardStyleIDs.find((id) => id === selector.value);
+        if (styleId) map.setStyle(styleId);
+    });
 };
 
 (async () => {

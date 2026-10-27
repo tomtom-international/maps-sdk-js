@@ -31,10 +31,10 @@ const CENTRAL_LONDON: [number, number, number, number] = [-0.19, 51.49, -0.03, 5
 
     // Each of the three draws its own layers, in a look it reads off the style.
     const restaurants = await PlacesModule.create(map, { markerType: 'base-map' });
-    const incidents = await TrafficIncidentDetailsModule.create(map);
+    const incidentDetails = await TrafficIncidentDetailsModule.create(map);
     const route = await RoutingModule.create(map);
 
-    const [restaurantPlaces, incidentDetails, routes] = await Promise.all([
+    const [restaurantPlaces, incidentDetailsResponse, routes] = await Promise.all([
         discoverPlaces({
             filters: { poiCategories: ['RESTAURANT'] },
             geoBias: { position: [-0.1276, 51.5072] },
@@ -49,7 +49,7 @@ const CENTRAL_LONDON: [number, number, number, number] = [-0.19, 51.49, -0.03, 5
         }),
     ]);
     await restaurants.show(restaurantPlaces);
-    await incidents.show(incidentDetails);
+    await incidentDetails.show(incidentDetailsResponse);
     await route.showRoutes(routes);
 
     initKnobPanel({ styling, pois, incidents: trafficIncidents });

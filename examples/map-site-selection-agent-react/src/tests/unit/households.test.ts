@@ -23,7 +23,9 @@ const poi = (id: string) => ({ id }) as SearchFeature;
 const respondWith = (...features: SearchFeature[]) =>
     ({ type: 'FeatureCollection', features }) as unknown as DiscoverPlacesResponse;
 const requestedCategories = (): POICategory[][] =>
-    discoverPlacesMock.mock.calls.map(([request]) => request.filters?.poiCategories ?? []);
+    discoverPlacesMock.mock.calls.map(([request]) =>
+        typeof request === 'string' ? [] : (request.filters?.poiCategories ?? []),
+    );
 
 describe('searchInGeometry', () => {
     beforeEach(() => {
@@ -37,9 +39,9 @@ describe('searchInGeometry', () => {
     });
 
     it('splits a longer category list into batches within the limit', async () => {
-        const codes = categories(19);
+        const codes = categories(2 * MAX_CATEGORY_CODES - 1);
         await searchInGeometry(area, { poiCategories: codes });
-        expect(requestedCategories()).toEqual([codes.slice(0, 10), codes.slice(10)]);
+        expect(requestedCategories()).toEqual([codes.slice(0, MAX_CATEGORY_CODES), codes.slice(MAX_CATEGORY_CODES)]);
     });
 
     it('merges the batches, dropping a POI returned twice', async () => {
@@ -74,7 +76,11 @@ describe('searchInGeometry', () => {
     it('asks for POI time zones only when the caller does', async () => {
         await searchInGeometry(area, { poiCategories: categories(12), timeZone: 'iana' });
         await searchInGeometry(area, { query: 'gym' });
-        expect(discoverPlacesMock.mock.calls.map(([request]) => request.timeZone)).toEqual(['iana', 'iana', undefined]);
+        expect(
+            discoverPlacesMock.mock.calls.map(([request]) =>
+                typeof request === 'string' ? undefined : request.timeZone,
+            ),
+        ).toEqual(['iana', 'iana', undefined]);
     });
 
     it('falls back to a free-text search when no category resolved', async () => {

@@ -1,6 +1,7 @@
 import { expect, type Page, test } from '@playwright/test';
 import { TAG_PROD } from '../../src/e2e-test-utils/e2eTestConstants';
 import { EXTRA_SHOT_OPTIONS, loadProdExample } from '../../src/e2e-test-utils/loadProdExample';
+import { expectNoPageErrors } from '../../src/e2e-test-utils/pageErrors';
 
 /**
  * What each use case this playground ships actually does to the map.
@@ -120,19 +121,19 @@ const setKnob = async (page: Page, group: string, knob: string, value: number): 
 
 test.describe('map effects use cases', () => {
     test('every effect off is the map the other shots are compared against', { tag: TAG_PROD }, async ({ page }) => {
-        const consoleErrors = await loadPlayground(page);
+        const pageErrors = await loadPlayground(page);
 
         await expect(page).toHaveScreenshot('use-case-none.png', EXTRA_SHOT_OPTIONS);
-        expect(consoleErrors).toHaveLength(0);
+        expectNoPageErrors(pageErrors);
     });
 
     for (const useCase of USE_CASES) {
         test(`the ${useCase.value} use case composites over the map`, { tag: TAG_PROD }, async ({ page }) => {
-            const consoleErrors = await loadPlayground(page);
+            const pageErrors = await loadPlayground(page);
             await applyUseCase(page, useCase.value);
 
             await expect(page).toHaveScreenshot(useCase.shot, EXTRA_SHOT_OPTIONS);
-            expect(consoleErrors).toHaveLength(0);
+            expectNoPageErrors(pageErrors);
         });
     }
 
@@ -142,25 +143,25 @@ test.describe('map effects use cases', () => {
         }, async ({ page }) => {
             // Each test loads the playground fresh, where every effect is off, so nothing from the
             // previous one can bleed into this shot.
-            const consoleErrors = await loadPlayground(page);
+            const pageErrors = await loadPlayground(page);
             for (const knob of effect.knobs) {
                 await setKnob(page, knob.group, knob.knob, knob.value);
             }
 
             await expect(page).toHaveScreenshot(effect.shot, EXTRA_SHOT_OPTIONS);
-            expect(consoleErrors).toHaveLength(0);
+            expectNoPageErrors(pageErrors);
         });
     }
 
     test('a reload restores the knobs the panel saved', { tag: TAG_PROD }, async ({ page }) => {
-        const consoleErrors = await loadPlayground(page);
+        const pageErrors = await loadPlayground(page);
         await setKnob(page, 'vignette', 'intensity', -0.5);
         await knobField(page, 'bloom', 'only').locator('select').selectOption('traffic');
 
         await page.reload();
         await expect(knobSlider(page, 'vignette', 'intensity')).toHaveValue('-0.5');
         await expect(knobField(page, 'bloom', 'only').locator('select')).toHaveValue('traffic');
-        expect(consoleErrors).toHaveLength(0);
+        expectNoPageErrors(pageErrors);
     });
 
     test('bloom at full strength, so the effect is legible at all', { tag: TAG_PROD }, async ({ page }) => {
@@ -168,11 +169,11 @@ test.describe('map effects use cases', () => {
         // features and changes a few percent of the frame — honest, but near-invisible in a still.
         // This shot is the same effect with nothing held back, so a reviewer can see what the knob
         // does and judge the shipped setting against it.
-        const consoleErrors = await loadPlayground(page);
+        const pageErrors = await loadPlayground(page);
         await setKnob(page, 'bloom', 'intensity', 1);
         await setKnob(page, 'bloom', 'threshold', 0.2);
 
         await expect(page).toHaveScreenshot('effect-bloom-strong.png', EXTRA_SHOT_OPTIONS);
-        expect(consoleErrors).toHaveLength(0);
+        expectNoPageErrors(pageErrors);
     });
 });

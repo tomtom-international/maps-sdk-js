@@ -9,6 +9,8 @@ import { updateTimeDisplay } from './updatePanel';
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: API_KEY });
 
+const REPLAN_INTERVAL_MS = 60_000;
+
 (async () => {
     const searchResults = await Promise.all([
         // The postcode keeps businesses named after the tower, elsewhere in Paris, from matching first.
@@ -35,7 +37,6 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
 
     const originalRoute = (await calculateRoute({ locations, costModel })).features[0];
     routingModule.showRoutes(originalRoute);
-    // Initial update
     updateTimeDisplay();
 
     // A tick retires a recalculation still running from the previous one. Without this, two
@@ -43,7 +44,6 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     // older traffic.
     const latestReplan = createLatestRequest();
 
-    // route re-calculation interval
     const intervalId = setInterval(async () => {
         const replan = await latestReplan.run((signal) =>
             calculateRoute({ locations: [originalRoute], costModel, signal }),
@@ -52,7 +52,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
 
         routingModule.showRoutes(replan.value);
         updateTimeDisplay();
-    }, 60000); // 60000 ms = 1 minute
+    }, REPLAN_INTERVAL_MS);
 
     // Stop monitoring (and cancel any request in flight) when the page goes away
     window.addEventListener('beforeunload', () => {

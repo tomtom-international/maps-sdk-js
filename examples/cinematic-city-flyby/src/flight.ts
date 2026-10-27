@@ -82,7 +82,7 @@ const smoothCircular = (values: number[], radius: number): number[] =>
 const smoothedTwice = (values: number[], radius: number) => smoothCircular(smoothCircular(values, radius), radius);
 
 // Every STEP_METERS along the closed polyline; between two legs, the camera flies straight on, named after the leg it left.
-const resampled = (points: Sample[]): Sample[] => {
+const resampled = (points: Sample[], speedFactor: number): Sample[] => {
     const samples: Sample[] = [];
     let carried = 0;
     for (let i = 0; i < points.length; i++) {
@@ -98,7 +98,7 @@ const resampled = (points: Sample[]): Sample[] => {
                 x: lerp(from.x, to.x, t),
                 y: lerp(from.y, to.y, t),
                 z: lerp(from.z, to.z, t) + climb * Math.sin(Math.PI * t),
-                speed: between ? TRANSIT_METERS_PER_SECOND : from.speed,
+                speed: between ? TRANSIT_METERS_PER_SECOND * speedFactor : from.speed,
                 focus: between ? 0 : from.focus,
                 target: between ? undefined : from.target,
                 leg: from.leg,
@@ -113,6 +113,7 @@ const resampled = (points: Sample[]): Sample[] => {
 const withNearestTargets = (samples: Sample[]): Sample[] =>
     samples.map((sample, index) => {
         if (sample.target) return sample;
+
         for (let offset = 1; offset < samples.length; offset++) {
             const target =
                 samples[(index + offset) % samples.length].target ??
@@ -165,10 +166,12 @@ export class FlightPath {
     /**
      * @param legs - The fly-by's legs; the first must be a landmark, where the opening shot is.
      * @param streets - The road geometry of each street run, by leg index; a run without one flies its sketch.
+     * @param speedFactor - How many times faster than over a city the camera flies, as over a landscape.
      */
     constructor(
         readonly legs: [LandmarkTurn, ...FlightLeg[]],
         streets: ReadonlyMap<number, [number, number][]> = new Map(),
+        private readonly speedFactor = 1,
     ) {
         this.origin = legs[0].center;
         this.metersPerDegreeEast = METERS_PER_DEGREE * Math.cos(toRadians(this.origin[1]));
@@ -180,6 +183,7 @@ export class FlightPath {
             const at = (index + legs.length) % legs.length;
             const leg = legs[at];
             if (leg.kind === 'landmark') return this.toLocal(leg.center);
+
             const points = streetPoints[at];
             return end === 'first' ? points[0] : points[points.length - 1];
         };
@@ -188,7 +192,7 @@ export class FlightPath {
                 ? streetPoints[index]
                 : this.turnPoints(leg, index, handover(index - 1, 'last'), handover(index + 1, 'first')),
         );
-        this.samples = smoothed(withNearestTargets(resampled(legPoints)));
+        this.samples = smoothed(withNearestTargets(resampled(legPoints, speedFactor)));
         this.length = this.samples.length * STEP_METERS;
         this.views = this.smoothViews();
     }
@@ -289,7 +293,7 @@ export class FlightPath {
         return points.map((point, at) => ({
             ...point,
             z: lerp(from, to, smoothstep(0, runLength, along[at])),
-            speed: STREET_METERS_PER_SECOND,
+            speed: STREET_METERS_PER_SECOND * this.speedFactor,
             focus: 0,
             leg: index,
         }));
@@ -298,7 +302,7 @@ export class FlightPath {
     // From the tangent the camera arrives on, round to the tangent it leaves on, whichever way round is shorter.
     private turnPoints(leg: LandmarkTurn, index: number, from: Point2, to: Point2): Sample[] {
         const center = this.toLocal(leg.center);
-        const target = { ...center, z: leg.heightMeters / 2 };
+        const target = { ...center, z: (leg.groundMeters ?? 0) + leg.heightMeters / 2 };
         // Seen from the centre, the bearing where a line from `point` touches the circle, on the given side.
         const tangent = (point: Point2, side: number) =>
             bearingBetween(center, point) +
@@ -318,7 +322,7 @@ export class FlightPath {
                 x: center.x + leg.radiusMeters * Math.sin(bearing),
                 y: center.y + leg.radiusMeters * Math.cos(bearing),
                 z: leg.altitudeMeters,
-                speed: LANDMARK_METERS_PER_SECOND,
+                speed: LANDMARK_METERS_PER_SECOND * this.speedFactor,
                 focus: LANDMARK_FOCUS,
                 target,
                 leg: index,

@@ -53,8 +53,8 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
 
     const routingModule = await RoutingModule.create(map);
     routingModule.showWaypoints(examples['all'].waypoints);
-    examplesSelector.addEventListener('change', (event) =>
-        routingModule.showWaypoints(examples[(event.target as HTMLOptionElement).value].waypoints),
+    examplesSelector.addEventListener('change', () =>
+        routingModule.showWaypoints(examples[examplesSelector.value].waypoints),
     );
 
     initTogglePanel();

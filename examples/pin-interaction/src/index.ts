@@ -9,11 +9,11 @@ import { API_KEY } from './config';
 TomTomConfig.instance.put({ apiKey: API_KEY });
 
 (async () => {
-    const position = [4.8907, 52.37311];
+    const position: [number, number] = [4.8907, 52.37311];
     const map = new TomTomMap({
         mapLibre: {
             container: 'sdk-map',
-            center: position as [number, number],
+            center: position,
             zoom: 17,
         },
     });

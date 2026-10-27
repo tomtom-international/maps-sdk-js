@@ -43,6 +43,7 @@ const requestViewLabel = (): string => {
         const position = territory.addressPoint;
         addressPin.clear();
         if (!position) {
+            latestLookup.cancel();
             showStatus('No address here: the dispute is over sea, ice or an unpopulated border.');
             return;
         }

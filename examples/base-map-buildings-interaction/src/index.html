@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Interactive base map buildings</title>
+        <meta name="viewport" content="initial-scale=1">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">Interactive base map buildings</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+
+            <div class="ui-panel-content">
+                <div class="ui-section">
+                    <p class="ui-text" id="ui-selected">Click a building to select it.</p>
+                </div>
+
+                <div class="ui-section">
+                    <label class="ui-form-field">
+                        <span class="ui-form-label">Paint colour</span>
+                        <span class="ui-color-swatch"><input type="color" id="ui-paint" value="#29335c"></span>
+                    </label>
+                    <div class="ui-button-group-horizontal">
+                        <button class="ui-button" id="ui-paint-selected" disabled>Paint selected</button>
+                        <button class="ui-button ui-button-secondary" id="ui-clear">Clear paint</button>
+                    </div>
+                </div>
+
+                <div class="ui-section ui-color-fields">
+                    <label class="ui-form-field">
+                        <span class="ui-form-label">Hover colour</span>
+                        <span class="ui-color-swatch"><input type="color" id="ui-hover" value="#f3a712"></span>
+                    </label>
+                    <label class="ui-form-field">
+                        <span class="ui-form-label">Click colour</span>
+                        <span class="ui-color-swatch"><input type="color" id="ui-click" value="#e4572e"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

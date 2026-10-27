@@ -78,7 +78,7 @@ effects.remove();                                           // detach, remove th
 
 **fog vs edgeBlur** — both blur the rim and take a `reach`; the difference is the rim's colour. `fog` also washes it out towards the colour of the air, so it reads as distance. The air is `fog.color` when set (its lightness brightens or darkens the rim's grade, and its alpha thins both the veil and that change), otherwise the theme's: pale on a light style, dark on a dark one, following `map.styleLightDarkTheme` through every switch. Reset `fog.color` to hand the air back to the theme. `edgeBlur` leaves colour alone, so it reads as a lens — use it when the rim's colour still carries data. They compound if both are on.
 
-**depthOfField** — a **GPU** effect (a WebGL2 full-screen pass), as the glare is, and the only one that reads the map's **camera**. For a plane, `1/z` is affine in the screen row, so pitch + vertical FOV give the whole depth of the frame as one ramp (`2·tan(fov/2)·tan(pitch)`, normalised); the circle of confusion then grows with distance from the plane of focus, per pixel. `focus` runs 0 = nearest ground (bottom) → 1 = farthest the frame shows (top); `band` is the amount of depth held sharp, on that ramp's fixed scale (not a share of the frame's depth); `intensity` is the widest circle of confusion in CSS px; `bokeh` decides whether a defocused highlight fades or returns as a disc.
+**depthOfField** — a **GPU** effect (a WebGL2 full-screen pass), as the glare is, and the only one that reads the map's **camera**. Without WebGL2 the map stays sharp, with one warning. For a plane, `1/z` is affine in the screen row, so pitch + vertical FOV give the whole depth of the frame as one ramp (`2·tan(fov/2)·tan(pitch)`, normalised); the circle of confusion then grows with distance from the plane of focus, per pixel. `focus` runs 0 = nearest ground (bottom) → 1 = farthest the frame shows (top); `band` is the amount of depth held sharp, on that ramp's fixed scale (not a share of the frame's depth); `intensity` is the widest circle of confusion in CSS px; `bokeh` decides whether a defocused highlight fades or returns as a disc.
 
 ```ts
 await TerrainModule.get(map, { elevation: { visible: true } }); // the relief to defocus
@@ -125,7 +125,7 @@ effects.updateConfig({
 });
 ```
 
-- **`rays`**: 2 = one line per light (anamorphic; horizontal at `angle: 0`), 4 = a cross, 6 / 8 = a star. `angle` is the first ray's direction in degrees anticlockwise from horizontal; the rest share the turn evenly. `length` is in CSS px, and a streak fades over it.
+- **`rays`**: 2 = one line per light (anamorphic; horizontal at `angle: 0`), 4 = a cross, 6 / 8 = a star; an odd count rounds up. `angle` is the first ray's direction in degrees anticlockwise from horizontal; the rest share the turn evenly. `length` is in CSS px, and a streak fades over it.
 - **A light's shape decides the look**: a small light (icon, dot) becomes a star; a lit line (a road) gets a soft sheen along its length, since every point on it streaks.
 - **`[]` streaks every pixel above `threshold`, labels included**; a name that resolves to no colour does the same, with one console warning.
 - On `monoDark` / `monoLight` the major roads are grey, and a grey key matches every grey: name a colour there.
@@ -157,7 +157,7 @@ effects.addPass({
 
 - **Don't redeclare the preamble**: `#version 300 es`, precisions, `uSource`, `vUv`, `fragColor` are provided. `addPass` throws on a missing `id`, on a shader that doesn't compile (with the compiler log), and with `RangeError` on an unknown `placement`. Without WebGL2 no pass runs, and the plugin warns once.
 - **Order**: passes run in the order added, within their placement; re-adding an `id` replaces that pass in place. `removePass` ignores an unknown id.
-- **Uniforms are `float` to `vec4`**: a number, or an array of 2–4 numbers (a colour is a `vec3`). An `int` / `bool` uniform can't be set and stays 0. A `uniforms()` or `textures()` that throws skips its pass for that draw, with one warning.
+- **Uniforms are `float` to `vec4`**: a number, or an array of 2–4 numbers (a colour is a `vec3`). An `int` uniform can't be set and stays 0; a `bool` takes a number, 0 as false. A `uniforms()` or `textures()` that throws skips its pass for that draw, with one warning.
 - **`textures`**: up to 15 by name, on texture units 1–15 in the order listed (`uSource` keeps 0; a texture named `uSource`, or a 16th, throws `RangeError`).
   - A **video or canvas** re-uploads on every draw (live pixels, same object); an **image, `ImageBitmap`, `VideoFrame` or `ImageData` once per object**: to change it, hand a new object (from a `textures()` function).
   - A playing video still redraws only with the map: call `triggerRepaint()` per frame (`requestVideoFrameCallback`).
@@ -192,7 +192,7 @@ effects.removeLayer('paper');
 
 ## Catalogue — `effectKnobCatalogue`
 
-Static data, no map needed, in compositing order: `{ id, kind, description, default, useCase }` plus `range` (`min`, `max`, `step`, `bounds`) on a `number` knob, and `options` (every style colour knob id and group) on `bloom.only` and `glare.only`. `fog.color` has no `default` (the theme decides). `bounds` is `hard` only where the maths breaks past it (a 0–1 strength, cut or share, `glare.rays`, `glare.angle`, `vignette.intensity`); the rest are `hard-min` (`bloom.radius`, both `onlyTolerance`s, `glare.length`, every `grade.*`, `edgeBlur.intensity`, `depthOfField.intensity`): `setKnob` refuses a value under `min`, and `max` is only a slider's end. `getKnob(effects, effectKnobCatalogue, id)` reads the value set, else the default (`undefined` for an unset `fog.color`).
+Static data, no map needed, grouped by effect in the order the overlays stack (the glare and the depth of field, GPU passes under every overlay, sit beside the bloom and the edge blur): `{ id, kind, description, default, useCase }` plus `range` (`min`, `max`, `step`, `bounds`) on a `number` knob, and `options` (every style colour knob id and group) on `bloom.only` and `glare.only`. `fog.color` has no `default` (the theme decides). `bounds` is `hard` only where the maths breaks past it (a 0–1 strength, cut or share, `glare.rays`, `glare.angle`, `vignette.intensity`); the rest are `hard-min` (`bloom.radius`, both `onlyTolerance`s, `glare.length`, every `grade.*`, `edgeBlur.intensity`, `depthOfField.intensity`): `setKnob` refuses a value under `min`, and `max` is only a slider's end. `getKnob(effects, effectKnobCatalogue, id)` reads the value set, else the default (`undefined` for an unset `fog.color`).
 
 ```ts
 for (const knob of effectKnobCatalogue) { /* knob.kind is 'number', 'color' or 'colors' */ }
@@ -205,13 +205,13 @@ const canvas = await effects.capture({ pixelRatio: 3 }); // map + effects, re-re
 canvas.toBlob((blob) => upload(blob), 'image/png');
 ```
 
-Re-renders at the new ratio (never resamples), waits for `idle` (15 s at most), reads back, then sets the map back to the ratio it had; without `pixelRatio` it reads the current frame. Passes, layers and bloom scope included. MapLibre clamps to `maxCanvasSize` — measure `canvas.width / map.mapLibreMap.getCanvas().clientWidth` for the ratio you actually got.
+Re-renders at the new ratio (never resamples), waits for `idle` (15 s at most), reads back, then sets the map back to the ratio it had; without `pixelRatio` it reads at the live ratio, first waiting for `idle` (the same 15 s at most) while tiles are still loading. Passes, layers and bloom scope included. MapLibre clamps to `maxCanvasSize` — measure `canvas.width / map.mapLibreMap.getCanvas().clientWidth` for the ratio you actually got. A capture asked for during another waits for it; a `pixelRatio` that isn't a positive number rejects with a `RangeError`.
 
 ## Gotchas
 
 - **No `preserveDrawingBuffer`**: the effects draw in the same frame as the map, reading its canvas inside its `render` event, and `capture()` reads it there too. Setting the flag costs a copy of the map's frame every frame, and the effects don't need it.
 - A bloom, glare or depth-of-field knob change, or `addPass` / `removePass`, asks the map for one frame (`triggerRepaint`), so an idle map redraws once; a grade, tint, fog, edge blur or vignette change asks for none. A pass or layer that changes on its own still calls `map.mapLibreMap.triggerRepaint()` for every frame it needs.
-- A frame the effects fail to draw (e.g. a pass texture from another origin loaded without CORS) shows the map without the chain and warns once; `capture()` rejects with the error.
+- A frame the effects fail to draw (e.g. a pass texture from another origin loaded without CORS) shows the map without the chain and the bloom and warns once; `capture()` rejects with the error.
 - Effects are DOM overlays under the map controls with `pointer-events: none`; they do not affect hit-testing or SDK events.
 - HTML markers (`maplibregl.Marker`), popups and controls sit **above** every effect, the depth of field's opaque canvas included, whenever the marker was added. To have a pin take the effects, draw it as a symbol layer instead.
 - The chain takes its WebGL2 context on the first stage it runs (a pass, the depth of field, the glare or a `bloom.only` scope), not in the constructor; unscoped bloom and the CSS overlays need none. Once taken it is held until `remove()`. Without WebGL2 a scoped bloom draws no glow (one warning) rather than lighting the whole frame.

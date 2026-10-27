@@ -41,7 +41,8 @@ const map = new TomTomMap({
     // A fresh click retires the calculation still in flight for the previous origin
     const latestRanges = createLatestRequest();
 
-    const formatCoords = ([lng, lat]: [number, number]) => `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+    const formatCoordinates = ([longitude, latitude]: [number, number]) =>
+        `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
 
     const isInvertedFillStyle = (fillStyle: GeometryFillStyle) => fillStyle === 'inverted';
 
@@ -128,13 +129,13 @@ const map = new TomTomMap({
     });
 
     // Click/touch on map to relocate origin
-    map.mapLibreMap.on('click', (e) => {
-        const lngLat = e.lngLat.toArray();
-        controls.setOriginInput(formatCoords(lngLat));
+    map.mapLibreMap.on('click', (event) => {
+        const lngLat = event.lngLat.toArray();
+        controls.setOriginInput(formatCoordinates(lngLat));
         setOrigin(lngLat);
     });
 
     showPin(origin);
-    controls.setOriginInput(formatCoords(origin));
+    controls.setOriginInput(formatCoordinates(origin));
     updateRanges();
 })();

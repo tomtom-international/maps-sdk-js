@@ -13,7 +13,7 @@ import {
     RotateCw,
     Undo2,
 } from 'lucide-react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { addSeconds, clockTime, distance } from '../format';
 import { flyBetweenPanels } from '../map/coveringPanels';
 import { roadIcons } from './icons';
@@ -45,8 +45,8 @@ const maneuverIcons: [RegExp, LucideIcon][] = [
     [/TOLL/, roadIcons.toll],
     [/^(TURN|SHARP)_LEFT/, CornerUpLeft],
     [/^(TURN|SHARP)_RIGHT/, CornerUpRight],
-    [/LEFT|_L$/, ArrowUpLeft],
-    [/RIGHT|_R$/, ArrowUpRight],
+    [/LEFT/, ArrowUpLeft],
+    [/RIGHT/, ArrowUpRight],
 ];
 
 const maneuverIcon = (maneuver: Maneuver): LucideIcon =>
@@ -58,6 +58,24 @@ const secondsInto = (instruction: Instruction) => instruction.routePath[0]?.trav
 const laneSignOf = (route: Route, instruction: Instruction): string | undefined => {
     const lanes = getInstructionLanes(route, instruction);
     return lanes && laneSign(lanes);
+};
+
+/** What each row shows that depends on the route alone, worked out once per route rather than at every replay step. */
+const rowsOf = (route: Route) => {
+    const instructions = route.properties.guidance?.instructions ?? [];
+    const { departureTime } = route.properties.summary;
+    return instructions.map((instruction, index) => {
+        const previous = instructions[index - 1];
+        const secondsIn = secondsInto(instruction);
+        return {
+            instruction,
+            secondsIn,
+            fromPrevious: previous && instruction.routeOffsetInMeters - previous.routeOffsetInMeters,
+            ManeuverIcon: maneuverIcon(instruction.maneuver),
+            sign: laneSignOf(route, instruction),
+            clock: clockTime(addSeconds(departureTime, secondsIn)),
+        };
+    });
 };
 
 /** Keeps the instruction the replay is on in view, without scrolling the rest of the page. */
@@ -74,23 +92,15 @@ const useScrollIntoView = (index: number) => {
  * and the current one stands out. Click one to see it on the map and move the replay there.
  */
 export const Directions = ({ map, route, elapsedSeconds, onJump }: DirectionsProps) => {
-    const instructions = route.properties.guidance?.instructions ?? [];
-    const { departureTime } = route.properties.summary;
+    const rows = useMemo(() => rowsOf(route), [route]);
     const current =
-        elapsedSeconds === undefined
-            ? -1
-            : instructions.findLastIndex((instruction) => secondsInto(instruction) <= elapsedSeconds);
+        elapsedSeconds === undefined ? -1 : rows.findLastIndex(({ secondsIn }) => secondsIn <= elapsedSeconds);
     const list = useScrollIntoView(current);
-    if (!instructions.length) return <p className="ui-note">No directions for this route.</p>;
+    if (!rows.length) return <p className="ui-note">No directions for this route.</p>;
 
     return (
         <ol className="ui-directions" ref={list}>
-            {instructions.map((instruction, index) => {
-                const previous = instructions[index - 1];
-                const fromPrevious = previous && instruction.routeOffsetInMeters - previous.routeOffsetInMeters;
-                const secondsIn = secondsInto(instruction);
-                const ManeuverIcon = maneuverIcon(instruction.maneuver);
-                const sign = laneSignOf(route, instruction);
+            {rows.map(({ instruction, secondsIn, fromPrevious, ManeuverIcon, sign, clock }, index) => {
                 const state = index === current ? ' is-current' : index < current ? ' is-passed' : '';
                 return (
                     <li key={`${instruction.pathPointIndex}-${instruction.maneuver}`}>
@@ -112,7 +122,7 @@ export const Directions = ({ map, route, elapsedSeconds, onJump }: DirectionsPro
                                     <span className="ui-direction-lanes" dangerouslySetInnerHTML={{ __html: sign }} />
                                 )}
                                 <span className="ui-direction-meta">
-                                    {clockTime(addSeconds(departureTime, secondsIn))}
+                                    {clock}
                                     {fromPrevious ? ` · after ${distance(fromPrevious)}` : ''}
                                 </span>
                             </span>

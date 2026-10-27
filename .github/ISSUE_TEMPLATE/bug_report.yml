@@ -45,7 +45,6 @@ body:
       options:
         - 'Web Browser'
         - 'Node.js'
-        - 'React Native'
         - 'Other'
     validations:
       required: true

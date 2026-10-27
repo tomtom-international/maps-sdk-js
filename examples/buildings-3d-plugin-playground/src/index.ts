@@ -1,18 +1,7 @@
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
-import {
-    getKnob,
-    knobEntryOf,
-    type StandardStyleID,
-    setKnob,
-    standardStyleIDs,
-    TomTomMap,
-} from '@tomtom-org/maps-sdk/map';
-import {
-    Buildings3D,
-    type Buildings3DKnobId,
-    buildings3DKnobCatalogue,
-    Landmarks3D,
-} from '@tomtom-org/maps-sdk-plugin-landmarks-3d';
+import { getKnob, knobEntryOf, setKnob, standardStyleIDs, TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { Buildings3D, Landmarks3D } from '@tomtom-org/maps-sdk-plugin-landmarks-3d';
+import { type Buildings3DKnobId, buildings3DKnobCatalogue } from '@tomtom-org/maps-sdk-plugin-landmarks-3d/knobs';
 import './style.css';
 import { API_KEY } from './config';
 import { type KnobControl, knobControl } from './knobControls';
@@ -36,6 +25,17 @@ const sections: Record<string, [Buildings3DKnobId, string][]> = {
         ['roofs.color', 'Roofs'],
         ['windows.color', 'Glass'],
         ['litWindows.color', 'Lit'],
+    ],
+    '#ui-palette': [
+        ['walls.palette', 'Wall palette'],
+        ['walls.paletteMode', 'Palette mode'],
+        ['walls.paletteIntensity', 'Palette strength'],
+        ['walls.variation', 'Shade variation'],
+    ],
+    '#ui-roof-palette': [
+        ['roofs.palette', 'Roof palette'],
+        ['roofs.paletteMode', 'Palette mode'],
+        ['roofs.paletteIntensity', 'Palette strength'],
     ],
     '#ui-light': [
         ['light.direction', 'Light direction (°)'],
@@ -92,7 +92,10 @@ const sunAt = (progress: number) => ({
     const styleSelector = document.querySelector('#ui-mapStyle') as HTMLSelectElement;
     standardStyleIDs.forEach((styleId) => styleSelector.add(new Option(styleId)));
     styleSelector.addEventListener('change', async () => {
-        await map.setStyle(styleSelector.value as StandardStyleID);
+        const styleId = standardStyleIDs.find((id) => id === styleSelector.value);
+        if (!styleId) return;
+
+        await map.setStyle(styleId);
         showValues();
     });
 

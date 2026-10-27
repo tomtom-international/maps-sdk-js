@@ -29,7 +29,8 @@ export const SearchOptions = ({ search }: { search: PlaceSearch }) => (
                 label="Search where"
                 options={['map', 'route'] as const}
                 look={(scope) => scopeLooks[scope]}
-                value={search.scope}
+                // The scope the search runs in: a route-scoped search falls back to the map while there is no route.
+                value={search.alongRoute ? 'route' : 'map'}
                 disabled={(scope) => scope === 'route' && !search.canSearchAlongRoute}
                 onChange={search.setScope}
             />

@@ -35,8 +35,8 @@ const buildOpeningHoursHtml = (place: Place<SearchPlaceProps>): string => {
 
     const now = nowAtPlace(place.properties.poi?.timeZone?.ianaId);
     const isOpenNow = openingHours.timeRanges.some(({ start, end }) => now >= start.date && now <= end.date);
-    const todayStr = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
-    const todayRanges = openingHours.timeRanges.filter(({ start }) => start.dateYYYYMMDD === todayStr);
+    const today = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+    const todayRanges = openingHours.timeRanges.filter(({ start }) => start.dateYYYYMMDD === today);
     const hoursText = todayRanges
         .map(({ start, end }) => `${formatTime(start.hour, start.minute)}–${formatTime(end.hour, end.minute)}`)
         .join(', ');

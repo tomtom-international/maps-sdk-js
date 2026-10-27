@@ -147,7 +147,7 @@
     --ui-font-caption-m-lh: 1rem; /* 16px */
     --ui-font-caption-s: 0.625rem; /* 10px */
     --ui-font-caption-s-lh: 0.875rem; /* 14px */
-    --ui-font-overline: 0.75rem; /* 12px — uppercase is baked in, see typography.css */
+    --ui-font-overline: 0.75rem; /* 12px */
     --ui-font-overline-lh: 1rem; /* 16px */
 
     /* Fira Code — code only */

@@ -128,7 +128,9 @@ export const setupAvoidedAreas = (
         });
     };
 
+    // An open Clear popup holds its area's position in the list, which this change may shift.
     const update = () => {
+        closeClearPopup();
         updateMap();
         renderList();
     };

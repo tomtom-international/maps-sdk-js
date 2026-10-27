@@ -1,13 +1,13 @@
 import type { ToolState } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import * as turf from '@turf/turf';
 import type { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
-import { clipPolygons } from './geometry';
+import { clipPolygons, unionPolygons } from './geometry';
 
 // Helpers that let the domain tools CONSUME a bring-your-own-data layer the user already loaded via
 // the toolkit's `addByodSource` (stored on `state.byod`). The toolkit owns ingestion — fetch, scheme /
 // size / timeout checks, parsing, profiling and rendering — so nothing here re-implements
 // any of that; we only read `state.byod.findById(id).data` (a GeoJSON FeatureCollection) and join it
-// against an analysis geometry with turf. See the PR description.
+// against an analysis geometry with turf.
 
 // Read a loaded BYOD entry's FeatureCollection, or throw a message the agent can relay to the user.
 export const requireByodFeatures = (state: ToolState, entryId: string): FeatureCollection => {
@@ -120,16 +120,7 @@ export const outerBoundary = (features: FeatureCollection): Feature<Polygon | Mu
         (f): f is Feature<Polygon | MultiPolygon> =>
             f.geometry?.type === 'Polygon' || f.geometry?.type === 'MultiPolygon',
     );
-    if (polygons.length === 0) return null;
-    let union: Feature<Polygon | MultiPolygon> | null;
-    try {
-        union =
-            polygons.length === 1
-                ? polygons[0]
-                : (turf.union(turf.featureCollection(polygons)) as Feature<Polygon | MultiPolygon> | null);
-    } catch {
-        return null;
-    }
+    const union = unionPolygons(polygons);
     return union && isCoherentRegion(union) ? union : null;
 };
 

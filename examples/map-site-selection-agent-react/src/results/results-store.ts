@@ -120,7 +120,7 @@ export type RankingResult = {
     competitorsMatchedBy: string;
     /** The BYOD layer property summed as Spend power; null when no demand layer was supplied. */
     demandProperty: string | null;
-    /** The candidate sites as a FeatureCollection of Point features (each feature `id` is its label). */
+    /** The candidate sites as a FeatureCollection of Point features, each `id` `site-<index>` and its label in `properties.label`. */
     sites: FeatureCollection<Point, RankedSiteProps>;
     /** Each site's catchment polygon, `id`-matched to the corresponding site feature. */
     catchments: PolygonFeature[];

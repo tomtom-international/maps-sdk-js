@@ -1,14 +1,14 @@
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import {
-    KnobEntry,
+    knobEntryOf,
     POIsModule,
     poisKnobCatalogue,
-    StandardStyleID,
     standardStyleIDs,
     TerrainModule,
     TomTomMap,
     TrafficFlowModule,
     TrafficIncidentsModule,
+    terrainKnobCatalogue,
     trafficFlowKnobCatalogue,
     trafficIncidentsKnobCatalogue,
 } from '@tomtom-org/maps-sdk/map';
@@ -16,11 +16,9 @@ import './style.css';
 import { API_KEY } from './config';
 import { initTogglePanel } from './togglePanel';
 
-// TomTomConfig initialization
 TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
 
 (async () => {
-    // Main map and modules initialization
     const map = new TomTomMap({
         mapLibre: {
             container: 'sdk-map',
@@ -42,20 +40,16 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     };
 
     // A toggle's hover text is its setting's description in the module's knob catalogue.
-    const describeToggle = <ID extends string>(
-        toggleId: string,
-        catalogue: readonly KnobEntry<ID>[],
-        knobId: NoInfer<ID>,
-    ) => {
+    const describeToggle = (toggleId: string, description: string) => {
         const label = document.querySelector(toggleId)?.closest('label');
-        if (label) label.title = catalogue.find(({ id }) => id === knobId)?.description ?? '';
+        if (label) label.title = description;
     };
-    describeToggle('#ui-toggleIncidents', trafficIncidentsKnobCatalogue, 'visible');
-    describeToggle('#ui-toggleIncidentIcons', trafficIncidentsKnobCatalogue, 'icons.visible');
-    describeToggle('#ui-toggleFlow', trafficFlowKnobCatalogue, 'visible');
-    describeToggle('#ui-togglePOIs', poisKnobCatalogue, 'visible');
+    describeToggle('#ui-toggleIncidents', knobEntryOf(trafficIncidentsKnobCatalogue, 'visible').description);
+    describeToggle('#ui-toggleIncidentIcons', knobEntryOf(trafficIncidentsKnobCatalogue, 'icons.visible').description);
+    describeToggle('#ui-toggleFlow', knobEntryOf(trafficFlowKnobCatalogue, 'visible').description);
+    describeToggle('#ui-togglePOIs', knobEntryOf(poisKnobCatalogue, 'visible').description);
+    describeToggle('#ui-toggleHillshade', knobEntryOf(terrainKnobCatalogue, 'hillshade.visible').description);
 
-    // Traffic Incidents and Flow
     const trafficIncidentsModule = await TrafficIncidentsModule.get(map);
     const trafficFlowModule = await TrafficFlowModule.get(map);
 
@@ -63,7 +57,6 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     const poisModule = await POIsModule.get(map);
     poisModule.setVisible(false);
 
-    // Hillshade
     const terrainModule = await TerrainModule.get(map);
 
     setupToggle('#ui-toggleTraffic', (checked) => {
@@ -84,12 +77,12 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     setupToggle('#ui-togglePOIs', (checked) => poisModule.setVisible(checked));
     setupToggle('#ui-toggleHillshade', (checked) => terrainModule.setHillshadeVisible(checked));
 
-    // Styles selector
     const stylesSelector = document.querySelector('#ui-mapStyles') as HTMLSelectElement;
     standardStyleIDs.forEach((id) => stylesSelector.add(new Option(id)));
-    stylesSelector.addEventListener('change', (event) =>
-        map.setStyle((event.target as HTMLOptionElement).value as StandardStyleID),
-    );
+    stylesSelector.addEventListener('change', () => {
+        const styleId = standardStyleIDs.find((id) => id === stylesSelector.value);
+        if (styleId) map.setStyle(styleId);
+    });
 
     initTogglePanel();
 })();

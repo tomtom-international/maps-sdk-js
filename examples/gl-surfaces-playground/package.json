@@ -1,0 +1,28 @@
+{
+  "name": "@examples/gl-surfaces-playground",
+  "description": "Example texturing the map's water, glaciers, forests, grass, scrub, fields, sand, mud, shingle, rock, paving, built-up ground and roads with the Landmarks 3D plugin's GLSurfaces, growing 3D trees and colouring it all for a season, with the surface, season, tree, sky and wind knobs on a panel built off glSurfacesKnobCatalogue, beside the map's light shared with the Landmarks 3D plugin's buildings and the map-effects plugin's effects over it all.",
+  "type": "module",
+  "scripts": {
+    "build": "vite build --config ../example-vite.config.ts",
+    "clean:dist": "rimraf ./dist",
+    "develop": "vite --config ../example-vite.config.ts",
+    "type-check": "tsc --noEmit",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:update-snapshots": "playwright test --update-snapshots",
+    "start-test-server:prod": "vite serve dist/prod --port 9050"
+  },
+  "dependencies": {
+    "@tomtom-org/maps-sdk": "catalog:",
+    "@tomtom-org/maps-sdk-plugin-landmarks-3d": "catalog:",
+    "@tomtom-org/maps-sdk-plugin-map-effects": "catalog:"
+  },
+  "devDependencies": {
+    "@playwright/test": "catalog:",
+    "@types/node": "catalog:",
+    "rimraf": "catalog:",
+    "rollup-plugin-visualizer": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  }
+}

@@ -5,7 +5,7 @@ import type { AgentInstance } from './useAgentBootstrap';
 /**
  * Mirror the toolkit's `trafficAreaAnalytics` events into React state so the
  * AnalyticsControlPanel can render the currently-shown area analysis. The
- * slice is per-entry now — we react to `shown-change` and pick the latest
+ * slice is per-entry, so we react to `shown-change` and pick the latest
  * shown entry, lazy-fetching its module for the control panel.
  */
 export function useTrafficAnalytics(agent: AgentInstance | undefined) {

@@ -1,6 +1,6 @@
 {
   "name": "@examples/routing-composite",
-  "description": "Chain four routing services into one map: geocode the stops, plan an electric route, search along it, and show what is reachable from the destination.",
+  "description": "Chain four routing services into one map: geocode the stops, plan a route with a pause, search along it, and show what is reachable from the destination.",
   "type": "module",
   "scripts": {
     "build": "vite build --config ../example-vite.config.ts",

@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { TAG_PROD } from '../../src/e2e-test-utils/e2eTestConstants';
 import { EXTRA_SHOT_OPTIONS, loadProdExample } from '../../src/e2e-test-utils/loadProdExample';
+import { expectNoPageErrors } from '../../src/e2e-test-utils/pageErrors';
 
 /**
  * The speed limit signs this playground draws without configuring them.
@@ -15,8 +16,8 @@ import { EXTRA_SHOT_OPTIONS, loadProdExample } from '../../src/e2e-test-utils/lo
  */
 test('speed limit signs at the zoom a stretch is readable', { tag: TAG_PROD }, async ({ page }) => {
     // A stretch of the Munich-to-Milan route through the Alps, in `zoom/lat/lng`.
-    const consoleErrors = await loadProdExample(page, 'route-sections-playground', '12.5/46.22/9.02');
+    const pageErrors = await loadProdExample(page, 'route-sections-playground', '12.5/46.22/9.02');
 
     await expect(page).toHaveScreenshot('speed-limit-signs.png', EXTRA_SHOT_OPTIONS);
-    expect(consoleErrors).toHaveLength(0);
+    expectNoPageErrors(pageErrors);
 });

@@ -3,13 +3,7 @@ import { browserProjects } from '@testing/core-utils';
 
 export const PROD_TEST_SERVER_PORT = 9050;
 
-/**
- * Builds the Playwright test configuration with optional overrides.
- *
- * @param overrides Partial configuration to override defaults
- * @returns Complete PlaywrightTestConfig object
- */
-
+/** Builds the Playwright test configuration, with `overrides` on top of the defaults. */
 export const buildPlaywrightConfig = (overrides: Partial<PlaywrightTestConfig> = {}): PlaywrightTestConfig => {
     return defineConfig({
         timeout: 60 * 1000,
@@ -32,10 +26,8 @@ export const buildPlaywrightConfig = (overrides: Partial<PlaywrightTestConfig> =
             trace: 'on-first-retry',
         },
 
-        projects: browserProjects(),
-
         // Keep snapshots next to test files
-        snapshotPathTemplate: '{testDir}/{testFileDir}/snapshots/{arg}{ext}',
+        projects: browserProjects('{testDir}/{testFileDir}/snapshots'),
 
         webServer: [
             {

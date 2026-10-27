@@ -12,12 +12,12 @@ const parseHex = (hex: string): [number, number, number] => {
 };
 
 // Linearly interpolates between two RGB colors.
-// t = 0 returns a; t = 1 returns b; values in between are blended channel-by-channel.
-const lerpColor = (a: [number, number, number], b: [number, number, number], t: number): string => {
-    const r = Math.round(a[0] + (b[0] - a[0]) * t);
-    const g = Math.round(a[1] + (b[1] - a[1]) * t);
-    const blue = Math.round(a[2] + (b[2] - a[2]) * t);
-    return `rgb(${r},${g},${blue})`;
+// A ratio of 0 returns `from`, 1 returns `to`; values in between are blended channel-by-channel.
+const lerpColor = (from: [number, number, number], to: [number, number, number], ratio: number): string => {
+    const red = Math.round(from[0] + (to[0] - from[0]) * ratio);
+    const green = Math.round(from[1] + (to[1] - from[1]) * ratio);
+    const blue = Math.round(from[2] + (to[2] - from[2]) * ratio);
+    return `rgb(${red},${green},${blue})`;
 };
 
 // Maps a 0–100 congestion value to a CSS color by interpolating through the given color stops.
@@ -71,7 +71,7 @@ const groupByDayAndHour = (entries: AreaAnalyticsHourlyEntry[]): Map<number, Ent
 export const renderAreaAnalyticsChart = (
     container: HTMLElement,
     entries: AreaAnalyticsHourlyEntry[],
-    colorStops: string[] = ['#2dc653', '#f5a623', '#e03030'],
+    colorStops: string[],
 ): void => {
     if (entries.length === 0) return;
 

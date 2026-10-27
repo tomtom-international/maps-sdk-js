@@ -13,5 +13,5 @@ export type Cluster = {
     diameterKm?: number;
     primaryRoads?: readonly string[];
     primaryCategory?: string;
-    trend?: ClusterTrend;
+    trend: ClusterTrend;
 };

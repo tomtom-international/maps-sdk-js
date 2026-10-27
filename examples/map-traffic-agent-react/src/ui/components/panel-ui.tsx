@@ -23,10 +23,10 @@ export const captionStyle: CSSProperties = {
 };
 
 // ── Card shell ──────────────────────────────────────────────────────────────
-/** Floating-card chrome shared by every overlay panel — surface-0, hairline border, e4 elevation,
- *  blurred backdrop. Compose with per-panel layout/sizing classes. Uses the Playbook (`--ui-*`) tokens. */
+/** Floating-card chrome shared by every overlay panel — surface-0, hairline border, e4 elevation.
+ *  Compose with per-panel layout/sizing classes. Uses the Playbook (`--ui-*`) tokens. */
 export const cardShellClass =
-    'rounded-(--ui-rounded-10) border border-(--ui-border-low-em) bg-(--ui-surface-0) shadow-(--ui-elevation-e4) backdrop-blur-md';
+    'rounded-(--ui-rounded-10) border border-(--ui-border-low-em) bg-(--ui-surface-0) shadow-(--ui-elevation-e4)';
 
 // ── Status tag ───────────────────────────────────────────────────────────────
 export type StatusTone = 'error' | 'warning' | 'success' | 'info' | 'neutral';
@@ -263,7 +263,7 @@ function Chevrons() {
 }
 
 /**
- * The overlay-panel shell: a card (cardShellStyle) with a title-row header carrying an optional
+ * The overlay-panel shell: a card (cardShellClass) with a title-row header carrying an optional
  * count chip, a collapse toggle, and a close ✕ — the control pair every Notification-Center panel shows.
  * The parent renders/unmounts the card (close → parent clears its data); the card owns collapsed state.
  */

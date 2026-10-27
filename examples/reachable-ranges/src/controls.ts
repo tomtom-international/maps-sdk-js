@@ -1,4 +1,4 @@
-import { type BudgetType, budgetUnits } from '@tomtom-org/maps-sdk/core';
+import { type BudgetType, budgetTypes, budgetUnits } from '@tomtom-org/maps-sdk/core';
 import {
     type BeforeLayerConfig,
     type GeometryBeforeLayerConfig,
@@ -8,7 +8,7 @@ import {
     standardStyleIDs,
     type TomTomMap,
 } from '@tomtom-org/maps-sdk/map';
-import { discoverPlaces } from '@tomtom-org/maps-sdk/services';
+import { createLatestRequest, discoverPlaces } from '@tomtom-org/maps-sdk/services';
 
 export type ControlCallbacks = {
     onOriginSelected: (lngLat: [number, number], displayName: string) => void;
@@ -54,14 +54,14 @@ const BUDGET_TYPE_LABELS: Record<BudgetType, string> = {
 };
 
 export const getBudgetsForMax = (maxValue: number, type: BudgetType, isInverted = false): number[] =>
-    (isInverted ? INVERTED_BUDGET_STEPS[type] : BUDGET_STEPS[type]).filter((b) => b <= maxValue);
+    (isInverted ? INVERTED_BUDGET_STEPS[type] : BUDGET_STEPS[type]).filter((budget) => budget <= maxValue);
 
 const statusText = document.getElementById('ui-statusText') as HTMLElement;
 const spinner = document.getElementById('ui-spinner') as HTMLElement;
 
-export const setStatus = (msg: string, loading = false): void => {
-    statusText.textContent = msg;
-    statusText.hidden = !msg;
+export const setStatus = (message: string, loading = false): void => {
+    statusText.textContent = message;
+    statusText.hidden = !message;
     spinner.style.visibility = loading ? 'visible' : 'hidden';
 };
 
@@ -87,7 +87,10 @@ export const initControls = (
 
     // Map style selector
     standardStyleIDs.forEach((id) => addOption(mapStylesSelect, id, id, id === 'monoDark'));
-    mapStylesSelect.addEventListener('change', () => callbacks.onStyleChange(mapStylesSelect.value as StandardStyleID));
+    mapStylesSelect.addEventListener('change', () => {
+        const styleId = standardStyleIDs.find((id) => id === mapStylesSelect.value);
+        if (styleId) callbacks.onStyleChange(styleId);
+    });
 
     // Budget type selector
     const populateBudgetValues = (type: BudgetType, inverted: boolean) => {
@@ -99,13 +102,14 @@ export const initControls = (
         );
     };
 
-    (Object.keys(BUDGET_STEPS) as BudgetType[]).forEach((type) =>
-        addOption(budgetTypeSelect, BUDGET_TYPE_LABELS[type], type, type === 'timeMinutes'),
-    );
+    budgetTypes.forEach((type) => addOption(budgetTypeSelect, BUDGET_TYPE_LABELS[type], type, type === 'timeMinutes'));
     populateBudgetValues('timeMinutes', false);
+    const selectedBudgetType = () => budgetTypes.find((type) => type === budgetTypeSelect.value);
 
     budgetTypeSelect.addEventListener('change', () => {
-        const type = budgetTypeSelect.value as BudgetType;
+        const type = selectedBudgetType();
+        if (!type) return;
+
         populateBudgetValues(type, fillStyleSelect.value === 'inverted');
         callbacks.onBudgetTypeChange(type, Number(maxBudgetSelect.value));
     });
@@ -119,9 +123,23 @@ export const initControls = (
     geometryFillStyles.forEach((id) =>
         addOption(fillStyleSelect, id.charAt(0).toUpperCase() + id.slice(1), id, id === 'filled'),
     );
+    // Only a switch to or from `inverted` changes the budget steps, and so the ranges to fetch.
+    let invertedBudgets = false;
     fillStyleSelect.addEventListener('change', () => {
-        const fillStyle = fillStyleSelect.value as GeometryFillStyle;
-        populateBudgetValues(budgetTypeSelect.value as BudgetType, fillStyle === 'inverted');
+        const fillStyle = geometryFillStyles.find((style) => style === fillStyleSelect.value);
+        if (!fillStyle) return;
+
+        const inverted = fillStyle === 'inverted';
+        if (inverted === invertedBudgets) {
+            callbacks.onFillStyleChange(fillStyle);
+            return;
+        }
+
+        const budgetType = selectedBudgetType();
+        if (!budgetType) return;
+
+        invertedBudgets = inverted;
+        populateBudgetValues(budgetType, inverted);
         callbacks.onFillStyleChange(fillStyle);
         callbacks.onMaxBudgetChange(Number(maxBudgetSelect.value));
     });
@@ -152,55 +170,57 @@ export const initControls = (
             const name = place.properties.poi?.name
                 ? `${place.properties.poi.name} — ${place.properties.address.freeformAddress}`
                 : place.properties.address.freeformAddress;
-            const li = Object.assign(document.createElement('li'), {
+            const item = Object.assign(document.createElement('li'), {
                 className: 'ui-result-item',
                 textContent: name,
             });
-            li.addEventListener('click', () => {
+            item.addEventListener('click', () => {
                 originInput.value = name;
                 map.mapLibreMap.flyTo({ center: place.geometry.coordinates as [number, number], zoom: 9 });
                 clearResults();
                 callbacks.onOriginSelected(place.geometry.coordinates as [number, number], name);
             });
-            resultsList.appendChild(li);
+            resultsList.appendChild(item);
         }
     };
 
+    // Each keystroke searches, and a slower answer to an earlier one is dropped rather than shown.
+    const latestSearch = createLatestRequest();
     const performSearch = async () => {
         const query = originInput.value.trim();
         if (query.length < 2) {
+            latestSearch.cancel();
             clearResults();
             return;
         }
         try {
-            showResults(
-                (
-                    await discoverPlaces({
-                        query,
-                        typeahead: true,
-                        limit: 5,
-                        geoBias: { position: map.mapLibreMap.getCenter().toArray() },
-                    })
-                ).features,
+            const results = await latestSearch.run((signal) =>
+                discoverPlaces({
+                    query,
+                    typeahead: true,
+                    limit: 5,
+                    geoBias: { position: map.mapLibreMap.getCenter().toArray() },
+                    signal,
+                }),
             );
+            if (results.current) showResults(results.value.features);
         } catch {
             clearResults();
         }
     };
 
-    originInput.addEventListener('input', () =>
-        originInput.value.trim().length >= 2 ? void performSearch() : clearResults(),
-    );
-    originInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') void performSearch();
+    originInput.addEventListener('input', performSearch);
+    originInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') void performSearch();
     });
     searchButton.addEventListener('click', performSearch);
     clearButton.addEventListener('click', () => {
         originInput.value = '';
+        latestSearch.cancel();
         clearResults();
     });
-    document.addEventListener('click', (e) => {
-        if (!originInput.contains(e.target as Node) && !resultsList.contains(e.target as Node)) clearResults();
+    document.addEventListener('click', (event) => {
+        if (!originInput.contains(event.target as Node) && !resultsList.contains(event.target as Node)) clearResults();
     });
 
     return {

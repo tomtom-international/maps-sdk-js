@@ -1,0 +1,120 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+@import "../../src/templates/css/form/dropdown.css";
+@import "../../src/templates/css/form/field.css";
+@import "../../src/templates/css/form/input.css";
+@import "../../src/templates/css/form/radio.css";
+@import "../../src/templates/css/form/slider.css";
+@import "../../src/templates/css/form/toggle.css";
+
+/* CUSTOM STYLES (example-specific) */
+
+/* The panel sits beside the map rather than over it, so all four corners stay in view. */
+.ui-customPanel {
+    left: var(--ui-panel-margin);
+    right: auto;
+    bottom: var(--ui-panel-margin);
+    width: 320px;
+    max-height: none;
+}
+
+.ui-map-area {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: calc(320px + 2 * var(--ui-panel-margin));
+    overflow: hidden;
+}
+
+.ui-placement .ui-form-field-inline {
+    margin-bottom: var(--ui-space-2);
+}
+
+.ui-placement .ui-form-field-inline .ui-form-label {
+    width: 72px;
+}
+
+.ui-placement .ui-slider-container {
+    flex: 1;
+    margin: 0;
+}
+
+.ui-placement .ui-slider-value {
+    min-width: 40px;
+    text-align: right;
+}
+
+.ui-subheading-spaced {
+    margin-top: var(--ui-space-4);
+}
+
+.ui-corners {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.ui-toggle-label + .ui-input {
+    margin-top: var(--ui-space-2);
+}
+
+.ui-code {
+    margin: 0;
+    padding: var(--ui-space-3);
+    font-family: var(--ui-font-fira);
+    font-size: var(--ui-font-caption-m);
+    line-height: var(--ui-font-caption-m-lh);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    color: var(--ui-text-high-em);
+    background: var(--ui-surface-1);
+    border-radius: var(--ui-rounded-10);
+}
+
+.ui-bottom-sheet {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 96px;
+    padding: var(--ui-space-2) var(--ui-space-4);
+    background: var(--ui-surface-0);
+    border-radius: var(--ui-rounded-20) var(--ui-rounded-20) 0 0;
+    box-shadow: 0 -2px 8px rgba(17, 12, 34, 0.12);
+    text-align: center;
+}
+
+.ui-bottom-sheet[hidden] {
+    display: none;
+}
+
+.ui-bottom-sheet-handle {
+    display: inline-block;
+    width: 40px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--ui-surface-2);
+}
+
+.ui-bottom-sheet-text {
+    margin: var(--ui-space-3) 0 0;
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-body-s);
+    color: var(--ui-text-med-em);
+}
+
+@media (max-width: 700px) {
+    .ui-customPanel {
+        right: var(--ui-panel-margin);
+        bottom: auto;
+        width: auto;
+        max-height: 45vh;
+    }
+
+    .ui-map-area {
+        top: calc(45vh + 2 * var(--ui-panel-margin));
+        left: 0;
+    }
+}

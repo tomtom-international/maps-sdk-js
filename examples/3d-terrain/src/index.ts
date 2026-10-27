@@ -19,10 +19,8 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
         },
     });
 
-    // Raises the map surface in 3D and shades its relief
     await TerrainModule.get(map, { elevation: { visible: true, exaggeration: 1.5 }, hillshade: { visible: true } });
 
-    // Turn on 3D basemap buildings
     const baseMap = await BaseMapModule.get(map);
     baseMap.setVisible(true, { layerGroups: { show: 'only', values: ['buildings3D'] } });
 

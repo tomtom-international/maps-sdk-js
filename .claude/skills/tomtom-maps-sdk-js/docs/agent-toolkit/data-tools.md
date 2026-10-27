@@ -66,7 +66,9 @@ in the sandbox; without it the default clustering runs.
 - **Node / SSR:** main thread, no isolation.
 - **Everywhere:** `fetch`, `XMLHttpRequest`, `WebSocket`, `EventSource`, `localStorage`, `sessionStorage`, `indexedDB`,
   `document`, `window`, `globalThis`, `self`, `navigator`, `importScripts`, `process` are shadowed to `undefined` —
-  a tripwire, not a boundary. Inputs are copied, so code can mutate them.
+  a tripwire, not a boundary. The iframe worker also shadows its own `postMessage`, `onmessage`, `addEventListener`,
+  `removeEventListener` and `close`, so a run can't take over or end the worker. Code runs with a null-prototype
+  `this`, so `this.fetch` finds nothing. Inputs are copied, so code can mutate them.
 - **`executeMaplibreCode`** runs in the host page, unshadowed, so it is not a default tool — add it with
   `createExecuteMaplibreCodeTool()` only when the deployment trusts the model ([tools.md](./tools.md#executemaplibrecode--opt-in)).
 

@@ -1,14 +1,6 @@
 import { useAui } from '@assistant-ui/react';
+import type { ClarifyIntentQuestion } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import { Fragment, useState } from 'react';
-
-export type ClarifyQuestion = {
-    id: string;
-    question: string;
-    options: string[];
-    /** Multi-select toggles options (send confirms); single-select answers on tap. */
-    multiSelect?: boolean;
-    allowCustom?: boolean;
-};
 
 // Renders a clarifyIntent call as the Figma survey wizard pinned in the composer slot: pager + Skip,
 // question title, numbered options, and a freeform "Something else" input. Single-select answers on tap
@@ -39,7 +31,7 @@ function PagerButton({ dir, disabled, onClick }: { dir: 'prev' | 'next'; disable
     );
 }
 
-export function ClarifyForm({ questions, onDismiss }: { questions: ClarifyQuestion[]; onDismiss?: () => void }) {
+export function ClarifyForm({ questions, onDismiss }: { questions: ClarifyIntentQuestion[]; onDismiss?: () => void }) {
     const aui = useAui();
     const [picks, setPicks] = useState<Record<string, string[]>>({});
     const [step, setStep] = useState(0);

@@ -2,6 +2,7 @@ import path from 'node:path';
 import type { Page, TestInfo } from '@playwright/test';
 import { expect } from '@playwright/test';
 import { PROD_TEST_SERVER_PORT } from '../../playwright.config';
+import { ACCESSIBILITY_SCAN_TIMEOUT, expectKnownAccessibilityViolations } from './accessibilityScan';
 import { DEFAULT_MAP_LOAD_TIMEOUT, DEFAULT_MAP_SELECTOR, WHOLE_PAGE_MAX_DIFF_RATIO } from './e2eTestConstants';
 import { enableMapReadback, waitForMapPainted, waitForMapStill } from './mapPaint';
 import { expectNoPageErrors, recordPageErrors } from './pageErrors';
@@ -22,7 +23,7 @@ export type SanityE2ETestOptions = {
     testInfo: TestInfo;
     /** Custom selector for the map element (default: #sdk-map) */
     mapSelector?: string;
-    /** Custom timeout for map loading (default: 10000ms) */
+    /** Custom timeout for map loading (default: 60000ms) */
     mapLoadTimeout?: number;
     /**
      * Fraction of pixels allowed to differ from the baseline (default: 0.15).
@@ -88,8 +89,8 @@ export const sanityE2ETest = async (options: SanityE2ETestOptions) => {
 
     // Four waits run back to back below, each free to take up to `mapLoadTimeout` on its own.
     // The default per-test budget is that same figure, so the examples that mount several maps
-    // used to run out of test before they ran out of any one wait. Budget for the chain.
-    testInfo.setTimeout(Math.max(testInfo.timeout, mapLoadTimeout * 3));
+    // used to run out of test before they ran out of any one wait. Budget for the chain, and the scan.
+    testInfo.setTimeout(Math.max(testInfo.timeout, mapLoadTimeout * 3) + ACCESSIBILITY_SCAN_TIMEOUT);
 
     await enableMapReadback(page);
     await page.goto(getExampleURL(testInfo));
@@ -105,6 +106,8 @@ export const sanityE2ETest = async (options: SanityE2ETestOptions) => {
         maxDiffPixelRatio,
         timeout: mapLoadTimeout,
     });
+
+    await expectKnownAccessibilityViolations(page, getExampleName(testInfo));
 
     await checkTempUiSnapshot({
         page,

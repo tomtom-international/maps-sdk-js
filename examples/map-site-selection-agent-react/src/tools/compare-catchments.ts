@@ -1,11 +1,9 @@
 import type { CommonPlaceProps, PolygonFeature, PolygonFeatures } from '@tomtom-org/maps-sdk/core';
 import type { ReachableRange, ToolEntry, ToolState } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
-import * as turf from '@turf/turf';
-import type { FeatureCollection, MultiPolygon, Polygon } from 'geojson';
 import { z } from 'zod';
 import { byodCandidateSites, requireByodFeatures } from '../agent/byod-inputs';
-import { type AreaFeature, clipPolygons, km2 } from '../agent/geometry';
-import { resolveCatchment } from '../agent/site-selection-state';
+import { clipPolygons, km2, unionPolygons } from '../agent/geometry';
+import { type ResolvedCatchment, resolveCatchment } from '../agent/site-selection-state';
 import { startProgress } from '../progress/progress-store';
 import { type OverlapPair, pointFeature, publishOverlap } from '../results/results-store';
 import { drawRichOverlay, OVERLAP_COLOR, type OverlayLine, positionPolygonLayers } from '../viz/site-visuals';
@@ -64,14 +62,12 @@ type ResolvedSite = { label: string; position: [number, number]; catchment: Catc
 
 const pct = (part: number, whole: number): number => (whole > 0 ? Math.round((part / whole) * 1000) / 10 : 0);
 
-type Catchmenter = { walking: boolean; walkReachMeters: number; driveMinutes: number };
-
 // Build a catchment around an already-resolved position (used for both geocoded addresses and the
 // coordinate-carrying Point features of a BYOD network layer).
 const buildResolvedSite = async (
     label: string,
     position: [number, number],
-    { walking, walkReachMeters, driveMinutes }: Catchmenter,
+    { walking, walkReachMeters, driveMinutes }: ResolvedCatchment,
 ): Promise<ResolvedSite | null> => {
     try {
         const catchment = walking
@@ -86,7 +82,7 @@ const buildResolvedSite = async (
 const resolveSite = async (
     site: z.infer<typeof siteSchema>,
     state: ToolState,
-    catchmenter: Catchmenter,
+    resolvedCatchment: ResolvedCatchment,
 ): Promise<ResolvedSite | null> => {
     const place = await geocodeSite(site.address, state);
     if (!place) return null;
@@ -94,29 +90,34 @@ const resolveSite = async (
     return buildResolvedSite(
         site.label ?? place.properties.address?.freeformAddress ?? site.address,
         position,
-        catchmenter,
+        resolvedCatchment,
     );
 };
 
 // Resolve the existing network from the address list and/or a BYOD point layer (capped at MAX_EXISTING).
-const resolveExisting = async (
+export const resolveExisting = async (
     params: CompareCatchmentsInput,
     state: ToolState,
-    catchmenter: Catchmenter,
+    resolvedCatchment: ResolvedCatchment,
 ): Promise<{ existing: ResolvedSite[]; skipped: string[] }> => {
     const existing: ResolvedSite[] = [];
     const skipped: string[] = [];
 
     for (const site of params.existing ?? []) {
-        const resolved = await resolveSite(site, state, catchmenter);
+        const resolved = await resolveSite(site, state, resolvedCatchment);
         if (resolved) existing.push(resolved);
         else skipped.push(site.address);
     }
 
+    let unbuilt = 0;
     if (params.existingByodEntryId) {
         const candidates = byodCandidateSites(requireByodFeatures(state, params.existingByodEntryId));
-        for (const candidate of candidates) {
-            const resolved = await buildResolvedSite(candidate.label, candidate.position, catchmenter);
+        for (const [index, candidate] of candidates.entries()) {
+            if (existing.length >= MAX_EXISTING) {
+                unbuilt = candidates.length - index;
+                break;
+            }
+            const resolved = await buildResolvedSite(candidate.label, candidate.position, resolvedCatchment);
             if (resolved) existing.push(resolved);
             else skipped.push(candidate.label);
         }
@@ -124,8 +125,8 @@ const resolveExisting = async (
 
     // Cap at MAX_EXISTING, but surface the drop rather than silently truncating — a BYOD network layer
     // can carry far more sites than the overlap check compares.
-    if (existing.length > MAX_EXISTING) {
-        const dropped = existing.length - MAX_EXISTING;
+    const dropped = Math.max(0, existing.length - MAX_EXISTING) + unbuilt;
+    if (dropped > 0) {
         skipped.push(
             `${dropped} more existing site${dropped === 1 ? '' : 's'} beyond the ${MAX_EXISTING}-site limit (not compared)`,
         );
@@ -151,17 +152,17 @@ export const compareCatchments: ToolEntry = {
             'Drawing',
         ]);
         try {
-            const { walking, walkReachMeters, driveMinutes } = resolveCatchment(state, params);
-            const catchmenter = { walking, walkReachMeters, driveMinutes };
+            const resolvedCatchment = resolveCatchment(state, params);
+            const { walking, walkReachMeters, driveMinutes } = resolvedCatchment;
 
             progress.step(0);
-            const proposed = await resolveSite(params.proposed, state, catchmenter);
+            const proposed = await resolveSite(params.proposed, state, resolvedCatchment);
             if (!proposed) {
                 progress.done();
                 return { error: `Could not resolve the proposed site "${params.proposed.address}".` };
             }
             progress.step(1);
-            const { existing, skipped } = await resolveExisting(params, state, catchmenter);
+            const { existing, skipped } = await resolveExisting(params, state, resolvedCatchment);
             if (existing.length === 0) {
                 progress.done();
                 return {
@@ -177,10 +178,7 @@ export const compareCatchments: ToolEntry = {
                     label: site.label,
                     catchmentKm2: site.km2,
                 });
-                const intersection = clipPolygons(
-                    proposed.catchment as unknown as AreaFeature,
-                    site.catchment as unknown as AreaFeature,
-                );
+                const intersection = clipPolygons(proposed.catchment, site.catchment);
                 if (!intersection) {
                     return {
                         existing: existingFeature,
@@ -217,10 +215,7 @@ export const compareCatchments: ToolEntry = {
             let sharedKm2 = 0;
             if (overlapFeatures.length === 1) sharedKm2 = pairs.reduce((sum, pair) => sum + pair.overlapKm2, 0);
             else if (overlapFeatures.length > 1) {
-                const union = turf.union({
-                    type: 'FeatureCollection',
-                    features: overlapFeatures,
-                } as unknown as FeatureCollection<Polygon | MultiPolygon>);
+                const union = unionPolygons(overlapFeatures);
                 sharedKm2 = union ? km2(union) : 0;
             }
 

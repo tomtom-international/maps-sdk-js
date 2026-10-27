@@ -1,6 +1,6 @@
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { BaseMapLayerGroupName, BaseMapModule, GeometriesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
-import { discoverPlaces, geometryData } from '@tomtom-org/maps-sdk/services';
+import { createLatestRequest, discoverPlaces, geometryData } from '@tomtom-org/maps-sdk/services';
 import './style.css';
 import { API_KEY } from './config';
 
@@ -17,40 +17,57 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     });
 
     const geometryModule = await GeometriesModule.create(map, { fill: { style: 'inverted' } });
-    const labelsToClick: BaseMapLayerGroupName[] = ['allPlaceLabels', 'stateLabels', 'capitalLabels', 'countryLabels'];
+    const labelsToClick: BaseMapLayerGroupName[] = ['allPlaceLabels'];
 
     const baseMap = await BaseMapModule.get(map);
 
-    const hintEl = document.getElementById('hint') as HTMLElement;
+    const hintElement = document.getElementById('hint') as HTMLElement;
+    const initialHint = hintElement.textContent;
+    // A later click, on a label or off them, drops the boundary still on its way for an earlier one.
+    const latestBoundary = createLatestRequest();
 
     const showBoundary = async (query: string, position: [number, number]) => {
-        hintEl.hidden = true;
-        const place = await discoverPlaces({
-            query,
-            geoBias: { position },
-            limit: 1,
-            filters: {
-                geographyTypes: [
-                    'Municipality',
-                    'Country',
-                    'MunicipalitySubdivision',
-                    'CountrySubdivision',
-                    'Neighbourhood',
-                ],
-            },
+        hintElement.hidden = true;
+        // A failed lookup, or a match with no geometry id, leaves no boundary to show.
+        const boundary = await latestBoundary.run(async (signal) => {
+            try {
+                const place = await discoverPlaces({
+                    query,
+                    geoBias: { position },
+                    limit: 1,
+                    filters: {
+                        geographyTypes: [
+                            'Municipality',
+                            'Country',
+                            'MunicipalitySubdivision',
+                            'CountrySubdivision',
+                            'Neighbourhood',
+                        ],
+                    },
+                    signal,
+                });
+                return place.features[0]?.properties.dataSources?.geometry?.id
+                    ? await geometryData({ geometries: place, signal })
+                    : undefined;
+            } catch {
+                return undefined;
+            }
         });
-        if (!place.features.length) {
+        if (!boundary.current) return;
+
+        if (!boundary.value) {
             await clearBoundary();
         } else {
-            await geometryModule.show(await geometryData({ geometries: place }));
-            hintEl.textContent = `${query} — click anywhere to dismiss`;
-            hintEl.hidden = false;
+            await geometryModule.show(boundary.value);
+            hintElement.textContent = `${query} — click anywhere to dismiss`;
+            hintElement.hidden = false;
         }
     };
 
     const clearBoundary = async () => {
         await geometryModule.clear();
-        hintEl.textContent = 'Click a city label to show its boundary';
+        hintElement.textContent = initialHint;
+        hintElement.hidden = false;
     };
 
     // Two scopes of the one base map module. `where` narrows to part of the map and takes its own
@@ -63,5 +80,8 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
 
     baseMap.events
         .where({ layerGroups: { show: 'all-except', values: labelsToClick } }, { cursorOnHover: 'default' })
-        .on('click', clearBoundary);
+        .on('click', () => {
+            latestBoundary.cancel();
+            return clearBoundary();
+        });
 })();

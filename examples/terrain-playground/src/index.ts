@@ -1,17 +1,17 @@
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import {
+    knobEntryOf,
     resetKnob,
     type StandardStyleID,
     StylingFoundationsModule,
     setKnob,
     standardStyleIDs,
     stylingFoundationsKnobCatalogue,
-    type TerrainKnob,
-    type TerrainKnobId,
     TerrainModule,
     TomTomMap,
     terrainKnobCatalogue,
 } from '@tomtom-org/maps-sdk/map';
+import { Buildings3D, GLSurfaces } from '@tomtom-org/maps-sdk-plugin-landmarks-3d';
 import { MapEffects } from '@tomtom-org/maps-sdk-plugin-map-effects';
 import './style.css';
 import { API_KEY } from './config';
@@ -34,16 +34,12 @@ const viewpoints: Viewpoint[] = [
     { label: 'Mont Blanc, France', center: [6.8652, 45.8326], zoom: 12.2, bearing: 320 },
     { label: 'Grand Canyon, United States', center: [-112.14, 36.1], zoom: 12.2, bearing: 0 },
     { label: 'Mount Fuji, Japan', center: [138.7274, 35.3606], zoom: 11.4, bearing: 172 },
+    // Close enough for the 3D buildings and the trees, on a lake under steep woods.
+    { label: 'Hallstatt, Austria', center: [13.6493, 47.5622], zoom: 16, bearing: 200 },
 ];
 
 const INITIAL_PITCH = 72;
 const INITIAL_EXAGGERATION = 1.4;
-
-const terrainKnob = (id: TerrainKnobId): TerrainKnob => {
-    const entry = terrainKnobCatalogue.find((candidate) => candidate.id === id);
-    if (!entry) throw new Error(`No terrain knob '${id}'`);
-    return entry;
-};
 
 // The satellite basemap is a daylit photograph, but its dark labels put the style in the dark
 // theme, whose night sky sits oddly above sunlit rock. Every other style keeps the sky its own
@@ -89,12 +85,22 @@ const focusLabel = (focus: number) => {
     // The effects plugin works on the rendered pixels, so it needs nothing from the style and
     // survives every switch below.
     const effects = new MapEffects(map);
+    // Off until their toggles: the 3D buildings and the textured water, woods and fields with their
+    // trees, all standing on the terrain. The waves and the trees hold still for readers who ask for
+    // less motion.
+    const buildings = new Buildings3D(map, { visible: false });
+    const surfaces = new GLSurfaces(map, {
+        visible: false,
+        ...(matchMedia('(prefers-reduced-motion: reduce)').matches && { wind: { speedFactor: 0 } }),
+    });
 
     const viewpointSelector = document.querySelector('#ui-viewpoint') as HTMLSelectElement;
     const styleSelector = document.querySelector('#ui-mapStyle') as HTMLSelectElement;
     const terrain = document.querySelector('#ui-terrain') as HTMLInputElement;
     const hillshade = document.querySelector('#ui-hillshade') as HTMLInputElement;
     const sky = document.querySelector('#ui-sky') as HTMLInputElement;
+    const buildingsToggle = document.querySelector('#ui-buildings') as HTMLInputElement;
+    const surfacesToggle = document.querySelector('#ui-surfaces') as HTMLInputElement;
     const depthOfField = document.querySelector('#ui-depthOfField') as HTMLInputElement;
     const exaggeration = document.querySelector('#ui-exaggeration') as HTMLInputElement;
     const exaggerationValue = document.querySelector('#ui-exaggerationValue') as HTMLElement;
@@ -132,7 +138,7 @@ const focusLabel = (focus: number) => {
 
     // The terrain controls read their tooltips from the module's catalogue, and the exaggeration
     // slider its bounds and step, so the panel offers only values the module takes.
-    const { range, description } = terrainKnob('elevation.exaggeration');
+    const { range, description } = knobEntryOf(terrainKnobCatalogue, 'elevation.exaggeration');
     if (range) {
         exaggeration.min = String(range.min);
         exaggeration.max = String(range.max);
@@ -141,8 +147,8 @@ const focusLabel = (focus: number) => {
     exaggeration.title = description;
     exaggeration.value = String(INITIAL_EXAGGERATION);
     exaggerationValue.textContent = exaggeration.value;
-    terrain.parentElement?.setAttribute('title', terrainKnob('elevation.visible').description);
-    hillshade.parentElement?.setAttribute('title', terrainKnob('hillshade.visible').description);
+    terrain.parentElement?.setAttribute('title', knobEntryOf(terrainKnobCatalogue, 'elevation.visible').description);
+    hillshade.parentElement?.setAttribute('title', knobEntryOf(terrainKnobCatalogue, 'hillshade.visible').description);
 
     viewpoints.forEach((viewpoint, index) => viewpointSelector.add(new Option(viewpoint.label, String(index))));
     standardStyleIDs.forEach((styleId) => styleSelector.add(new Option(styleId)));
@@ -157,7 +163,9 @@ const focusLabel = (focus: number) => {
     // The terrain, its exaggeration and the sky are module settings rather than camera state, so
     // they survive this switch: both modules re-apply them on top of every style the map loads.
     styleSelector.addEventListener('change', () => {
-        const styleId = styleSelector.value as StandardStyleID;
+        const styleId = standardStyleIDs.find((id) => id === styleSelector.value);
+        if (!styleId) return;
+
         map.setStyle(styleId);
         applySkyOf(styleId);
     });
@@ -167,6 +175,8 @@ const focusLabel = (focus: number) => {
         setKnob(styling, stylingFoundationsKnobCatalogue, 'view.sky.visible', sky.checked),
     );
     hillshade.addEventListener('change', () => terrainModule.setHillshadeVisible(hillshade.checked));
+    buildingsToggle.addEventListener('change', () => buildings.setVisible(buildingsToggle.checked));
+    surfacesToggle.addEventListener('change', () => surfaces.setVisible(surfacesToggle.checked));
 
     depthOfField.addEventListener('change', applyDepthOfField);
 
@@ -212,6 +222,11 @@ const focusLabel = (focus: number) => {
     pitch.addEventListener('input', () => {
         pitchValue.textContent = `${pitch.value}°`;
         map.mapLibreMap.setPitch(Number(pitch.value));
+    });
+    // A tilt by hand moves the slider too, so the next viewpoint keeps it.
+    map.mapLibreMap.on('pitchend', () => {
+        pitch.value = String(Math.round(map.mapLibreMap.getPitch()));
+        pitchValue.textContent = `${pitch.value}°`;
     });
 
     initTogglePanel();

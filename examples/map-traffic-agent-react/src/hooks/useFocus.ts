@@ -80,7 +80,7 @@ export function useFocus(agent: AgentInstance | undefined) {
         if (features.length === 0) return;
         const bbox = bboxFromGeoJSON({ type: 'FeatureCollection', features });
         if (!bbox) return;
-        agent.state.baseMap.mapLibreMap.fitBounds(bbox as [number, number, number, number], {
+        agent.state.baseMap.mapLibreMap.fitBounds(bbox, {
             padding: 120,
             maxZoom: 15,
             duration: 600,

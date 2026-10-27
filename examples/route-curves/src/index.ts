@@ -8,7 +8,6 @@ import {
     formatDuration,
     getProgressAtNearestRoutePoint,
     getRouteProgressForSection,
-    getSectionBBox,
     getSectionOverlap,
     getSectionsWithin,
     isHairpin,
@@ -25,7 +24,7 @@ import {
     type ReverseGeocodingResponse,
     reverseGeocode,
 } from '@tomtom-org/maps-sdk/services';
-import { type LngLatBoundsLike, Popup } from 'maplibre-gl';
+import { Popup } from 'maplibre-gl';
 import { API_KEY } from './config';
 import './style.css';
 
@@ -42,7 +41,8 @@ const FIT_PADDING = { top: 80, bottom: 80, left: 80, right: 400 };
 
 type Mood = 'avoid' | 'seek';
 
-const hairpinsOf = (count: number): string => `${count} ${count === 1 ? 'hairpin' : 'hairpins'}`;
+const countOf = (count: number, singular: string, plural = `${singular}s`): string =>
+    `${count} ${count === 1 ? singular : plural}`;
 
 // How hard a curve is for the road it's on, as the map's rose deepens with it.
 const severityOf = ({ severity }: CurveSectionProps): string => {
@@ -83,7 +83,7 @@ const CONTEXTS: Record<Context, ContextView> = {
             curve: sections.curve ?? [],
             curvyStretch: sections.curvyStretch ?? [],
         }),
-        detailOf: ({ curve }) => `${curve.length} curves`,
+        detailOf: ({ curve }) => countOf(curve.length, 'curve'),
     },
     // Bends outside towns with no junction to slow down for: the roads to ride.
     openRoad: {
@@ -91,7 +91,7 @@ const CONTEXTS: Record<Context, ContextView> = {
             curve: clearOf(sections.curve, sections.urban).filter((curve) => !curve.maneuver),
             curvyStretch: clearOf(sections.curvyStretch, sections.urban),
         }),
-        detailOf: ({ curve }) => `${curve.length} open-road bends`,
+        detailOf: ({ curve }) => countOf(curve.length, 'open-road bend'),
     },
     // Turns at junctions through a town, the maneuvers to take among traffic.
     townTurns: {
@@ -99,18 +99,19 @@ const CONTEXTS: Record<Context, ContextView> = {
             curve: curvesWithin(route, route.properties.sections.urban).curve.filter((curve) => curve.maneuver),
             curvyStretch: [],
         }),
-        detailOf: ({ curve }) => `${curve.length} turns in towns`,
+        detailOf: ({ curve }) => `${countOf(curve.length, 'turn')} in towns`,
     },
     // The winding roads no other route drives, which set the alternatives apart. A stretch counts when most of it is
     // the route's own, not when it runs on a little past the fork from a road the alternatives share.
     distinct: {
         curvesOf: (route) => curvesWithin(route, route.properties.sections.distinct, 0.5),
-        detailOf: ({ curvyStretch }) => `${curvyStretch.length} curvy stretches of its own`,
+        detailOf: ({ curvyStretch }) =>
+            `${countOf(curvyStretch.length, 'curvy stretch', 'curvy stretches')} of its own`,
     },
     // Curves where the road can't be seen ahead, nor the oncoming traffic.
     tunnels: {
         curvesOf: (route) => ({ curve: curvesWithin(route, route.properties.sections.tunnel).curve, curvyStretch: [] }),
-        detailOf: ({ curve }) => `${curve.length} curves in tunnels`,
+        detailOf: ({ curve }) => `${countOf(curve.length, 'curve')} in tunnels`,
     },
     // The hairpins and the curvy stretches they're on.
     hairpins: {
@@ -118,7 +119,7 @@ const CONTEXTS: Record<Context, ContextView> = {
             curve: sections.curve?.filter(isHairpin) ?? [],
             curvyStretch: sections.curvyStretch?.filter((stretch) => stretch.hairpinCount) ?? [],
         }),
-        detailOf: ({ curve }) => hairpinsOf(curve.length),
+        detailOf: ({ curve }) => countOf(curve.length, 'hairpin'),
     },
 };
 
@@ -185,7 +186,7 @@ const isContext = (value: string): value is Context => value in CONTEXTS;
     const map = new TomTomMap({
         mapLibre: {
             container: 'sdk-map',
-            bounds: bboxFromCoordsArray(INNSBRUCK_TO_BOLZANO) as LngLatBoundsLike,
+            bounds: bboxFromCoordsArray(INNSBRUCK_TO_BOLZANO),
             fitBoundsOptions: { padding: FIT_PADDING },
         },
     });
@@ -238,16 +239,16 @@ const isContext = (value: string): value is Context => value in CONTEXTS;
             ? `${formatDistance(progress.start.distanceInMeters)} into the route, ${formatDuration(progress.delta.travelTimeInSeconds)} to drive`
             : '';
         stretchShape.textContent = [
-            ...(picked.hairpinCount ? [hairpinsOf(picked.hairpinCount)] : []),
+            ...(picked.hairpinCount ? [countOf(picked.hairpinCount, 'hairpin')] : []),
             `one every ${formatDistance(picked.lengthInMeters / picked.curveCount)}`,
             `tightest radius ${formatDistance(picked.minRadiusInMeters)}`,
             `curviness ${Math.round(picked.curvinessScore)}`,
         ].join(', ');
         stretchPlaces.textContent = '…';
-        map.mapLibreMap.fitBounds(getSectionBBox(route, picked) as LngLatBoundsLike, {
-            padding: FIT_PADDING,
-            maxZoom: 14,
-        });
+        // Framed on every point: a winding stretch strays outside `getSectionBBox`'s sampled box.
+        const stretchCoordinates = route.geometry.coordinates.slice(picked.startPointIndex, picked.endPointIndex + 1);
+        const stretchBBox = bboxFromCoordsArray(stretchCoordinates);
+        if (stretchBBox) map.mapLibreMap.fitBounds(stretchBBox, { padding: FIT_PADDING, maxZoom: 14 });
 
         const { coordinates } = route.geometry;
         const ends = await latestPlaces.run((signal) =>
@@ -389,7 +390,8 @@ const isContext = (value: string): value is Context => value in CONTEXTS;
         const picked = mood === 'seek' ? straightestFirst[straightestFirst.length - 1] : straightestFirst[0];
         selectedIndex = picked.properties.index;
         popup.remove();
-        map.mapLibreMap.fitBounds(bboxFromGeoJSON(routes) as LngLatBoundsLike, { padding: FIT_PADDING });
+        const routesBBox = bboxFromGeoJSON(routes);
+        if (routesBBox) map.mapLibreMap.fitBounds(routesBBox, { padding: FIT_PADDING });
         await showCurves();
     };
 

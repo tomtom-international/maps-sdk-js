@@ -26,7 +26,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     const [routingModule, baseModule] = await Promise.all([RoutingModule.create(map), BaseMapModule.get(map)]);
 
     // --- State ---
-    let stops: [number, number][] = [];
+    let stops: WaypointLike[] = [];
     let currentRoute: Route;
     let activePopup: ReturnType<typeof createStopPopup> | null = null;
     let isUpdating = false;
@@ -45,20 +45,22 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         map.mapLibreMap.getCanvas().style.cursor = loading ? 'wait' : '';
     };
 
-    const recalculate = async () => {
-        const routeResult = await calculateRoute({ locations: getLocations() });
+    // The stops change only once their route comes back, so one the router cannot reach is never kept.
+    const recalculate = async (nextStops: WaypointLike[]) => {
+        const locations = [origin, ...nextStops, destination];
+        const routeResult = await calculateRoute({ locations });
+        stops = nextStops;
         currentRoute = routeResult.features[0];
-        routingModule.showWaypoints(getLocations());
+        routingModule.showWaypoints(locations);
         routingModule.showRoutes(routeResult);
     };
 
-    const addStop = async (pos: [number, number]) => {
+    const addStop = async (position: [number, number]) => {
         if (isUpdating) return;
         setLoading(true);
         try {
-            const updated = withInsertedWaypoint(currentRoute, getLocations(), pos);
-            stops = updated.slice(1, -1) as [number, number][];
-            await recalculate();
+            const updated = withInsertedWaypoint(currentRoute, getLocations(), position);
+            await recalculate(updated.slice(1, -1));
         } finally {
             setLoading(false);
         }
@@ -68,8 +70,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         if (isUpdating) return;
         setLoading(true);
         try {
-            stops = stops.filter((_, i) => i !== index);
-            await recalculate();
+            await recalculate(stops.filter((_, stopIndex) => stopIndex !== index));
         } finally {
             setLoading(false);
         }

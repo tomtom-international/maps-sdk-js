@@ -84,8 +84,10 @@ const cellLayers = (statistic: Statistic): CustomGeoJSONLayerSpec[] => [
         sources: { cells: { layers: cellLayers('median') } },
     });
 
+    let shownCellSizeKM: number | undefined;
     const showCells = async () => {
-        sizeValue.textContent = `${cellSizeKM()} km`;
+        shownCellSizeKM = cellSizeKM();
+        sizeValue.textContent = `${shownCellSizeKM} km`;
         await cells.show(aggregateListings());
     };
     await showCells();
@@ -96,7 +98,8 @@ const cellLayers = (statistic: Statistic): CustomGeoJSONLayerSpec[] => [
         sizeSlider.disabled = followZoomToggle.checked;
         showCells();
     });
-    map.mapLibreMap.on('zoomend', () => followZoomToggle.checked && showCells());
+    // The size follows the zoom in steps, so most zooms leave the cells as they are.
+    map.mapLibreMap.on('zoomend', () => followZoomToggle.checked && cellSizeKM() !== shownCellSizeKM && showCells());
 
     statisticSelect.addEventListener('change', () =>
         cells.updateConfig({ sources: { cells: { layers: cellLayers(statisticSelect.value as Statistic) } } }),

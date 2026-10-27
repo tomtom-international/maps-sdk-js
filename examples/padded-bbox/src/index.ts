@@ -27,11 +27,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     const mapLibreMap: Map = map.mapLibreMap;
     await mapLibreMap.once('load');
 
-    const panelLeft = document.getElementById('panel-left');
-    const panelTop = document.getElementById('panel-top');
-    const panelRight = document.getElementById('panel-right');
-
-    const surroundingElements = [panelLeft, panelTop, panelRight] as HTMLElement[];
+    const surroundingElements = ['#panel-left', '#panel-top', '#panel-right'];
 
     const BBOX_SOURCE_ID = 'padded-bbox-source';
     const BBOX_LAYER_ID = 'padded-bbox-layer';

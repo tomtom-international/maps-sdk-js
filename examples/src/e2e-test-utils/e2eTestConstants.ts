@@ -14,7 +14,7 @@ export const WHOLE_PAGE_MAX_DIFF_RATIO = 0.15;
 /** Settle time for a `Buildings3D` example's shot: it extrudes the tiles over several frames after they arrive, seconds under SwiftShader. */
 export const BUILDINGS_EXTRUDE_MS = 4000;
 
-/** Load budget of the cinematic examples: buildings with shadows, landmarks and effects draw a frame or two a second under SwiftShader. */
+/** Load budget of the heavy 3D examples, the cinematic ones and the 3D cities: buildings with shadows, landmarks, surfaces and effects draw a frame or two a second under SwiftShader. */
 export const CINEMATIC_MAP_LOAD_TIMEOUT = 120_000;
 
 /**

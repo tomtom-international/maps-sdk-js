@@ -115,6 +115,16 @@ export const isLayerVisible = async (page: Page, layerId: string): Promise<boole
         layerId,
     );
 
+/** The map's layer ids, bottom first, read without serialising the style. */
+export const getLayersOrder = async (page: Page): Promise<string[]> =>
+    page.evaluate(() => {
+        const map = (globalThis as MapWindowLike).mapLibreMap;
+        if (!map) {
+            throw new Error('globalThis.mapLibreMap is not available.');
+        }
+        return map.getLayersOrder();
+    });
+
 /**
  * The position of a layer in the style's draw order, counting from the bottom. `-1` when the style
  * has no such layer.
@@ -124,13 +134,7 @@ export const isLayerVisible = async (page: Page, layerId: string): Promise<boole
  * stacking needs — the absolute number shifts with every layer the basemap adds.
  */
 export const getLayerIndex = async (page: Page, layerId: string): Promise<number> =>
-    page.evaluate((inputLayerId) => {
-        const map = (globalThis as MapWindowLike).mapLibreMap;
-        if (!map) {
-            throw new Error('globalThis.mapLibreMap is not available.');
-        }
-        return map.getStyle().layers.findIndex((layer) => layer.id === inputLayerId);
-    }, layerId);
+    (await getLayersOrder(page)).indexOf(layerId);
 
 // ---------------------------------------------------------------------------
 // Paint
@@ -138,8 +142,11 @@ export const getLayerIndex = async (page: Page, layerId: string): Promise<number
 
 export const getPaintProperty = async (page: Page, layerId: string, propertyName: string): Promise<unknown> =>
     page.evaluate(
-        ({ layerID, propertyName: prop }) =>
-            (globalThis as MapWindowLike).mapLibreMap?.getPaintProperty(layerID, prop as keyof AllPaintProperties),
+        ({ layerID, propertyName }) =>
+            (globalThis as MapWindowLike).mapLibreMap?.getPaintProperty(
+                layerID,
+                propertyName as keyof AllPaintProperties,
+            ),
         { layerID: layerId, propertyName },
     );
 
@@ -177,8 +184,7 @@ const allLayersPresent = async (page: Page, layerIDs: string[]): Promise<boolean
     page.evaluate((ids) => {
         const map = (globalThis as MapWindowLike).mapLibreMap;
         if (!map) return false;
-        const existing = new Set(map.getStyle().layers.map((l) => l.id));
-        return ids.every((id) => existing.has(id));
+        return ids.every((id) => map.getLayer(id));
     }, layerIDs);
 
 export const waitUntilRenderedFeatures = async (

@@ -8,10 +8,10 @@ import type {
     Route, Routes, RouteSummary, SectionsProps,
     TrafficIncident, TrafficIncidentDetails, TrafficIncidentCategory,
     TrafficIncidentProperties, DelayMagnitude, TrafficIncidentTimeValidity,
-    TrafficIncidentRequestCategory,
+    TrafficIncidentRequestCategory, SDKErrorCode, APIErrorDetails, PrivatePreviewAccess,
 } from '@tomtom-org/maps-sdk/core';
-// Category lists are runtime values, so they need a value import, not `import type`.
-import { fullTrafficIncidentCategories, trafficIncidentRequestCategories } from '@tomtom-org/maps-sdk/core';
+// Category and code lists are runtime values, so they need a value import, not `import type`.
+import { fullTrafficIncidentCategories, sdkErrorCodes, trafficIncidentRequestCategories } from '@tomtom-org/maps-sdk/core';
 ```
 
 GeoJSON types (`Position`, `Feature`, `FeatureCollection`, …) come from `geojson`, not the SDK: `import type { Position } from 'geojson'`.
@@ -49,7 +49,7 @@ place.properties.address.countrySubdivision; // 'North Holland'
 // countrySecondarySubdivision, countrySubdivisionCodeIso, postalName, routeNumbers
 ```
 
-`place.properties.geographyType` lists the administrative levels of a `'Geography'` place, most specific first (`'Country'`, `'Municipality'`, …; `geographyTypes` holds them all).
+`place.properties.geographyType` names which administrative levels a `'Geography'` place has. `geographyTypes` holds them all, largest to smallest (`'Country'`, `'Municipality'`, …). An area with several roles carries several.
 
 ### POI properties (when `type === 'POI'`)
 
@@ -343,6 +343,59 @@ result.features.forEach((incident: TrafficIncident) => {
     p.probabilityOfOccurrence; // 'certain' | 'probable' | 'risk_of' | 'improbable'
 });
 ```
+
+---
+
+## SDK errors
+
+Every SDK error, a service call's `SDKError` (`services-config.md` § Error handling) and the map's or a plugin's
+`TomTomMapError` (`map-setup.md` § Map errors), carries `.code`, `.canRetry` and `.sdkVersion`. Branch on `.code`,
+never on `.message`. `sdkErrorCodes` (a runtime value from `/core`) lists every `SDKErrorCode`, under the TomTom
+Navigation SDK's names for the same failures.
+
+| `code` | When |
+|---|---|
+| `INVALID_REQUEST` | SDK validation failed, a request sent with `validateRequest: false` could not be built, or API `400` / other `4xx` |
+| `INSECURE_BASE_URL` | `commonBaseURL` is neither `https:` nor `http:` on loopback (`localhost`, `*.localhost`, `127.x`, `[::1]`) |
+| `INVALID_CREDENTIALS` | API `401`: key missing, invalid or expired |
+| `INSUFFICIENT_PERMISSIONS` | API `403`: key valid but not allowed this request (see below) |
+| `NOT_FOUND` | API `404`, or `geocodeOne` / `discoverOnePlace` found no place |
+| `RATE_LIMITED` | API `429`, after the `retry` budget is spent (services only; the map doesn't retry) |
+| `LIVE_SERVICE_NOT_AVAILABLE` | API `5xx` |
+| `NETWORK_NOT_AVAILABLE` | no response (offline, DNS, TLS, CORS) |
+| `ABORTED` | the call's `signal` aborted |
+| `WEBGL_UNSUPPORTED` | the browser can't create a WebGL2 context (map constructor) |
+| `WEBGL_CONTEXT_LOST` | the browser took the map's WebGL context away |
+| `STYLE_LOAD_FAILED` | the map style failed to load, not by an HTTP status above |
+| `INTERNAL` | anything else, e.g. an unreadable response |
+
+- `.canRetry` is `true` for `RATE_LIMITED`, `LIVE_SERVICE_NOT_AVAILABLE` and `NETWORK_NOT_AVAILABLE`: retry later.
+  Any other code fails the same way again.
+- **A refused key reads the same on services and the map.** `SDKServiceError` and `TomTomMapError` both implement
+  `APIErrorDetails` (from `/core`). Its `.apiErrorCode` is the API's `detailedError.code`; on an
+  `INSUFFICIENT_PERMISSIONS`, `'Forbidden'` = API not enabled for the key (or a Private Preview API it lacks access
+  to), `'InvalidReferer'` = the key's domain restriction refused the page (add the domain, or a fixed referrer from a
+  proxy).
+- **Private Preview APIs** (`calculateReachableRange(s)`, the Landmarks 3D tiles): an `INSUFFICIENT_PERMISSIONS` whose
+  `apiErrorCode` is `'Forbidden'`, or a `403` with no body, also carries
+  `.privatePreviewAccess: { product, requestAccessURL }` (type `PrivatePreviewAccess`, from `/core`), and its
+  `.message` ends with the same plus the [Private Preview terms](https://docs.tomtom.com/legal/private-preview). Show
+  that to the developer rather than "check the API key".
+
+```ts
+import type { APIErrorDetails, SDKErrorCode } from '@tomtom-org/maps-sdk/core';
+
+// One reader for a service call's SDKServiceError and the map's TomTomMapError alike.
+const explainRefusedKey = (error: APIErrorDetails & { code: SDKErrorCode }): string | undefined => {
+    if (error.privatePreviewAccess) return `${error.privatePreviewAccess.product} needs access: ${error.privatePreviewAccess.requestAccessURL}`;
+    if (error.apiErrorCode === 'InvalidReferer') return 'Add this domain to the API key';
+    if (error.code === 'INSUFFICIENT_PERMISSIONS') return 'Enable this API for the API key';
+    if (error.code === 'INVALID_CREDENTIALS') return 'Check the API key';
+    return undefined;
+};
+```
+
+See [Errors](https://docs.tomtom.com/maps-sdk-js/guides/core/errors.md).
 
 ---
 

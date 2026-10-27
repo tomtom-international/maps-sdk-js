@@ -6,7 +6,6 @@
     "build": "vite build --config ../example-vite.config.ts",
     "clean:dist": "rimraf ./dist",
     "develop": "vite --config ../example-vite.config.ts",
-    "start-test-server": "vite preview --port 9050 --outDir dist/prod",
     "start-test-server:prod": "vite preview --port 9050 --outDir dist/prod",
     "test:e2e": "playwright test",
     "test:e2e:prod": "playwright test --grep @prod",
@@ -17,6 +16,7 @@
   },
   "dependencies": {
     "@tomtom-org/maps-sdk": "catalog:",
+    "@tomtom-org/maps-sdk-plugin-landmarks-3d": "catalog:",
     "@tomtom-org/maps-sdk-plugin-map-effects": "catalog:"
   },
   "devDependencies": {

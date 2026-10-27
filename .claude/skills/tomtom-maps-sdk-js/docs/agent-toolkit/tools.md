@@ -40,7 +40,8 @@ suggestions from the same source as the `help` tool.
   `TrafficIncidentsModule` and `TerrainModule` catalogues, under the map-wide prefixes `''`, `pois.`, `traffic.flow.`,
   `traffic.incidents.` and `terrain.`: `labels.sizeFactor`, `groups.buildings3D.visible`, `pois.visible`,
   `pois.filters.categories.values`, `traffic.flow.visible`, `traffic.incidents.filters.magnitudes.values`,
-  `terrain.elevation.visible`, …; `reset: true` resets every knob, visibility included, or pass ids; `preset` calls `applyMapPreset`;
+  `terrain.elevation.visible`, … (not the base map's `buildings3D.hover.*` and `buildings3D.click.*`, which show only under
+  a base-map event handler the agent never registers); `reset: true` resets every knob, visibility included, or pass ids; `preset` calls `applyMapPreset`;
   scopable: the classifier emits `{ kinds }` from `look`, `baseMap`, `pois`, `trafficFlow`, `trafficIncidents`, `terrain`
   and the `set` description lists only those families' ids, while any id stays settable; an unknown id is refused with
   the closest ones (`did you mean pois.label.color?`);
@@ -191,7 +192,7 @@ createMapAgent(map, { model, tools: { getFleetVehicle } });
 
 ### Resolve a place in a custom tool
 
-`locatePlace(query, queryAs, bias?, execOptions?)` runs the `locatePlace` tool's lookup and returns the best `Place` or `null`
+`locatePlace(query, queryAs, bias?, executeOptions?)` runs the `locatePlace` tool's lookup and returns the best `Place` or `null`
 (`queryAs`: `'poi'` searches points of interest, `'place'` geocodes). `getViewportBias(state.baseMap)` returns the map centre as
 `[lng, lat]`, or `undefined` below zoom `MIN_VIEWPORT_BIAS_ZOOM` (6). A failed or cancelled lookup rejects:
 

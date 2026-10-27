@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Attribution playground</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">Attribution</span>
+                </h3>
+            </div>
+
+            <div class="ui-panel-content">
+                <div class="ui-section">
+                    <p class="ui-instructions">
+                        The map always shows its copyright attribution as logos, which the license requires. The options
+                        below place them, add your credit and set their backdrop, and none removes them. Changing one
+                        creates the map again, since <code>attribution</code> is set when the map is created, and keeps
+                        the camera and the style.
+                    </p>
+                </div>
+
+                <div class="ui-section">
+                    <h4 class="ui-subheading">
+                        Map style
+                        <span class="ui-form-hint">setStyle</span>
+                    </h4>
+                    <select id="ui-style" class="ui-dropdown" aria-label="Map style"></select>
+                    <p class="ui-note">The backdrop follows the style's theme, on the same map.</p>
+                </div>
+
+                <div class="ui-section ui-placement">
+                    <h4 class="ui-subheading">
+                        Corner
+                        <span class="ui-form-hint">position</span>
+                    </h4>
+                    <div class="ui-radio-group ui-corners">
+                        <label class="ui-radio-label">
+                            <input type="radio" name="ui-position" value="top-left">
+                            Top left
+                        </label>
+                        <label class="ui-radio-label">
+                            <input type="radio" name="ui-position" value="top-right">
+                            Top right
+                        </label>
+                        <label class="ui-radio-label">
+                            <input type="radio" name="ui-position" value="bottom-left">
+                            Bottom left
+                        </label>
+                        <label class="ui-radio-label">
+                            <input type="radio" name="ui-position" value="bottom-right" checked>
+                            Bottom right
+                        </label>
+                    </div>
+
+                    <h4 class="ui-subheading ui-subheading-spaced">
+                        Padding
+                        <span class="ui-form-hint">padding</span>
+                    </h4>
+                    <div class="ui-form-field-inline">
+                        <label class="ui-form-label" for="ui-horizontal">Horizontal</label>
+                        <span class="ui-slider-container">
+                            <input
+                                id="ui-horizontal"
+                                class="ui-slider"
+                                type="range"
+                                min="0"
+                                max="48"
+                                step="2"
+                                value="12"
+                            >
+                            <span id="ui-horizontal-value" class="ui-slider-value">12px</span>
+                        </span>
+                    </div>
+                    <div class="ui-form-field-inline">
+                        <label class="ui-form-label" for="ui-vertical">Vertical</label>
+                        <span class="ui-slider-container">
+                            <input id="ui-vertical" class="ui-slider" type="range" min="0" max="48" step="2" value="8">
+                            <span id="ui-vertical-value" class="ui-slider-value">8px</span>
+                        </span>
+                    </div>
+
+                    <h4 class="ui-subheading ui-subheading-spaced">
+                        Your own credit
+                        <span class="ui-form-hint">credits</span>
+                    </h4>
+                    <label class="ui-toggle-label">
+                        <input id="ui-credit-toggle" class="ui-toggle-input" type="checkbox">
+                        <span class="ui-toggle-switch"></span>
+                        Add a credit
+                    </label>
+                    <input
+                        id="ui-credit"
+                        class="ui-input"
+                        type="text"
+                        value="Weather data by Open-Meteo.com"
+                        aria-label="Credit text"
+                    >
+
+                    <h4 class="ui-subheading ui-subheading-spaced">
+                        Backdrop
+                        <span class="ui-form-hint">backdrop</span>
+                    </h4>
+                    <label class="ui-toggle-label">
+                        <input id="ui-backdrop" class="ui-toggle-input" type="checkbox" checked>
+                        <span class="ui-toggle-switch"></span>
+                        A soft backdrop behind the logos
+                    </label>
+                </div>
+
+                <div class="ui-section">
+                    <h4 class="ui-subheading">Your app's chrome</h4>
+                    <label class="ui-toggle-label">
+                        <input id="ui-sheet" class="ui-toggle-input" type="checkbox">
+                        <span class="ui-toggle-switch"></span>
+                        A bottom sheet over the map
+                    </label>
+                    <p class="ui-note">
+                        In a bottom corner, the vertical padding then counts from the top of the sheet.
+                    </p>
+                </div>
+
+                <div class="ui-section">
+                    <h4 class="ui-subheading">The option as you'd write it</h4>
+                    <pre class="ui-code"><code id="ui-code"></code></pre>
+                </div>
+            </div>
+        </div>
+
+        <main class="ui-map-area">
+            <div id="sdk-map"></div>
+            <div id="ui-bottom-sheet" class="ui-bottom-sheet" hidden>
+                <span class="ui-bottom-sheet-handle"></span>
+                <p class="ui-bottom-sheet-text">Your app's bottom sheet</p>
+            </div>
+        </main>
+
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

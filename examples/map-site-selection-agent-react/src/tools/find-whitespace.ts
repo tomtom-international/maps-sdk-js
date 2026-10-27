@@ -3,19 +3,13 @@ import { reverseGeocode } from '@tomtom-org/maps-sdk/services';
 import type { ToolEntry, ToolEntryBuilder, ToolState } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import { isResolveError, resolveWithin, toolStateToWhereContext } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import * as turf from '@turf/turf';
-import type { Feature, FeatureCollection, MultiPolygon, Point, Polygon } from 'geojson';
+import type { Feature, FeatureCollection, Point } from 'geojson';
 import { z } from 'zod';
 import { byodCandidateSites, requireByodFeatures } from '../agent/byod-inputs';
-import { km2 } from '../agent/geometry';
+import { type AreaFeature, type AreaGeometry, km2 } from '../agent/geometry';
 import { getSitePreferences } from '../agent/site-selection-state';
-import {
-    householdsEnabled,
-    placeInfo,
-    type SearchFeature,
-    searchAddresses,
-    searchInGeometry,
-    searchLimit,
-} from '../demographics/households';
+import { householdsEnabled, searchLimit } from '../demographics/experimental-search';
+import { placeInfo, type SearchFeature, searchAddresses, searchInGeometry } from '../demographics/households';
 import { pocketColor } from '../pocket-colors';
 import { startProgress } from '../progress/progress-store';
 import { pointCollection, pointFeature, publishWhitespace, type WhitespacePocketProps } from '../results/results-store';
@@ -40,9 +34,6 @@ const MAX_GRID_CELLS = 20000;
 const MIN_COVERAGE = 0.5; // a perimeter hex must be ≥50% inside the region to be ranked (drops slivers)
 const AREA_FALLBACK_KM = 5; // circle radius used when the query has no admin boundary polygon
 
-type Colocation = 'avoid' | 'seek';
-
-type AreaGeometry = Polygon | MultiPolygon;
 type ResolvedArea = { geometry: AreaGeometry; label: string; km2: number; source: 'boundary' | 'radius' };
 
 const findWhitespaceBaseSchema = z.object({
@@ -111,13 +102,14 @@ const buildFindWhitespaceSchema = (households: boolean) =>
 
 // `householdDemand` is optional in the shared type: absent (hence never true) when the flag is off.
 type FindWhitespaceInput = z.infer<typeof findWhitespaceBaseSchema> & { householdDemand?: boolean };
+type Colocation = FindWhitespaceInput['colocation'];
 
 const resolveArea = async (query: string, state: ToolState): Promise<ResolvedArea | null> => {
     const result = await resolveWithin({ queries: [{ query, queryAs: 'place' }] }, toolStateToWhereContext(state));
     if (isResolveError(result) || result.length === 0) return null;
     const raw = result[0];
     if (raw.polygon) {
-        const geometry = raw.polygon as AreaGeometry;
+        const geometry = raw.polygon;
         const areaKm2 = km2(geometry);
         return {
             geometry,
@@ -129,9 +121,9 @@ const resolveArea = async (query: string, state: ToolState): Promise<ResolvedAre
     // No admin boundary — fall back to a circle around the bbox centre.
     const circle = turf.circle(bboxCenter(raw.bbox), AREA_FALLBACK_KM, { units: 'kilometers' });
     return {
-        geometry: circle.geometry as AreaGeometry,
+        geometry: circle.geometry,
         label: raw.label ?? query,
-        km2: Math.round(Math.PI * AREA_FALLBACK_KM * AREA_FALLBACK_KM * 100) / 100,
+        km2: km2(circle),
         source: 'radius',
     };
 };
@@ -241,7 +233,7 @@ const colourDemandPois = (
 };
 
 type Candidate = {
-    hex: Feature<Polygon | MultiPolygon>;
+    hex: AreaFeature;
     centre: [number, number];
     demand: number;
     households: number; // address points within radius (0 when householdDemand is off)
@@ -278,6 +270,10 @@ const blendNorms = (
     return { demandNorm, peerNorm };
 };
 
+/** A pocket's 0–100 opportunity: its demand and peer-proximity norms blended by the demand weight (0–1). */
+export const blendOpportunity = (demandNorm: number, peerNorm: number, demandWeight: number): number =>
+    Math.round(100 * (demandWeight * demandNorm + (1 - demandWeight) * peerNorm));
+
 const scoreOpportunity = (
     candidate: Candidate,
     demandRange: [number, number],
@@ -299,7 +295,7 @@ const scoreOpportunity = (
     // Demand-favoured (0.6) over peer proximity (0.4): commercial viability is the precondition — a
     // pocket that is merely far from rivals but has little demand (e.g. an industrial edge) should not
     // outrank a genuinely busy one. Peer proximity still earns the remaining 40%.
-    return Math.round(100 * (DEFAULT_DEMAND_WEIGHT * demandNorm + (1 - DEFAULT_DEMAND_WEIGHT) * peerNorm));
+    return blendOpportunity(demandNorm, peerNorm, DEFAULT_DEMAND_WEIGHT);
 };
 
 // Greedy spatial suppression so the top-N are distinct places (≥ one walk apart), not a blob.
@@ -356,15 +352,14 @@ type ScanContext = {
 // residential density), recording each cell's demand, household count and nearest-peer distance.
 // `allHexes` is EVERY cell that tiles the region (≥MIN_COVERAGE inside) regardless of demand — the map
 // draws these as plain outlines so the scan's full coverage is visible; `candidates` is the busy subset
-// that gets scored and (for the top pockets) filled. The two share hex references, so a pocket can be
-// matched back to its outline cell by identity.
+// that gets scored and (for the top pockets) filled.
 const buildCandidates = (
     grid: HexGrid,
     area: AreaGeometry,
     ctx: ScanContext,
-): { candidates: Candidate[]; allHexes: Feature<Polygon | MultiPolygon>[] } => {
+): { candidates: Candidate[]; allHexes: AreaFeature[] } => {
     const candidates: Candidate[] = [];
-    const allHexes: Feature<Polygon | MultiPolygon>[] = [];
+    const allHexes: AreaFeature[] = [];
     for (const hex of grid.features) {
         const clipped = clipHexToArea(hex, area);
         if (!clipped) continue;
@@ -446,7 +441,7 @@ const renderWhitespace = async (
     area: AreaGeometry,
     bbox: [number, number, number, number],
     top: ScoredPocket[],
-    allHexes: Feature<Polygon | MultiPolygon>[],
+    allHexes: AreaFeature[],
     anchorFeatures: SearchFeature[],
     byodDemandPoints: readonly { label: string; position: [number, number] }[],
     targetFeatures: SearchFeature[],
@@ -525,8 +520,8 @@ const renderWhitespace = async (
     return { demandLegend, demandComposition };
 };
 
-// The honest caveats for this scan (unresolved peer category, auto-shrunk cells, radius fallback,
-// capped residential sample).
+// The honest caveats for this scan (unresolved peer category, capped peer or demand search, auto-shrunk
+// cells, radius fallback, capped residential sample).
 const buildWarnings = (
     params: FindWhitespaceInput,
     areaQuery: string,
@@ -534,12 +529,24 @@ const buildWarnings = (
     cellSizeMeters: number,
     targets: { codes: string[] },
     targetFeatures: SearchFeature[],
+    targetsCapped: boolean,
+    anchorsCapped: boolean,
     addressesCapped: boolean,
 ): string[] => {
     const warnings: string[] = [];
     if (targets.codes.length === 0 && targetFeatures.length <= 1) {
         warnings.push(
             `Peer category "${params.targetCategories.join(', ')}" did not resolve to a TomTom category (found ${targetFeatures.length}), so pockets may be unreliable.`,
+        );
+    }
+    if (targetsCapped) {
+        warnings.push(
+            `Peer search capped: ${resolved.label} has at least ${searchLimit().toLocaleString('en-US')} peers and only that many were placed, so a pocket beyond walking distance of them may still have a peer nearby.`,
+        );
+    }
+    if (anchorsCapped) {
+        warnings.push(
+            `Demand search capped: ${resolved.label} has at least ${searchLimit().toLocaleString('en-US')} demand places and only that many were counted, so pocket demand is a sample, not a full count.`,
         );
     }
     if (cellSizeMeters !== params.cellSizeMeters) {
@@ -603,6 +610,8 @@ type AreaSearchResult = {
     resolved: ResolvedArea;
     anchorFeatures: SearchFeature[];
     targetFeatures: SearchFeature[];
+    targetsCapped: boolean;
+    anchorsCapped: boolean;
     hasTargets: boolean;
     addresses: { features: readonly SearchFeature[]; capped: boolean };
 };
@@ -610,7 +619,7 @@ type AreaGridResult = AreaSearchResult & {
     bbox: [number, number, number, number];
     cellSizeMeters: number;
     candidates: Candidate[];
-    allHexes: Feature<Polygon | MultiPolygon>[];
+    allHexes: AreaFeature[];
 };
 type AreaRankedResult = AreaGridResult & { top: ScoredPocket[]; ranges: Ranges };
 
@@ -688,22 +697,26 @@ const executeFindWhitespace = (async (params: FindWhitespaceInput, state: ToolSt
             codes: anchorsRaw.codes.filter((code) => !targetCodes.has(code)),
             names: anchorsRaw.names.filter((_, index) => !targetCodes.has(anchorsRaw.codes[index])),
         };
-        const searchPlaces = async (area: AreaGeometry) => ({
-            anchorFeatures: (
-                await searchInGeometry(area, {
-                    poiCategories: anchors.codes,
-                    query: 'shop',
-                    limit: searchLimit(),
-                })
-            ).features,
-            targetFeatures: (
-                await searchInGeometry(area, {
-                    poiCategories: targets.codes,
-                    query: params.targetCategories.join(' '),
-                    limit: searchLimit(),
-                })
-            ).features,
-        });
+        const searchPlaces = async (area: AreaGeometry) => {
+            const anchorSearch = await searchInGeometry(area, {
+                poiCategories: anchors.codes,
+                query: 'shop',
+                limit: searchLimit(),
+            });
+            const targetSearch = await searchInGeometry(area, {
+                poiCategories: targets.codes,
+                query: params.targetCategories.join(' '),
+                limit: searchLimit(),
+            });
+            // A parent anchor category also returns its sub-categories, the peers' own among them.
+            const peerIds = new Set(targetSearch.features.map((feature) => feature.id));
+            return {
+                anchorFeatures: anchorSearch.features.filter((feature) => !peerIds.has(feature.id)),
+                targetFeatures: targetSearch.features,
+                targetsCapped: targetSearch.capped,
+                anchorsCapped: anchorSearch.capped,
+            };
+        };
         const areaSearches: AreaSearchResult[] = [];
         // An area whose search fails is left out: scanned without its places, it would read as one with
         // no demand or no peers.
@@ -770,7 +783,7 @@ const executeFindWhitespace = (async (params: FindWhitespaceInput, state: ToolSt
 
         // Phase 4 — draw + publish for all areas
         progress.step(4);
-        let lastHint = '';
+        const hints: string[] = [];
         const headlines: string[] = [];
         for (const ranked of areaRanked) {
             const {
@@ -782,6 +795,8 @@ const executeFindWhitespace = (async (params: FindWhitespaceInput, state: ToolSt
                 allHexes,
                 anchorFeatures,
                 targetFeatures,
+                targetsCapped,
+                anchorsCapped,
                 hasTargets,
                 addresses,
                 cellSizeMeters,
@@ -810,6 +825,8 @@ const executeFindWhitespace = (async (params: FindWhitespaceInput, state: ToolSt
                 cellSizeMeters,
                 targets,
                 targetFeatures,
+                targetsCapped,
+                anchorsCapped,
                 addresses.capped,
             );
             const { pockets, hexes } = buildPockets(top, ranges, hasTargets, colocation, anchorFeatures);
@@ -842,12 +859,13 @@ const executeFindWhitespace = (async (params: FindWhitespaceInput, state: ToolSt
                     : `none has a ${peers} within ${radius} m, so ${resolved.label} has no cluster to join here. Say that plainly in ONE sentence; these are just the closest available spots, NOT clusters.`;
             // Honest framing for saturated areas: if NOTHING clears the goal, the agent must say so
             // rather than calling busy-but-served spots "gaps" or "sparse".
-            lastHint =
+            const hint =
                 top.length === 0
                     ? `IMPORTANT: the scan found no pockets to rank in ${resolved.label}. Say that plainly in ONE sentence.`
                     : gapCount === 0
                       ? `IMPORTANT: NONE of these pockets is ${goalWithArticle} — ${noGoalReason} Refer to pockets by colour/number; do not restate scores or coordinates.`
                       : `${gapCount} of ${pockets.features.length} pockets ${gapCount === 1 ? `is ${goalWithArticle}` : `are ${goalWord}s`}; the rest are ${colocation === 'avoid' ? 'only least-served' : 'not clustered'}. Lead with that count in ONE sentence and don't oversell the rest. Refer to pockets by colour/number; do not restate scores or coordinates.`;
+            hints.push(areaRanked.length > 1 ? `${resolved.label}: ${hint}` : hint);
             headlines.push(
                 `Scanned ${resolved.label} for ${peers}: ${pockets.features.length} pocket${pockets.features.length === 1 ? '' : 's'}, ${gapCount} ${goalWord}${gapCount === 1 ? '' : 's'}`,
             );
@@ -860,7 +878,7 @@ const executeFindWhitespace = (async (params: FindWhitespaceInput, state: ToolSt
             ok: true as const,
             panel: 'Opportunities',
             headline: headlines.join('. ') + '.',
-            hint: lastHint,
+            hint: hints.join(' '),
         };
     } catch (error) {
         progress.done();

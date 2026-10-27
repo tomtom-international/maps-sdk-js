@@ -4,18 +4,18 @@ import {
     type ToolCallMessagePartComponent,
     useAuiState,
 } from '@assistant-ui/react';
-import { marked } from 'marked';
 import { useState } from 'react';
 import agentsDemoIconRaw from './assets/agents-demo-icon.svg?raw';
 import { Icon } from './icon';
+import { renderMarkdown } from './markdown';
 import { ToolCall, ToolDisclosure } from './ToolCall';
 
 const MarkdownText: TextMessagePartComponent = ({ text }) => (
-    <div dangerouslySetInnerHTML={{ __html: marked(text) as string }} />
+    <div dangerouslySetInnerHTML={{ __html: renderMarkdown(text) }} />
 );
 
 const AssistantText: TextMessagePartComponent = ({ text }) => (
-    <div className="message assistant" dangerouslySetInnerHTML={{ __html: marked(text) as string }} />
+    <div className="message assistant" dangerouslySetInnerHTML={{ __html: renderMarkdown(text) }} />
 );
 
 // AI SDK error results can be primitives, Error instances, Zod issues, or plain
@@ -136,6 +136,10 @@ const ToolCallContent: ToolCallMessagePartComponent = ({ toolName, args, result,
     );
 };
 
+// One object for every render: assistant-ui re-renders each finished part whenever this changes.
+const ASSISTANT_PARTS = { Text: AssistantText, tools: { Fallback: ToolCallContent } };
+const USER_PARTS = { Text: MarkdownText };
+
 // The copy control below an agent reply. The button itself is the hit zone — 32px square around a
 // 16px icon — so the tappable area is far larger than the glyph.
 function ActionIcon({ label, onClick, children }: { label: string; onClick: () => void; children: React.ReactNode }) {
@@ -231,7 +235,7 @@ export function MessageComponent() {
                     <span className="chat-welcome-spark" aria-hidden="true">
                         <Icon raw={agentsDemoIconRaw} />
                     </span>
-                    <div dangerouslySetInnerHTML={{ __html: marked(welcomeMarkdown) as string }} />
+                    <div dangerouslySetInnerHTML={{ __html: renderMarkdown(welcomeMarkdown) }} />
                     <hr className="chat-welcome-divider" />
                 </section>
             </MessagePrimitive.Root>
@@ -241,7 +245,7 @@ export function MessageComponent() {
     if (role === 'user') {
         return (
             <MessagePrimitive.Root className={hasContent ? 'message user' : ''}>
-                <MessagePrimitive.Content components={{ Text: MarkdownText }} />
+                <MessagePrimitive.Content components={USER_PARTS} />
             </MessagePrimitive.Root>
         );
     }
@@ -252,12 +256,7 @@ export function MessageComponent() {
             {/* The turn's tool calls collapsed into the "Used N tools" pill — it expands to the
                 per-tool rows. Rendered above the answer text. */}
             <ToolGroup toolCalls={extractToolCalls(content as readonly unknown[] | undefined)} />
-            <MessagePrimitive.Content
-                components={{
-                    Text: AssistantText,
-                    tools: { Fallback: ToolCallContent },
-                }}
-            />
+            <MessagePrimitive.Content components={ASSISTANT_PARTS} />
             {/* Action row beneath the reply. Only on turns that produced answer text — tool-only turns
                 get none. */}
             {answerText.trim() && <AssistantActions text={answerText} />}

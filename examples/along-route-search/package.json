@@ -1,6 +1,6 @@
 {
   "name": "@examples/along-route-search",
-  "description": "Example displaying EV charging stations along a route using along-route search.",
+  "description": "Find the beaches and viewpoints within a one-minute detour of a coastal drive",
   "type": "module",
   "scripts": {
     "build": "vite build --config ../example-vite.config.ts",

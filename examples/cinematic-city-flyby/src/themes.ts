@@ -1,5 +1,5 @@
-import type { CustomTypeface, StandardStyleID } from '@tomtom-org/maps-sdk/map';
-import type { Buildings3DConfig, Landmarks3DConfig } from '@tomtom-org/maps-sdk-plugin-landmarks-3d';
+import type { CustomTypeface, MapLight, StandardStyleID } from '@tomtom-org/maps-sdk/map';
+import type { Buildings3DConfig, GLSurfacesConfig, Landmarks3DConfig } from '@tomtom-org/maps-sdk-plugin-landmarks-3d';
 import type { MapEffectsConfig, MapEffectsPass } from '@tomtom-org/maps-sdk-plugin-map-effects';
 import type { MapThemeMode } from '@tomtom-org/maps-sdk-plugin-map-theme';
 import {
@@ -14,15 +14,50 @@ import {
     greenPhosphor,
     heatHaze,
     instantFilm,
+    mangaInk,
     paperToning,
     popArtInks,
     risograph,
     sunsetGlow,
 } from './themePasses';
 
+// The wall palettes the looks draw from: CSS colours, and map colours by knob id, which follow the theme.
+const PALETTES = {
+    sandstone: ['#efe4cf', '#e2cfa8', '#cdb07f', '#d9c7a6'],
+    brick: ['#b5654a', '#9a4e38', '#c47f5e', '#8c5a44', '#d2a98c'],
+    nordic: ['#f4f1ea', '#dcd7cb', '#c9cfd4', '#aab5bf', '#e7c9a9'],
+    terracotta: ['#f1e5d0', '#e3bf94', '#cf8f60', '#b96c48'],
+    dusk: ['#2b2f4a', '#3a2f55', '#24384d', '#463049'],
+    foundations: ['colors.artificial', 'colors.land', 'colors.park', 'colors.water'],
+    accent: ['colors.artificial', 'colors.accent'],
+};
+
+/** The name of each look, which a fly-by picks its own by. */
+export type FlybyLook =
+    | 'Nordic'
+    | 'Sunset'
+    | 'Desert'
+    | 'Satellite'
+    | 'Monsoon'
+    | 'Moonlight'
+    | 'Tilt-shift'
+    | 'Polaroid'
+    | 'Kodachrome'
+    | 'Aerochrome'
+    | 'Noir'
+    | 'Atlas'
+    | 'Blueprint'
+    | 'Risograph'
+    | 'Manga'
+    | 'Pop art'
+    | 'Gilded'
+    | 'Aurora'
+    | 'Neon'
+    | 'Neo';
+
 /** A look for the whole scene: the map's colours, its sky and labels, the buildings and their light, and the effects over the frame. */
 export type FlybyTheme = {
-    label: string;
+    label: FlybyLook;
     /** The heading the theme is listed under; the themes come grouped, the most natural looks first. */
     group: 'Natural light' | 'Camera and film' | 'Print and paper' | 'Neon and night';
     style: StandardStyleID;
@@ -32,8 +67,15 @@ export type FlybyTheme = {
     sky: { color: string; horizon?: string };
     /** The open source typeface the map's labels are set in. */
     font: CustomTypeface;
+    /**
+     * Where the sun stands, in degrees: set once on the map's light, which lights the buildings, the
+     * landmarks and the textured ground alike.
+     */
+    sun: MapLight;
     buildings: Buildings3DConfig;
     landmarks: Landmarks3DConfig;
+    /** The textured ground and its trees, in the map's colours for their season: summer unless set. A flat print or neon look leaves them out. */
+    surfaces?: GLSurfacesConfig;
     effects: MapEffectsConfig;
     /** A stylisation of the frame, run inside the effects' own chain so the bloom and grade read it. */
     pass?: MapEffectsPass;
@@ -61,18 +103,21 @@ export const flybyThemes: FlybyTheme[] = [
         theme: { colors: ['#f2f4f3', '#c9d3d6', '#7d9aa5', '#9fb59a', '#d98e63', '#2c3a40'], mode: 'light' },
         sky: { color: '#a9c3d3', horizon: '#f6efe6' },
         font: fontsource('outfit', { italic: false }),
+        sun: { direction: 200, altitude: 18 },
         buildings: {
             facade: { pattern: 'mixed', intensity: 0.8 },
-            walls: { color: '#eceeec' },
+            // Painted timber: white, stone, pale blue and the odd ochre house.
+            walls: { color: '#eceeec', palette: PALETTES.nordic, paletteIntensity: 0.9, variation: 0.15 },
             roofs: { color: '#5f6f75' },
             windows: { color: '#5f7a88' },
             reflections: { intensity: 0.8 },
             litWindows: { color: '#ffd9a0', fraction: 0.1, intensity: 0.5 },
-            light: { direction: 200, altitude: 18, color: '#ffe8cc', intensity: 0.9 },
+            light: { color: '#ffe8cc', intensity: 0.9 },
             ambientLight: { color: '#cfe0ea', intensity: 0.7 },
             shadows: { intensity: 0.6 },
         },
         landmarks: { color: '#e9eef0' },
+        surfaces: { season: 'winter' },
         effects: {
             bloom: { intensity: 0.5, threshold: 0.7, radius: 20 },
             depthOfField: { intensity: 14, focus: 0.3, band: 0.3, bokeh: 0.4 },
@@ -91,16 +136,20 @@ export const flybyThemes: FlybyTheme[] = [
         theme: { colors: ['#f4e9dc', '#2f5d8a', '#8c9a5b', '#ff7a3d', '#d6336c', '#3a2230'], mode: 'light' },
         sky: { color: '#3b2f63', horizon: '#ff8f52' },
         font: fontsource('playfair-display'),
+        sun: { direction: 285, altitude: 6 },
         buildings: {
-            // The sun almost level in the west, the first windows coming on in the shade.
+            // The sun almost level in the west, the first windows coming on in the shade, over walls
+            // that take a little of the theme's tangerine and rose.
+            walls: { palette: PALETTES.accent, paletteMode: 'blend', paletteIntensity: 0.2, variation: 0.2 },
             windows: { color: '#4a5a7a' },
             reflections: { intensity: 0.9 },
             litWindows: { color: '#ffc27a', fraction: 0.15, intensity: 0.7 },
-            light: { direction: 285, altitude: 6, color: '#ff8b4a', intensity: 1 },
+            light: { color: '#ff8b4a', intensity: 1 },
             ambientLight: { color: '#b98ad6', intensity: 0.5 },
             shadows: { intensity: 0.9 },
         },
         landmarks: { color: '#ffd2a8' },
+        surfaces: { season: 'autumn' },
         effects: {
             bloom: { intensity: 0.9, threshold: 0.5, radius: 36 },
             depthOfField: { intensity: 20, focus: 0.3, band: 0.25, bokeh: 0.7 },
@@ -120,13 +169,21 @@ export const flybyThemes: FlybyTheme[] = [
         theme: { colors: ['#e7dcca', '#c98b4a', '#8a5a2f', '#e0b36a', '#5e8c99', '#3a2a1c'], mode: 'light' },
         sky: { color: '#8ab4c8', horizon: '#f7d9a8' },
         font: fontsource('marcellus', { bold: false, italic: false }),
+        sun: { direction: 250, altitude: 55 },
         buildings: {
             facade: { pattern: 'mixed', intensity: 0.7 },
-            walls: { color: '#e8cfa6' },
+            // Mud brick and sandstone, every shade in between.
+            walls: {
+                color: '#e8cfa6',
+                palette: PALETTES.sandstone,
+                paletteMode: 'blend',
+                paletteIntensity: 0.85,
+                variation: 0.2,
+            },
             roofs: { color: '#d6b483' },
             windows: { color: '#4f5d66' },
             reflections: { intensity: 0.6 },
-            light: { direction: 250, altitude: 55, color: '#fff0d4', intensity: 1 },
+            light: { color: '#fff0d4', intensity: 1 },
             ambientLight: { color: '#f0d2a0', intensity: 0.6 },
             shadows: { intensity: 0.85 },
         },
@@ -143,6 +200,30 @@ export const flybyThemes: FlybyTheme[] = [
         pass: heatHaze,
     },
     {
+        label: 'Satellite',
+        group: 'Natural light',
+        style: 'streetSatellite',
+        // The imagery's own colours, white labels and bright roads over it, under the day sun it was taken in.
+        theme: { colors: ['#ffffff', '#f2d27a', '#7fc4ef', '#9fd39a', '#2b2b2b'], mode: 'dark' },
+        sky: { color: '#88c6fc', horizon: '#f4f8fb' },
+        font: fontsource('inter'),
+        sun: { direction: 215, altitude: 35 },
+        buildings: {
+            reflections: { intensity: 0.5 },
+            light: { intensity: 0.9 },
+            shadows: { intensity: 0.75 },
+        },
+        landmarks: {},
+        effects: {
+            bloom: { intensity: 0.3, threshold: 0.85, radius: 20 },
+            depthOfField: { intensity: 10, focus: 0.3, band: 0.35, bokeh: 0.3 },
+            grade: { contrast: 1.05, saturation: 1.1 },
+            fog: { intensity: 0.3, reach: 0.55 },
+            edgeBlur: { intensity: 3, reach: 0.45 },
+            vignette: { intensity: -0.2 },
+        },
+    },
+    {
         label: 'Monsoon',
         group: 'Natural light',
         style: 'streetDark',
@@ -150,16 +231,19 @@ export const flybyThemes: FlybyTheme[] = [
         theme: { colors: ['#0e1518', '#1c2a30', '#5fa8a0', '#2f5d62', '#c7d6d4', '#e0a458'], mode: 'dark' },
         sky: { color: '#1f2b30', horizon: '#6f8a8c' },
         font: fontsource('lora'),
+        sun: { direction: 180, altitude: 40 },
         buildings: {
-            walls: { color: '#2a3438' },
+            // Wet concrete, each block darker or lighter in the rain.
+            walls: { color: '#2a3438', variation: 0.35 },
             windows: { color: '#3c4f55' },
             reflections: { intensity: 0.9 },
             litWindows: { color: '#ffc27a', fraction: 0.25, intensity: 0.7 },
-            light: { direction: 180, altitude: 40, color: '#b9d2d4', intensity: 0.3 },
+            light: { color: '#b9d2d4', intensity: 0.3 },
             ambientLight: { color: '#5f7f86', intensity: 0.6 },
             shadows: { intensity: 0.3 },
         },
         landmarks: { color: '#c7d6d4' },
+        surfaces: { season: 'spring' },
         effects: {
             bloom: { intensity: 0.9, threshold: 0.45, radius: 30 },
             // Lit windows smeared down the wet lens, and not the sodium-orange major roads just off their colour.
@@ -188,12 +272,13 @@ export const flybyThemes: FlybyTheme[] = [
         theme: { colors: ['#070b14', '#111a2b', '#9fb4d8', '#3c5a8a', '#d7e3f5', '#596f96'], mode: 'dark' },
         sky: { color: '#050913', horizon: '#3a4f78' },
         font: fontsource('libre-baskerville'),
+        sun: { direction: 160, altitude: 35 },
         buildings: {
             walls: { color: '#1a2335' },
             windows: { color: '#22304a' },
             reflections: { intensity: 0.85 },
             litWindows: { color: '#f2e6c8', fraction: 0.12, intensity: 0.6 },
-            light: { direction: 160, altitude: 35, color: '#c7d6f5', intensity: 0.6 },
+            light: { color: '#c7d6f5', intensity: 0.6 },
             ambientLight: { color: '#2b3b5e', intensity: 0.5 },
             shadows: { intensity: 0.7 },
         },
@@ -218,11 +303,18 @@ export const flybyThemes: FlybyTheme[] = [
         theme: { colors: ['#f6f3eb', '#4cc3d9', '#ffc845', '#ff6f59', '#7bc950', '#2d3047'], mode: 'light' },
         sky: { color: '#7fd1ff', horizon: '#ffffff' },
         font: fontsource('nunito'),
+        sun: { direction: 210, altitude: 50 },
         buildings: {
             facade: { pattern: 'mixed', intensity: 0.8 },
+            // The candy colours of the model, each house painted in one.
+            walls: {
+                palette: ['#f6f3eb', '#4cc3d9', '#ffc845', '#ff6f59', '#7bc950'],
+                paletteIntensity: 0.55,
+                variation: 0.15,
+            },
             windows: { color: '#3d5566' },
             reflections: { intensity: 0.5 },
-            light: { direction: 210, altitude: 50, color: '#ffffff', intensity: 1 },
+            light: { color: '#ffffff', intensity: 1 },
             ambientLight: { color: '#ffffff', intensity: 0.6 },
             shadows: { intensity: 0.8 },
         },
@@ -246,12 +338,14 @@ export const flybyThemes: FlybyTheme[] = [
         theme: { colors: ['#efe9dd', '#7fa7a3', '#c9b37e', '#d98c6a', '#6f8f6a', '#3b3a36'], mode: 'light' },
         sky: { color: '#9fc3c9', horizon: '#f6e7cf' },
         font: fontsource('caveat', { italic: false }),
+        sun: { direction: 240, altitude: 30 },
         buildings: {
             facade: { pattern: 'mixed', intensity: 0.7 },
-            walls: { color: '#ece3d2' },
+            // The faded print takes a hint of the theme's teal, straw and sage.
+            walls: { color: '#ece3d2', palette: PALETTES.foundations, paletteIntensity: 0.25, variation: 0.15 },
             windows: { color: '#55686e' },
             reflections: { intensity: 0.5 },
-            light: { direction: 240, altitude: 30, color: '#ffe7c4', intensity: 0.9 },
+            light: { color: '#ffe7c4', intensity: 0.9 },
             ambientLight: { color: '#e9e2d4', intensity: 0.6 },
             shadows: { intensity: 0.6 },
         },
@@ -275,13 +369,15 @@ export const flybyThemes: FlybyTheme[] = [
         theme: { colors: ['#efe9dc', '#2b5fa6', '#c8102e', '#e7b10a', '#3f7d4f', '#24201c'], mode: 'light' },
         sky: { color: '#3f7fc4', horizon: '#f2e2c4' },
         font: fontsource('dm-serif-display', { bold: false }),
+        sun: { direction: 230, altitude: 35 },
         buildings: {
             facade: { pattern: 'mixed', intensity: 0.8 },
-            walls: { color: '#e9dcc3' },
+            // Brick and cream stucco, side by side down the street.
+            walls: { color: '#e9dcc3', palette: PALETTES.brick, paletteIntensity: 0.65, variation: 0.2 },
             roofs: { color: '#b5443a' },
             windows: { color: '#33445e' },
             reflections: { intensity: 0.7 },
-            light: { direction: 230, altitude: 35, color: '#ffe2b8', intensity: 1 },
+            light: { color: '#ffe2b8', intensity: 1 },
             ambientLight: { color: '#d8e4f0', intensity: 0.5 },
             shadows: { intensity: 0.85 },
         },
@@ -305,10 +401,11 @@ export const flybyThemes: FlybyTheme[] = [
         theme: { colors: ['#f4f1ec', '#1d6fa3', '#7bb661', '#d8d2c4', '#e04f7a', '#22303c'], mode: 'light' },
         sky: { color: '#1b4f8c', horizon: '#bfe3f2' },
         font: fontsource('space-grotesk', { italic: false }),
+        sun: { direction: 220, altitude: 45 },
         buildings: {
             reflections: { intensity: 0.6 },
             facade: { pattern: 'mixed', intensity: 0.6 },
-            light: { direction: 220, altitude: 45, color: '#ffffff', intensity: 0.9 },
+            light: { color: '#ffffff', intensity: 0.9 },
             ambientLight: { color: '#e6eef5', intensity: 0.6 },
             shadows: { intensity: 0.7 },
         },
@@ -332,11 +429,12 @@ export const flybyThemes: FlybyTheme[] = [
         theme: { colors: ['#0e0e0e', '#1a1a1a', '#3c3c3c', '#8c8c8c', '#e8e8e8'], mode: 'dark' },
         sky: { color: '#070707', horizon: '#6b6b6b' },
         font: fontsource('bodoni-moda'),
+        sun: { direction: 230, altitude: 22 },
         buildings: {
             reflections: { intensity: 0.9 },
             walls: { color: '#5c5c5c' },
             litWindows: { color: '#fff2d0', fraction: 0.3, intensity: 0.9 },
-            light: { direction: 230, altitude: 22, color: '#ffffff', intensity: 1 },
+            light: { color: '#ffffff', intensity: 1 },
             ambientLight: { color: '#ffffff', intensity: 0.25 },
             shadows: { intensity: 0.95 },
         },
@@ -360,17 +458,26 @@ export const flybyThemes: FlybyTheme[] = [
         theme: { colors: ['#e9e1ce', '#5b4630', '#8fb3b5', '#9aa36b', '#b5654a', '#2f2418'], mode: 'light' },
         sky: { color: '#c9d4cc', horizon: '#f3e6c8' },
         font: fontsource('cormorant-garamond', { regular: 500 }),
+        sun: { direction: 225, altitude: 30 },
         buildings: {
             facade: { pattern: 'residential', intensity: 0.4 },
-            walls: { color: '#e6d6b4' },
+            // A hand-tinted plate: parchment washed with terracotta, unevenly.
+            walls: {
+                color: '#e6d6b4',
+                palette: PALETTES.terracotta,
+                paletteMode: 'blend',
+                paletteIntensity: 0.45,
+                variation: 0.2,
+            },
             roofs: { color: '#c9a77c' },
             windows: { color: '#8a7a62' },
             reflections: { intensity: 0.15 },
-            light: { direction: 225, altitude: 30, color: '#fff1d6', intensity: 0.9 },
+            light: { color: '#fff1d6', intensity: 0.9 },
             ambientLight: { color: '#efe0c0', intensity: 0.6 },
             shadows: { intensity: 0.6 },
         },
         landmarks: { color: '#d9c39a' },
+        surfaces: { visible: false },
         effects: {
             bloom: { intensity: 0.5, threshold: 0.75, radius: 22 },
             depthOfField: { intensity: 14, focus: 0.3, band: 0.3, bokeh: 0.3 },
@@ -390,15 +497,17 @@ export const flybyThemes: FlybyTheme[] = [
         theme: { colors: ['#0b2a52', '#123a6e', '#1d4f91', '#9cc3ff', '#e8f1ff'], mode: 'dark' },
         sky: { color: '#0a2348', horizon: '#3f78c4' },
         font: fontsource('ibm-plex-mono'),
+        sun: { direction: 200, altitude: 50 },
         buildings: {
             facade: { pattern: 'plain' },
             walls: { color: '#2a5fa8' },
             roofs: { color: '#3a70ba' },
-            light: { direction: 200, altitude: 50, color: '#ffffff', intensity: 0.8 },
+            light: { color: '#ffffff', intensity: 0.8 },
             ambientLight: { color: '#cfe2ff', intensity: 0.6 },
             shadows: { intensity: 0.5 },
         },
         landmarks: { color: '#9cc3ff' },
+        surfaces: { visible: false },
         effects: {
             bloom: { intensity: 0.7, threshold: 0.6, radius: 20 },
             depthOfField: { intensity: 12, focus: 0.3, band: 0.35, bokeh: 0.3 },
@@ -418,14 +527,16 @@ export const flybyThemes: FlybyTheme[] = [
         theme: { colors: ['#f6f3eb', '#ff4f8b', '#2f6bd9', '#ffd23f', '#2a2a2a', '#8fd3c9'], mode: 'light' },
         sky: { color: '#ffd1e0', horizon: '#f7f3ea' },
         font: fontsource('syne', { italic: false }),
+        sun: { direction: 210, altitude: 45 },
         buildings: {
             reflections: { intensity: 0.2 },
             facade: { pattern: 'residential', intensity: 0.5 },
-            light: { direction: 210, altitude: 45, color: '#ffffff', intensity: 1 },
+            light: { color: '#ffffff', intensity: 1 },
             ambientLight: { color: '#ffffff', intensity: 0.6 },
             shadows: { intensity: 0.8 },
         },
         landmarks: { color: '#ffffff' },
+        surfaces: { visible: false },
         effects: {
             bloom: { intensity: 0.3, threshold: 0.85, radius: 12 },
             depthOfField: { intensity: 10, focus: 0.3, band: 0.4, bokeh: 0.2 },
@@ -437,6 +548,33 @@ export const flybyThemes: FlybyTheme[] = [
         pass: risograph,
     },
     {
+        label: 'Manga',
+        group: 'Print and paper',
+        style: 'streetLight',
+        // Black ink on white paper: white walls and roofs, windows inked in outline, and the shadows in screentone.
+        theme: { colors: ['#ffffff', '#ededed', '#c4c4c4', '#7a7a7a', '#161616'], mode: 'light' },
+        sky: { color: '#ffffff', horizon: '#f4f4f4' },
+        font: fontsource('m-plus-1p', { italic: false }),
+        sun: { direction: 225, altitude: 40 },
+        buildings: {
+            facade: { pattern: 'mixed', intensity: 0.7 },
+            walls: { color: '#f7f7f7' },
+            roofs: { color: '#ffffff' },
+            windows: { color: '#8c8c8c' },
+            reflections: { intensity: 0 },
+            litWindows: { fraction: 0 },
+            light: { color: '#ffffff', intensity: 1 },
+            ambientLight: { color: '#ffffff', intensity: 0.9 },
+            shadows: { intensity: 0.5 },
+        },
+        landmarks: { color: '#f2f2f2' },
+        surfaces: { visible: false },
+        effects: {
+            grade: { brightness: 1.1, saturation: 0 },
+        },
+        pass: mangaInk,
+    },
+    {
         label: 'Pop art',
         group: 'Print and paper',
         style: 'streetLight',
@@ -444,17 +582,19 @@ export const flybyThemes: FlybyTheme[] = [
         theme: { colors: ['#f5f2ea', '#1fb6ff', '#ffd400', '#ff2e63', '#111111', '#7ae582'], mode: 'light' },
         sky: { color: '#1fb6ff' },
         font: fontsource('bangers', { bold: false, italic: false }),
+        sun: { direction: 210, altitude: 45 },
         buildings: {
             facade: { pattern: 'residential', intensity: 0.8 },
             walls: { color: '#ffd400' },
             roofs: { color: '#ff2e63' },
             windows: { color: '#1fb6ff' },
             reflections: { intensity: 0.4 },
-            light: { direction: 210, altitude: 45, color: '#ffffff', intensity: 1 },
+            light: { color: '#ffffff', intensity: 1 },
             ambientLight: { color: '#ffffff', intensity: 0.6 },
             shadows: { intensity: 0.7 },
         },
         landmarks: { color: '#ff2e63' },
+        surfaces: { visible: false },
         effects: {
             bloom: { intensity: 0.55, threshold: 0.7, radius: 18 },
             depthOfField: { intensity: 10, focus: 0.3, band: 0.4, bokeh: 0.2 },
@@ -474,14 +614,15 @@ export const flybyThemes: FlybyTheme[] = [
         theme: { colors: ['#0a0f1f', '#141b30', '#d4af37', '#8c6d1f', '#2a3b5f', '#f3e6c4'], mode: 'dark' },
         sky: { color: '#060a16', horizon: '#7a6230' },
         font: fontsource('cinzel', { italic: false }),
+        sun: { direction: 240, altitude: 25 },
         buildings: {
             facade: { pattern: 'office', intensity: 0.9 },
-            walls: { color: '#121a2e' },
+            walls: { color: '#121a2e', palette: PALETTES.dusk, paletteIntensity: 0.6, variation: 0.25 },
             roofs: { color: '#0c1222' },
             windows: { color: '#1c2742' },
             reflections: { intensity: 0.9 },
             litWindows: { color: '#ffcf70', fraction: 0.22, intensity: 0.8 },
-            light: { direction: 240, altitude: 25, color: '#ffd27a', intensity: 0.5 },
+            light: { color: '#ffd27a', intensity: 0.5 },
             ambientLight: { color: '#2a3b6b', intensity: 0.5 },
         },
         landmarks: { color: '#e8c873' },
@@ -504,6 +645,7 @@ export const flybyThemes: FlybyTheme[] = [
         theme: { colors: ['#060b1a', '#0e1830', '#33f0c0', '#8a5cff', '#1f4f7a', '#d8f3ff'], mode: 'dark' },
         sky: { color: '#04061a', horizon: '#1fd6a4' },
         font: fontsource('josefin-sans'),
+        sun: { direction: 20, altitude: 12 },
         buildings: {
             // Lit from the north by the aurora, glass catching its green and violet.
             facade: { pattern: 'glass', intensity: 0.9 },
@@ -511,7 +653,7 @@ export const flybyThemes: FlybyTheme[] = [
             windows: { color: '#0d2238' },
             reflections: { intensity: 1 },
             litWindows: { color: '#bff8ea', fraction: 0.08, intensity: 0.5 },
-            light: { direction: 20, altitude: 12, color: '#7af5d0', intensity: 0.35 },
+            light: { color: '#7af5d0', intensity: 0.35 },
             ambientLight: { color: '#5b47c9', intensity: 0.6 },
         },
         landmarks: { color: '#a9f5e0' },
@@ -544,16 +686,19 @@ export const flybyThemes: FlybyTheme[] = [
         theme: { colors: ['#07020f', '#140a26', '#ff2bd6', '#00e5ff', '#7a00ff', '#f4e9ff'], mode: 'dark' },
         sky: { color: '#0a0218', horizon: '#ff2bd6' },
         font: fontsource('orbitron', { italic: false }),
+        sun: { direction: 300, altitude: 20 },
         buildings: {
             facade: { pattern: 'glass', intensity: 1 },
-            walls: { color: '#120a24' },
+            // Dark glass tinted by the theme's magenta, cyan and violet, a different mix on every tower.
+            walls: { color: '#120a24', palette: PALETTES.accent, paletteMode: 'blend', paletteIntensity: 0.15 },
             windows: { color: '#1a0f33' },
             reflections: { intensity: 1 },
             litWindows: { color: '#b8f6ff', fraction: 0.14, intensity: 0.7 },
-            light: { direction: 300, altitude: 20, color: '#ff2bd6', intensity: 0.45 },
+            light: { color: '#ff2bd6', intensity: 0.45 },
             ambientLight: { color: '#5a1aa8', intensity: 0.6 },
         },
         landmarks: { color: '#ff7ae8' },
+        surfaces: { visible: false },
         effects: {
             bloom: { intensity: 1, threshold: 0.35, radius: 34 },
             // An anamorphic lens: one long horizontal flare through every lit window, paler than the cyan water.
@@ -575,6 +720,7 @@ export const flybyThemes: FlybyTheme[] = [
         theme: { colors: ['#050805', '#141414', '#00ff41', '#008f11', '#003b00', '#c8ffd0'], mode: 'dark' },
         sky: { color: '#010702', horizon: '#0f5a24' },
         font: fontsource('jetbrains-mono'),
+        sun: { direction: 200, altitude: 35 },
         buildings: {
             // Dark glass that mirrors a green sky, a few panes lit.
             facade: { pattern: 'glass', intensity: 1 },
@@ -583,10 +729,11 @@ export const flybyThemes: FlybyTheme[] = [
             windows: { color: '#062a12' },
             reflections: { intensity: 0.8 },
             litWindows: { color: '#00ff41', fraction: 0.12, intensity: 0.55 },
-            light: { direction: 200, altitude: 35, color: '#00ff41', intensity: 0.2 },
+            light: { color: '#00ff41', intensity: 0.2 },
             ambientLight: { color: '#2fae52', intensity: 0.6 },
         },
         landmarks: { color: '#7dffa0' },
+        surfaces: { visible: false },
         effects: {
             bloom: { intensity: 1, threshold: 0.4, radius: 28 },
             depthOfField: { intensity: 14, focus: 0.3, band: 0.3, bokeh: 0.8 },

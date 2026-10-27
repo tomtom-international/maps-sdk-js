@@ -1,4 +1,4 @@
-import type { Place, Route } from '@tomtom-org/maps-sdk/core';
+import type { Place, Route, Routes } from '@tomtom-org/maps-sdk/core';
 import { bboxFromGeoJSON, formatDistance, formatDuration, TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import {
     RoutingModule,
@@ -8,10 +8,11 @@ import {
     TomTomMap,
     terrainKnobCatalogue,
 } from '@tomtom-org/maps-sdk/map';
-import type { RouteType } from '@tomtom-org/maps-sdk/services';
-import { calculateRoute, createLatestRequest, geocodeOne } from '@tomtom-org/maps-sdk/services';
+import type { LatestRequestResult } from '@tomtom-org/maps-sdk/services';
+import { calculateRoute, createLatestRequest, geocodeOne, routeTypes } from '@tomtom-org/maps-sdk/services';
 import type { FlyoverAim, FlyoverProgress, FlyoverZoom } from '@tomtom-org/maps-sdk-plugin-flyover';
 import { anchorForPitch, RouteFlyover } from '@tomtom-org/maps-sdk-plugin-flyover';
+import { Buildings3D, GLSurfaces } from '@tomtom-org/maps-sdk-plugin-landmarks-3d';
 import { MapEffects } from '@tomtom-org/maps-sdk-plugin-map-effects';
 import './style.css';
 import { API_KEY } from './config';
@@ -54,6 +55,8 @@ const DEPTH_OF_FIELD = { intensity: 20, band: 0.08, bokeh: 1 } as const;
     const depthOfField = document.querySelector('#ui-depthOfField') as HTMLInputElement;
     const hillshade = document.querySelector('#ui-hillshade') as HTMLInputElement;
     const marker = document.querySelector('#ui-marker') as HTMLInputElement;
+    const buildingsToggle = document.querySelector('#ui-buildings') as HTMLInputElement;
+    const surfacesToggle = document.querySelector('#ui-surfaces') as HTMLInputElement;
     const aimMode = document.querySelector('#ui-aimMode') as HTMLSelectElement;
     const aimPointsField = document.querySelector('#ui-aimPoints') as HTMLElement;
     const aimDistanceField = document.querySelector('#ui-aimDistance') as HTMLElement;
@@ -68,8 +71,10 @@ const DEPTH_OF_FIELD = { intensity: 20, band: 0.08, bokeh: 1 } as const;
     const instructionsValue = document.querySelector('#ui-instructionsValue') as HTMLElement;
 
     // Typed as the wider `Place`: a geocoded endpoint is replaced by a searched one on every pick.
-    let origin: Place = await geocodeOne(INITIAL_ORIGIN);
-    let destination: Place = await geocodeOne(INITIAL_DESTINATION);
+    let [origin, destination]: Place[] = await Promise.all([
+        geocodeOne(INITIAL_ORIGIN),
+        geocodeOne(INITIAL_DESTINATION),
+    ]);
 
     const map = new TomTomMap({
         style: 'streetSatellite',
@@ -110,6 +115,14 @@ const DEPTH_OF_FIELD = { intensity: 20, band: 0.08, bokeh: 1 } as const;
     // The effects plugin reads the rendered pixels, so the defocus follows the flight with no
     // per-frame work of its own.
     const effects = new MapEffects(map);
+    // Off until their toggles: the 3D buildings and the textured water, woods and fields with their
+    // trees, all standing on the terrain the flight crosses. The waves and the trees hold still for
+    // readers who ask for less motion.
+    const buildings = new Buildings3D(map, { visible: false });
+    const surfaces = new GLSurfaces(map, {
+        visible: false,
+        ...(matchMedia('(prefers-reduced-motion: reduce)').matches && { wind: { speedFactor: 0 } }),
+    });
 
     let route: Route | undefined;
     let flyover: RouteFlyover | undefined;
@@ -186,47 +199,54 @@ const DEPTH_OF_FIELD = { intensity: 20, band: 0.08, bokeh: 1 } as const;
     const planRoute = async () => {
         status.textContent = 'Planning the route…';
 
+        let plan: LatestRequestResult<Routes>;
         try {
-            const plan = await latestPlan.run((signal) =>
+            plan = await latestPlan.run((signal) =>
                 calculateRoute({
                     locations: [origin, destination],
-                    costModel: { routeType: routeTypeSelector.value as RouteType, traffic: 'live' },
+                    costModel: {
+                        routeType: routeTypes.find((type) => type === routeTypeSelector.value),
+                        traffic: 'live',
+                    },
                     // The instructions are what the camera aims at and frames on, so the flight asks
                     // for guidance rather than working the junctions out from the geometry.
                     guidance: { type: 'coded' },
                     signal,
                 }),
             );
-            if (!plan.current) return;
-
-            const routes = plan.value;
-            route = routes.features[0];
-            await routingModule.showRoutes(routes);
-            await routingModule.showWaypoints([origin, destination]);
-
-            const { lengthInMeters, travelTimeInSeconds } = route.properties.summary;
-            status.textContent = `${formatDistance(lengthInMeters)} · ${formatDuration(travelTimeInSeconds)}`;
-
-            if (flyover) {
-                flyover.setRoute(route);
-            } else {
-                flyover = new RouteFlyover(map, {
-                    route,
-                    camera: {
-                        speedKMH: Number(speed.value),
-                        pitch: Number(pitch.value),
-                        aim: currentAim(),
-                        zoom: currentZoom(),
-                        anchor: currentAnchor(),
-                    },
-                    onProgress: showProgress,
-                });
-            }
-            if (!flyover.running) showRouteOverview(route);
         } catch {
             // A `thrilling` route is capped at 900 km, and no road connects every pair of places
             status.textContent = 'No route between these two places.';
+            return;
         }
+        if (!plan.current) return;
+
+        const routes = plan.value;
+        route = routes.features[0];
+        await routingModule.showRoutes(routes);
+        await routingModule.showWaypoints([origin, destination]);
+
+        const { lengthInMeters, travelTimeInSeconds } = route.properties.summary;
+        status.textContent = `${formatDistance(lengthInMeters)} · ${formatDuration(travelTimeInSeconds)}`;
+
+        if (flyover) {
+            flyover.setRoute(route);
+            // Paused, it moves its marker to the new departure without reporting progress.
+            if (!flyover.running) showProgress({ traveledDistanceInMeters: 0, traveledTimeInSeconds: 0 });
+        } else {
+            flyover = new RouteFlyover(map, {
+                route,
+                camera: {
+                    speedKMH: Number(speed.value),
+                    pitch: Number(pitch.value),
+                    aim: currentAim(),
+                    zoom: currentZoom(),
+                    anchor: currentAnchor(),
+                },
+                onProgress: showProgress,
+            });
+        }
+        if (!flyover.running) showRouteOverview(route);
     };
 
     const flyoverPosition = (): [number, number] => map.mapLibreMap.getCenter().toArray();
@@ -339,6 +359,8 @@ const DEPTH_OF_FIELD = { intensity: 20, band: 0.08, bokeh: 1 } as const;
     hillshade.addEventListener('change', () => terrain.setHillshadeVisible(hillshade.checked));
 
     marker.addEventListener('change', () => flyover?.setMarker({ visible: marker.checked }));
+    buildingsToggle.addEventListener('change', () => buildings.setVisible(buildingsToggle.checked));
+    surfacesToggle.addEventListener('change', () => surfaces.setVisible(surfacesToggle.checked));
 
     showModeFields();
     followPitchWithAnchor();

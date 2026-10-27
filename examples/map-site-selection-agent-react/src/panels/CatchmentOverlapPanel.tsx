@@ -4,8 +4,6 @@ import { OVERLAP_COLOR } from '../viz/site-visuals';
 import { setPanelActive, useIsTopPanel } from './active-panel-store';
 import { captionStyle, PanelShell, RankBadge, ScoreBar, ScoreBreakdown, title2Class } from './panel-ui';
 
-const OVERLAP_PINK = OVERLAP_COLOR; // cannibalization accent (Figma) — headline % + bar fill (shared with the map)
-
 /**
  * Catchment-overlap (cannibalization) panel for the latest compareCatchments result. The per-store
  * bar is the % of the PROPOSED catchment that overlaps that existing store — higher = more shared
@@ -43,12 +41,12 @@ export function CatchmentOverlapPanel() {
                                 <span className={`truncate ${title2Class}`}>{pair.existing.properties.label}</span>
                                 <span
                                     className="shrink-0 font-(family-name:--ui-font-gilroy) text-[20px] leading-[24px] font-bold"
-                                    style={{ color: OVERLAP_PINK }}
+                                    style={{ color: OVERLAP_COLOR }}
                                 >
                                     {pair.pctOfProposed}%
                                 </span>
                             </div>
-                            <ScoreBar value={(pair.pctOfProposed / maxPct) * 100} color={OVERLAP_PINK} />
+                            <ScoreBar value={(pair.pctOfProposed / maxPct) * 100} color={OVERLAP_COLOR} />
                             <ScoreBreakdown
                                 rows={[
                                     { label: 'Shared area', value: `${pair.overlapKm2} km²` },

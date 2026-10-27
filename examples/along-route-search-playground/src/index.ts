@@ -20,14 +20,14 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
         },
     });
 
-    map.mapLibreMap.fitBounds(
-        calculateFittingBBox({
-            map,
-            toBeContainedBBox: waypointsBBox,
-            surroundingElements: ['.ui-customPanel'],
-            paddingPX: 40,
-        }) as BBox,
-    );
+    // Null when the panel leaves too little of the map to fit the route in.
+    const fittingBBox = calculateFittingBBox({
+        map,
+        toBeContainedBBox: waypointsBBox,
+        surroundingElements: ['.ui-customPanel'],
+        paddingPX: 40,
+    });
+    if (fittingBBox) map.mapLibreMap.fitBounds(fittingBBox);
 
     const routingModule = await RoutingModule.create(map);
     await routingModule.showWaypoints(waypoints);
@@ -35,7 +35,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
     await routingModule.showRoutes(routes);
 
     const placesModule = await PlacesModule.create(map);
-    // A newer search or Clear retires the search in flight, so it cannot repopulate the map
+    // Clear retires the search in flight, so it cannot repopulate the map
     const latestSearch = createLatestRequest();
 
     setupPanel(

@@ -1,5 +1,19 @@
 # @tomtom-org/maps-sdk-plugin-flyover
 
+## 0.1.2
+
+### Patch Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - The package ships its `CHANGELOG.md`, as the SDK does, so you can read what changed between two releases from `node_modules`
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - The flyover frames at the pitch MapLibre shows, and a loop keeps its framing and the instruction ahead across its seam
+  
+  - A stop asked for from `onProgress` is honoured
+  - A cross-origin marker image warns instead of failing silently
+  - Editing the `zoom` or `aim` that `getCamera()` returns no longer changes every flight's defaults
+  - A marker given as an SVG data URI with unencoded markup loads
+  - After a `seek`, the camera clears the terrain from where it lands rather than from its heading before
+
 ## 0.1.1
 
 ### Patch Changes

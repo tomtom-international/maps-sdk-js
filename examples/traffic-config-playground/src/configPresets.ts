@@ -7,7 +7,7 @@ import type { TrafficFlowModuleConfig, TrafficIncidentsModuleConfig } from '@tom
  */
 export const configPresets: {
     title: string;
-    config: { incidents?: TrafficIncidentsModuleConfig; flow?: TrafficFlowModuleConfig } | undefined;
+    config: { incidents: TrafficIncidentsModuleConfig; flow: TrafficFlowModuleConfig };
 }[] = [
     {
         title: 'Everything',

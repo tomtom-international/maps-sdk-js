@@ -122,7 +122,7 @@ export function App() {
 
     return (
         <div className="absolute inset-0 flex flex-row-reverse gap-2 bg-(--ui-surface-0) p-2 max-sm:flex-col max-sm:gap-0 max-sm:p-0">
-            {/* `id="sdk-map"` is required — MapLibre attaches to the DOM node by ID. */}
+            {/* `id="sdk-map"` is required — the e2e tests find the map by it; MapLibre mounts in #map-container. */}
             <div
                 id="sdk-map"
                 className="relative flex-1 overflow-hidden rounded-[20px] bg-(--ui-surface-1) max-sm:min-h-0 max-sm:basis-1/2 max-sm:rounded-none"

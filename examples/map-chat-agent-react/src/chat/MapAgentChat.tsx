@@ -1,19 +1,23 @@
 import '../../../src/templates/css/agent-chat.css';
-import { type AssistantRuntime, AssistantRuntimeProvider, ThreadPrimitive, useAuiState } from '@assistant-ui/react';
+import { AssistantRuntimeProvider, ThreadPrimitive, useAuiState } from '@assistant-ui/react';
 import { useChatRuntime } from '@assistant-ui/react-ai-sdk';
-import type { createMapAgent } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+import {
+    type ClarifyIntentQuestion,
+    clarifyIntentOutputSchema,
+    type createMapAgent,
+} from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import type { ChatTransport, InferAgentUIMessage } from 'ai';
 import { useEffect, useState } from 'react';
 import { sendMessageToCurrentThread } from './assistantRuntimeUtils';
 import { ChatHeader } from './ChatHeader';
 import { ChatInput } from './ChatInput';
 import { ChatMessages, DEFAULT_WELCOME_TEXT } from './ChatMessages';
-import { ClarifyForm, type ClarifyQuestion } from './ClarifyForm';
+import { ClarifyForm } from './ClarifyForm';
 
 // While the agent is awaiting a clarifyIntent answer, the survey wizard takes over the composer slot
 // (pinned at the bottom, per Figma). Detect it from the LAST assistant turn's clarifyIntent tool call —
 // once the user answers, a user message becomes last and this returns null, restoring the input.
-function usePendingClarify(): { key: string; questions: ClarifyQuestion[] } | null {
+function usePendingClarify(): { key: string; questions: ClarifyIntentQuestion[] } | null {
     const part = useAuiState((s) => {
         const last = s.thread.messages.at(-1);
         if (!last || last.role !== 'assistant') return undefined;
@@ -23,22 +27,12 @@ function usePendingClarify(): { key: string; questions: ClarifyQuestion[] } | nu
                 (p as { toolName?: string }).toolName === 'clarifyIntent',
         );
     });
-    // Only show the wizard once the call has finished streaming — clarifyIntent sets a `result` when its
-    // args are fully parsed, so this avoids rendering a half-built question set.
-    if ((part as { result?: unknown } | undefined)?.result === undefined) return null;
-    const questions = (part as { args?: { questions?: unknown } } | undefined)?.args?.questions;
-    if (!Array.isArray(questions) || questions.length === 0) return null;
-    const valid = questions.every(
-        (q) =>
-            q &&
-            typeof q === 'object' &&
-            typeof (q as { id?: unknown }).id === 'string' &&
-            typeof (q as { question?: unknown }).question === 'string' &&
-            Array.isArray((q as { options?: unknown }).options),
-    );
-    if (!valid) return null;
+    // Only show the wizard once the call has finished streaming: clarifyIntent's `result` echoes the parsed
+    // questions, so a half-built question set never renders, and neither does a failed call.
+    const parsed = clarifyIntentOutputSchema.safeParse((part as { result?: unknown } | undefined)?.result);
+    if (!parsed.success || parsed.data.questions.length === 0) return null;
     const key = (part as { toolCallId?: string } | undefined)?.toolCallId ?? 'clarify';
-    return { key, questions: questions as ClarifyQuestion[] };
+    return { key, questions: parsed.data.questions };
 }
 
 type MapAgentChatProps = {
@@ -175,7 +169,7 @@ export function MapAgentChat({
     // Mobile collapse: shrinks the panel to a thin strip when isCollapsed is true.
     const collapsedClass = isCollapsed ? 'max-sm:max-h-12' : 'max-sm:max-h-[50dvh]';
     return (
-        <AssistantRuntimeProvider runtime={runtime as unknown as AssistantRuntime}>
+        <AssistantRuntimeProvider runtime={runtime}>
             <ThreadPrimitive.Root
                 className={`flex h-full w-full flex-col gap-3 rounded-[20px] bg-(--ui-surface-0) py-3 pr-2 pl-3 transition-[max-height] max-sm:w-full max-sm:rounded-none max-sm:overflow-hidden ${collapsedClass}`}
             >

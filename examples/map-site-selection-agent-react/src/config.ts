@@ -9,9 +9,9 @@ const gatewayBaseUrl = process.env.AZURE_GATEWAY_BASE_URL;
 const resourceName = process.env.AZURE_RESOURCE_NAME;
 const azureApiKey = process.env.AZURE_API_KEY;
 
-// AZURE_MODEL_IDS is the leading source — when set, its comma-separated list
-// IS the picker (AZURE_DEPLOYMENT_ID is ignored). When unset, fall back to a
-// single deployment via AZURE_DEPLOYMENT_ID so legacy setups keep working.
+// AZURE_MODEL_IDS is the leading source — when set, the agent runs on the first
+// model of its comma-separated list (AZURE_DEPLOYMENT_ID is ignored). When unset,
+// fall back to a single deployment via AZURE_DEPLOYMENT_ID so legacy setups keep working.
 const modelIds = process.env.AZURE_MODEL_IDS;
 const fallbackDeploymentId = process.env.AZURE_DEPLOYMENT_ID;
 
@@ -29,7 +29,6 @@ if (resolved.length === 0) {
     );
 }
 
-export const availableDeployments: readonly string[] = resolved;
 export const defaultDeploymentId = resolved[0];
 
 const fetchWithCredentials: typeof fetch = (input, init) => fetch(input, { ...init, credentials: 'include' });

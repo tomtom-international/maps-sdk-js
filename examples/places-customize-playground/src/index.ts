@@ -1,11 +1,15 @@
-import type { BBox, Place } from '@tomtom-org/maps-sdk/core';
+import type { Place } from '@tomtom-org/maps-sdk/core';
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
-import type { MapFont, PlaceIconConfig, PlacesMarkerType } from '@tomtom-org/maps-sdk/map';
+import type { PlaceIconConfig } from '@tomtom-org/maps-sdk/map';
 import {
     calculatePaddedBBox,
     knobEntryOf,
+    MAP_BOLD_FONT,
+    MAP_REGULAR_FONT,
+    mapFonts,
     PlacesModule,
     placesKnobCatalogue,
+    placesMarkerTypes,
     TomTomMap,
 } from '@tomtom-org/maps-sdk/map';
 import { createLatestRequest, discoverPlaces } from '@tomtom-org/maps-sdk/services';
@@ -68,21 +72,24 @@ const initIconOpacitySlider = (onInput: () => void): HTMLInputElement => {
         '\n',
         {},
         ['get', 'phone'], // comes as extra feature property, see extraFeatureProps below
-        { 'font-scale': 0.8, 'text-font': ['literal', ['Noto-Regular']], 'text-color': '#3125d1' },
+        { 'font-scale': 0.8, 'text-font': ['literal', [MAP_REGULAR_FONT]], 'text-color': '#3125d1' },
         '\n',
         {},
         ['get', 'staticProp'], // comes as extra feature property, see extraFeatureProps below
-        { 'font-scale': 0.7, 'text-font': ['literal', ['Noto-Bold']], 'text-color': '#ce258d' },
+        { 'font-scale': 0.7, 'text-font': ['literal', [MAP_BOLD_FONT]], 'text-color': '#ce258d' },
     ];
 
     // A new map move retires the previous move's search, so a slow answer cannot paint over a newer viewport
     const latestSearch = createLatestRequest();
 
     const updatePlaces = async () => {
+        const boundingBox = calculatePaddedBBox({ map, surroundingElements: ['.ui-panel'] });
+        if (!boundingBox) return;
+
         const search = await latestSearch.run((signal) =>
             discoverPlaces({
                 filters: { poiCategories: ['CHARGING_LOCATION', 'CAFE_PUB'] },
-                geoBias: { boundingBox: calculatePaddedBBox({ map, surroundingElements: ['.ui-panel'] }) as BBox },
+                geoBias: { boundingBox },
                 limit: 100,
                 signal,
             }),
@@ -98,30 +105,31 @@ const initIconOpacitySlider = (onInput: () => void): HTMLInputElement => {
 
         for (const element of fontSelectors) {
             element.addEventListener('change', () => {
-                places.updateConfig({ label: { ...places.getConfig()?.label, font: [element.value as MapFont] } });
+                const font = mapFonts.find((candidate) => candidate === element.value);
+                if (font) places.updateConfig({ label: { ...places.getConfig()?.label, font: [font] } });
             });
         }
 
         for (const element of contentSelectors) {
             element.addEventListener('change', () => {
-                element.value !== 'default' &&
-                    places.updateConfig({
-                        extraFeatureProps: {
-                            phone: (place: Place) => `Phone: ${place.properties.poi?.phone}`,
-                            staticProp: 'Static text',
-                        },
-                    });
+                const multiLine = element.value !== 'default';
+                // One update: each one re-applies the whole config and redraws every place.
                 places.updateConfig({
-                    label: {
-                        ...places.getConfig()?.label,
-                        title: element.value === 'default' ? undefined : multiLineLabel,
-                    },
+                    extraFeatureProps: multiLine
+                        ? {
+                              phone: (place: Place) =>
+                                  place.properties.poi?.phone ? `Phone: ${place.properties.poi.phone}` : '',
+                              staticProp: 'Static text',
+                          }
+                        : undefined,
+                    label: { ...places.getConfig()?.label, title: multiLine ? multiLineLabel : undefined },
                 });
             });
         }
 
-        iconStyleSelector?.addEventListener('change', (e) => {
-            places.updateConfig({ markerType: (e.target as HTMLSelectElement).value as PlacesMarkerType });
+        iconStyleSelector?.addEventListener('change', () => {
+            const markerType = placesMarkerTypes.find((type) => type === iconStyleSelector.value);
+            if (markerType) places.updateConfig({ markerType });
         });
 
         for (const element of layerPositionSelectors) {

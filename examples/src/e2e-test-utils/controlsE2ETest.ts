@@ -33,6 +33,8 @@ export type ControlsE2ETestOptions = {
     testInfo: TestInfo;
     /** The element holding the map, or a grid of them (default: #sdk-map). */
     mapSelector?: string;
+    /** How long the map may take to draw, on loading and after the walk (default: 30000ms). */
+    mapLoadTimeout?: number;
     /**
      * Controls left alone, as CSS selectors, for one whose effect leaves the page or that the
      * example's own test drives.
@@ -70,13 +72,15 @@ export const controlsE2ETest = async (options: ControlsE2ETestOptions): Promise<
         page,
         testInfo,
         mapSelector = DEFAULT_MAP_SELECTOR,
+        mapLoadTimeout = LOAD_TIMEOUT_MS,
         skip = [],
         stepSettleMs = DEFAULT_STEP_SETTLE_MS,
         maxOptionsPerSelect = DEFAULT_MAX_OPTIONS_PER_SELECT,
         clickMap = true,
         reveal,
     } = options;
-    testInfo.setTimeout(Math.max(testInfo.timeout, 180_000));
+    // The walk takes up to 180 s, after the waits for the map, each free to take up to `mapLoadTimeout`.
+    testInfo.setTimeout(Math.max(testInfo.timeout, 180_000 + 2 * mapLoadTimeout));
 
     const pageErrors = recordPageErrors(page);
     // Where in `pageErrors` each step began, so an error is reported with the step that caused it.
@@ -85,8 +89,8 @@ export const controlsE2ETest = async (options: ControlsE2ETestOptions): Promise<
 
     await enableMapReadback(page);
     await page.goto(getExampleURL(testInfo));
-    await page.waitForSelector(`${mapSelector} canvas`, { timeout: LOAD_TIMEOUT_MS });
-    await waitForMapPainted(page, LOAD_TIMEOUT_MS);
+    await page.waitForSelector(`${mapSelector} canvas`, { timeout: mapLoadTimeout });
+    await waitForMapPainted(page, mapLoadTimeout, mapLoadTimeout);
     if (reveal) {
         beginStep('revealing the controls');
         await reveal(page);
@@ -114,7 +118,7 @@ export const controlsE2ETest = async (options: ControlsE2ETestOptions): Promise<
 
     await page.waitForTimeout(FINAL_SETTLE_MS);
     beginStep('waiting for the map to draw again');
-    await waitForMapPainted(page, LOAD_TIMEOUT_MS);
+    await waitForMapPainted(page, mapLoadTimeout, mapLoadTimeout);
 
     const reported = pageErrors.flatMap((error, errorIndex) => {
         if (!isReportablePageError(error)) return [];

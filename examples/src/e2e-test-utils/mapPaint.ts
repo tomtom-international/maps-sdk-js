@@ -23,6 +23,12 @@ const CHANNEL_NOISE_BITS = 3;
 const PAINT_TIMEOUT_MS = 30_000;
 
 /**
+ * The longest {@link waitForSurfacesStill} waits for a map with the GL surfaces and their trees on it,
+ * which a software renderer takes seconds a frame to draw.
+ */
+export const SURFACES_SETTLE_MS = 60_000;
+
+/**
  * Share of the sampled pixels that may change between two samples of a map still counted as still.
  *
  * A pitched 3D terrain map keeps streaming its far tiles for half a minute on a loaded runner, each
@@ -87,6 +93,13 @@ export const waitForMapPainted = async (
         })
         .toBeGreaterThan(1);
 };
+
+/**
+ * Waits until a map with the GL surfaces and their trees on it has held still for 3 s, within
+ * {@link SURFACES_SETTLE_MS}.
+ */
+export const waitForSurfacesStill = (target: Page | Frame): Promise<void> =>
+    waitForMapStill(target, 3000, SURFACES_SETTLE_MS, SURFACES_SETTLE_MS);
 
 /**
  * Waits until the map canvases have held still for `quietMs`, as {@link STILL_CHANGE_RATIO} counts it.

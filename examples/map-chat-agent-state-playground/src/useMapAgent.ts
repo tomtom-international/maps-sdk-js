@@ -67,8 +67,8 @@ export function useMapAgent() {
         setAgentInstance(agent);
 
         // Instrumented transport tracks queries, tool calls, and token usage via Azure Application Insights
-        // to help us improve the demo.
-        // To opt out, replace with: new DirectChatTransport({ agent })
+        // to help us improve the demo. It also tells the model what the side panel changed since its last
+        // reply, so opting out with new DirectChatTransport({ agent }) drops that note too.
         setTransport(
             createInstrumentedTransport(agent, {
                 onUsage: (usage) =>

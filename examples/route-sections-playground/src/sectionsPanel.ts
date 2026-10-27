@@ -256,12 +256,11 @@ const initCrossingRow = (state: PanelState, apply: () => void): void => {
     };
 
     syncReadout();
-    for (const eventName of ['change', 'input']) {
-        row.addEventListener(eventName, (event) => {
-            readCrossingKnob(event.target as HTMLInputElement | HTMLSelectElement);
-            apply();
-        });
-    }
+    // Every control here fires `input`, and a `change` after it would apply the same edit twice.
+    row.addEventListener('input', (event) => {
+        readCrossingKnob(event.target as HTMLInputElement | HTMLSelectElement);
+        apply();
+    });
 };
 
 const initPanelToggle = (): void => {
@@ -323,13 +322,11 @@ export const initSectionsPanel = (options: {
     for (const type of allTypes) syncRow(type, state);
     initCrossingRow(state, apply);
 
-    for (const eventName of ['change', 'input']) {
-        for (const rows of [drawnRows, optInRows]) {
-            rows.addEventListener(eventName, (event) => {
-                readSectionKnob(event.target as HTMLInputElement | HTMLSelectElement, state);
-                apply();
-            });
-        }
+    for (const rows of [drawnRows, optInRows]) {
+        rows.addEventListener('input', (event) => {
+            readSectionKnob(event.target as HTMLInputElement | HTMLSelectElement, state);
+            apply();
+        });
     }
 
     const onCountPressed = (event: Event): void => {

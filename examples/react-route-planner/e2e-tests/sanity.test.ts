@@ -6,7 +6,7 @@ test.describe('sanity', () => {
     test('sanity test - prod', { tag: TAG_PROD }, async ({ page }) => {
         // Arrival and departure times follow the clock, and the durations follow live traffic, as
         // do the alternatives' roads and where the bar's lanes place their sections and stays. The
-        // chrome shot is compared at zero tolerance, so those texts are pinned and the lanes emptied.
+        // chrome shot is compared at near-zero tolerance, so those texts are pinned and the lanes emptied.
         await sanityE2ETest({
             page,
             testInfo: test.info(),

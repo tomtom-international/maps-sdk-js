@@ -6,7 +6,7 @@ import {
     TrafficIncidentsModule,
     TrafficIncidentsModuleFeature,
 } from '@tomtom-org/maps-sdk/map';
-import { discoverPlaces, reverseGeocode } from '@tomtom-org/maps-sdk/services';
+import { createLatestRequest, discoverPlaces, reverseGeocode } from '@tomtom-org/maps-sdk/services';
 import { LngLat, Marker, NavigationControl, Popup } from 'maplibre-gl';
 import './style.css';
 import { API_KEY } from './config';
@@ -72,12 +72,12 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
             .setHTML(
                 `
             <div id="place-popup">
-            <h3 id="place-name">${poi?.name}</h3>
+            <h3 id="place-name">${poi?.name ?? ''}</h3>
             <b id="place-address"> Address: </b> ${address.freeformAddress}
             <br />
             ${poi?.phone ? `<b> Phone: </b> ${poi?.phone}` : ''}
             <div id="ui-popup-tags">
-            ${poi?.localizedCategories?.map((category) => `<span class="ui-popup-tags-item">${category}</span>`)}
+            ${poi?.localizedCategories?.map((category) => `<span class="ui-popup-tags-item">${category}</span>`).join('') ?? ''}
             </div>
             </div> 
             `,
@@ -100,39 +100,46 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         placesModule.events.places.on('click', showPlacesPopUp);
     };
 
-    const showBasemapPopup = async (_: any, lnglat: LngLat) => {
-        const { properties } = await reverseGeocode({ position: [lnglat.lng, lnglat.lat] });
-        revGeocodingMarker.setLngLat(lnglat).addTo(map.mapLibreMap);
-
-        if (!isMarkerVisible) {
-            new Popup({
-                closeButton: true,
-                closeOnClick: true,
-                closeOnMove: true,
-                offset: 6,
-                className: 'ui-popup-basemap',
-            })
-                .setHTML(
-                    `
-                <div id="ui-popup-basemap">
-                ${
-                    properties?.address.freeformAddress
-                        ? ` <h4 id="ui-popup-basemap-address">${properties.address.freeformAddress}</h4> <hr class="ui-hr" />`
-                        : ''
-                }
-                    <div id="ui-popup-lnglat">
-                        <span> ${lnglat.lng.toFixed(5)}, ${lnglat.lat.toFixed(5)}</span>
-                    </div>
-                </div> 
-                `,
-                )
-                .setLngLat(lnglat)
-                .addTo(map.mapLibreMap);
-            isMarkerVisible = true;
-        } else {
+    // A second click before the first address lands, a double click say, drops the first.
+    const latestAddress = createLatestRequest();
+    const showBasemapPopup = async (_: any, lngLat: LngLat) => {
+        if (isMarkerVisible) {
             revGeocodingMarker.remove();
             isMarkerVisible = false;
+            return;
         }
+
+        const lookup = await latestAddress.run((signal) =>
+            reverseGeocode({ position: [lngLat.lng, lngLat.lat], signal }),
+        );
+        if (!lookup.current) return;
+
+        const { properties } = lookup.value;
+        revGeocodingMarker.setLngLat(lngLat).addTo(map.mapLibreMap);
+        new Popup({
+            closeButton: true,
+            closeOnClick: true,
+            closeOnMove: true,
+            offset: 6,
+            className: 'ui-popup-basemap',
+        })
+            .setHTML(
+                `
+            <div id="ui-popup-basemap">
+            ${
+                properties?.address.freeformAddress
+                    ? ` <h4 id="ui-popup-basemap-address">${properties.address.freeformAddress}</h4> <hr class="ui-hr" />`
+                    : ''
+            }
+                <div id="ui-popup-lnglat">
+                    <span> ${lngLat.lng.toFixed(5)}, ${lngLat.lat.toFixed(5)}</span>
+                </div>
+            </div> 
+            `,
+            )
+            .setLngLat(lngLat)
+            .addTo(map.mapLibreMap);
+        isMarkerVisible = true;
     };
 
     const initBaseMapModule = async () => {

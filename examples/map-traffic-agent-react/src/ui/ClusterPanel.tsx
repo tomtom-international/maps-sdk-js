@@ -1,13 +1,23 @@
-import type { Cluster } from '../agent/types';
+import type { Cluster, ClusterTrend } from '../agent/types';
 import { formatDelay } from '../utils/format';
 import { PanelCard, StatusTag, type StatusTone } from './components';
 
-const TREND_BADGE: Record<string, { label: string; tone?: StatusTone; accent?: string }> = {
+const TREND_BADGE: Partial<Record<ClusterTrend, { label: string; tone?: StatusTone; accent?: string }>> = {
     growing: { label: '↑ Growing', tone: 'error' },
     fading: { label: '↓ Fading', tone: 'success' },
     steady: { label: '→ Steady', tone: 'info' },
     new: { label: '★ New', accent: 'var(--ui-surface-brand-red)' },
 };
+
+function TrendBadge({ trend }: { trend: ClusterTrend }) {
+    const badge = TREND_BADGE[trend];
+    if (!badge) return null;
+    return (
+        <StatusTag tone={badge.tone} accent={badge.accent}>
+            {badge.label}
+        </StatusTag>
+    );
+}
 
 export type ClusterPanelProps = {
     clusters: readonly Cluster[];
@@ -59,11 +69,7 @@ export function ClusterPanel({ clusters, focusedIds, onFocusCluster, onClearClus
                                 <span className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-(--ui-border-low-em) bg-(--ui-surface-1) text-[11px] font-semibold text-(--ui-text-high-em)">
                                     {idx + 1}
                                 </span>
-                                {c.trend && TREND_BADGE[c.trend] && (
-                                    <StatusTag tone={TREND_BADGE[c.trend].tone} accent={TREND_BADGE[c.trend].accent}>
-                                        {TREND_BADGE[c.trend].label}
-                                    </StatusTag>
-                                )}
+                                <TrendBadge trend={c.trend} />
                             </div>
                             <h4 className="m-0 text-[13px] font-semibold leading-snug text-(--ui-text-high-em)">
                                 {c.headline}

@@ -6,7 +6,7 @@ import type {
 } from '@tomtom-org/maps-sdk/map';
 import { keysOf } from '../keysOf';
 
-/** Everything the Map tab sets, as one value: a preset is one of these, and each control edits one field. */
+/** Everything the Map panel sets, as one value: a preset is one of these, and each control edits one field. */
 export type MapLook = {
     style: StandardStyleID;
     /** A palette laid over the style. Unset, the style's own colours. */

@@ -5,7 +5,7 @@ import {
     type StylingFoundationsKnobValue,
     setKnob,
 } from '@tomtom-org/maps-sdk/map';
-import { controlFor } from './knobControls';
+import { controlFor, perFrameApplier } from './knobControls';
 import { groupOf, titleOf } from './knobLabels';
 
 /**
@@ -115,10 +115,11 @@ export const initStylingPanel = (
 ): StylingPanel => {
     const render = () => renderPanel(sources, groupControls);
     render();
+    const rerender = perFrameApplier(render);
     // The panel follows the modules, wherever a change comes from (a reset, a preset, a style switch, an agent).
     for (const { module } of sources) {
         module.events.on('config-change', () => {
-            if (!applyingFromPanel) render();
+            if (!applyingFromPanel) rerender.queue();
         });
     }
 

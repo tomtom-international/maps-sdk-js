@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { focusFeature } from '../agent/agent-bridge';
 import { pocketColor } from '../pocket-colors';
 import { useWhitespace, type WhitespacePocket, type WhitespaceResult } from '../results/results-store';
+import { blendOpportunity } from '../tools/find-whitespace';
 import { setPanelActive, useIsTopPanel } from './active-panel-store';
 import {
     captionStyle,
@@ -48,7 +49,7 @@ export function WhitespacePanel() {
         .map((feature, originalIndex) => ({
             feature,
             originalIndex,
-            opp: Math.round(100 * (w * feature.properties.demandNorm + (1 - w) * feature.properties.peerNorm)),
+            opp: blendOpportunity(feature.properties.demandNorm, feature.properties.peerNorm, w),
         }))
         .sort((a, b) => b.opp - a.opp);
 

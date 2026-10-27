@@ -1,6 +1,6 @@
 import { BBox, bboxFromGeoJSON, getSectionBBox, Route, SectionProps, TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { RoutingModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
-import { calculateRoute, geocodeOne } from '@tomtom-org/maps-sdk/services';
+import { calculateRoute, createLatestRequest, geocodeOne } from '@tomtom-org/maps-sdk/services';
 import type { LngLat } from 'maplibre-gl';
 import { setupAvoidedAreas } from './avoidedAreas';
 import { setupAvoidOptions } from './avoidOptions';
@@ -32,14 +32,22 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     let avoidOptions: ReturnType<typeof setupAvoidOptions>;
     let vehicleOptions: ReturnType<typeof setupVehicleOptions>;
 
+    // Quick edits each replan; an answer to an earlier one is dropped rather than shown over a newer one.
+    const latestRoute = createLatestRequest();
     const recalculate = async () => {
         const areas = avoidedAreasManager.areas;
-        const avoidAreas = areas.length > 0 ? areas.map((a) => a.bbox) : undefined;
-        const routeResult = await calculateRoute({
-            locations,
-            costModel: { avoid: avoidOptions.activeAvoidTypes, avoidAreas },
-            vehicle: vehicleOptions.vehicle,
-        });
+        const avoidAreas = areas.length > 0 ? areas.map((area) => area.bbox) : undefined;
+        const route = await latestRoute.run((signal) =>
+            calculateRoute({
+                locations,
+                costModel: { avoid: avoidOptions.activeAvoidTypes, avoidAreas },
+                vehicle: vehicleOptions.vehicle,
+                signal,
+            }),
+        );
+        if (!route.current) return;
+
+        const routeResult = route.value;
         currentRoute = routeResult.features[0];
         await routingModule.showWaypoints(locations);
         await routingModule.showRoutes(routeResult);

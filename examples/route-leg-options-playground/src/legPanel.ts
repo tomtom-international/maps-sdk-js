@@ -1,4 +1,4 @@
-import type { Avoidable } from '@tomtom-org/maps-sdk/core';
+import type { Avoidable, LegSummary } from '@tomtom-org/maps-sdk/core';
 import { formatDistance, formatDuration } from '@tomtom-org/maps-sdk/core';
 import type { LegCostModel, RouteType } from '@tomtom-org/maps-sdk/services';
 
@@ -24,12 +24,7 @@ const routeTypeLabel = (routeType: RouteType | ''): string =>
 const avoidLabel = (avoidable: Avoidable): string =>
     AVOID_LABELS.find(([value]) => value === avoidable)?.[1] ?? avoidable;
 
-export type LegStats = {
-    lengthInMeters: number;
-    travelTimeInSeconds: number;
-    /** Time spent at the stop this leg arrives at, absent when it does not stop. */
-    stopTimeInSeconds?: number;
-};
+export type LegStats = Pick<LegSummary, 'lengthInMeters' | 'travelTimeInSeconds' | 'stopTimeInSeconds'>;
 
 export type LegPanel = {
     /** One cost model per leg, in leg order, ready to attach to the arriving stops. */
@@ -84,8 +79,6 @@ const buildLegSection = (legIndex: number, from: string, to: string): HTMLElemen
     return section;
 };
 
-// The panel is built from the legs of a route that has already been calculated, so the number of
-// legs and their endpoints come from the route rather than being assumed here.
 // A leg a control keeps focus in stays pointed at while the pointer roams the other legs.
 const pointedLegTracker = (onPointAtLeg: (legIndex: number | null) => void) => {
     let hoveredLeg: number | null = null;
@@ -121,6 +114,8 @@ const pointedLegTracker = (onPointAtLeg: (legIndex: number | null) => void) => {
     };
 };
 
+// The panel is built from the legs of a route that has already been calculated, so the number of
+// legs and their endpoints come from the route rather than being assumed here.
 export const buildLegPanel = (
     container: HTMLElement,
     legNames: [string, string][],

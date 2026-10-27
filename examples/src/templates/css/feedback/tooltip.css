@@ -1,7 +1,7 @@
 /* TOOLTIP: a dark label beside the element it names, with .ui-tooltip-arrow on an SVG arrow */
 
 .ui-tooltip {
-    z-index: 1000;
+    z-index: var(--ui-z-tooltip);
     padding: var(--ui-space-1) var(--ui-space-2);
     border-radius: var(--ui-rounded-5);
     background: var(--ui-surface-high-em);

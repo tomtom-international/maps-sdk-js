@@ -36,7 +36,7 @@ form.addEventListener('submit', async (event) => {
     input.value = '';
     sendButton.disabled = true;
     addMessage('user', prompt);
-    messages.push({ role: 'user', content: prompt });
+    const promptIndex = messages.push({ role: 'user', content: prompt }) - 1;
     const reply = addMessage('assistant thinking', 'Working on it…');
     try {
         // Created on the first message, so a missing model setting shows in the chat instead of breaking the page.
@@ -59,6 +59,8 @@ form.addEventListener('submit', async (event) => {
         }
         messages.push(...(await result.responseMessages));
     } catch (error) {
+        // A failed turn leaves no prompt behind, or the next turn would send it again.
+        messages.length = promptIndex;
         reply.remove();
         addMessage('error', `Something went wrong: ${error instanceof Error ? error.message : String(error)}`);
     } finally {

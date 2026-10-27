@@ -1,7 +1,6 @@
 import { defineConfig } from 'vitest/config';
 
-// Unit tests only — pure utilities under src. The app's vite.config (tailwind/react) is not loaded;
-// component/e2e coverage lives in Playwright (test:e2e).
+// Unit tests only — pure utilities under src, in node. The app's vite.config (tailwind/react) is not loaded.
 export default defineConfig({
     test: {
         include: ['src/**/*.test.ts'],

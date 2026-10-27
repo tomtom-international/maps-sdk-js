@@ -1,5 +1,5 @@
 import type { AreaAnalyticsMetricKey } from '@tomtom-org/maps-sdk/core';
-import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { areaAnalyticsMetricKeys, TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import type { AreaAnalyticsDisplayMode, AreaAnalyticsPalette, BaseMapLayerGroupName } from '@tomtom-org/maps-sdk/map';
 import { BaseMapModule, resolveColorStops, TomTomMap, TrafficAreaAnalyticsModule } from '@tomtom-org/maps-sdk/map';
 import { API_KEY } from './config';
@@ -35,7 +35,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
     const filters = defaultFilters();
     const applyButton = $('filter-apply') as HTMLButtonElement;
 
-    const { selectCityByName, rerenderChart, reloadCurrent, hasCurrent } = initCitySearch({
+    const { selectCityByName, rerenderChart, reloadCurrent, hasCurrent, clearCurrent } = initCitySearch({
         map,
         analyticsModule,
         cityInput: $('city-input') as HTMLInputElement,
@@ -71,13 +71,13 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
 
     baseMap.events
         .where({ layerGroups: { show: 'all-except', values: cityLabelGroups } }, { cursorOnHover: 'default' })
-        .on('click', () => {
-            analyticsModule.clear();
-            $('bottom-panel').classList.add('aa-hidden');
-        });
+        .on('click', clearCurrent);
 
     (document.getElementById('metric-selector') as HTMLSelectElement).addEventListener('change', (event) => {
-        const metricKey = (event.target as HTMLSelectElement).value as AreaAnalyticsMetricKey;
+        const { value } = event.target as HTMLSelectElement;
+        const metricKey = areaAnalyticsMetricKeys.find((key) => key === value);
+        if (!metricKey) return;
+
         analyticsModule.updateConfig({ activeMetric: metricKey });
         refreshLegend(metricKey);
     });

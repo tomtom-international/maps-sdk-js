@@ -29,9 +29,10 @@
     min-width: 0;
 }
 
+/* Bottom-left: in the bottom-right corner it would cover the map's attribution */
 .ui-button-container {
     position: absolute;
-    right: var(--ui-panel-margin);
+    left: var(--ui-panel-margin);
     bottom: var(--ui-panel-margin);
     z-index: var(--ui-z-panel);
 }

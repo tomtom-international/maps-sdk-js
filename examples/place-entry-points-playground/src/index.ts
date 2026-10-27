@@ -1,7 +1,7 @@
 import type { Place } from '@tomtom-org/maps-sdk/core';
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { BaseMapModule, calculatePaddedBBox, PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
-import { discoverPlaces, reverseGeocode } from '@tomtom-org/maps-sdk/services';
+import { createLatestRequest, discoverPlaces, reverseGeocode } from '@tomtom-org/maps-sdk/services';
 import './style.css';
 import { API_KEY } from './config';
 import { initPanel, readEntryPointsConfig, showEntryPoint, showPlace, showZoom } from './panel';
@@ -33,17 +33,25 @@ const CLICKED_ADDRESS_ID = 'clicked-address';
         if (clickedPlaceID) places.setEventState({ id: clickedPlaceID, state: 'click' });
     };
 
+    // A newer map move or click retires the request still running for an earlier one.
+    const latestSearch = createLatestRequest();
+    const latestAddress = createLatestRequest();
     const searchView = async () => {
         // Null when the panel leaves too little of the map to search in.
         const boundingBox = calculatePaddedBBox({ map, surroundingElements: ['.ui-customPanel'] });
         if (!boundingBox) return;
 
-        const results = await discoverPlaces({
-            filters: { poiCategories: ['MUSEUM', 'THEATER', 'HOTEL_OR_MOTEL', 'DEPARTMENT_STORE', 'MALL'] },
-            geoBias: { boundingBox },
-            limit: 50,
-        });
-        searchedPlaces = results.features;
+        const results = await latestSearch.run((signal) =>
+            discoverPlaces({
+                filters: { poiCategories: ['MUSEUM', 'THEATER', 'HOTEL_OR_MOTEL', 'DEPARTMENT_STORE', 'MALL'] },
+                geoBias: { boundingBox },
+                limit: 50,
+                signal,
+            }),
+        );
+        if (!results.current) return;
+
+        searchedPlaces = results.value.features;
         await showPlaces();
     };
 
@@ -59,7 +67,10 @@ const CLICKED_ADDRESS_ID = 'clicked-address';
 
     const baseMap = await BaseMapModule.get(map);
     baseMap.events.on('click', async (_feature, lngLat) => {
-        const address = await reverseGeocode({ position: lngLat.toArray() });
+        const lookup = await latestAddress.run((signal) => reverseGeocode({ position: lngLat.toArray(), signal }));
+        if (!lookup.current) return;
+
+        const address = lookup.value;
         if (!address.properties) return;
         // The result geometry is the clicked point; `originalPosition` is the address it matched.
         clickedAddress = {

@@ -4,19 +4,14 @@ import {
     getKnob,
     knobEntryOf,
     resetKnob,
-    type StandardStyleID,
     StylingFoundationsModule,
     setKnob,
     standardStyleIDs,
     stylingFoundationsKnobCatalogue,
     TomTomMap,
 } from '@tomtom-org/maps-sdk/map';
-import {
-    Buildings3D,
-    Landmarks3D,
-    type Landmarks3DKnobId,
-    landmarks3DKnobCatalogue,
-} from '@tomtom-org/maps-sdk-plugin-landmarks-3d';
+import { Buildings3D, Landmarks3D } from '@tomtom-org/maps-sdk-plugin-landmarks-3d';
+import { type Landmarks3DKnobId, landmarks3DKnobCatalogue } from '@tomtom-org/maps-sdk-plugin-landmarks-3d/knobs';
 import type { CameraOptions } from 'maplibre-gl';
 import './style.css';
 import { API_KEY } from './config';
@@ -37,9 +32,14 @@ const places: Record<string, CameraOptions> = {
     'Sydney Opera House': { center: [151.2149, -33.8572], zoom: 17, pitch: 55, bearing: 160 },
 };
 
-// Every landmarks knob but `visible`, with the label its control takes.
+// Each landmarks knob with the label its control takes, but `visible` and the hover and click ones,
+// which do nothing while no handler listens to the landmarks' events.
 const landmarkKnobs: [Landmarks3DKnobId, string][] = [
     ['color', 'Colour'],
+    ['palette', 'Palette'],
+    ['paletteMode', 'Palette mode'],
+    ['paletteIntensity', 'Palette strength'],
+    ['variation', 'Shade variation'],
     ['texture', 'Texture'],
     ['opacity', 'Opacity'],
     ['verticalGradient', 'Walls darken towards the ground'],
@@ -120,7 +120,10 @@ const landmarkKnobs: [Landmarks3DKnobId, string][] = [
     const basemapSelector = document.querySelector('#ui-basemap') as HTMLSelectElement;
     standardStyleIDs.forEach((id) => basemapSelector.add(new Option(id)));
     basemapSelector.addEventListener('change', async () => {
-        await map.setStyle(basemapSelector.value as StandardStyleID);
+        const styleId = standardStyleIDs.find((id) => id === basemapSelector.value);
+        if (!styleId) return;
+
+        await map.setStyle(styleId);
         showAll();
     });
 

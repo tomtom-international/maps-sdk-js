@@ -12,7 +12,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
 
 (async () => {
     const [spainAirports, italyAirports, franceAirports] = await Promise.all([
-        discoverPlaces({ filters: { countries: ['ES'], poiCategories: ['PUBLIC_AIRPORT'] }, limit: 100 }), // searching for locations by postcode
+        discoverPlaces({ filters: { countries: ['ES'], poiCategories: ['PUBLIC_AIRPORT'] }, limit: 100 }),
         discoverPlaces({ filters: { countries: ['IT'], poiCategories: ['PUBLIC_AIRPORT'] }, limit: 100 }),
         discoverPlaces({ filters: { countries: ['FR'], poiCategories: ['PUBLIC_AIRPORT'] }, limit: 100 }),
     ]);

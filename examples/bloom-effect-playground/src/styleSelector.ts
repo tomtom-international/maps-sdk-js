@@ -6,5 +6,8 @@ export const initStyleSelector = (selected: StandardStyleID, onPick: (style: Sta
     selector.innerHTML = standardStyleIDs
         .map((id) => `<option value="${id}"${id === selected ? ' selected' : ''}>${id}</option>`)
         .join('');
-    selector.addEventListener('change', () => onPick(selector.value as StandardStyleID));
+    selector.addEventListener('change', () => {
+        const styleId = standardStyleIDs.find((id) => id === selector.value);
+        if (styleId) onPick(styleId);
+    });
 };

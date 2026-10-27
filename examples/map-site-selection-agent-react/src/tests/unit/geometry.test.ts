@@ -1,6 +1,6 @@
 import type { Feature, Polygon } from 'geojson';
 import { describe, expect, it } from 'vitest';
-import { clipPolygons, km2 } from '../../agent/geometry';
+import { clipPolygons, km2, unionPolygons } from '../../agent/geometry';
 
 const box = (minLng: number, minLat: number, maxLng: number, maxLat: number): Feature<Polygon> => ({
     type: 'Feature',
@@ -49,5 +49,19 @@ describe('km2', () => {
 
     it('accepts a bare geometry, not just a feature', () => {
         expect(km2(box(0, 0, 1, 1).geometry)).toBeGreaterThan(0);
+    });
+});
+
+describe('unionPolygons', () => {
+    it('returns the union of overlapping polygons', () => {
+        const union = unionPolygons([box(0, 0, 2, 2), box(1, 1, 3, 3)]);
+        const expected = km2(box(0, 0, 2, 2)) + km2(box(1, 1, 3, 3)) - km2(box(1, 1, 2, 2));
+        expect(km2(union as Feature<Polygon>)).toBeCloseTo(expected, 1);
+    });
+
+    it('returns a single polygon as it is, and null for none', () => {
+        const only = box(0, 0, 1, 1);
+        expect(unionPolygons([only])).toBe(only);
+        expect(unionPolygons([])).toBeNull();
     });
 });

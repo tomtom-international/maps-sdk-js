@@ -85,6 +85,10 @@ describe('lookupCategoryCandidates', () => {
         expect(codes).toEqual(expect.arrayContaining(['INTERNET_CAFE', 'TRUCK_STOP']));
     });
 
+    it('needs three shared letters before it calls two words a match', async () => {
+        expect(await candidateCodes('café')).not.toContain('CAR_DEALER');
+    });
+
     it('lists a plain sub-category named like its parent once, as the parent', async () => {
         expect(await candidateCodes('auto wash')).toEqual(['CAR_WASH']);
     });

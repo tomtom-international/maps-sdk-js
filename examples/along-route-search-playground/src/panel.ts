@@ -56,9 +56,8 @@ export const setupPanel = (onSearch: (params: SearchPanelParams) => Promise<void
             if (input.checked) {
                 checkedCategories.push(category);
             } else {
-                checkedCategories = checkedCategories.filter((c) => c !== category);
+                checkedCategories = checkedCategories.filter((checked) => checked !== category);
             }
-            console.log('checkedCategories after change: ', checkedCategories);
         });
 
         label.appendChild(input);
@@ -72,7 +71,6 @@ export const setupPanel = (onSearch: (params: SearchPanelParams) => Promise<void
     });
 
     const getParams = (): SearchPanelParams => {
-        console.log(checkedCategories);
         return {
             query: queryInput.value.trim() || undefined,
             filters: checkedCategories.length > 0 ? { poiCategories: checkedCategories } : undefined,
@@ -99,8 +97,8 @@ export const setupPanel = (onSearch: (params: SearchPanelParams) => Promise<void
     const reset = () => {
         queryInput.value = '';
         checkedCategories = [];
-        categoriesContainer.querySelectorAll<HTMLInputElement>('input[type="checkbox"]').forEach((cb) => {
-            cb.checked = false;
+        categoriesContainer.querySelectorAll<HTMLInputElement>('input[type="checkbox"]').forEach((checkbox) => {
+            checkbox.checked = false;
         });
         detourMinutesSlider.value = String(DEFAULT_DETOUR_MINUTES);
         detourValue.textContent = formatDuration(DEFAULT_DETOUR_MINUTES * 60);
@@ -111,7 +109,7 @@ export const setupPanel = (onSearch: (params: SearchPanelParams) => Promise<void
         reset();
         onClear();
     });
-    queryInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') triggerSearch();
+    queryInput.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') triggerSearch();
     });
 };

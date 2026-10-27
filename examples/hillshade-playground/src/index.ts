@@ -2,8 +2,8 @@ import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import {
     getKnob,
     knobEntryOf,
-    type StandardStyleID,
     setKnob,
+    setKnobs,
     standardStyleIDs,
     type TerrainHillshadeConfig,
     type TerrainKnobId,
@@ -56,8 +56,7 @@ const sunAt = (progress: number) => ({
     const terrain = await TerrainModule.get(map, { hillshade: { ...ALWAYS, ...initialLook.hillshade } });
 
     // getKnob reports a setting left unset as the loaded style draws it, so the controls always
-    // show the value in force. The ids come as an array: the live editor's ES5 transpile runs a
-    // `for…of` over the Map's own iterator zero times.
+    // show the value in force.
     const controls = new Map<TerrainKnobId, KnobControl>();
     const showValues = (ids: TerrainKnobId[] = Array.from(controls.keys())) => {
         for (const id of ids) controls.get(id)?.show(getKnob(terrain, terrainKnobCatalogue, id));
@@ -86,7 +85,14 @@ const sunAt = (progress: number) => ({
     // The hillshade settings are module configuration, so they outlive the switch.
     const styleSelector = document.querySelector('#ui-mapStyle') as HTMLSelectElement;
     standardStyleIDs.forEach((styleId) => styleSelector.add(new Option(styleId)));
-    styleSelector.addEventListener('change', () => map.setStyle(styleSelector.value as StandardStyleID));
+    styleSelector.addEventListener('change', async () => {
+        const styleId = standardStyleIDs.find((id) => id === styleSelector.value);
+        if (!styleId) return;
+
+        await map.setStyle(styleId);
+        // What a look leaves unset comes from the new style.
+        showValues();
+    });
 
     // With the light measured from the viewport it turns with the map; from the map, it stays put.
     document.querySelector('#ui-rotate')?.addEventListener('click', () => {
@@ -95,11 +101,18 @@ const sunAt = (progress: number) => ({
 
     const sun = document.querySelector('#ui-sun') as HTMLInputElement;
     let frame = 0;
+    // The sun moves in whole degrees, so most frames would restyle the hillshade with the same light.
+    let lastSun: { direction: number; altitude: number } | undefined;
     const playDay = (startedAt: number) => (now: number) => {
         const { direction, altitude } = sunAt(((now - startedAt) % DAY_MS) / DAY_MS);
-        setKnob(terrain, terrainKnobCatalogue, 'hillshade.light.direction', direction);
-        setKnob(terrain, terrainKnobCatalogue, 'hillshade.light.altitude', altitude);
-        showValues(['hillshade.light.direction', 'hillshade.light.altitude']);
+        if (direction !== lastSun?.direction || altitude !== lastSun.altitude) {
+            lastSun = { direction, altitude };
+            setKnobs(terrain, terrainKnobCatalogue, {
+                'hillshade.light.direction': direction,
+                'hillshade.light.altitude': altitude,
+            });
+            showValues(['hillshade.light.direction', 'hillshade.light.altitude']);
+        }
         frame = requestAnimationFrame(playDay(startedAt));
     };
     sun.addEventListener('change', () => {

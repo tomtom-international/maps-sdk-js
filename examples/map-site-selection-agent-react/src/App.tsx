@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { MapAgentChat } from './chat';
-import { useAgentSettings } from './hooks/useAgentSettings';
+import { defaultDeploymentId } from './config';
 import { CatchmentOverlapPanel } from './panels/CatchmentOverlapPanel';
 import { ProfilePanel } from './panels/ProfilePanel';
 import { ShortlistPanel } from './panels/ShortlistPanel';
@@ -46,8 +46,7 @@ function DemoOnlyPill() {
 }
 
 export function App() {
-    const { settings } = useAgentSettings();
-    const { transport } = useMapAgent({ deploymentId: settings.deploymentId });
+    const { transport } = useMapAgent({ deploymentId: defaultDeploymentId });
 
     // Drag-resizable chat width (desktop only). Capped at half the viewport — "to the middle".
     const [chatWidth, setChatWidth] = useState(DEFAULT_CHAT_WIDTH);

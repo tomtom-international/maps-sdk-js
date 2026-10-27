@@ -26,17 +26,16 @@ This example demonstrates the TomTom Maps SDK Agent Toolkit plugin set up as a t
 
 3. Set your Azure OpenAI credentials in the same `.env` file:
    ```
-   AZURE_BASE_URL=https://your-resource.cognitiveservices.azure.com
+   AZURE_RESOURCE_NAME=your-resource
    AZURE_API_KEY=your-azure-api-key
    AZURE_DEPLOYMENT_ID=model-router
-   AZURE_API_VERSION=2024-12-01-preview
    ```
    
    Find these values in your [Azure Portal](https://portal.azure.com):
-   - **AZURE_BASE_URL**: Your Azure OpenAI endpoint URL (without `/openai` suffix)
+   - **AZURE_RESOURCE_NAME**: The name of your Azure OpenAI resource, the `your-resource` in `https://your-resource.openai.azure.com`
    - **AZURE_API_KEY**: One of the keys from "Keys and Endpoint" section
-   - **AZURE_DEPLOYMENT_ID**: Your deployment name (e.g., "model-router", "gpt-4o")
-   - **AZURE_API_VERSION**: API version (defaults to "2024-12-01-preview" if not set)
+   - **AZURE_DEPLOYMENT_ID**: Your deployment name (e.g., "model-router", "gpt-4o"); or set **AZURE_MODEL_IDS**, a comma-separated list that takes precedence
+   - **AZURE_GATEWAY_BASE_URL** (optional): An API gateway in front of Azure OpenAI, used instead of the resource name
 
 4. Install dependencies (requires AI SDK v7 and @ai-sdk/azure v4+):
    ```bash

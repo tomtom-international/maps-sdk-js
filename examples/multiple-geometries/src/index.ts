@@ -8,11 +8,10 @@ import {
     type GeometryPaletteMode,
     geometriesKnobCatalogue,
     knobEntryOf,
-    type StandardStyleID,
     standardStyleIDs,
     TomTomMap,
 } from '@tomtom-org/maps-sdk/map';
-import { geocode, geometryData } from '@tomtom-org/maps-sdk/services';
+import { createLatestRequest, geocode, geometryData } from '@tomtom-org/maps-sdk/services';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 import type { Config } from './placeConfiguration';
 import { namedConfigs, palettes } from './placeConfiguration';
@@ -60,15 +59,28 @@ const OWN_PALETTE = "The region's own";
             surroundingElements: ['#ui-panel'],
         }) as LngLatBoundsLike;
 
+    // A newer pick drops the requests still on their way for an earlier one.
+    const latestPick = createLatestRequest();
     const updateMap = async (config: Config) => {
         region = config;
         paletteSelector.value = OWN_PALETTE;
         paletteModeSelector.value = config.geometryConfig.fill?.paletteMode ?? String(paletteModeKnob.default);
-        placeSubdivisions = await geocode({ limit: 100, query: '', ...config.searchConfig });
+        const subdivisions = await latestPick.run((signal) =>
+            geocode({ limit: 100, query: '', ...config.searchConfig, signal }),
+        );
+        if (!subdivisions.current) return;
+
+        placeSubdivisions = subdivisions.value;
         map.mapLibreMap.fitBounds(placeBBox());
-        const geometries = await geometryData({ geometries: placeSubdivisions, zoom: 14 });
-        geometryModule.applyConfig({ ...config.geometryConfig, fill: fillConfig() });
-        geometryModule.show(geometries);
+        const geometries = await latestPick.run((signal) =>
+            geometryData({ geometries: placeSubdivisions, zoom: 14, signal }),
+        );
+        if (!geometries.current) return;
+
+        // `applyConfig` replaces the whole config, so the layer position picked on the radios carries over.
+        const { beforeLayerConfig } = geometryModule.getConfig() ?? {};
+        geometryModule.applyConfig({ ...config.geometryConfig, beforeLayerConfig, fill: fillConfig() });
+        geometryModule.show(geometries.value);
     };
 
     const listenToUIEvents = async () => {
@@ -88,9 +100,10 @@ const OWN_PALETTE = "The region's own";
 
         const stylesSelector = document.querySelector('#ui-mapStyles') as HTMLSelectElement;
         standardStyleIDs.forEach((id) => stylesSelector.add(new Option(id)));
-        stylesSelector.addEventListener('change', (event) =>
-            map.setStyle((event.target as HTMLOptionElement).value as StandardStyleID),
-        );
+        stylesSelector.addEventListener('change', () => {
+            const styleId = standardStyleIDs.find((id) => id === stylesSelector.value);
+            if (styleId) map.setStyle(styleId);
+        });
 
         document
             .querySelector('#ui-reCenter')

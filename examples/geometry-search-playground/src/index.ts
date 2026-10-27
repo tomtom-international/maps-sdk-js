@@ -1,7 +1,6 @@
-import { bboxFromGeoJSON, TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { bboxFromGeoJSON, type OptionalBBox, TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { GeometriesModule, PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { createLatestRequest, discoverPlaces, geocodeOne, geometryData } from '@tomtom-org/maps-sdk/services';
-import type { LngLatBoundsLike } from 'maplibre-gl';
 import './style.css';
 import { API_KEY } from './config';
 
@@ -21,9 +20,11 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     const placesModule = await PlacesModule.create(map);
     const geometryModule = await GeometriesModule.create(map, { fill: { style: 'inverted' } });
 
-    let placeToSearchBBox: LngLatBoundsLike;
+    let placeToSearchBBox: OptionalBBox;
     // A fresh search or Clear drops the previous chain of calls wherever it got to
     const latestSearch = createLatestRequest();
+
+    const reCenter = () => placeToSearchBBox && map.mapLibreMap.fitBounds(placeToSearchBBox, fitBoundsOptions);
 
     const searchPlacesInGeometry = async (placesQuery: string, geometryQuery: string) => {
         if (!placesQuery || !geometryQuery) return;
@@ -31,7 +32,6 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         const search = await latestSearch.run(async (signal) => {
             const placeToSearchInside = await geocodeOne({ query: geometryQuery, signal });
             const geometryToSearch = await geometryData({ geometries: [placeToSearchInside], signal });
-            // Searching within the obtained geometry:
             const places = await discoverPlaces({
                 query: placesQuery,
                 geometries: [geometryToSearch],
@@ -43,15 +43,15 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         if (!search.current) return;
 
         const { placeToSearchInside, geometryToSearch, places } = search.value;
-        // (bounding box is also available directly in placeToSearchInside.bbox)
-        placeToSearchBBox = bboxFromGeoJSON(placeToSearchInside) as LngLatBoundsLike;
+        placeToSearchBBox = bboxFromGeoJSON(placeToSearchInside);
         geometryModule.show(geometryToSearch);
         placesModule.show(places);
-        map.mapLibreMap.fitBounds(placeToSearchBBox, fitBoundsOptions);
+        reCenter();
     };
 
     const clear = () => {
         latestSearch.cancel();
+        placeToSearchBBox = undefined;
         searchTextBox.value = '';
         inTextBox.value = '';
         placesModule.clear();
@@ -71,9 +71,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
 
         (document.querySelector('#ui-clearButton') as HTMLButtonElement).addEventListener('click', clear);
 
-        document
-            .querySelector('#ui-reCenter')
-            ?.addEventListener('click', () => map.mapLibreMap.fitBounds(placeToSearchBBox, fitBoundsOptions));
+        document.querySelector('#ui-reCenter')?.addEventListener('click', reCenter);
     };
 
     listenToUserEvents();

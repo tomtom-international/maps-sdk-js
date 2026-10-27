@@ -120,7 +120,7 @@ The plugin ships a `DEFAULT_TOOLS` registry that covers search, routing, traffic
 | `getTrafficIncidents` | Fetch traffic incidents within an area (viewport, named place, route corridor, polygon, IDs). By default, the entry keeps refreshing |
 | `setTrafficIncidentsMonitor` | Turn background refreshing of an already-loaded incidents entry on or off |
 | `clusterIncidents` | Group loaded incidents into hotspots (DBSCAN) with road and category labels, delay totals and trends |
-| `focusIncidents` | Highlight a subset of incidents (by id / category / severity) on the map and dim the rest |
+| `focusIncidents` | Highlight a subset of incidents by id (`analyseData` can pick them by category or severity) on the map and dim the rest |
 | `getTrafficAreaAnalytics` | Fetch historical traffic analytics (speed, congestion, travel time) for an area |
 
 ### Trackers
@@ -199,9 +199,9 @@ const agent = createMapAgent(map, {
 
 | Tool | Description |
 |---|---|
-| `recallState` | Read session state: a snapshot of every slice, one kind's entries (`places`, `routes`, `ranges`, `geometries`, `byod`, …), or one entry by `{ kind, id }` |
+| `recallState` | Read session state: a snapshot of the places, routes and ranges entries with the map style and layer configs, one kind's entries (`places`, `routes`, `ranges`, `geometries`, `byod`, …), or one entry by `{ kind, id }` |
 | `setEntryMode` | Switch a slice between `multiple` (default) and `single` entry modes |
-| `resetState` | Reset one or all state slices |
+| `resetState` | Reset every state slice and the map style to their defaults |
 
 ### Utilities
 
@@ -485,22 +485,26 @@ const agent = createMapAgent(map, {
 
 ### Wrapping default tools
 
-To add logging, analytics or custom behavior around an existing tool, wrap it:
+To add logging, analytics or custom behavior around an existing tool, wrap it. `DEFAULT_TOOLS` types
+each value as a `ToolDefinition`: `locatePlace` is a static `ToolEntry`, while builders such as
+`discoverPlaces` are functions of `ToolBuildOptions` that return one.
 
 ```typescript
-import { DEFAULT_TOOLS, createMapAgent } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+import { DEFAULT_TOOLS, createMapAgent, type ToolEntry } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 
-const wrappedDiscover = {
-    ...DEFAULT_TOOLS.discoverPlaces,
-    execute: async (input, state) => {
-        console.log('[Analytics] Search:', input.query);
-        const result = await DEFAULT_TOOLS.discoverPlaces.execute(input, state);
-        console.log('[Analytics] Found:', result.count, 'places');
+const locatePlace = DEFAULT_TOOLS.locatePlace as ToolEntry;
+
+const wrappedLocatePlace: ToolEntry = {
+    ...locatePlace,
+    execute: async (input, state, options) => {
+        console.log('[Analytics] Locate:', input);
+        const result = await locatePlace.execute(input, state, options);
+        console.log('[Analytics] Result:', result);
         return result;
     },
 };
 
-createMapAgent(map, { model, tools: { discoverPlaces: wrappedDiscover } });
+createMapAgent(map, { model, tools: { locatePlace: wrappedLocatePlace } });
 ```
 
 ### Common configuration patterns

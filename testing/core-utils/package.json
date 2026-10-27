@@ -17,6 +17,7 @@
     "test": "vitest run --passWithNoTests"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
     "@playwright/test": "catalog:",
     "@tsconfig/recommended": "catalog:",
     "@types/geojson": "catalog:",

@@ -69,10 +69,6 @@ export class HeatmapOverlay {
         this.applyVisibility();
     }
 
-    getMode(): VizMode {
-        return this.mode;
-    }
-
     remove(): void {
         if (this.removed) return;
 

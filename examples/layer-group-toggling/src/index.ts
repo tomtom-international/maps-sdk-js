@@ -5,10 +5,9 @@ import {
     BaseMapModule,
     baseMapKnobCatalogue,
     baseMapLayerGroupNames,
-    KnobEntry,
+    knobEntryOf,
     POIsModule,
     poisKnobCatalogue,
-    StandardStyleID,
     standardStyleIDs,
     TomTomMap,
 } from '@tomtom-org/maps-sdk/map';
@@ -22,15 +21,12 @@ const humanizeGroupName = (name: string): string => {
     return spaced.charAt(0).toUpperCase() + spaced.slice(1);
 };
 
-// A module's knob catalogue describes each of its settings, by the setting's path in its config.
-const descriptionOf = <ID extends string>(catalogue: readonly KnobEntry<ID>[], id: NoInfer<ID>): string =>
-    catalogue.find((knob) => knob.id === id)?.description ?? '';
-
 // Build one toggle row per base-map layer group and return its checkbox.
 const addToggleRow = (container: HTMLElement, group: BaseMapLayerGroupName): HTMLInputElement => {
     const label = document.createElement('label');
     label.className = 'ui-toggle-label';
-    label.title = descriptionOf(baseMapKnobCatalogue, `groups.${group}.visible`);
+    // A module's knob catalogue describes each of its settings, by the setting's path in its config.
+    label.title = knobEntryOf(baseMapKnobCatalogue, `groups.${group}.visible`).description;
     label.innerHTML = `
         <input type="checkbox" class="ui-toggle-input" id="ui-toggle-${group}">
         <span class="ui-toggle-switch"></span>
@@ -67,7 +63,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     const poisModule = await POIsModule.get(map);
     const poisToggle = document.querySelector('#ui-togglePOIs') as HTMLInputElement;
     const poisLabel = poisToggle.closest('label');
-    if (poisLabel) poisLabel.title = descriptionOf(poisKnobCatalogue, 'visible');
+    if (poisLabel) poisLabel.title = knobEntryOf(poisKnobCatalogue, 'visible').description;
 
     poisToggle.addEventListener('change', () => poisModule.setVisible(poisToggle.checked));
 
@@ -75,9 +71,10 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     for (const id of standardStyleIDs) {
         stylesSelector.add(new Option(id));
     }
-    stylesSelector.addEventListener('change', (event) =>
-        map.setStyle((event.target as HTMLOptionElement).value as StandardStyleID),
-    );
+    stylesSelector.addEventListener('change', () => {
+        const styleId = standardStyleIDs.find((id) => id === stylesSelector.value);
+        if (styleId) map.setStyle(styleId);
+    });
 
     initTogglePanel();
 })();

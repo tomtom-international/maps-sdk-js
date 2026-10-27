@@ -1,6 +1,11 @@
 import type { AreaAnalyticsAverageEntry } from '@tomtom-org/maps-sdk/core';
 import { describe, expect, it } from 'vitest';
-import { MORNING_HOURS, utcOffsetHours, weekdayPeakCongestion } from '../../agent/traffic-peaks';
+import {
+    analysedWindowOffsetHours,
+    MORNING_HOURS,
+    utcOffsetHours,
+    weekdayPeakCongestion,
+} from '../../agent/traffic-peaks';
 
 // A full average week labelled in UTC, as Area Analytics sends it: congestion 50 from 05:00 to 07:00
 // UTC on weekdays, which is 07:00 to 09:00 in Amsterdam summer time, and 10 at every other hour.
@@ -11,6 +16,15 @@ const averageWeek: AreaAnalyticsAverageEntry[] = ([1, 2, 3, 4, 5, 6, 7] as const
         congestionLevel: day <= 5 && hour >= 5 && hour <= 7 ? 50 : 10,
     })),
 );
+
+describe('analysedWindowOffsetHours', () => {
+    it('reads the offset of the analysed days, not of the day the profile runs', () => {
+        const march = { startDate: new Date('2026-03-01'), endDate: new Date('2026-03-27') };
+        expect(analysedWindowOffsetHours('Europe/Amsterdam', march)).toBe(1);
+        const july = { startDate: new Date('2026-07-01'), endDate: new Date('2026-07-29') };
+        expect(analysedWindowOffsetHours('Europe/Amsterdam', july)).toBe(2);
+    });
+});
 
 describe('utcOffsetHours', () => {
     it('reads the offset of the date it is given, summer or winter', () => {

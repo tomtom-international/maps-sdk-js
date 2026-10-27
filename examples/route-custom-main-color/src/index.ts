@@ -27,7 +27,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
 
     const state: RouteColorState = { color: undefined };
     initControls(state, () => {
-        routingModule.applyConfig({ color: state.color });
+        routingModule.updateConfig({ color: state.color });
     });
 
     initTogglePanel();

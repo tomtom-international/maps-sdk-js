@@ -1,5 +1,11 @@
-import type { AreaAnalyticsMetricKey, TrafficAreaAnalytics } from '@tomtom-org/maps-sdk/core';
+import type {
+    AreaAnalyticsAverageEntry,
+    AreaAnalyticsHourlyEntry,
+    AreaAnalyticsMetricKey,
+    TrafficAreaAnalytics,
+} from '@tomtom-org/maps-sdk/core';
 import {
+    AREA_ANALYTICS_DEFAULTS,
     type AreaAnalyticsDisplayMode,
     resolveColorStops,
     type TrafficAreaAnalyticsModule,
@@ -163,8 +169,12 @@ export function AnalyticsControlPanel({ analytics, module }: AnalyticsControlPan
     const [collapsed, setCollapsed] = useState(false);
 
     const config = module.getConfig();
-    const [metric, setMetric] = useState<AreaAnalyticsMetricKey>(config?.activeMetric ?? 'congestionLevel');
-    const [mode, setMode] = useState<AreaAnalyticsDisplayMode>(config?.displayMode ?? 'hexgrid-3d');
+    const [metric, setMetric] = useState<AreaAnalyticsMetricKey>(
+        config?.activeMetric ?? AREA_ANALYTICS_DEFAULTS.activeMetric,
+    );
+    const [mode, setMode] = useState<AreaAnalyticsDisplayMode>(
+        config?.displayMode ?? AREA_ANALYTICS_DEFAULTS.displayMode,
+    );
 
     const onMetricChange = useCallback(
         (value: AreaAnalyticsMetricKey) => {
@@ -184,7 +194,7 @@ export function AnalyticsControlPanel({ analytics, module }: AnalyticsControlPan
 
     return (
         <div
-            className={`absolute bottom-3 left-3 z-[5] max-w-[320px] rounded-(--ui-rounded-10) border border-(--ui-border-low-em) bg-(--ui-surface-0) text-[13px] text-(--ui-text-high-em) shadow-(--ui-elevation-e4) backdrop-blur-md ${collapsed ? 'px-4 py-3' : 'p-4'}`}
+            className={`absolute bottom-3 left-3 z-[5] max-w-[320px] rounded-(--ui-rounded-10) border border-(--ui-border-low-em) bg-(--ui-surface-0) text-[13px] text-(--ui-text-high-em) shadow-(--ui-elevation-e4) ${collapsed ? 'px-4 py-3' : 'p-4'}`}
         >
             <div
                 className={`flex cursor-pointer select-none items-center justify-between ${collapsed ? '' : 'mb-3'}`}
@@ -215,15 +225,18 @@ function getCellColors(module: TrafficAreaAnalyticsModule, metric: AreaAnalytics
     return resolveColorStops(metric, module.getConfig()?.metrics?.[metric]).stops.map((stop) => stop.color);
 }
 
-function computeHourlyAverages(entries: ReadonlyArray<Record<string, unknown>>, metric: string): number[] {
+function computeHourlyAverages(
+    entries: ReadonlyArray<AreaAnalyticsAverageEntry | AreaAnalyticsHourlyEntry>,
+    metric: AreaAnalyticsMetricKey,
+): number[] {
     const sums = new Array(24).fill(0);
     const counts = new Array(24).fill(0);
 
     for (const entry of entries) {
-        const hour = entry.hour as number | undefined;
-        if (hour === undefined || hour < 0 || hour > 23) continue;
+        const hour = entry.hour;
+        if (hour < 0 || hour > 23) continue;
 
-        const value = entry[metric] as number | undefined;
+        const value = entry[metric];
         if (value != null) {
             sums[hour] += value;
             counts[hour]++;

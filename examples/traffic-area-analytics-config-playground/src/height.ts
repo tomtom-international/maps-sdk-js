@@ -1,13 +1,10 @@
-import type { AreaAnalyticsMetricKey } from '@tomtom-org/maps-sdk/core';
-import type { AreaAnalyticsHeightConfig } from '@tomtom-org/maps-sdk/map';
-
-type ScaleMode = NonNullable<AreaAnalyticsHeightConfig['scaleMode']>;
+import type { AreaAnalyticsHeightConfig, AreaAnalyticsScaleMode } from '@tomtom-org/maps-sdk/map';
 
 /** A height knob of the active metric, by its path below `metrics.<metric>.height`. */
 export type HeightKnob = 'scaleMode' | 'maxMeters' | 'metersPerUnit' | 'minMeters';
 
 export type HeightControls = {
-    update: (metric: AreaAnalyticsMetricKey, config?: AreaAnalyticsHeightConfig) => void;
+    update: (config?: AreaAnalyticsHeightConfig) => void;
 };
 
 export const initHeightControls = (
@@ -15,7 +12,7 @@ export const initHeightControls = (
     metersPerUnitId: string,
     minHeightId: string,
     scaleModeId: string,
-    setHeightKnob: (knob: HeightKnob, value: number | ScaleMode) => void,
+    setHeightKnob: (knob: HeightKnob, value: number | AreaAnalyticsScaleMode) => void,
 ): HeightControls => {
     const maxHeightInput = document.getElementById(maxHeightId) as HTMLInputElement;
     const metersPerUnitInput = document.getElementById(metersPerUnitId) as HTMLInputElement;
@@ -43,7 +40,7 @@ export const initHeightControls = (
 
     scaleModeSelect.addEventListener('change', () => {
         updateFieldVisibility();
-        setHeightKnob('scaleMode', scaleModeSelect.value as ScaleMode);
+        setHeightKnob('scaleMode', scaleModeSelect.value as AreaAnalyticsScaleMode);
     });
     bindNumberInput(maxHeightInput, 'maxMeters');
     bindNumberInput(metersPerUnitInput, 'metersPerUnit');
@@ -52,7 +49,7 @@ export const initHeightControls = (
     updateFieldVisibility();
 
     return {
-        update(_metric: AreaAnalyticsMetricKey, config?: AreaAnalyticsHeightConfig): void {
+        update(config?: AreaAnalyticsHeightConfig): void {
             const isRaw = config?.scaleMode === 'raw';
             scaleModeSelect.value = config?.scaleMode ?? 'predefinedRange';
             updateFieldVisibility();

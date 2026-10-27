@@ -1,7 +1,7 @@
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
 import {
+    bboxFromCoordsArray,
     getCoordinateAtRouteProgress,
-    getSectionBBox,
     type Route,
     type RouteCoordinateAtProgress,
 } from '@tomtom-org/maps-sdk/core';
@@ -115,8 +115,10 @@ export const RouteSectionsBar = ({
     );
 };
 
+// Fitted to every point of the section: a winding one strays outside `getSectionBBox`'s sampled box.
 const zoomToSection = (modules: MapModules, route: Route, block: LaneBlock) => {
-    const bbox = getSectionBBox(route, block.section);
+    const { startPointIndex, endPointIndex } = block.section;
+    const bbox = bboxFromCoordsArray(route.geometry.coordinates.slice(startPointIndex, endPointIndex + 1));
     if (bbox) fitBetweenPanels(modules.map, bbox, 15);
 };
 

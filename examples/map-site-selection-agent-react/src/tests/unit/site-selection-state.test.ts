@@ -42,7 +42,7 @@ describe('SiteSelectionState', () => {
         slice.reset();
         expect(slice.preferences).toEqual(DEFAULT_SITE_SELECTION_PREFERENCES);
         expect(DEFAULT_WEIGHTS).toEqual(shippedWeights);
-        // mutating the returned defaults must not bleed back into the slice
+        // mutating the restored defaults must not bleed back into the shipped defaults
         slice.preferences.demandAnchors.push('leak');
         expect(new SiteSelectionState().preferences.demandAnchors).not.toContain('leak');
     });

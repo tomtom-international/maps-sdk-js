@@ -3,12 +3,13 @@ import {
     type CustomGeoJSONLayerSpec,
     type GeometriesModule,
     type GeometryBeforeLayerConfig,
+    MAP_BOLD_FONT,
 } from '@tomtom-org/maps-sdk/map';
 import type { ToolState } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import * as turf from '@turf/turf';
 import type { Feature, FeatureCollection, LineString, MultiPolygon, Point, Polygon } from 'geojson';
 import { type ExpressionSpecification, Marker, Popup } from 'maplibre-gl';
-import { clipPolygons } from '../agent/geometry';
+import { type AreaGeometry, clipPolygons } from '../agent/geometry';
 import sitePinSvg from './assets/site-pin.svg?raw';
 
 // Shared rich map visuals for the site tools. Markers + connector lines (with distance labels) are
@@ -16,8 +17,6 @@ import sitePinSvg from './assets/site-pin.svg?raw';
 // higher-level places/ranges slices don't: per-point colour, dashed connectors, and a label rendered
 // ALONG each connector line (the nearest-competitor / parking distance). Numbered, region-clipped
 // hexes use the customGeometries slice (fill colour + centred title number).
-
-const GLYPH_FONT = 'Noto-Bold'; // the style's bundled glyph set (matches the SDK's own symbol layers)
 
 // CSS font shorthands for the HTML overlays (popups, badges, pins) — the Playbook titles the panels
 // use, sharable here because these elements render outside React.
@@ -33,7 +32,7 @@ export const KIND_COLOR: Record<OverlayKind, string> = {
     competitor: '#E60000', // design dot red — rivals
     parking: '#255AA0', // blue — parking
     anchor: '#6B7280', // grey — demand anchors / area make-up POIs
-    target: '#7C3AED', // violet — whitespace target peers
+    target: '#7C3AED', // violet — compareCatchments' connectors to the existing sites
 };
 // Dots are shrunk ~1/3 from the design size (POI dot radius 6 → 4) so dense scans with many markers stay
 // legible without an arbitrary draw cap; whitespace anchor dots stay a touch smaller still.
@@ -71,8 +70,7 @@ const SCAN_AREA_COLOR = '#5B4FA8'; // whitespace scan purple — distinct from t
 /** Style the whitespace scan-area polygon (faint fill + boundary, split under roads/labels). */
 export const styleScanArea = (module: GeometriesModule): void => {
     const config = module.getConfig();
-    module.applyConfig({
-        ...config,
+    module.updateConfig({
         fill: { ...config?.fill, color: SCAN_AREA_COLOR, opacity: 0.08 },
         line: { ...config?.line, color: SCAN_AREA_COLOR, width: 3, opacity: 0.9 },
         beforeLayerConfig: SPLIT_BEFORE_LAYER,
@@ -93,8 +91,7 @@ export const withColor = <F extends Feature<Polygon | MultiPolygon>>(feature: F,
 export const styleCatchment = (module: GeometriesModule, perFeatureColor = false): void => {
     const config = module.getConfig();
     const color = perFeatureColor ? PER_FEATURE_COLOR : CATCHMENT_COLOR;
-    module.applyConfig({
-        ...config,
+    module.updateConfig({
         fill: { ...config?.fill, color, opacity: 0.1 },
         line: { ...config?.line, color, width: 3, opacity: 1 },
         beforeLayerConfig: SPLIT_BEFORE_LAYER,
@@ -105,7 +102,7 @@ export const styleCatchment = (module: GeometriesModule, perFeatureColor = false
 };
 
 // Categorical palette for colour-by-category overlays (e.g. demand POIs in findWhitespace). Avoids
-// the competitor red (#DF1B12) so the two never read as the same thing. Cycled by category index.
+// the competitor red (#E60000) so the two never read as the same thing. Cycled by category index.
 export const CATEGORY_PALETTE = [
     '#2F6FB0', // blue
     '#1F9D55', // green
@@ -158,7 +155,7 @@ const OVERLAY_LAYERS: CustomGeoJSONLayerSpec[] = [
         layout: {
             'symbol-placement': 'line-center',
             'text-field': ['get', 'label'],
-            'text-font': [GLYPH_FONT],
+            'text-font': [MAP_BOLD_FONT],
             'text-size': 12,
         },
         paint: { 'text-color': ['get', 'color'], 'text-halo-color': '#ffffff', 'text-halo-width': 1.6 },
@@ -179,7 +176,7 @@ const OVERLAY_LAYERS: CustomGeoJSONLayerSpec[] = [
         filter: ['all', ['==', ['geometry-type'], 'Point'], ['!=', ['get', 'label'], '']],
         layout: {
             'text-field': ['get', 'label'],
-            'text-font': [GLYPH_FONT],
+            'text-font': [MAP_BOLD_FONT],
             'text-size': 11,
             'text-offset': [0, 1.1],
             'text-anchor': 'top',
@@ -497,8 +494,6 @@ export const drawRichOverlay = async (
     await attachMarkerPopups(state, entryId);
 };
 
-type AreaGeometry = Polygon | MultiPolygon;
-
 /**
  * Clip a hex to the region so partial cells are trimmed at the boundary (no hexes spilling outside).
  * Returns the clipped polygon, or null when the hex doesn't overlap the area at all.
@@ -551,8 +546,7 @@ export const drawNumberedHexes = async (state: ToolState, label: string, hexes: 
     // Configured before showing — no default-theme flash.
     const geometriesModule = await state.customGeometries.getEntryGeometriesModule(entryId, 'filled');
     const config = geometriesModule.getConfig();
-    geometriesModule.applyConfig({
-        ...config,
+    geometriesModule.updateConfig({
         // The fill sits above the roads (below labels) but fades out as the user zooms in: pockets
         // read strongly at district overview, then recede so the map underneath stays explorable at
         // street level — only the coloured border keeps marking the pocket.
@@ -600,8 +594,7 @@ export const drawHexOutlineGrid = async (
     // a transparent fill (no 5px flash), split across the layer stack: fill below roads, line below labels.
     const module = await state.customGeometries.getEntryGeometriesModule(entryId, 'outline');
     const config = module.getConfig();
-    module.applyConfig({
-        ...config,
+    module.updateConfig({
         fill: { ...config?.fill, opacity: 0 },
         line: {
             ...config?.line,

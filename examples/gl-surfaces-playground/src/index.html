@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>GL Surfaces playground</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">GL Surfaces</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+            <div class="ui-panel-content">
+                <div class="ui-section" id="ui-map">
+                    <label class="ui-form-field">
+                        <span class="ui-form-label">Place</span>
+                        <select class="ui-dropdown" id="ui-place"></select>
+                    </label>
+                    <label class="ui-form-field">
+                        <span class="ui-form-label">Map style</span>
+                        <select class="ui-dropdown" id="ui-mapStyle"></select>
+                    </label>
+                </div>
+                <details class="ui-section ui-disclosure">
+                    <summary class="ui-disclosure-summary ui-subheading">Surfaces</summary>
+                    <div class="ui-disclosure-content">
+                        <div id="ui-surfaces"></div>
+                        <details class="ui-disclosure">
+                            <summary class="ui-disclosure-summary ui-form-label">Water</summary>
+                            <div class="ui-disclosure-content" id="ui-water"></div>
+                            <div class="ui-color-grid" id="ui-water-colors"></div>
+                        </details>
+                        <details class="ui-disclosure">
+                            <summary class="ui-disclosure-summary ui-form-label">Forest</summary>
+                            <div class="ui-disclosure-content" id="ui-forest"></div>
+                            <div class="ui-color-grid" id="ui-forest-colors"></div>
+                        </details>
+                        <details class="ui-disclosure">
+                            <summary class="ui-disclosure-summary ui-form-label">Grass</summary>
+                            <div class="ui-disclosure-content" id="ui-grass"></div>
+                            <div class="ui-color-grid" id="ui-grass-colors"></div>
+                        </details>
+                        <details class="ui-disclosure">
+                            <summary class="ui-disclosure-summary ui-form-label">Farmland</summary>
+                            <div class="ui-disclosure-content" id="ui-farmland"></div>
+                            <div class="ui-color-grid" id="ui-farmland-colors"></div>
+                        </details>
+                        <details class="ui-disclosure">
+                            <summary class="ui-disclosure-summary ui-form-label">Sand</summary>
+                            <div class="ui-disclosure-content" id="ui-sand"></div>
+                            <div class="ui-color-grid" id="ui-sand-colors"></div>
+                        </details>
+                        <details class="ui-disclosure">
+                            <summary class="ui-disclosure-summary ui-form-label">Ice and scrub</summary>
+                            <div class="ui-disclosure-content" id="ui-ice-scrub"></div>
+                            <div class="ui-color-grid" id="ui-ice-scrub-colors"></div>
+                        </details>
+                        <details class="ui-disclosure">
+                            <summary class="ui-disclosure-summary ui-form-label">Mud and shingle</summary>
+                            <div class="ui-disclosure-content" id="ui-mud-gravel"></div>
+                            <div class="ui-color-grid" id="ui-mud-colors"></div>
+                        </details>
+                        <details class="ui-disclosure">
+                            <summary class="ui-disclosure-summary ui-form-label">Rock, paving and roads</summary>
+                            <div class="ui-disclosure-content" id="ui-rock-roads"></div>
+                            <div class="ui-color-grid" id="ui-paving-colors"></div>
+                        </details>
+                    </div>
+                </details>
+                <details class="ui-section ui-disclosure">
+                    <summary class="ui-disclosure-summary ui-subheading">Season and colours</summary>
+                    <div class="ui-disclosure-content">
+                        <div id="ui-season"></div>
+                        <div class="ui-color-grid" id="ui-foundation-colors"></div>
+                    </div>
+                </details>
+                <details class="ui-section ui-disclosure">
+                    <summary class="ui-disclosure-summary ui-subheading">3D trees</summary>
+                    <div class="ui-disclosure-content">
+                        <div id="ui-trees"></div>
+                        <div class="ui-color-grid" id="ui-trees-colors"></div>
+                    </div>
+                </details>
+                <details class="ui-section ui-disclosure">
+                    <summary class="ui-disclosure-summary ui-subheading">Light and 3D buildings</summary>
+                    <div class="ui-disclosure-content" id="ui-light"></div>
+                </details>
+                <details class="ui-section ui-disclosure">
+                    <summary class="ui-disclosure-summary ui-subheading">Sky and wind</summary>
+                    <div class="ui-disclosure-content">
+                        <div class="ui-color-grid" id="ui-colors"></div>
+                        <div id="ui-wind"></div>
+                    </div>
+                </details>
+                <details class="ui-section ui-disclosure">
+                    <summary class="ui-disclosure-summary ui-subheading">Map effects</summary>
+                    <div class="ui-disclosure-content" id="ui-effects"></div>
+                </details>
+                <div class="ui-section">
+                    <button class="ui-button" id="ui-reset">Reset</button>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

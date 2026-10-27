@@ -1,4 +1,4 @@
-import { type AssistantRuntime, AssistantRuntimeProvider, ThreadPrimitive, useAuiState } from '@assistant-ui/react';
+import { AssistantRuntimeProvider, ThreadPrimitive, useAuiState } from '@assistant-ui/react';
 import { useChatRuntime } from '@assistant-ui/react-ai-sdk';
 import type { ClassificationResult, createMapAgent } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import type { ChatTransport, InferAgentUIMessage } from 'ai';
@@ -122,7 +122,7 @@ export function MapAgentChat({
     // Mobile collapse: shrinks the panel to a thin strip when isCollapsed is true.
     const collapsedClass = isCollapsed ? 'max-sm:max-h-12' : 'max-sm:max-h-[50dvh]';
     return (
-        <AssistantRuntimeProvider runtime={runtime as unknown as AssistantRuntime}>
+        <AssistantRuntimeProvider runtime={runtime}>
             <ClassificationsProvider classifications={classifications}>
                 <ThreadPrimitive.Root
                     className={`flex w-[380px] flex-col gap-4 bg-(--ui-surface-0) p-2 transition-[max-height] max-sm:w-full max-sm:overflow-hidden ${collapsedClass}`}

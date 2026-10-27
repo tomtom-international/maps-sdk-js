@@ -1,6 +1,6 @@
 import { bboxFromGeoJSON, RoutePlanningLocation, TomTomConfig, Waypoint } from '@tomtom-org/maps-sdk/core';
 import { RoutingModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
-import { calculateRoute, geocodeOne } from '@tomtom-org/maps-sdk/services';
+import { calculateRoute, createLatestRequest, geocodeOne } from '@tomtom-org/maps-sdk/services';
 import type { Position } from 'geojson';
 import { GeoJSONSource, Map } from 'maplibre-gl';
 import './style.css';
@@ -13,11 +13,18 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
 (async () => {
     const state = {
         locations: [] as RoutePlanningLocation[],
-        allDrawnCoords: [] as Position[],
-        lastDrawnCoords: [] as Position[],
+        allDrawnCoordinates: [] as Position[],
+        lastDrawnCoordinates: [] as Position[],
         drawnLineSource: undefined as GeoJSONSource | undefined,
         mouseDown: false,
-        controlKeyDown: false,
+        altKeyDown: false,
+    };
+    // A reset and a finished drawing each replan the route; the later one wins whatever answers first.
+    const latestRoute = createLatestRequest();
+    const showLatestRoute = async (routingModule: RoutingModule) => {
+        const locations = [...state.locations];
+        const route = await latestRoute.run((signal) => calculateRoute({ locations, signal }));
+        if (route.current) routingModule.showRoutes(route.value);
     };
 
     const initDrawMapStyle = (mapLibreMap: Map, routingModule: RoutingModule) => {
@@ -45,51 +52,58 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     };
 
     const resetState = async (routingModule: RoutingModule, waypoints: Waypoint[]) => {
-        state.allDrawnCoords = [];
-        state.lastDrawnCoords = [];
+        state.allDrawnCoordinates = [];
+        state.lastDrawnCoordinates = [];
         state.locations = [...waypoints];
         routingModule.showWaypoints(waypoints);
-        routingModule.showRoutes(await calculateRoute({ locations: state.locations }));
         state.drawnLineSource?.setData({ type: 'LineString', coordinates: [] });
+        await showLatestRoute(routingModule);
     };
 
     const initDrawUserEvents = (mapLibreMap: Map, routingModule: RoutingModule): void => {
-        window.addEventListener('keydown', (ev) => {
-            if (ev.key === 'Alt') {
-                state.controlKeyDown = true;
-                mapLibreMap.getCanvas().style.cursor = 'pointer';
-            }
-            if (state.mouseDown) {
-                mapLibreMap.dragPan.disable();
-            }
+        window.addEventListener('keydown', (event) => {
+            if (event.key !== 'Alt') return;
+
+            state.altKeyDown = true;
+            mapLibreMap.getCanvas().style.cursor = 'pointer';
+            if (state.mouseDown) mapLibreMap.dragPan.disable();
         });
 
-        window.addEventListener('keyup', async (ev) => {
-            if (ev.key === 'Alt') {
-                state.controlKeyDown = false;
+        window.addEventListener('keyup', async (event) => {
+            if (event.key === 'Alt') {
+                state.altKeyDown = false;
                 mapLibreMap.getCanvas().style.cursor = 'default';
                 mapLibreMap.dragPan.enable();
-                if (state.lastDrawnCoords.length) {
-                    state.locations.splice(state.locations.length - 1, 0, state.lastDrawnCoords);
-                    state.lastDrawnCoords = [];
-                    routingModule.showRoutes(await calculateRoute({ locations: state.locations }));
+                if (state.lastDrawnCoordinates.length) {
+                    state.locations.splice(state.locations.length - 1, 0, state.lastDrawnCoordinates);
+                    state.lastDrawnCoordinates = [];
+                    await showLatestRoute(routingModule);
                 }
             }
         });
 
         mapLibreMap.on('mousedown', () => {
             state.mouseDown = true;
-            if (state.controlKeyDown) {
+            if (state.altKeyDown) {
                 mapLibreMap.dragPan.disable();
             }
         });
 
-        mapLibreMap.on('mousemove', (ev) => {
-            if (state.mouseDown && state.controlKeyDown) {
-                state.allDrawnCoords.push(ev.lngLat.toArray());
-                state.lastDrawnCoords.push(ev.lngLat.toArray());
-                state.drawnLineSource?.setData({ type: 'LineString', coordinates: state.allDrawnCoords });
-            }
+        // The trail grows with every pointer move, so it is redrawn at most once per frame.
+        let redrawPending = false;
+        mapLibreMap.on('mousemove', (event) => {
+            if (!state.mouseDown || !state.altKeyDown) return;
+
+            const position = event.lngLat.toArray();
+            state.allDrawnCoordinates.push(position);
+            state.lastDrawnCoordinates.push(position);
+            if (redrawPending) return;
+
+            redrawPending = true;
+            requestAnimationFrame(() => {
+                redrawPending = false;
+                state.drawnLineSource?.setData({ type: 'LineString', coordinates: state.allDrawnCoordinates });
+            });
         });
 
         mapLibreMap.on('mouseup', async () => {

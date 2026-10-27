@@ -11,7 +11,6 @@ import {
 } from '@tomtom-org/maps-sdk/core';
 import { BaseMapModule, RoutingModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { calculateRoute, geocodeOne } from '@tomtom-org/maps-sdk/services';
-import type { LngLatBoundsLike } from 'maplibre-gl';
 import './style.css';
 import { API_KEY } from './config';
 import { initTogglePanel } from './togglePanel';
@@ -57,7 +56,7 @@ const weighed = ({ ferry, carTrain, toll, traffic, unpaved }: SectionsWithin): C
 
 (async () => {
     const waypoints = await Promise.all(['London', 'Paris'].map(geocodeOne));
-    const bounds = bboxFromGeoJSON(waypoints) as LngLatBoundsLike;
+    const bounds = bboxFromGeoJSON(waypoints);
     const fitBoundsOptions = { padding: 150 };
 
     const map = new TomTomMap({

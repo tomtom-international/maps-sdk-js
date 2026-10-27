@@ -6,7 +6,7 @@ import {
     type RouteSummary,
     type Routes,
 } from '@tomtom-org/maps-sdk/core';
-import type { ReactNode } from 'react';
+import { type ReactNode, useMemo } from 'react';
 import { clockTime, distance, duration, placeTitle } from '../format';
 import { filledStops, type Stop, stopBadge } from '../planner/stops';
 import { type LaneId, laneLook, lanesCrossed } from '../sections/routeLanes';
@@ -52,10 +52,15 @@ type OwnRoadsProps = { route: Route; onPointAtRoad: (sectionIds?: string[]) => v
 /** The main roads only this route takes, which set it apart; pointing at one rings its stretches. */
 const OwnRoads = ({ route, onPointAtRoad }: OwnRoadsProps) => {
     const ownSections = route.properties.sections.distinct ?? [];
-    const roads = getImportantRoads(route, {
-        within: ownSections,
-        minLengthInMeters: MIN_ROAD_LENGTH_IN_METERS,
-    }).filter((road) => road.name);
+    // Measuring the route is worth doing once per route, not at every render a pointer on the map causes.
+    const roads = useMemo(
+        () =>
+            getImportantRoads(route, {
+                within: route.properties.sections.distinct ?? [],
+                minLengthInMeters: MIN_ROAD_LENGTH_IN_METERS,
+            }).filter((road) => road.name),
+        [route],
+    );
     if (!roads.length) {
         return (
             <span className="ui-alternative-roads">
@@ -86,11 +91,13 @@ const OwnRoads = ({ route, onPointAtRoad }: OwnRoadsProps) => {
  * little past the fork; pointing at them rings them.
  */
 const OwnCurves = ({ route, onPointAtRoad }: OwnRoadsProps) => {
-    const { curvyStretch } = getSectionsWithin(route, {
-        within: route.properties.sections.distinct ?? [],
-        types: ['curvyStretch'],
-    });
-    const stretches = curvyStretch?.sections.filter((_, index) => curvyStretch.shares[index] > 0.5) ?? [];
+    const stretches = useMemo(() => {
+        const { curvyStretch } = getSectionsWithin(route, {
+            within: route.properties.sections.distinct ?? [],
+            types: ['curvyStretch'],
+        });
+        return curvyStretch?.sections.filter((_, index) => curvyStretch.shares[index] > 0.5) ?? [];
+    }, [route]);
     if (!stretches.length) return null;
 
     return (

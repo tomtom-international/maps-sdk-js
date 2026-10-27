@@ -53,7 +53,7 @@ The same functions as on every module (`map-setup.md` § Every setting as data);
 setKnob(styling, stylingFoundationsKnobCatalogue, 'labels.sizeFactor', 1.3);            // factor 0.5–1.5, 1 = as the style ships
 setKnob(styling, stylingFoundationsKnobCatalogue, 'symbols.sizeFactor', 1.2);           // icons: POI icons, shields, arrows
 setKnob(styling, stylingFoundationsKnobCatalogue, 'roads.widthFactor', 0.8);            // road hierarchy kept
-setKnob(styling, stylingFoundationsKnobCatalogue, 'colors.water', '#7cc4e8');           // any CSS colour
+setKnob(styling, stylingFoundationsKnobCatalogue, 'colors.water', '#7cc4e8');           // hex, rgb(), hsl() or a named colour
 setKnob(styling, stylingFoundationsKnobCatalogue, 'view.projection', 'globe');          // enum
 setKnobs(styling, stylingFoundationsKnobCatalogue, { 'colors.land': '#f6efe3', 'colors.roadMajor': '#d9822b' }); // several: one restyle, all or none
 
@@ -199,7 +199,7 @@ The sky knobs write MapLibre's **whole** sky: a field set with `map.mapLibreMap.
 
 `view.space.color` is the colour **behind** the map, which a globe leaves visible around the planet. The map canvas is transparent there, so something has to fill it. A background your page already gives the map container is the knob's default and what `resetKnob` returns to — the SDK does not paint over it. Otherwise it follows the theme (white on light, the night sky's `#0a1626` on dark) and is re-applied after a `setStyle`, so a light→dark switch carries it.
 
-The `view.light` knobs set MapLibre's light, which shades the sides of the 3D buildings (`fill-extrusion`) and nothing else. The standard styles ship `buildings3D` hidden, except the driving ones, so show it through `BaseMapModule` first, and tilt the camera. A visible `Buildings3D` (landmarks-3d plugin) hides those buildings and lights its own, so these knobs light nothing while it shows.
+The `view.light` knobs set MapLibre's light, the map's one light: it shades the sides of the style's 3D buildings (`fill-extrusion`), and the plugins drawing their own lit surfaces follow it while their own light direction and altitude knobs are unset — landmarks-3d's `Buildings3D` (which hides the style's buildings and lights its own from it) and its `GLSurfaces` (tree crowns, dunes, water glint). Set the light once here to light them all alike. The standard styles ship `buildings3D` hidden, except the driving ones, so show it through `BaseMapModule` first, and tilt the camera.
 
 ```ts
 await BaseMapModule.get(map, { groups: { buildings3D: { visible: true } } });
@@ -208,9 +208,11 @@ await StylingFoundationsModule.get(map, {
 });
 ```
 
-`buildings3D.roundedCornerDistanceMeters` is MapLibre's layout `fill-extrusion-rounded-corner-distance` on the style's 3D buildings: how far along each wall a corner is rounded. Every map softens them by 1 m on every style load, unless the style sets its own; that is the knob's default and what `resetKnob` returns to. `0` for sharp corners, 2–4 for visibly rounded buildings. Like the light, it changes nothing while a `Buildings3D` shows.
+`buildings3D.roundedCornerDistanceMeters` is MapLibre's layout `fill-extrusion-rounded-corner-distance` on the style's 3D buildings: how far along each wall a corner is rounded. Every map softens them by 1 m on every style load, unless the style sets its own; that is the knob's default and what `resetKnob` returns to. `0` for sharp corners, 2–4 for visibly rounded buildings. It changes nothing while a `Buildings3D` shows, which hides the style's buildings.
 
-`direction` is degrees clockwise from the top of the screen, or from north with `alignment: 'map'`. `altitude` is degrees above the horizon. An unset part takes the style's own `light`, otherwise MapLibre's default (`direction` 210, `altitude` 60, `viewport`, white, `intensity` 0.5). The knobs write MapLibre's **whole** light, so a part set with `map.mapLibreMap.setLight` goes back whenever a light knob applies. Once a light knob has been set, a clean `setStyle(…, { resetState: true })` writes the new style's light, which MapLibre on its own would not.
+`direction` is degrees clockwise from the top of the screen, or from north with `alignment: 'map'`. `altitude` is degrees above the horizon. An unset colour, intensity or alignment takes the style's own `light`, otherwise MapLibre's default (white, `intensity` 0.5, `viewport`). Direction and altitude take 210° and 60° only once one of them is set: until then the position stays unset, so `getMapLight` stays `undefined`. The knobs write MapLibre's **whole** light, so a part set with `map.mapLibreMap.setLight` goes back whenever a light knob applies. Once a light knob has been set, a clean `setStyle(…, { resetState: true })` writes the new style's light, which MapLibre on its own would not.
+
+To light a layer of your own from the same direction, `getMapLight(map)` returns `MapLight` `{ direction, altitude }`: the direction as a compass bearing from north **whatever the map's bearing** (a `viewport`-aligned light turns with the camera, so read it per frame), the altitude above the horizon. It returns `undefined` while the map has no light placed — on the standard styles until `view.light.direction` or `view.light.altitude` (or `setLight` with a `position`) places one. The colour, intensity and alignment knobs alone place none, and neither does a style light whose `position` is an expression.
 
 Gotcha: the globe flattens to Mercator between zoom 11–12 by design.
 
@@ -222,7 +224,7 @@ Named bundles of knob settings across the modules that hold the look: this one, 
 | --- | --- |
 | `'data-viz'` | quiet base under your data: smaller labels/icons, thinner roads, no exit numbers or arrows, no micro markers, POIs from z14 |
 | `'night-driving'` | bigger labels and icons, wider roads, exit numbers and arrows shown, no micro markers, POIs from z13 |
-| `'minimal'` | bare map: smaller labels, no road markings, exit numbers or micro markers, POIs from z16 |
+| `'minimal'` | bare map: smaller labels, no road markings (restricted-access dashes included), roads under construction, exit numbers or micro markers, POIs from z16 |
 | `'globe'` | `view.projection: 'globe'` + `view.sky.visible: true` |
 
 ```ts
@@ -320,9 +322,10 @@ styling.layers.query({ group: 'railways' }).layerIds;                           
 
 // A derivation (LayerPropertyDerivation): built per layer from the value beneath — the style's, or a knob's
 const motorway: ExpressionSpecification = ['==', ['get', 'category'], 'motorway'];
+const isRamp = (value: unknown[]) => ['interpolate', 'interpolate-hcl', 'interpolate-lab', 'step'].includes(String(value[0]));
 styling.layers.query({ group: 'roadLabels' }).setPaint({
-  'text-color': (color, layerId) =>
-    typeof color === 'string' || Array.isArray(color) ? ['case', motorway, '#c026d3', color] : color,
+  'text-color': (color, layerId) => // `TransitLabels - Path` draws a zoom ramp, which no `case` may wrap
+    typeof color === 'string' || (Array.isArray(color) && !isRamp(color)) ? ['case', motorway, '#c026d3', color] : color,
 });
 
 // A filter clause, and-ed with the style's own filter instead of replacing it
@@ -335,9 +338,9 @@ styling.layers.query({ group: 'roadLabels' }).removeFilterClause(majorRoads);
 
 - `valueUnder` is the style's own value, or the knob's when a knob set that property (`setMapColors`' `colors.label` reaches road labels), and the derivation re-runs after every `setStyle` and knob change — so the app's expression and the knob compose. `reset()` writes `valueUnder` back.
 - `valueUnder` is `undefined` where the style leaves the property unset, and can be a legacy `{ stops }` function: narrow it (`typeof === 'string' || Array.isArray`) before embedding it in an expression.
-- `["zoom"]` is only legal as the input of a top-level `interpolate`/`step`: wrapping a zoom ramp (`['case', …, ramp]`, `['*', 2, ramp]`) is rejected — rewrite each stop's output instead.
+- `["zoom"]` is only legal as the input of a top-level `interpolate`/`step`: wrapping a zoom ramp (`['case', …, ramp]`, `['*', 2, ramp]`) is rejected — rewrite each stop's output instead. A rejected value throws from `setPaint`/`setLayout`; rejected only on a later re-run (after `setStyle` or a knob change), it warns once and that layer keeps `valueUnder`.
 
-`setFilter` replaces the style's own filter; `addFilterClause(clause)` narrows it instead (`all` with the style's filter, or `setFilter`'s, and with module filters such as POI categories), once per equal clause, and `removeFilterClause(clause)` withdraws it by value. **Confining the map to an area**: `addFilterClause(['within', polygon])` keeps the labels (points, lines) inside it, but MapLibre's `within` evaluates points and lines only, so on polygon layers (`buildings3D`, land use, water) it hides every feature. No filter cuts a polygon at an edge, and the SDK has no area option for the base map; hide polygon groups through `BaseMapModule` or draw your own clipped copy. `setVisible` (or a `visibility` of `'visible'` / `'none'` in `setLayout`, which takes no expression) never shows a layer its module hides. Re-applied after `setStyle` while the layers exist; dropped on `resetState: true`; **not** in `getConfig()`. Layer ids/expressions belong to the style version, which an SDK minor can move — prefer knobs/`setMapColors` where they cover the intent. An empty match warns once.
+`setFilter` replaces the style's own filter; `addFilterClause(clause)` narrows it instead (`all` with the style's filter, or `setFilter`'s, and with module filters such as POI categories), once per equal clause, and `removeFilterClause(clause)` withdraws it by value. **Confining the map to an area**: `addFilterClause(['within', polygon])` keeps the labels (points, lines) inside it, but MapLibre's `within` evaluates points and lines only, so on polygon layers (`buildings3D`, land use, water) it hides every feature. No filter cuts a polygon at an edge, and the SDK has no area option for the base map; hide polygon groups through `BaseMapModule` or draw your own clipped copy. `setVisible` (or a `visibility` of `'visible'` / `'none'` in `setLayout`, which takes no expression) never shows a layer its module hides. Re-applied after `setStyle` while the layers exist; dropped on `resetState: true`; **not** in `getConfig()`. Layer ids/expressions belong to the loaded style, which an SDK minor can change, and aren't public API — prefer knobs/`setMapColors` where they cover the intent. An empty match warns once.
 
 ## Gotchas
 

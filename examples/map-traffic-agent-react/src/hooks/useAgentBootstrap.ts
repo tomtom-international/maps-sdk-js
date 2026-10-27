@@ -15,8 +15,8 @@ type BootstrapOptions = {
 
 /**
  * Owns map + agent lifecycle for the example. The map is created once; the
- * agent re-instantiates whenever the deployment id changes so users can swap
- * models in-session without losing camera/state.
+ * agent re-instantiates whenever the deployment id changes, so a model swap
+ * keeps the camera but starts a fresh agent state and chat.
  */
 export function useAgentBootstrap({ deploymentId }: BootstrapOptions) {
     const [map, setMap] = useState<TomTomMap | undefined>(undefined);
@@ -26,7 +26,7 @@ export function useAgentBootstrap({ deploymentId }: BootstrapOptions) {
     useEffect(() => {
         // With the demos-proxy bootstrap active, commonBaseURL is
         // already set to the proxy; this put() just adds apiKey (which it ignores).
-        // In local dev (no bootstrap), the API_KEY path runs as before.
+        // In local dev (no bootstrap), the API_KEY is what authenticates the requests.
         TomTomConfig.instance.put({ apiKey: API_KEY });
 
         const created = new TomTomMap({
@@ -54,11 +54,9 @@ export function useAgentBootstrap({ deploymentId }: BootstrapOptions) {
         const created = createMapAgent(map, {
             model: createDemoAzure().chat(deploymentId),
             maxSteps: 10,
-            // Layer the persona onto the toolkit's base prompt via section overrides
-            // (instead of a full-string replacement) — see agent/system-prompt.ts.
+            // Layer the persona onto the toolkit's base prompt via section overrides — see agent/system-prompt.ts.
             systemPrompt: TRAFFIC_MANAGER_PROMPT_OVERRIDES,
             tools: {
-                toggleTrafficIncidents: false,
                 clarifyIntent: createClarifyIntentTool({ rendersForm: true }),
             },
             onClassify: telemetry.onClassify,
@@ -75,5 +73,5 @@ export function useAgentBootstrap({ deploymentId }: BootstrapOptions) {
         };
     }, [map, deploymentId]);
 
-    return { agent, transport, isReady: transport !== undefined };
+    return { agent, transport };
 }

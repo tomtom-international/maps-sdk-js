@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SiteSelectionState } from '../../agent/site-selection-state';
 import { getResultsSnapshot } from '../../results/results-store';
 import { findWhitespace } from '../../tools/find-whitespace';
+import { drawRichOverlay } from '../../viz/site-visuals';
 
 vi.mock('@tomtom-org/maps-sdk/services', () => ({ reverseGeocode: vi.fn(), discoverPlaces: vi.fn() }));
 vi.mock('@tomtom-org/maps-sdk-plugin-agent-toolkit', () => ({
@@ -64,7 +65,7 @@ describe('findWhitespace', () => {
         discoverPlacesMock.mockReset();
         // Every search inside Eastside fails; Downtown has no places.
         discoverPlacesMock.mockImplementation(async (request) =>
-            'geometries' in request && request.geometries[0] === areas.Eastside
+            typeof request !== 'string' && request.geometries?.[0] === areas.Eastside
                 ? Promise.reject(new Error('503'))
                 : ({ type: 'FeatureCollection', features: [] } as unknown as DiscoverPlacesResponse),
         );
@@ -86,12 +87,81 @@ describe('findWhitespace', () => {
         expect(result.hint).toContain('the scan found no pockets to rank in Downtown');
     });
 
+    it('tells the model about every area it scanned', async () => {
+        discoverPlacesMock.mockResolvedValue({
+            type: 'FeatureCollection',
+            features: [],
+        } as unknown as DiscoverPlacesResponse);
+        const result = await scan(['Downtown', 'Eastside']);
+        expect(result.hint).toContain('Downtown: IMPORTANT: the scan found no pockets to rank in Downtown');
+        expect(result.hint).toContain('Eastside: IMPORTANT: the scan found no pockets to rank in Eastside');
+    });
+
     it('returns an error for an unknown demand layer', async () => {
         const result = await findWhitespace({}).execute(
             { areas: ['Downtown'], targetCategories: ['gym'], colocation: 'avoid', demandByodEntryId: 'missing' },
             state,
         );
         expect(result.error).toContain('No BYOD layer "missing"');
+    });
+
+    const fillLimitFor = (fullQuery: string) =>
+        discoverPlacesMock.mockImplementation(
+            async (request) =>
+                ({
+                    type: 'FeatureCollection',
+                    features:
+                        typeof request !== 'string' && request.query === fullQuery
+                            ? Array.from({ length: request.limit ?? 0 }, (_, index) => ({
+                                  type: 'Feature',
+                                  id: `${fullQuery}-${index}`,
+                                  geometry: { type: 'Point', coordinates: [-115.14, 36.17] },
+                                  properties: { poi: { name: `${fullQuery} ${index}`, categories: [fullQuery] } },
+                              }))
+                            : [],
+                }) as unknown as DiscoverPlacesResponse,
+        );
+
+    it('warns that pockets may not be genuine gaps when the peer search fills its limit', async () => {
+        fillLimitFor('gym');
+        await scan(['Downtown']);
+        expect(getResultsSnapshot().whitespace?.warnings).toContainEqual(
+            expect.stringContaining('Peer search capped: Downtown has at least 100 peers'),
+        );
+    });
+
+    it('warns that demand is a sample when the demand search fills its limit', async () => {
+        fillLimitFor('shop');
+        await scan(['Downtown']);
+        const warnings = getResultsSnapshot().whitespace?.warnings;
+        expect(warnings).toContainEqual(expect.stringContaining('Demand search capped: Downtown has at least 100'));
+        expect(warnings).not.toContainEqual(expect.stringContaining('Peer search capped'));
+    });
+
+    it('never counts a peer the demand search also returned as demand', async () => {
+        const place = (id: string, category: string) => ({
+            type: 'Feature',
+            id,
+            geometry: { type: 'Point', coordinates: [-115.14, 36.17] },
+            properties: { poi: { name: id, categories: [category] } },
+        });
+        discoverPlacesMock.mockImplementation(
+            async (request) =>
+                ({
+                    type: 'FeatureCollection',
+                    features:
+                        typeof request === 'string'
+                            ? []
+                            : request.query === 'shop'
+                              ? [place('italian-1', 'italian restaurant'), place('bakery-1', 'bakery')]
+                              : [place('italian-1', 'italian restaurant')],
+                }) as unknown as DiscoverPlacesResponse,
+        );
+        vi.mocked(drawRichOverlay).mockClear();
+        await scan(['Downtown']);
+        const points = vi.mocked(drawRichOverlay).mock.calls.at(-1)?.[2] ?? [];
+        expect(points.filter((point) => point.kind === 'anchor').map((point) => point.name)).toEqual(['bakery-1']);
+        expect(points.filter((point) => point.kind === 'competitor').map((point) => point.name)).toEqual(['italian-1']);
     });
 
     it('fails the scan when no area could be searched', async () => {

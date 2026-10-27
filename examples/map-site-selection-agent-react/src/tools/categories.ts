@@ -5,15 +5,6 @@ import { getPOICategories, type POICategoryResult } from '@tomtom-org/maps-sdk/s
 const resolve = async (terms: string[]): Promise<POICategoryResult[]> =>
     terms.length ? (await getPOICategories({ filters: terms })).poiCategories : [];
 
-/** Resolve search terms to POI category codes (catalog-ranked). [] when nothing resolves. */
-export const resolveCategories = async (terms: string[]): Promise<POICategory[]> => {
-    try {
-        return (await resolve(terms)).map(({ code }) => code);
-    } catch {
-        return [];
-    }
-};
-
 /** Resolve to codes plus their human category names (for `matchedBy` surfacing in panels/chat). */
 export const resolveCategoriesWithNames = async (
     terms: string[],
@@ -25,6 +16,10 @@ export const resolveCategoriesWithNames = async (
         return { codes: [], names: [] };
     }
 };
+
+/** Resolve search terms to POI category codes (catalog-ranked). [] when nothing resolves. */
+export const resolveCategories = async (terms: string[]): Promise<POICategory[]> =>
+    (await resolveCategoriesWithNames(terms)).codes;
 export type CategoryCandidate = Pick<POICategoryResult, 'code' | 'name' | 'synonyms'>;
 
 // Lower case, accents folded, split on anything but letters and digits: "Café/Pub" gives "cafe", "pub".
@@ -46,7 +41,7 @@ const wordMatch = (termWord: string, targetWord: string): boolean => {
 
     let i = 0;
     while (i < shorterLength && termWord[i] === targetWord[i]) i++;
-    return i >= shorterLength - 2;
+    return i >= Math.max(3, shorterLength - 2);
 };
 
 // GENEROUS fallback used ONLY by lookupCategories (agent-facing): fuzzy word overlap, so natural phrases

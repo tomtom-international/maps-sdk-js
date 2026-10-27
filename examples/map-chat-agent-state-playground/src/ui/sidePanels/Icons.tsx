@@ -28,12 +28,6 @@ export const MenuIcon = (props: IconProps) => (
     </svg>
 );
 
-export const CloseIcon = (props: IconProps) => (
-    <svg {...baseProps} {...props}>
-        <path d="M6 6l12 12M18 6l-12 12" />
-    </svg>
-);
-
 export const ChevronRightIcon = (props: IconProps) => (
     <svg {...baseProps} {...props}>
         <path d="M9 6l6 6-6 6" />
@@ -78,13 +72,6 @@ export const ByodIcon = (props: IconProps) => (
     </svg>
 );
 
-export const TagIcon = (props: IconProps) => (
-    <svg {...baseProps} {...props}>
-        <path d="M3.5 12.5L11 5h7v7l-7.5 7.5a1.6 1.6 0 0 1-2.3 0l-4.7-4.7a1.6 1.6 0 0 1 0-2.3z" />
-        <circle cx="14.7" cy="9.3" r="1.2" />
-    </svg>
-);
-
 export const LayersIcon = (props: IconProps) => (
     <svg {...baseProps} {...props}>
         <path d="M12 3.5l9 5-9 5-9-5 9-5z" />
@@ -116,28 +103,12 @@ export const ChartIcon = (props: IconProps) => (
     </svg>
 );
 
-export const SignalIcon = (props: IconProps) => (
-    <svg {...baseProps} {...props}>
-        <path d="M5.5 18.5a9 9 0 0 1 13 0" />
-        <path d="M8 15.5a5.5 5.5 0 0 1 8 0" />
-        <circle cx="12" cy="13.5" r="1.4" />
-        <path d="M3 21.5h18" />
-    </svg>
-);
-
 export const EyeOffIcon = (props: IconProps) => (
     <svg {...baseProps} {...props}>
         <path d="M3 3l18 18" />
         <path d="M10.6 5.2A11 11 0 0 1 12 5c5 0 9 4 10 7-0.5 1.5-1.7 3.4-3.6 4.9" />
         <path d="M6.6 6.6C4.5 8 3.4 9.8 3 11c1 3 5 7 10 7 1.4 0 2.7-.3 3.9-.8" />
         <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" />
-    </svg>
-);
-
-export const RefreshIcon = (props: IconProps) => (
-    <svg {...baseProps} {...props}>
-        <path d="M20 12a8 8 0 1 1-2.3-5.6" />
-        <path d="M20 4v4h-4" />
     </svg>
 );
 

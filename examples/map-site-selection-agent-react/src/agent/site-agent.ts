@@ -24,11 +24,7 @@ import { SiteSelectionState, type SiteToolState } from './site-selection-state';
 // React bootstrap (useAgentBootstrap) and the tool-selection scenario tests (src/tests/scenarios). Keep
 // it free of React / map / telemetry concerns so it can be built from a bare model in either context.
 
-// DEFAULT_TOOLS values are typed as the `ToolEntry | ToolEntryBuilder` union. Most built-ins picked
-// below are plain entries; a few (analyseData, processData, recallState) are BUILDERS. The cast narrows
-// them to ToolEntry for a tidy map — safe because the toolkit's setupTools (and the scenario adapter's
-// resolveEntry) resolve a builder before use.
-const builtin = DEFAULT_TOOLS as Record<string, ToolEntry>;
+const builtin = DEFAULT_TOOLS;
 
 // Which tools the per-turn classifier is allowed to gate (drop from the active set). Everything NOT
 // listed here is forced active by keepGenericToolsActive.
@@ -193,8 +189,8 @@ export const SITE_AGENT_MAX_STEPS = 10;
 // cover (they search internally but draw no free-standing pins); the isochrone primitive
 // findReachableAreas overlaps the domain tools' reach internals, so it (and out-of-scope routing/
 // traffic) stays out.
-// The four household-aware domain tools are BUILDERS: setupTools invokes them with the agent's
-// featureFlags so their model-facing schema/description stay in step with the toolkit's.
+// The four household-aware domain tools are BUILDERS: setupTools invokes them at agent creation, and each
+// reads householdsEnabled() so its model-facing schema/description stay in step with the household flag.
 export const buildSiteTools = (): Record<string, ToolEntry | ToolEntryBuilder> => ({
     profileSite,
     rankSites,
@@ -271,9 +267,7 @@ export const buildSiteAgentOptions = (
         systemPromptSuffix: buildSiteSystemPromptSuffix(),
         classifier: keepGenericToolsActive(createDefaultClassifier({ model })),
         includeDefaultTools: false,
-        // The cast mirrors the `builtin` one above: builders are legal tool values (setupTools
-        // resolves them), the options type just doesn't say so.
-        tools: buildSiteTools() as Record<string, ToolEntry>,
+        tools: buildSiteTools(),
         // Session-preferences slice (catchment size, scoring weights, demand anchors) — runtime-mutable
         // defaults the domain tools and the sandbox read instead of hardcoding thresholds.
         state: { siteSelection: new SiteSelectionState() },

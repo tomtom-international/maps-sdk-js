@@ -1,5 +1,16 @@
 # @tomtom-org/maps-sdk-plugin-route-dragging
 
+## 0.0.3
+
+### Patch Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - The package ships its `CHANGELOG.md`, as the SDK does, so you can read what changed between two releases from `node_modules`
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - A pin drags from where it is drawn, and a drop after a failed plan plans again
+  
+  - A clear drops the route plans still in flight, and nothing plans after `remove()`
+  - A line drag that can't extend the route keeps it as it was
+
 ## 0.0.2
 
 ### Patch Changes

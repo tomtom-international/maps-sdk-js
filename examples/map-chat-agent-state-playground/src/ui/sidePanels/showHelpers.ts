@@ -11,13 +11,13 @@ import type { Agent } from './useAgentSnapshot';
 /**
  * Render a stored route on the map and frame it with the camera.
  *
- * Mirrors the `showRoute` tool — picks the routing module, redraws the route + waypoints,
- * and fits the camera to the route bbox. Kept here (not in the plugin) so the demo can call
- * it directly from UI handlers without spinning up the full tool pipeline.
+ * Picks the routing module, redraws the route + waypoints, and fits the camera to the route
+ * bbox. Kept here (not in the plugin) so the demo can call it directly from UI handlers without
+ * spinning up the full tool pipeline.
  */
 export async function showRouteEntry(agent: Agent, entry: RoutesEntry): Promise<void> {
-    // RoutingModules are per-entry now — `showEntry` lazy-inits the entry's
-    // own module, hides any previously-shown one, and updates `_shownEntryId`.
+    // RoutingModules are per-entry: `showEntry` lazy-inits the entry's own module and, only in
+    // `single` entry mode, hides the other shown routes. The rail hides its previous selection itself.
     await agent.state.routing.showEntry(entry.id);
     const bbox = bboxFromGeoJSON(entry.data as HasBBox);
     if (bbox) {
@@ -93,7 +93,8 @@ export async function showCustomGeometriesEntry(agent: Agent, entry: CustomGeome
  * on top so the rail's "show details" affordance matches the other slices.
  */
 export async function showByodEntry(agent: Agent, entry: BYODEntry): Promise<void> {
-    if (entry.data.features.length === 0) return;
+    // The slice draws nothing for an entry without layers, so there is nothing to frame either.
+    if (entry.data.features.length === 0 || entry.layers.length === 0) return;
     await agent.state.byod.showEntry(entry.id);
     const bbox = bboxFromGeoJSON(entry.data as unknown as HasBBox);
     if (bbox) {

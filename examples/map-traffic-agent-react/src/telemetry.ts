@@ -63,11 +63,19 @@ function createAppInsightsSink(connectionString: string): TelemetrySink {
 // silently drops events instead of crashing the app.
 const noopSink = (): TelemetrySink => ({ trackEvent: () => {}, trackException: () => {} });
 
-const defaultSink = (): TelemetrySink => {
+const createDefaultSink = (): TelemetrySink => {
     if (APPLICATIONINSIGHTS_CONNECTION_STRING) return createAppInsightsSink(APPLICATIONINSIGHTS_CONNECTION_STRING);
 
     console.warn('APPLICATIONINSIGHTS_CONNECTION_STRING is not set; agent telemetry is disabled.');
     return noopSink();
+};
+
+let sharedSink: TelemetrySink | undefined;
+
+// One sink for the page: an agent rebuilt for a model switch reuses it rather than loading App Insights again.
+const defaultSink = (): TelemetrySink => {
+    sharedSink ??= createDefaultSink();
+    return sharedSink;
 };
 
 function ctxProps(ctx: TurnContext): Record<string, string> {
@@ -179,12 +187,18 @@ function trackTurnOutcome(
     result: { usage: PromiseLike<LanguageModelUsage>; text: PromiseLike<string> },
     turnStartMs: number,
     getStepCount: () => number,
+    abortSignal?: AbortSignal,
 ) {
-    void result.usage.then((usage) => track.tokenUsage(ctx, usage));
+    void result.usage.then(
+        (usage) => track.tokenUsage(ctx, usage),
+        () => undefined, // A failed run is reported once, from the text below.
+    );
     void result.text.then(
         (text) => track.agentSuccess(ctx, text, Date.now() - turnStartMs, getStepCount()),
-        (error: unknown) =>
-            track.agentError(ctx, error instanceof Error ? error.message : String(error), Date.now() - turnStartMs),
+        (error: unknown) => {
+            if (abortSignal?.aborted) return; // Stop is not a failure.
+            track.agentError(ctx, error instanceof Error ? error.message : String(error), Date.now() - turnStartMs);
+        },
     );
 }
 
@@ -212,23 +226,38 @@ async function runInstrumentedTurn(
     const turnStartMs = Date.now();
     let stepCount = 0;
 
-    const modelMessages = await convertToModelMessages(await validateUIMessages({ messages, tools: agent.tools }), {
-        tools: agent.tools,
+    const startRun = async () => {
+        const modelMessages = await convertToModelMessages(await validateUIMessages({ messages, tools: agent.tools }), {
+            tools: agent.tools,
+        });
+        return agent.stream({
+            prompt: modelMessages,
+            abortSignal,
+            onStepEnd: (step) => {
+                stepCount += 1;
+                for (const toolCall of step.toolCalls) {
+                    const toolResult = step.toolResults.find((r) => r.toolCallId === toolCall.toolCallId);
+                    // A tool that throws or gets invalid input leaves a tool-error part and no result.
+                    const threw = step.content.some(
+                        (part) => part.type === 'tool-error' && part.toolCallId === toolCall.toolCallId,
+                    );
+                    track.toolCall(agentCtx, stepCount, toolCall, threw || resultIsError(toolResult));
+                }
+            },
+        });
+    };
+    const result = await startRun().catch((error: unknown) => {
+        if (!abortSignal?.aborted) {
+            track.agentError(
+                agentCtx,
+                error instanceof Error ? error.message : String(error),
+                Date.now() - turnStartMs,
+            );
+        }
+        throw error;
     });
 
-    const result = await agent.stream({
-        prompt: modelMessages,
-        abortSignal,
-        onStepEnd: (step) => {
-            stepCount += 1;
-            for (const toolCall of step.toolCalls) {
-                const toolResult = step.toolResults.find((r) => r.toolCallId === toolCall.toolCallId);
-                track.toolCall(agentCtx, stepCount, toolCall, resultIsError(toolResult));
-            }
-        },
-    });
-
-    trackTurnOutcome(track, agentCtx, result, turnStartMs, () => stepCount);
+    trackTurnOutcome(track, agentCtx, result, turnStartMs, () => stepCount, abortSignal);
 
     // Attach token usage to the finish message so the bridge can read it back. assistant-ui normalizes
     // thread-message metadata to a fixed shape and moves unknown keys under `custom`, which

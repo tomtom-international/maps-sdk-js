@@ -48,23 +48,23 @@ const toHex = (cssColor: string): string | undefined => {
     return color && formatHex(color);
 };
 
-// A drag fires `input` far faster than a restyle can run. Coalesce the events into one apply per
-// animation frame with the last value winning, and flush on `change` so the value the user
-// released on is always the one that lands.
-const perFrameApplier = (apply: (value: string) => void) => {
-    let pending: string | undefined;
+// A drag fires `input` far faster than a restyle can run, and a reset fires a `config-change` per
+// knob. Coalesce the calls into one apply per animation frame with the last value winning, and
+// flush on `change` so the value the user released on is always the one that lands.
+const perFrameApplier = <T = void>(apply: (value: T) => void) => {
+    let pending: { value: T } | undefined;
     let frame = 0;
     const run = () => {
         frame = 0;
-        if (pending === undefined) return;
+        if (!pending) return;
 
-        const value = pending;
+        const { value } = pending;
         pending = undefined;
         apply(value);
     };
     return {
-        queue: (value: string) => {
-            pending = value;
+        queue: (value: T) => {
+            pending = { value };
             if (!frame) frame = requestAnimationFrame(run);
         },
         flush: () => {
@@ -94,7 +94,7 @@ const controlFor = (
         field.innerHTML = `<span class="ui-color-swatch"><input type="color" value="${hex ?? '#808080'}"></span><span class="ui-form-label"></span>`;
         (field.querySelector('.ui-form-label') as HTMLElement).textContent = hex ? label : `${label} (per category)`;
         const input = field.querySelector('input') as HTMLInputElement;
-        const applier = perFrameApplier(apply);
+        const applier = perFrameApplier<string>(apply);
         input.addEventListener('input', () => applier.queue(input.value));
         input.addEventListener('change', () => applier.flush());
     } else if (knob.range) {
@@ -105,7 +105,7 @@ const controlFor = (
         const readout = field.querySelector('.ui-slider-value') as HTMLElement;
         input.value = String(current ?? 1);
         readout.textContent = input.value;
-        const applier = perFrameApplier((next) => apply(Number(next)));
+        const applier = perFrameApplier((next: string) => apply(Number(next)));
         input.addEventListener('input', () => {
             readout.textContent = input.value;
             applier.queue(input.value);
@@ -144,8 +144,9 @@ export const initKnobPanel = (modules: LookModules): void => {
     };
 
     renderPanel();
+    const nextFrameRender = perFrameApplier(renderPanel);
     const rerender = () => {
-        if (!applyingFromPanel) renderPanel();
+        if (!applyingFromPanel) nextFrameRender.queue();
     };
     modules.styling.events.on('config-change', rerender);
     modules.pois.events.on('config-change', rerender);

@@ -200,7 +200,8 @@ const cities = await geocode({ query: 'Utrecht', filters: { countries: ['NL'], g
   `minPowerKW`, `maxPowerKW`. `GeographicFilters`: `countries` (ISO alpha-2 or alpha-3), fuzzy search and geocoding only.
 - A filter **excludes**: a non-matching place is dropped, not ranked lower. Values within one member are OR'd;
   members are AND'd.
-- `geoBias` stays top-level: where to look, not what to accept.
+- `geoBias` stays top-level: where to look, not what to accept. It is a point (`position`, optional `radiusMeters`)
+  or a `boundingBox`, never both: the types reject both, and so does validation at runtime (`INVALID_REQUEST`).
 - `getSearchSuggestions()` has its own `filters` vocabulary (`kinds`, `poiTypes`, `areaTypes`, `boundingBox`,
   `countries`) — see [Search suggestions](#search-suggestions--places-brands-and-categories-for-a-search-box).
 - `getPOICategories()` and `getPOICategoryCodes()` take `filters` as keyword strings that pick categories — see
@@ -468,7 +469,7 @@ setKnob(poisModule, poisKnobCatalogue, 'zoomShift', 1);
 
 - `sizeFactor` multiplies with `StylingFoundationsModule`'s `labels.sizeFactor` and `symbols.sizeFactor` on the POI layers.
 - `zoomShift` rewrites the POI layer filter `filters.categories` also narrows; the two compose, in either order.
-- `microMarkers.visible` only hides: `true` never shows the dots while the module is hidden.
+- `microMarkers.visible: true` shows the dots, even where the style ships them hidden, but never while the module is hidden; `setVisible(true)` leaves them to this setting, or else to the style.
 - `PlacesModule`'s `base-map` markers follow `sizeFactor`, `label.color` and `label.haloColor`; `circle-icon` and `pin-clustered` follow `sizeFactor` (`map-styling.md` § Borrowed looks).
 - Map-wide colour ids, for `getStyleColor(map, id)` and `bloom.only`: `pois.label.color`, `pois.label.haloColor`.
 
@@ -507,6 +508,10 @@ viewportPlaces.removeAll();
 
 - Searches on every `moveend`, biased to `map.getBBox()`, first page only; a newer move cancels the
   search in flight. Modules stack in the order added, the first at the bottom.
+- Failures: `add` / `addPOICategories` / `update` reject with what failed. A refresh on move (and the clear of a
+  removed module) has no caller, so it goes to `new ViewportPlaces(map, { onError })` (`ViewportPlacesConstructorOptions`,
+  default a `console.warn`): the search's `SDKError` (branch on `.code`; an `SDKServiceError` adds `.apiErrorCode` for a refused key —
+  `core-types.md` § SDK errors) or the map's `TomTomMapError`. The places shown stay until the next move.
 
 ---
 
@@ -532,7 +537,8 @@ const places = await PlacesModule.create(map, { markerType: 'base-map' });
 // Marker types (placesMarkerTypes): 'pin' | 'circle-icon' | 'base-map' | 'pin-clustered' (default: 'pin')
 // - 'pin': classic teardrop pin markers
 // - 'circle-icon': centered circular POI icons (same sprites as base-map's POI layer)
-// - 'base-map': full base-map POI styling (POI + POI - Micro at the respective zooms).
+// - 'base-map': full base-map POI styling (POI + POI - Micro). `main` starts at zoom 10; below it, places
+//   not hovered or clicked draw only as `micro` dots. `layers.main.minzoom` lowers that floor.
 //   To render micro-only, hide `main` via `layers.main.layout.visibility = 'none'`.
 // - 'pin-clustered': pins that merge into a counted cluster up to zoom 17 by default (see below)
 
@@ -954,7 +960,7 @@ the road* together. Not typeahead-only: a complete query works as well as a part
 // query retires the pair still in flight
 const { suggestions } = await getSearchSuggestions({
     query: 'italian',
-    limit: 5,                     // default 5, capped at 10
+    limit: 5,                     // default 5; raised or capped to 1–10
     geoBias: { position: [4.9, 52.4] }, // a point only; biases both arms, distances are measured from here
     filters: { countries: ['NLD'] },
     signal,                       // one signal for both calls

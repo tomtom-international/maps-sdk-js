@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.17.2
+
+### Patch Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - `setMapStyling` leaves out the base map's new `buildings3D.hover` and `buildings3D.click` knobs, which show only under a base-map event handler the agent never registers
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - The package ships its `CHANGELOG.md`, as the SDK does, so you can read what changed between two releases from `node_modules`
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - Dropped entries tear down fully, and the sandbox, the traffic monitor and re-runs no longer race each other
+  
+  - A route that `single` mode drops stops its traffic monitor, and a single-mode places entry clears its polygons
+  - Incident listeners survive `resetState`, and the `resetState` tool also resets the map, even when a custom slice fails to reset
+  - The code sandbox survives a lost frame and frees itself on `destroy()`; `executeMaplibreCode` returns `NaN` and `Infinity` as `null`, and reports its source and layer changes when its result can't be returned
+  - Concurrent removals, mid-show drops and module creation no longer leave stale entries, focus, parameters or drawn layers behind
+  - Bias and ranges handle the antimeridian, waypoints keep their altitude, and tools report errors instead of throwing
+  - A `setRoute` time without a UTC offset is the local time at the origin for `departAt` and at the destination for `arriveBy`, not the browser's
+  - `setRoute` keeps the cost-model fields a call leaves out
+  - `dataEntries.places.enabled: false` also removes `reverseGeocode`
+  - `locatePlace` and `discoverPlaces` report a failed boundary fetch in `geometryError` and `geometriesError`
+  - `getTrackerHistory` orders events and its coverage by sample time
+  - Cancelling `analyseData`, `processData` or `createTracker` also cancels their boundary requests
+  - An entry id no entry has gets an error naming the entry kind and the recall call that lists the ids
+
 ## 0.17.1
 
 ### Patch Changes

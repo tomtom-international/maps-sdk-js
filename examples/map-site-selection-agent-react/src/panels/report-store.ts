@@ -1,8 +1,8 @@
 import { useSyncExternalStore } from 'react';
 
 // Holds the latest generated HTML report. generateSiteReport builds the HTML from the results store
-// and publishes it here; the ReportPanel offers Open-in-new-tab (user gesture → no popup block) and
-// Download. Kept separate from the results store since it's a derived artifact, not an analysis.
+// and publishes it here; chat/ReportActions, under the generateSiteReport call, offers Open-in-new-tab
+// (user gesture → no popup block) and Download. Kept separate from the results store since it's a derived artifact, not an analysis.
 
 export type ReportData = { title: string; html: string };
 

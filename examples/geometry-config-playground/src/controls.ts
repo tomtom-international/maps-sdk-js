@@ -15,10 +15,11 @@ import {
 
 // The mutable style + positioning the panel edits. index.ts feeds a copy into the GeometriesModule
 // config: fill and border each carry their own color, and `beforeLayerConfig` a target for each, so
-// they can be styled and positioned in the layer stack independently.
+// they can be styled and positioned in the layer stack independently. An unset fill opacity or border
+// width takes the fill style's own, which a style change goes back to.
 export type GeometryStyleState = {
-    fill: { style: GeometryFillStyle; color: string; opacity: number };
-    line: { color: string; width: number; pattern: LinePattern };
+    fill: { style: GeometryFillStyle; color: string; opacity?: number };
+    line: { color: string; width?: number; pattern: LinePattern };
     beforeLayerConfig: { fill: BeforeLayerConfig; line: BeforeLayerConfig };
     // Unset factors keep the SDK's own, which the sliders start at.
     highlight: Required<GeometryHighlightConfig>;
@@ -42,14 +43,19 @@ const getElement = <T extends HTMLElement>(id: string): T => document.getElement
 
 const knob = (id: GeometriesKnobId): GeometriesKnob => knobEntryOf(geometriesKnobCatalogue, id);
 
+// A knob with no value and no default is unset, and the module decides: the description says what.
+// Its slider then rests at its minimum.
+const UNSET = 'unset';
+
 // A slider takes its bounds and step from the knob's catalogue range, its tooltip from the
-// description, and its start from the catalogue default when no value is given.
+// description, and its start from the catalogue default when no value is given. It returns a
+// function that marks it unset again, once the knob is cleared.
 const initSlider = (
     inputId: string,
     id: GeometriesKnobId,
     value: number | undefined,
     onInput: (value: number) => void,
-): void => {
+): (() => void) => {
     const { range, description, default: knobDefault } = knob(id);
     const slider = getElement<HTMLInputElement>(inputId);
     const readout = getElement<HTMLElement>(`${inputId}-value`);
@@ -59,12 +65,23 @@ const initSlider = (
         slider.step = String(range.step ?? 'any');
     }
     slider.title = description;
-    slider.value = String(value ?? knobDefault);
-    readout.textContent = slider.value;
+    const unset = () => {
+        slider.value = slider.min;
+        readout.textContent = UNSET;
+    };
+    const start = value ?? knobDefault;
+    if (typeof start === 'number') {
+        slider.value = String(start);
+        readout.textContent = slider.value;
+    } else {
+        unset();
+    }
+
     slider.addEventListener('input', () => {
         readout.textContent = slider.value;
         onInput(Number(slider.value));
     });
+    return unset;
 };
 
 // A select lists the knob's catalogue options, with its description as the tooltip.
@@ -85,6 +102,33 @@ const addTargetOptions = (select: HTMLSelectElement, preselected: BeforeLayerCon
         select.add(option);
     });
     select.value = preselected;
+};
+
+// The fill style and border pattern selects list their knobs' catalogue options; the sliders follow
+// their ranges.
+const initKnobControls = (state: GeometryStyleState, apply: () => void): void => {
+    const unsetFillOpacity = initSlider('ui-fillOpacity', 'fill.opacity', state.fill.opacity, (opacity) => {
+        state.fill.opacity = opacity;
+        apply();
+    });
+    const unsetLineWidth = initSlider('ui-lineWidth', 'line.width', state.line.width, (width) => {
+        state.line.width = width;
+        apply();
+    });
+    // A fill style's look is the opacity and width it falls back to, so a style change clears both: an
+    // `outline` is a transparent fill with a thick border only while neither is set.
+    initSelect('ui-fillStyle', 'fill.style', state.fill.style, (style) => {
+        state.fill.style = style as GeometryFillStyle;
+        state.fill.opacity = undefined;
+        state.line.width = undefined;
+        unsetFillOpacity();
+        unsetLineWidth();
+        apply();
+    });
+    initSelect('ui-linePattern', 'line.pattern', state.line.pattern, (pattern) => {
+        state.line.pattern = pattern as LinePattern;
+        apply();
+    });
 };
 
 // The highlight section: the factor sliders, and the switch that draws the first geometry as clicked.
@@ -160,31 +204,17 @@ export const initControls = ({
         apply();
     });
 
-    // The fill style and border pattern selects list their knobs' catalogue options; the sliders follow
-    // their ranges.
-    initSelect('ui-fillStyle', 'fill.style', state.fill.style, (style) => {
-        state.fill.style = style as GeometryFillStyle;
-        apply();
-    });
-    initSelect('ui-linePattern', 'line.pattern', state.line.pattern, (pattern) => {
-        state.line.pattern = pattern as LinePattern;
-        apply();
-    });
-    initSlider('ui-fillOpacity', 'fill.opacity', state.fill.opacity, (opacity) => {
-        state.fill.opacity = opacity;
-        apply();
-    });
-    initSlider('ui-lineWidth', 'line.width', state.line.width, (width) => {
-        state.line.width = width;
-        apply();
-    });
+    initKnobControls(state, apply);
     initHighlightControls(state, apply, onClickedChange);
 
     // Map-style switcher.
     const styles = getElement<HTMLSelectElement>('ui-mapStyles');
     standardStyleIDs.forEach((id) => styles.add(new Option(id)));
     styles.value = initialStyle;
-    styles.addEventListener('change', () => onStyleChange(styles.value as StandardStyleID));
+    styles.addEventListener('change', () => {
+        const styleId = standardStyleIDs.find((id) => id === styles.value);
+        if (styleId) onStyleChange(styleId);
+    });
 
     const visible = getElement<HTMLInputElement>('ui-visible');
     visible.addEventListener('change', () => onVisibleChange(visible.checked));

@@ -9,7 +9,7 @@ import { requestFilters, type SearchRequest, type SearchScope, type StationFilte
 
 const RESULTS_PER_PAGE = 20;
 
-type SearchPageParams = {
+type SearchPageParameters = {
     modules: MapModules;
     request: SearchRequest;
     stationFilters: StationFilters;
@@ -27,7 +27,7 @@ const searchPage = ({
     alongRoute,
     cursor,
     signal,
-}: SearchPageParams): Promise<DiscoverPlacesResponse> => {
+}: SearchPageParameters): Promise<DiscoverPlacesResponse> => {
     const filters = requestFilters(request, stationFilters);
     const common = {
         ...(request.query && { query: request.query }),
@@ -68,6 +68,8 @@ export const usePlaceSearch = (modules: MapModules | undefined, route: Route | u
     const [maxDetourMinutes, setMaxDetourMinutes] = useState(10);
     const [stationFilters, setStationFilters] = useState<StationFilters>({});
     const [highlightedId, setHighlightedId] = useState<string>();
+    // Each search is a run of its own, so searching again with the same request (after moving the map, say) fetches again.
+    const [searchRun, setSearchRun] = useState(0);
     // Read at search time: a route recalculated by adding a result doesn't search again.
     const routeRef = useRef(route);
     useEffect(() => {
@@ -76,7 +78,7 @@ export const usePlaceSearch = (modules: MapModules | undefined, route: Route | u
     const alongRoute = scope === 'route' && route !== undefined;
 
     const query = useInfiniteQuery({
-        queryKey: ['places', request, stationFilters, alongRoute && maxDetourMinutes],
+        queryKey: ['places', request, searchRun, stationFilters, alongRoute && maxDetourMinutes],
         queryFn:
             modules && request
                 ? ({ pageParam, signal }) =>
@@ -110,7 +112,10 @@ export const usePlaceSearch = (modules: MapModules | undefined, route: Route | u
 
     return {
         request,
-        search: showRequest,
+        search: (next?: SearchRequest) => {
+            setSearchRun((run) => run + 1);
+            showRequest(next);
+        },
         clear: () => showRequest(undefined),
         preview: (place: Place) => {
             showRequest(undefined);

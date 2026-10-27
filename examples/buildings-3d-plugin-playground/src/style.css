@@ -8,9 +8,17 @@
 @import "../../src/templates/css/form/slider.css";
 @import "../../src/templates/css/form/color-picker.css";
 @import "../../src/templates/css/button/button.css";
+@import "../../src/templates/css/button/sizes.css";
 
 #ui-colors {
     display: grid;
     grid-template-columns: repeat(4, auto);
     gap: var(--ui-space-3);
+}
+
+.ui-palette {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--ui-space-2);
 }

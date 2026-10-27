@@ -5,7 +5,7 @@ import { sanityE2ETest } from '../../src/e2e-test-utils/sanityE2ETest';
 test.describe('sanity', () => {
     test('sanity test - prod', { tag: TAG_PROD }, async ({ page }) => {
         // The matched address, the offset and the matched coordinates all come from the live
-        // service and move with its map data. The chrome shot is compared at zero tolerance, so
+        // service and move with its map data. The chrome shot is compared at near-zero tolerance, so
         // they are pinned and only their styling is what the baseline holds.
         await sanityE2ETest({
             page,

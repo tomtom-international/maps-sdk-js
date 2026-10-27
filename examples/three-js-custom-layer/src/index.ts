@@ -114,7 +114,6 @@ columnsLayer.events.on('click', (column, lngLat) => {
 });
 
 (async () => {
-    // Turn on 3D basemap buildings
     const baseMap = await BaseMapModule.get(map, { events: { cursorOnHover: 'default' } });
     baseMap.setVisible(true, { layerGroups: { show: 'only', values: ['buildings3D'] } });
     // A click on the ground closes the popup. Labels and 3D buildings draw above the columns, so a handler

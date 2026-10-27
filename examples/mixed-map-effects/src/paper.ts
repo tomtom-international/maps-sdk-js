@@ -23,21 +23,15 @@ const seededRandom = (seed: number) => {
 };
 
 /** One random grey per pixel: the GPU's linear filtering and repeat wrapping turn it into seamless fibres. */
-export const createPaperTile = (): HTMLCanvasElement => {
-    const tile = document.createElement('canvas');
-    tile.width = TILE_SIZE;
-    tile.height = TILE_SIZE;
-    const context = tile.getContext('2d');
-    if (context) {
-        const random = seededRandom(1);
-        const pixels = context.createImageData(TILE_SIZE, TILE_SIZE);
-        for (let index = 0; index < pixels.data.length; index += 4) {
-            const grey = random() * 255;
-            pixels.data.set([grey, grey, grey, 255], index);
-        }
-        context.putImageData(pixels, 0, 0);
+// Image data rather than a canvas, which the plugin would upload again on every draw.
+export const createPaperTile = (): ImageData => {
+    const random = seededRandom(1);
+    const pixels = new ImageData(TILE_SIZE, TILE_SIZE);
+    for (let index = 0; index < pixels.data.length; index += 4) {
+        const grey = random() * 255;
+        pixels.data.set([grey, grey, grey, 255], index);
     }
-    return tile;
+    return pixels;
 };
 
 /** The paper left bare around the painting, with a ragged inner edge. */

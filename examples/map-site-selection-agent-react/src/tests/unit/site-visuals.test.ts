@@ -17,7 +17,7 @@ vi.mock('maplibre-gl', () => ({
     },
     Popup: class {},
 }));
-vi.mock('@tomtom-org/maps-sdk/map', () => ({ mapStyleLayerIDs: {} }));
+vi.mock('@tomtom-org/maps-sdk/map', () => ({ MAP_BOLD_FONT: 'Noto-Bold' }));
 vi.stubGlobal('document', { createElement: () => ({ style: {} }) });
 
 type Catchments = { show: (features: PolygonFeatures) => Promise<void> };

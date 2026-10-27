@@ -19,6 +19,8 @@ export type Stop = {
 
 export type StopsAction =
     | { type: 'replace'; stops: Stop[] }
+    /** The opening stops, kept only while the reader has filled none of their own. */
+    | { type: 'seed'; stops: Stop[] }
     | { type: 'fill'; id: string; place: Place }
     | { type: 'insert'; index: number; stop: Stop }
     | { type: 'remove'; id: string }
@@ -68,6 +70,8 @@ const stopsReducer = (stops: Stop[], action: StopsAction): Stop[] => {
     switch (action.type) {
         case 'replace':
             return action.stops;
+        case 'seed':
+            return stops.some((stop) => stop.place) ? stops : action.stops;
         case 'fill':
             return stops.map((stop) => (stop.id === action.id ? { ...stop, place: action.place } : stop));
         case 'insert':

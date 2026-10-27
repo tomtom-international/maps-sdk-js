@@ -40,7 +40,7 @@ const pastelRainbow = [
 const greenToBlue = ['#d9ed92', '#184e77'];
 
 // Palettes to try in place of a region's own: the two ends of a ramp, and three stops it passes through.
-export const palettes: Record<string, string[]> = {
+export const palettes: Partial<Record<string, string[]>> = {
     Dusk: ['#f5d000', '#6a1b9a'],
     'Blue, yellow, red': ['#2b83ba', '#ffffbf', '#d7191c'],
 };

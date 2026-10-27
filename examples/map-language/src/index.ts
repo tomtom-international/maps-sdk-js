@@ -42,9 +42,10 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     for (const language of mapLanguages) {
         languageSelector.add(new Option(language.text, language.value, undefined, configLanguage === language.value));
     }
-    languageSelector.addEventListener('change', (event) =>
-        map.setLanguage((event.target as HTMLOptionElement).value as Language),
-    );
+    languageSelector.addEventListener('change', () => {
+        const picked = mapLanguages.find((language) => language.value === languageSelector.value);
+        if (picked) map.setLanguage(picked.value);
+    });
 
     initTogglePanel();
 })();

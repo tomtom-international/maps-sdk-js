@@ -1,7 +1,13 @@
 import type { AreaAnalyticsHourlyEntry, Place } from '@tomtom-org/maps-sdk/core';
 import type { TomTomMap, TrafficAreaAnalyticsModule } from '@tomtom-org/maps-sdk/map';
 import { calculateFittingBBox, resolveColorStops } from '@tomtom-org/maps-sdk/map';
-import { geocode, geometryData, trafficAreaAnalytics } from '@tomtom-org/maps-sdk/services';
+import {
+    createLatestRequest,
+    geocode,
+    geometryData,
+    type LatestRequest,
+    trafficAreaAnalytics,
+} from '@tomtom-org/maps-sdk/services';
 import type { MultiPolygon, Polygon, Position } from 'geojson';
 import { renderAreaAnalyticsChart } from './areaAnalyticsChart';
 import { MOVE_PORTAL_KEY } from './config';
@@ -32,44 +38,49 @@ const loadAnalytics = async (
     bottomPanel: HTMLElement,
     loadingOverlay: HTMLElement,
     filters: AnalyticsFilters,
+    latestSelection: LatestRequest,
     onChartData: (entries: AreaAnalyticsHourlyEntry[]) => void,
 ): Promise<void> => {
     try {
-        const analytics = await trafficAreaAnalytics({
-            apiKey: MOVE_PORTAL_KEY,
-            name: cityName,
-            startDate: filters.startDate,
-            endDate: filters.endDate,
-            // Keep metrics: 'all' so the active-metric viz selector can switch freely
-            // between metrics without re-fetching.
-            metrics: 'all',
-            functionalRoadClasses: filters.functionalRoadClasses.length > 0 ? filters.functionalRoadClasses : 'all',
-            hours: filters.hours.length > 0 ? filters.hours : 'all',
-            geometry,
-        });
+        const analytics = await latestSelection.run((signal) =>
+            trafficAreaAnalytics({
+                apiKey: MOVE_PORTAL_KEY,
+                name: cityName,
+                startDate: filters.startDate,
+                endDate: filters.endDate,
+                // Keep metrics: 'all' so the active-metric viz selector can switch freely
+                // between metrics without re-fetching.
+                metrics: 'all',
+                functionalRoadClasses: filters.functionalRoadClasses.length > 0 ? filters.functionalRoadClasses : 'all',
+                hours: filters.hours.length > 0 ? filters.hours : 'all',
+                geometry,
+                signal,
+            }),
+        );
+        if (!analytics.current) return;
 
         loadingOverlay.classList.add('aa-hidden');
-        const region = analytics.features[0]?.properties;
+        const region = analytics.value.features[0]?.properties;
 
         if (!region) {
+            analyticsModule.clear();
             bottomPanel.classList.add('aa-hidden');
             return;
         }
 
-        await analyticsModule.show(analytics);
+        await analyticsModule.show(analytics.value);
 
         (document.getElementById('panel-city-name') as HTMLElement).textContent = cityName;
         updateStats(region.baseData);
-
-        const hourly = region.timedData.hourly ?? [];
-
-        if (hourly.length) {
-            onChartData(hourly);
-        }
+        onChartData(region.timedData.hourly ?? []);
 
         bottomPanel.classList.remove('aa-hidden');
     } catch (error) {
+        // A city picked while this one was being drawn keeps its loading overlay.
+        if (latestSelection.isRunning()) return;
+
         console.error('Analytics fetch error:', error);
+        analyticsModule.clear();
         loadingOverlay.classList.add('aa-hidden');
         bottomPanel.classList.add('aa-hidden');
     }
@@ -80,6 +91,8 @@ type CitySearchControls = {
     rerenderChart: () => void;
     reloadCurrent: () => Promise<void>;
     hasCurrent: () => boolean;
+    /** Dismisses the city shown, and drops a load still on its way. */
+    clearCurrent: () => void;
 };
 
 export const initCitySearch = ({
@@ -95,6 +108,8 @@ export const initCitySearch = ({
     let lastEntries: AreaAnalyticsHourlyEntry[] = [];
     let currentCityName: string | null = null;
     let currentGeometry: Polygon | MultiPolygon | null = null;
+    // Each city pick or reload drops the requests still on their way for an earlier one.
+    const latestSelection = createLatestRequest();
 
     const showSuggestions = (places: Place[]): void => {
         suggestionsList.innerHTML = '';
@@ -123,10 +138,25 @@ export const initCitySearch = ({
         currentCityName = cityName;
         currentGeometry = geometry;
         loadingOverlay.classList.remove('aa-hidden');
-        await loadAnalytics(cityName, geometry, analyticsModule, bottomPanel, loadingOverlay, filters, (entries) => {
-            lastEntries = entries;
-            renderAreaAnalyticsChart(heatmapContainer, entries, congestionColorStops(analyticsModule));
-        });
+        await loadAnalytics(
+            cityName,
+            geometry,
+            analyticsModule,
+            bottomPanel,
+            loadingOverlay,
+            filters,
+            latestSelection,
+            (entries) => {
+                lastEntries = entries;
+                // A city with no hourly data leaves no chart, rather than the previous city's.
+                if (!entries.length) {
+                    heatmapContainer.replaceChildren();
+                    return;
+                }
+
+                renderAreaAnalyticsChart(heatmapContainer, entries, congestionColorStops(analyticsModule));
+            },
+        );
     };
 
     const selectCity = async (place: Place, moveMap = true): Promise<void> => {
@@ -148,8 +178,10 @@ export const initCitySearch = ({
                 }
             }
 
-            const boundary = await geometryData({ geometries: [place] });
-            const geometry = boundary?.features?.[0]?.geometry;
+            const boundary = await latestSelection.run((signal) => geometryData({ geometries: [place], signal }));
+            if (!boundary.current) return;
+
+            const geometry = boundary.value?.features?.[0]?.geometry;
 
             if (geometry) {
                 await runAnalyticsFor(place.properties?.address?.freeformAddress ?? 'Unknown', geometry);
@@ -201,13 +233,18 @@ export const initCitySearch = ({
         cityInput.value = name;
 
         try {
-            const results = await geocode({
-                query: name,
-                geoBias: { position },
-                limit: 1,
-                filters: { geographyTypes: ['Municipality'] },
-            });
-            const place = results.features[0];
+            const results = await latestSelection.run((signal) =>
+                geocode({
+                    query: name,
+                    geoBias: { position },
+                    limit: 1,
+                    filters: { geographyTypes: ['Municipality'] },
+                    signal,
+                }),
+            );
+            if (!results.current) return;
+
+            const place = results.value.features[0];
 
             if (place) {
                 await selectCity(place, false);
@@ -231,5 +268,14 @@ export const initCitySearch = ({
 
     const hasCurrent = (): boolean => currentCityName !== null && currentGeometry !== null;
 
-    return { selectCityByName, rerenderChart, reloadCurrent, hasCurrent };
+    const clearCurrent = (): void => {
+        latestSelection.cancel();
+        currentCityName = null;
+        currentGeometry = null;
+        analyticsModule.clear();
+        loadingOverlay.classList.add('aa-hidden');
+        bottomPanel.classList.add('aa-hidden');
+    };
+
+    return { selectCityByName, rerenderChart, reloadCurrent, hasCurrent, clearCurrent };
 };

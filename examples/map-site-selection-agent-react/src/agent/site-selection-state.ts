@@ -1,11 +1,10 @@
 import type { StateSlice, ToolState } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import { DEFAULT_WEIGHTS, type FactorWeights } from './scoring';
 
-// Session-level preferences for the Site Selection agent — the values that used to be hardcoded
-// constants spread across profileSite / rankSites / findWhitespace (catchment size, scoring weights,
-// demand anchors). Holding them on a state slice makes them runtime-mutable and shared: tools and the
-// processData / analyseData sandbox read the live preferences instead of baking thresholds into code,
-// so the methodology stops being a compile-time decision. See the PR description.
+// Session-level preferences for the Site Selection agent: catchment size, scoring weights and demand
+// anchors for profileSite / rankSites / findWhitespace. Holding them on a state slice makes them
+// runtime-mutable and shared: tools and the processData / analyseData sandbox read the live
+// preferences instead of baking thresholds into code.
 
 /** How a catchment is measured: a walking radius or a drive-time isochrone. */
 export type SiteTravelMode = 'walk' | 'drive';
@@ -43,7 +42,7 @@ export const DEFAULT_SITE_SELECTION_PREFERENCES: SiteSelectionPreferences = {
 
 // Merge a partial patch over a base: scoringWeights merges field-by-field (so "bump competition" keeps
 // the other three), demandAnchors and scalars replace wholesale. Always returns a fresh object with
-// freshly cloned nested members so callers can never alias the slice's internals.
+// freshly cloned nested members, so the slice never aliases the shipped defaults or a caller's patch.
 const mergePreferences = (base: SiteSelectionPreferences, patch?: SiteSelectionPatch): SiteSelectionPreferences => ({
     ...base,
     ...patch,
@@ -89,7 +88,7 @@ export const getSitePreferences = (state: ToolState): SiteSelectionPreferences =
     (state as SiteToolState).siteSelection.preferences;
 
 // Catchment parameters after layering a request's explicit values over the session preferences.
-type ResolvedCatchment = { walking: boolean; walkReachMeters: number; driveMinutes: number };
+export type ResolvedCatchment = { walking: boolean; walkReachMeters: number; driveMinutes: number };
 
 /**
  * Resolve the effective catchment for an analysis: each field falls back to the session preference

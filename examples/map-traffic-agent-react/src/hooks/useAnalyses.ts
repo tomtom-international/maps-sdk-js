@@ -5,6 +5,10 @@ import type { AgentInstance } from './useAgentBootstrap';
 /** An analysis record plus whether its job is currently monitoring (recomputing on source change). */
 export type AnalysisView = AnalysisRecord & { monitored: boolean };
 
+// Snapshot into a new array so React sees a change; tag each with its live monitoring state.
+const snapshotAnalyses = (registry: AgentInstance['state']['analyses']): AnalysisView[] =>
+    registry.all().map((record) => ({ ...record, monitored: registry.isMonitored(record.analysisId) }));
+
 /**
  * Surfaces every analysis the agent has registered via analyseData (one-shot or monitored), with
  * each one's latest result, for the right-rail Analyses panel. Re-reads on `analysis-change` (fires
@@ -18,9 +22,7 @@ export function useAnalyses(agent: AgentInstance | undefined) {
         if (!agent) return;
         const registry = agent.state.analyses;
 
-        // Snapshot into a new array so React sees a change; tag each with its live monitoring state.
-        const refresh = () =>
-            setAnalyses(registry.all().map((r) => ({ ...r, monitored: registry.isMonitored(r.analysisId) })));
+        const refresh = () => setAnalyses(snapshotAnalyses(registry));
         refresh();
 
         const unsub = registry.events.on('analysis-change', refresh);
@@ -34,7 +36,7 @@ export function useAnalyses(agent: AgentInstance | undefined) {
         if (!agent) return;
         const registry = agent.state.analyses;
         registry.job(analysisId)?.setActive(enabled);
-        setAnalyses(registry.all().map((r) => ({ ...r, monitored: registry.isMonitored(r.analysisId) })));
+        setAnalyses(snapshotAnalyses(registry));
     };
 
     return { analyses, toggleMonitor };

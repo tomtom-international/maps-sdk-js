@@ -15,7 +15,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     const startDate = new Date();
     startDate.setUTCDate(startDate.getUTCDate() - 9);
 
-    console.log(`Analysis period: ${startDate.toDateString()} → three days ago`);
+    console.log(`Analysis period: ${startDate.toISOString().slice(0, 10)} → three days ago`);
 
     const metrics: AreaAnalyticsMetricKey[] = ['speed', 'congestionLevel'];
     const result = await trafficAreaAnalytics({
@@ -38,10 +38,10 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     const { baseData, timedData } = region.properties;
 
     console.log('\n=== Base Data (full period) ===');
-    if (baseData.speed) {
+    if (baseData.speed !== undefined) {
         console.log(`  Average speed:    ${baseData.speed.toFixed(1)} km/h`);
     }
-    if (baseData.congestionLevel) {
+    if (baseData.congestionLevel !== undefined) {
         console.log(`  Congestion level: ${baseData.congestionLevel.toFixed(1)}%`);
     }
 

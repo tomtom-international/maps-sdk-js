@@ -1,6 +1,5 @@
 /* Shared chat-surface styles for the agent example apps (ChatMessages / ChatMessage / ToolCall /
-   ChatInput). Imported by each agent's MapAgentChat; references the `--ui-*` Playbook tokens, so it
-   must load after the template token layer (it does — index.tsx imports styles.css first).
+   ChatInput). They read the `--ui-*` Playbook tokens, so a page using them also loads base/tokens.css.
    Kept in CSS because (a) the markdown content rendered inside `.message.assistant` from `marked()`
    carries no Tailwind classes, and (b) the same bubble shape is shared by user, assistant, error,
    and tool-call variants — easier to maintain as a cascade than as duplicated utility strings. */

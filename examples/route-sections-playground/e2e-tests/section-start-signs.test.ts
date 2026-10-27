@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { TAG_PROD } from '../../src/e2e-test-utils/e2eTestConstants';
 import { EXTRA_SHOT_OPTIONS, loadProdExample } from '../../src/e2e-test-utils/loadProdExample';
+import { expectNoPageErrors } from '../../src/e2e-test-utils/pageErrors';
 
 /**
  * The signs this playground posts where a tunnel and a restricted stretch start.
@@ -12,17 +13,17 @@ import { EXTRA_SHOT_OPTIONS, loadProdExample } from '../../src/e2e-test-utils/lo
 test.describe('section start signs', () => {
     test('a tunnel posts its sign where it starts', { tag: TAG_PROD }, async ({ page }) => {
         // The Pfänder tunnel, by Bregenz.
-        const consoleErrors = await loadProdExample(page, 'route-sections-playground', '16/47.5392/9.7568');
+        const pageErrors = await loadProdExample(page, 'route-sections-playground', '16/47.5392/9.7568');
 
         await expect(page).toHaveScreenshot('tunnel-sign.png', EXTRA_SHOT_OPTIONS);
-        expect(consoleErrors).toHaveLength(0);
+        expectNoPageErrors(pageErrors);
     });
 
     test('a restricted stretch posts its closed sign where it starts', { tag: TAG_PROD }, async ({ page }) => {
         // The pedestrian streets around the Duomo, which the route has to take to reach its end.
-        const consoleErrors = await loadProdExample(page, 'route-sections-playground', '17/45.4649/9.1893');
+        const pageErrors = await loadProdExample(page, 'route-sections-playground', '17/45.4649/9.1893');
 
         await expect(page).toHaveScreenshot('vehicle-restricted-sign.png', EXTRA_SHOT_OPTIONS);
-        expect(consoleErrors).toHaveLength(0);
+        expectNoPageErrors(pageErrors);
     });
 });

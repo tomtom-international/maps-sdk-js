@@ -263,7 +263,7 @@ const initBeforeLayerSelect = (analyticsModule: TrafficAreaAnalyticsModule): voi
             currentHeightConfigs[currentMetric] = analyticsModule.getConfig()?.metrics?.[currentMetric]?.height;
         },
     );
-    heightControls.update(currentMetric, currentHeightConfigs[currentMetric]);
+    heightControls.update(currentHeightConfigs[currentMetric]);
 
     // Scale mode change: convert current stops to the new range and re-apply.
     scaleModeSelect.addEventListener('change', () => {
@@ -289,7 +289,7 @@ const initBeforeLayerSelect = (analyticsModule: TrafficAreaAnalyticsModule): voi
         paletteSelect.value = currentPalettes[currentMetric];
         const range = getValueRange(currentMetric, vt);
         colorStopsControls.update(currentColorStops[currentMetric], range);
-        heightControls.update(currentMetric, currentHeightConfigs[currentMetric]);
+        heightControls.update(currentHeightConfigs[currentMetric]);
     });
 
     modeSelect.addEventListener('change', () =>

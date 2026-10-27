@@ -6,7 +6,6 @@
     "build": "vite build --config ../example-vite.config.ts",
     "clean:dist": "rimraf ./dist",
     "develop": "vite --config ../example-vite.config.ts",
-    "start-test-server": "vite preview --port 9050 --outDir dist/prod",
     "start-test-server:prod": "vite preview --port 9050 --outDir dist/prod",
     "type-check": "tsc --noEmit",
     "test:e2e": "playwright test",

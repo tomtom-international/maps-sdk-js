@@ -7,8 +7,7 @@ import {
     trafficFlowKnobCatalogue,
     trafficIncidentsKnobCatalogue,
 } from '@tomtom-org/maps-sdk/map';
-import { geocodeOne } from '@tomtom-org/maps-sdk/services';
-import type { LngLatBoundsLike } from 'maplibre-gl';
+import { createLatestRequest, geocodeOne } from '@tomtom-org/maps-sdk/services';
 import { configPresets } from './configPresets';
 import { jumpToPlaces } from './jumpToPlaces';
 import './style.css';
@@ -44,17 +43,23 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
 
     const presetSelector = document.getElementById('ui-presetSelector') as HTMLSelectElement;
     configPresets.forEach((preset, index) => presetSelector.add(new Option(preset.title, String(index))));
-    presetSelector.addEventListener('change', (event) => {
-        const config = configPresets[Number((event.target as HTMLOptionElement).value)].config;
-        trafficIncidentsModule.applyConfig(config?.incidents);
-        trafficFlowModule.applyConfig(config?.flow);
+    presetSelector.addEventListener('change', () => {
+        const { config } = configPresets[Number(presetSelector.value)];
+        trafficIncidentsModule.applyConfig(config.incidents);
+        trafficFlowModule.applyConfig(config.flow);
     });
 
     const locationsSelector = document.getElementById('ui-jumpToSelector') as HTMLSelectElement;
     jumpToPlaces.forEach((location, index) => locationsSelector.add(new Option(location, String(index))));
-    locationsSelector.addEventListener('change', async (event) => {
-        const place = await geocodeWithCache(jumpToPlaces[Number((event.target as HTMLOptionElement).value)]);
-        map.mapLibreMap.fitBounds(place.bbox as LngLatBoundsLike, { duration: 0 });
+    // A later pick wins over an earlier one whose geocode is still on its way.
+    const latestJump = createLatestRequest();
+    locationsSelector.addEventListener('change', async () => {
+        const query = jumpToPlaces[Number(locationsSelector.value)];
+        const jump = await latestJump.run(() => geocodeWithCache(query));
+        if (!jump.current) return;
+
+        const { bbox } = jump.value;
+        if (bbox) map.mapLibreMap.fitBounds(bbox, { duration: 0 });
     });
     locationsSelector.selectedIndex = 0;
 

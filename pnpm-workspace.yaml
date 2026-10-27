@@ -65,14 +65,14 @@ minimumReleaseAgeExclude:
   - "@tomtom-org/*"
 
 catalog:
-  "@tomtom-org/maps-sdk": 1.0.0-rc.5
-  "@tomtom-org/maps-sdk-plugin-agent-toolkit": 0.17.1
-  "@tomtom-org/maps-sdk-plugin-flyover": 0.1.1
-  "@tomtom-org/maps-sdk-plugin-landmarks-3d": 0.2.1
-  "@tomtom-org/maps-sdk-plugin-map-effects": 0.4.1
-  "@tomtom-org/maps-sdk-plugin-map-theme": 0.3.8
-  "@tomtom-org/maps-sdk-plugin-route-dragging": 0.0.2
-  "@tomtom-org/maps-sdk-plugin-viewport-places": 0.5.9
+  "@tomtom-org/maps-sdk": 1.0.0-rc.6
+  "@tomtom-org/maps-sdk-plugin-agent-toolkit": 0.17.2
+  "@tomtom-org/maps-sdk-plugin-flyover": 0.1.2
+  "@tomtom-org/maps-sdk-plugin-landmarks-3d": 0.3.0
+  "@tomtom-org/maps-sdk-plugin-map-effects": 0.4.2
+  "@tomtom-org/maps-sdk-plugin-map-theme": 0.3.9
+  "@tomtom-org/maps-sdk-plugin-route-dragging": 0.0.3
+  "@tomtom-org/maps-sdk-plugin-viewport-places": 0.5.10
   "@ai-sdk/azure": ^4.0.104
   "@ai-sdk/react": ^4.0.147
   "@assistant-ui/react": ^0.15.29
@@ -95,7 +95,7 @@ catalog:
   "@types/node": ^26.6.5
   "@types/react": ^19.3.0
   "@types/react-dom": ^19.3.0
-  "@types/three": ^0.170.0
+  "@types/three": ^0.186.0
   "@vitejs/plugin-react": ^6.1.2
   "@vitest/coverage-v8": ^5.0.5
   ai: ^7.0.143
@@ -121,9 +121,7 @@ catalog:
   rollup-plugin-license: ^3.7.1
   rollup-plugin-visualizer: ^7.1.1
   tailwindcss: ^4.3.3
-  # Held on 0.170 (with `@types/three`): from 0.186 the landmarks-3d plugin throws
-  # `process.emitWarning is not a function` in the examples' in-browser bundler preview.
-  three: ^0.170.0
+  three: ^0.186.1
   # Held on 6: TypeScript 7 drops the compiler API that rolldown-plugin-dts's `tsc` generator and typedoc load.
   typescript: ^6.0.3
   vite: ^8.3.4

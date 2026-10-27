@@ -36,14 +36,20 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
 
     const departureTime = route.properties.summary.departureTime;
 
+    // The text changes per formatted minute or kilometre, far less often than the pointer moves.
+    let hoverHTML = '';
     const showHoverAt = (lngLat: [number, number]) => {
         const result = getProgressAtNearestRoutePoint(route, lngLat);
         if (!result) return;
 
-        hoverPopup
-            .setLngLat(result.position as [number, number])
-            .setHTML(buildPopupHTML(result.distanceInMeters, result.travelTimeInSeconds, departureTime, false))
-            .addTo(map.mapLibreMap);
+        hoverPopup.setLngLat(result.position as [number, number]);
+        const html = buildPopupHTML(result.distanceInMeters, result.travelTimeInSeconds, departureTime, false);
+        if (html !== hoverHTML || !hoverPopup.isOpen()) {
+            hoverHTML = html;
+            hoverPopup.setHTML(html);
+        }
+        // Adding an open popup again removes and rebuilds it, at every pointer move.
+        if (!hoverPopup.isOpen()) hoverPopup.addTo(map.mapLibreMap);
     };
 
     const pinProgressAt = (lngLat: [number, number]) => {
