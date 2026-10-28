@@ -14,17 +14,17 @@ const EMPTY: IncidentsSnapshot = { label: '', items: [] };
  */
 export function useRouteIncidents(agent: AgentInstance | undefined) {
     const [routeIncidents, setRouteIncidents] = useState<IncidentsSnapshot>(EMPTY);
-    // Entry the summary points at. null → follow the first monitored corridor. Held in a ref so
+    // Dataset the summary points at. null → follow the first monitored corridor. Held in a ref so
     // `focusRoute` and the routing listeners share one source without re-subscribing.
     const selectedIdRef = useRef<string | null>(null);
-    const focusRouteRef = useRef<(entryId: string) => void>(() => {});
+    const focusRouteRef = useRef<(datasetId: string) => void>(() => {});
 
     useEffect(() => {
         if (!agent) return;
         const routing = agent.state.routing;
 
         const refresh = () => {
-            const monitored = routing.entries.filter((e) => routing.isMonitored(e.id));
+            const monitored = routing.datasets.filter((e) => routing.isMonitored(e.id));
             if (monitored.length === 0) {
                 selectedIdRef.current = null;
                 setRouteIncidents(EMPTY);
@@ -36,13 +36,13 @@ export function useRouteIncidents(agent: AgentInstance | undefined) {
             setRouteIncidents({ label: active.label, items: incidentsFromRoutes([active.data]) });
         };
 
-        focusRouteRef.current = (entryId: string) => {
-            selectedIdRef.current = entryId;
+        focusRouteRef.current = (datasetId: string) => {
+            selectedIdRef.current = datasetId;
             refresh();
         };
 
         const unsubs = [
-            routing.events.on('entries-change', refresh),
+            routing.events.on('datasets-change', refresh),
             routing.events.on('monitor-tick', refresh),
             routing.events.on('monitor-start', refresh),
             routing.events.on('monitor-stop', refresh),
@@ -58,7 +58,7 @@ export function useRouteIncidents(agent: AgentInstance | undefined) {
     }, [agent]);
 
     // Point the summary/triage panels at a specific monitored corridor (the route card's locate button).
-    const focusRoute = useCallback((entryId: string) => focusRouteRef.current(entryId), []);
+    const focusRoute = useCallback((datasetId: string) => focusRouteRef.current(datasetId), []);
 
     return { routeIncidents, focusRoute };
 }

@@ -66,9 +66,9 @@ minimumReleaseAgeExclude:
 
 catalog:
   "@tomtom-org/maps-sdk": 1.0.0-rc.6
-  "@tomtom-org/maps-sdk-plugin-agent-toolkit": 0.17.2
+  "@tomtom-org/maps-sdk-plugin-agent-toolkit": 0.18.0
   "@tomtom-org/maps-sdk-plugin-flyover": 0.1.2
-  "@tomtom-org/maps-sdk-plugin-landmarks-3d": 0.3.0
+  "@tomtom-org/maps-sdk-plugin-landmarks-3d": 0.3.1
   "@tomtom-org/maps-sdk-plugin-map-effects": 0.4.2
   "@tomtom-org/maps-sdk-plugin-map-theme": 0.3.9
   "@tomtom-org/maps-sdk-plugin-route-dragging": 0.0.3

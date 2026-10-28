@@ -5,10 +5,10 @@ import type { FocusState } from './types';
 import type { AgentInstance } from './useAgentBootstrap';
 
 /**
- * Focus is per-entry: the toolkit emits `focus-change` carrying the owning
- * entryId, and prev/next navigation feeds that id back. UI-driven focus
- * operations (panel clicks, cluster pins) resolve the owning entry by looking
- * up the first incident id, falling back to the latest entry when the id has
+ * Focus is per-dataset: the toolkit emits `focus-change` carrying the owning
+ * datasetId, and prev/next navigation feeds that id back. UI-driven focus
+ * operations (panel clicks, cluster pins) resolve the owning dataset by looking
+ * up the first incident id, falling back to the latest dataset when the id has
  * not yet been published.
  */
 export function useFocus(agent: AgentInstance | undefined) {
@@ -17,12 +17,12 @@ export function useFocus(agent: AgentInstance | undefined) {
 
     useEffect(() => {
         if (!agent) return;
-        const unsub = agent.state.trafficIncidents.events.on('focus-change', ({ entryId, focus: f }) => {
+        const unsub = agent.state.trafficIncidents.events.on('focus-change', ({ datasetId, focus: f }) => {
             if (f) {
-                setFocus({ entryId, ids: [...f.ids], reason: f.reason });
+                setFocus({ datasetId, ids: [...f.ids], reason: f.reason });
                 setFocusIndex(0);
                 if (f.ids.size > 0) {
-                    agent.state.trafficIncidents.navigateFocus(entryId, 0);
+                    agent.state.trafficIncidents.navigateFocus(datasetId, 0);
                 }
             } else {
                 setFocus(null);
@@ -41,21 +41,21 @@ export function useFocus(agent: AgentInstance | undefined) {
         if (!agent || !focus || focusCount === 0) return;
         const next = ((i % focusCount) + focusCount) % focusCount;
         setFocusIndex(next);
-        agent.state.trafficIncidents.navigateFocus(focus.entryId, next);
+        agent.state.trafficIncidents.navigateFocus(focus.datasetId, next);
     };
 
-    // Triage panels show items from the latest entry, so the latest entry is
+    // Triage panels show items from the latest dataset, so the latest dataset is
     // the natural target when the UI drives a focus change.
-    const latestEntryId = (): string | undefined => {
+    const latestDatasetId = (): string | undefined => {
         if (!agent) return undefined;
-        const entries = agent.state.trafficIncidents.entries;
-        return entries[entries.length - 1]?.id;
+        const datasets = agent.state.trafficIncidents.datasets;
+        return datasets[datasets.length - 1]?.id;
     };
 
     const focusOneIncident = (id: string) => {
         if (!agent) return;
-        const owning = agent.state.trafficIncidents.findEntryWithIncident(id);
-        const targetId = owning?.id ?? latestEntryId();
+        const owning = agent.state.trafficIncidents.findDatasetWithIncident(id);
+        const targetId = owning?.id ?? latestDatasetId();
         if (!targetId) return;
         agent.state.trafficIncidents.setFocus(targetId, [id], 'Selected from triage');
     };
@@ -63,8 +63,8 @@ export function useFocus(agent: AgentInstance | undefined) {
     const focusMany = (ids: string[], reason: string) => {
         if (!agent) return;
         const firstId = ids[0];
-        const owning = firstId ? agent.state.trafficIncidents.findEntryWithIncident(firstId) : undefined;
-        const targetId = owning?.id ?? latestEntryId();
+        const owning = firstId ? agent.state.trafficIncidents.findDatasetWithIncident(firstId) : undefined;
+        const targetId = owning?.id ?? latestDatasetId();
         if (!targetId) return;
         agent.state.trafficIncidents.setFocus(targetId, ids, reason);
     };
@@ -72,8 +72,8 @@ export function useFocus(agent: AgentInstance | undefined) {
     const focusCluster = (c: Cluster) => {
         if (!agent) return;
         const firstId = c.incidentIds[0];
-        const owning = firstId ? agent.state.trafficIncidents.findEntryWithIncident(firstId) : undefined;
-        const targetId = owning?.id ?? latestEntryId();
+        const owning = firstId ? agent.state.trafficIncidents.findDatasetWithIncident(firstId) : undefined;
+        const targetId = owning?.id ?? latestDatasetId();
         if (!targetId) return;
         agent.state.trafficIncidents.setFocus(targetId, [...c.incidentIds], `Cluster · ${c.headline}`);
         const features = agent.state.trafficIncidents.focusedFeatures(targetId);
@@ -89,7 +89,7 @@ export function useFocus(agent: AgentInstance | undefined) {
 
     const clearFocus = () => {
         if (!agent || !focus) return;
-        agent.state.trafficIncidents.clearFocus(focus.entryId);
+        agent.state.trafficIncidents.clearFocus(focus.datasetId);
     };
 
     return {

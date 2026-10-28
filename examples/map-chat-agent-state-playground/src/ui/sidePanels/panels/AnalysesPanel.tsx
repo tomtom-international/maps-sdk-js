@@ -17,9 +17,9 @@ const previewJson = (data: unknown): string => {
 };
 
 /**
- * Combined, cross-entry view of every analysis in the session — the same set the per-entry details
+ * Combined, cross-dataset view of every analysis in the session — the same set the per-dataset details
  * surface, read here straight off the top-level `state.analyses` registry. Re-renders on every
- * `analysis-change` (create / recompute), so monitored analyses stay live without per-entry plumbing.
+ * `analysis-change` (create / recompute), so monitored analyses stay live without per-dataset plumbing.
  */
 export function AnalysesPanel({ agent }: AnalysesPanelProps) {
     const analyses = useAgentSnapshot(
@@ -29,16 +29,16 @@ export function AnalysesPanel({ agent }: AnalysesPanelProps) {
 
     if (analyses.length === 0) {
         return (
-            <PanelShell title="Analyses" hint="Every analysis created by analyseData, across all entries.">
+            <PanelShell title="Analyses" hint="Every analysis created by analyseData, across all datasets.">
                 <p className="m-0 text-[11px] text-(--ui-text-low-em)">
-                    No analyses yet. Ask the agent to analyse one of your entries.
+                    No analyses yet. Ask the agent to analyse one of your datasets.
                 </p>
             </PanelShell>
         );
     }
 
     return (
-        <PanelShell title="Analyses" hint="Every analysis created by analyseData, across all entries.">
+        <PanelShell title="Analyses" hint="Every analysis created by analyseData, across all datasets.">
             <ul className="flex flex-col gap-2">
                 {analyses.map((record: AnalysisRecord) => {
                     const latest = record.history.at(-1);
@@ -60,8 +60,8 @@ export function AnalysesPanel({ agent }: AnalysesPanelProps) {
                             {record.description && (
                                 <span className="text-[11px] text-(--ui-text-low-em)">{record.description}</span>
                             )}
-                            <div className="flex flex-wrap gap-1" aria-label="Source entries">
-                                {record.affectedEntryIds.map((id) => (
+                            <div className="flex flex-wrap gap-1" aria-label="Source datasets">
+                                {record.affectedDatasetIds.map((id) => (
                                     <span
                                         key={id}
                                         className="truncate rounded-(--ui-rounded-5) bg-(--ui-surface-2) px-1.5 py-0.5 font-mono text-[10px] text-(--ui-text-med-em)"

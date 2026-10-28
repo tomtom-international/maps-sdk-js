@@ -45,24 +45,24 @@ export function useMapAgent() {
             },
         });
 
-        // Per-entry slice now — react to `shown-change` and bind the panel to the most
-        // recently rendered entry's data + lazy-initialised module.
+        // Per-dataset slice now — react to `shown-change` and bind the panel to the most
+        // recently rendered dataset's data + lazy-initialised module.
         const ttaSlice = agent.state.trafficAreaAnalytics;
         const syncLatestShown = async (shownIds: ReadonlySet<string>) => {
             if (shownIds.size === 0) {
                 setAnalyticsState(null);
                 return;
             }
-            const latest = [...ttaSlice.entries].reverse().find((e) => shownIds.has(e.id));
+            const latest = [...ttaSlice.datasets].reverse().find((e) => shownIds.has(e.id));
             if (!latest) {
                 setAnalyticsState(null);
                 return;
             }
-            const module = await ttaSlice.getEntryModule(latest.id);
+            const module = await ttaSlice.getDatasetModule(latest.id);
             setAnalyticsState({ analytics: latest.data, module });
         };
         const unsubShownChange = ttaSlice.events.on('shown-change', syncLatestShown);
-        void syncLatestShown(ttaSlice.shownEntryIds);
+        void syncLatestShown(ttaSlice.shownDatasetIds);
 
         setAgentInstance(agent);
 

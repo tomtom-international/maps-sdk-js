@@ -48,6 +48,6 @@ describe('score', () => {
         const [top] = scoreSites([best, worst], { ...DEFAULT_WEIGHTS, competition: 25, accessibility: 15 }).ranked;
 
         expect(top.score).toBe(100);
-        expect(top.breakdown.reduce((sum, entry) => sum + entry.points, 0)).toBe(100);
+        expect(top.breakdown.reduce((sum, dataset) => sum + dataset.points, 0)).toBe(100);
     });
 });

@@ -1,68 +1,68 @@
-import type { EntryMode, TrafficIncidentsEntry } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
-import { EntryModeToggle } from '../EntryModeToggle';
+import type { DatasetMode, TrafficIncidentsDataset } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+import { DatasetModeToggle } from '../DatasetModeToggle';
 import { type Agent, useSliceSnapshot } from '../useAgentSnapshot';
 import type { VisibilityMode } from '../VisibilityToggle';
-import { EntryList } from './EntryList';
+import { DatasetList } from './DatasetList';
 import { ModeRow } from './ModeRow';
 import { PanelShell } from './PanelShell';
 
 type IncidentsPanelProps = {
     agent: Agent;
-    entries: readonly TrafficIncidentsEntry[];
-    onShowDetails: (entry: TrafficIncidentsEntry) => void;
-    onDelete: (entry: TrafficIncidentsEntry) => void;
+    datasets: readonly TrafficIncidentsDataset[];
+    onShowDetails: (dataset: TrafficIncidentsDataset) => void;
+    onDelete: (dataset: TrafficIncidentsDataset) => void;
     visibility: (id: string) => VisibilityMode;
     onVisibilityChange: (id: string, mode: VisibilityMode) => void;
 };
 
-const summary = (entry: TrafficIncidentsEntry): string => {
-    const count = entry.data.length;
+const summary = (dataset: TrafficIncidentsDataset): string => {
+    const count = dataset.data.length;
     const word = count === 1 ? 'incident' : 'incidents';
     return `${count} ${word}`;
 };
 
 export function IncidentsPanel({
     agent,
-    entries,
+    datasets,
     onShowDetails,
     onDelete,
     visibility,
     onVisibilityChange,
 }: IncidentsPanelProps) {
-    const entryMode = useSliceSnapshot(
+    const datasetMode = useSliceSnapshot(
         agent.state.trafficIncidents.events,
         'mode-change',
-        () => agent.state.trafficIncidents.entryMode,
+        () => agent.state.trafficIncidents.datasetMode,
     );
-    const handleModeChange = (mode: EntryMode) => {
+    const handleModeChange = (mode: DatasetMode) => {
         void agent.state.trafficIncidents
-            .setEntryMode(mode)
+            .setDatasetMode(mode)
             .catch((error) => console.error('Failed to set incidents mode', error));
     };
 
-    const items = entries.map((entry) => ({
-        id: entry.id,
-        label: entry.label,
-        subtitle: summary(entry),
-        timestamp: entry.timestamp,
+    const items = datasets.map((dataset) => ({
+        id: dataset.id,
+        label: dataset.label,
+        subtitle: summary(dataset),
+        timestamp: dataset.timestamp,
     }));
 
-    const findEntry = (id: string) => entries.find((e) => e.id === id);
+    const findDataset = (id: string) => datasets.find((e) => e.id === id);
     const handleShow = (id: string) => {
-        const entry = findEntry(id);
-        if (entry) onShowDetails(entry);
+        const dataset = findDataset(id);
+        if (dataset) onShowDetails(dataset);
     };
     const handleDelete = (id: string) => {
-        const entry = findEntry(id);
-        if (entry) onDelete(entry);
+        const dataset = findDataset(id);
+        if (dataset) onDelete(dataset);
     };
 
     const clearShown = async () => {
         try {
             // Sequential — concurrent show/hide/clear calls race the SDK/MapLibre state machine.
-            const shown = [...agent.state.trafficIncidents.shownEntryIds];
+            const shown = [...agent.state.trafficIncidents.shownDatasetIds];
             for (const id of shown) {
-                await agent.state.trafficIncidents.hideEntry(id);
+                await agent.state.trafficIncidents.hideDataset(id);
             }
         } catch (error) {
             console.error('Failed to clear incidents', error);
@@ -76,11 +76,11 @@ export function IncidentsPanel({
             action={{ label: 'Hide all', onClick: clearShown }}
             controls={
                 <ModeRow>
-                    <EntryModeToggle value={entryMode} onChange={handleModeChange} />
+                    <DatasetModeToggle value={datasetMode} onChange={handleModeChange} />
                 </ModeRow>
             }
         >
-            <EntryList
+            <DatasetList
                 items={items}
                 emptyMessage='No incident snapshots yet. Ask the assistant for "incidents around …".'
                 onShowDetails={handleShow}

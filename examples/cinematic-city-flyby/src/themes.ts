@@ -243,7 +243,7 @@ export const flybyThemes: FlybyTheme[] = [
             shadows: { intensity: 0.3 },
         },
         landmarks: { color: '#c7d6d4' },
-        surfaces: { season: 'spring' },
+        surfaces: { season: 'spring', surfaces: { water: { glint: { intensity: 0.35 } } } },
         effects: {
             bloom: { intensity: 0.9, threshold: 0.45, radius: 30 },
             // Lit windows smeared down the wet lens, and not the sodium-orange major roads just off their colour.

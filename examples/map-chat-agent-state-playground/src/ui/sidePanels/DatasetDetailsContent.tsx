@@ -1,34 +1,34 @@
 import type {
-    BYODEntry,
-    CustomGeometriesEntry,
-    PlacesEntry,
-    RangesEntry,
-    RoutesEntry,
-    TrafficAreaAnalyticsEntry,
-    TrafficIncidentsEntry,
+    BYODDataset,
+    CustomGeometriesDataset,
+    PlacesDataset,
+    RangesDataset,
+    RoutesDataset,
+    TrafficAreaAnalyticsDataset,
+    TrafficIncidentsDataset,
 } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import { useMemo } from 'react';
 import { AnalysisChart } from '../../chat';
 import { type Agent, useAgentSnapshot } from './useAgentSnapshot';
 
-type AnyEntry =
-    | PlacesEntry
-    | RoutesEntry
-    | RangesEntry
-    | CustomGeometriesEntry
-    | BYODEntry
-    | TrafficIncidentsEntry
-    | TrafficAreaAnalyticsEntry;
+type AnyDataset =
+    | PlacesDataset
+    | RoutesDataset
+    | RangesDataset
+    | CustomGeometriesDataset
+    | BYODDataset
+    | TrafficIncidentsDataset
+    | TrafficAreaAnalyticsDataset;
 
-type EntryKind = 'places' | 'routes' | 'ranges' | 'geometries' | 'byod' | 'incidents' | 'areaAnalytics';
+type RailKind = 'places' | 'routes' | 'ranges' | 'geometries' | 'byod' | 'incidents' | 'areaAnalytics';
 
-type EntryDetailsContentProps = {
-    entry: AnyEntry;
+type DatasetDetailsContentProps = {
+    dataset: AnyDataset;
     /**
-     * Discriminator from the rail — avoids structural sniffing across entry shapes that
+     * Discriminator from the rail — avoids structural sniffing across dataset shapes that
      * share a `FeatureCollection`-shaped `data` (routes vs traffic-area-analytics).
      */
-    kind: EntryKind;
+    kind: RailKind;
     /** Agent handle — analyses are read on demand from the session-level `state.analyses` registry. */
     agent: Agent;
 };
@@ -42,22 +42,22 @@ const formatTimestamp = (ts: number): string =>
         minute: '2-digit',
     });
 
-const itemCount = (entry: AnyEntry, kind: EntryKind): { count: number; unit: string } => {
+const itemCount = (dataset: AnyDataset, kind: RailKind): { count: number; unit: string } => {
     switch (kind) {
         case 'places':
-            return { count: (entry as PlacesEntry).data.length, unit: 'place' };
+            return { count: (dataset as PlacesDataset).data.length, unit: 'place' };
         case 'routes':
-            return { count: (entry as RoutesEntry).data.features.length, unit: 'route' };
+            return { count: (dataset as RoutesDataset).data.features.length, unit: 'route' };
         case 'ranges':
-            return { count: (entry as RangesEntry).data?.length ?? 0, unit: 'range' };
+            return { count: (dataset as RangesDataset).data?.length ?? 0, unit: 'range' };
         case 'geometries':
-            return { count: (entry as CustomGeometriesEntry).data.length, unit: 'feature' };
+            return { count: (dataset as CustomGeometriesDataset).data.length, unit: 'feature' };
         case 'byod':
-            return { count: (entry as BYODEntry).profile.featureCount, unit: 'feature' };
+            return { count: (dataset as BYODDataset).profile.featureCount, unit: 'feature' };
         case 'incidents':
-            return { count: (entry as TrafficIncidentsEntry).data.length, unit: 'incident' };
+            return { count: (dataset as TrafficIncidentsDataset).data.length, unit: 'incident' };
         case 'areaAnalytics':
-            return { count: (entry as TrafficAreaAnalyticsEntry).data.features.length, unit: 'region' };
+            return { count: (dataset as TrafficAreaAnalyticsDataset).data.features.length, unit: 'region' };
     }
 };
 
@@ -72,9 +72,9 @@ function StatRow({ label, value }: { label: string; value: string }) {
 
 type Analysis = { name: string; description?: string; outputFormat: string; data: unknown };
 
-// One-line provenance string for a BYOD entry's source, mirroring the LLM-facing
+// One-line provenance string for a BYOD dataset's source, mirroring the LLM-facing
 // labels the slice uses (integrator / url / inline).
-const byodSource = (source: BYODEntry['source']): string => {
+const byodSource = (source: BYODDataset['source']): string => {
     switch (source.kind) {
         case 'url':
             return source.url;
@@ -85,27 +85,27 @@ const byodSource = (source: BYODEntry['source']): string => {
     }
 };
 
-export function EntryDetailsContent({ entry, kind, agent }: EntryDetailsContentProps) {
-    // Analyses live in the session-level registry, not on the entry — read them on demand for this entry
-    // and re-render whenever any analysis recomputes. (Mounted with a per-entry `key`, so the initial
+export function DatasetDetailsContent({ dataset, kind, agent }: DatasetDetailsContentProps) {
+    // Analyses live in the session-level registry, not on the dataset — read them on demand for this dataset
+    // and re-render whenever any analysis recomputes. (Mounted with a per-dataset `key`, so the initial
     // snapshot is fresh on selection change.)
     const allAnalyses = useAgentSnapshot(
         useMemo(() => [{ events: agent.state.analyses.events, types: ['analysis-change'] }], [agent]),
-        () => agent.state.analyses.getAnalysesForEntry(entry.id) as readonly Analysis[],
+        () => agent.state.analyses.getAnalysesForDataset(dataset.id) as readonly Analysis[],
     );
     const charts = allAnalyses.filter((a) => a.outputFormat === 'chart');
-    const { count, unit } = itemCount(entry, kind);
+    const { count, unit } = itemCount(dataset, kind);
     const isSingleAnalysis = charts.length === 1;
-    const provenance = kind === 'geometries' ? (entry as CustomGeometriesEntry).provenance : undefined;
-    const byod = kind === 'byod' ? (entry as BYODEntry) : undefined;
+    const provenance = kind === 'geometries' ? (dataset as CustomGeometriesDataset).provenance : undefined;
+    const byod = kind === 'byod' ? (dataset as BYODDataset) : undefined;
 
     return (
         <div className="flex flex-col">
             <div className="flex flex-col gap-1 border-b border-(--ui-border-low-em) bg-(--ui-surface-1) px-3 py-2">
-                <StatRow label="Label" value={entry.label} />
-                <StatRow label="ID" value={entry.id} />
+                <StatRow label="Label" value={dataset.label} />
+                <StatRow label="ID" value={dataset.id} />
                 <StatRow label="Items" value={`${count} ${unit}${count === 1 ? '' : 's'}`} />
-                <StatRow label="Last modified" value={formatTimestamp(entry.timestamp)} />
+                <StatRow label="Last modified" value={formatTimestamp(dataset.timestamp)} />
                 {provenance && <StatRow label="Operation" value={provenance.operation ?? 'custom'} />}
                 {provenance && provenance.sourceIds.length > 0 && (
                     <div className="flex flex-col gap-0.5 pt-1 text-[12px] leading-[16px]">

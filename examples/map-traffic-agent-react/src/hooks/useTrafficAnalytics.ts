@@ -5,8 +5,8 @@ import type { AgentInstance } from './useAgentBootstrap';
 /**
  * Mirror the toolkit's `trafficAreaAnalytics` events into React state so the
  * AnalyticsControlPanel can render the currently-shown area analysis. The
- * slice is per-entry, so we react to `shown-change` and pick the latest
- * shown entry, lazy-fetching its module for the control panel.
+ * slice is per-dataset, so we react to `shown-change` and pick the latest
+ * shown dataset, lazy-fetching its module for the control panel.
  */
 export function useTrafficAnalytics(agent: AgentInstance | undefined) {
     const [analyticsState, setAnalyticsState] = useState<AnalyticsState>(null);
@@ -21,21 +21,21 @@ export function useTrafficAnalytics(agent: AgentInstance | undefined) {
                 setAnalyticsState(null);
                 return;
             }
-            const entries = slice.entries;
-            // Newest-first scan picks the most recent rendered entry — that's the one the
+            const datasets = slice.datasets;
+            // Newest-first scan picks the most recent rendered dataset — that's the one the
             // control panel should be bound to.
-            const latest = [...entries].reverse().find((e) => shownIds.has(e.id));
+            const latest = [...datasets].reverse().find((e) => shownIds.has(e.id));
             if (!latest) {
                 setAnalyticsState(null);
                 return;
             }
-            const module = await slice.getEntryModule(latest.id);
+            const module = await slice.getDatasetModule(latest.id);
             setAnalyticsState({ analytics: latest.data, module });
         };
 
         const unsubShown = slice.events.on('shown-change', syncLatestShown);
-        // Sync once on mount in case an entry is already showing when the hook attaches.
-        void syncLatestShown(slice.shownEntryIds);
+        // Sync once on mount in case a dataset is already showing when the hook attaches.
+        void syncLatestShown(slice.shownDatasetIds);
 
         return () => {
             unsubShown();

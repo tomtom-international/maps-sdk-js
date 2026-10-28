@@ -4,35 +4,35 @@
 
 ### Patch Changes
 
-- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - The package ships its `CHANGELOG.md`, as the SDK does, so you can read what changed between two releases from `node_modules`
+- The package ships its `CHANGELOG.md`, as the SDK does, so you can read what changed between two releases from `node_modules`
 
-- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - A `maxZoom` of 0 is honoured, and `update()` rebuilds the places layers only when it is given a places config
+- A `maxZoom` of 0 is honoured, and `update()` rebuilds the places layers only when it is given a places config
 
-- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - `new ViewportPlaces(map, { onError })` hands you a refresh on map move that fails, as the search's `SDKError` or the map's `TomTomMapError`, instead of only logging it
+- `new ViewportPlaces(map, { onError })` hands you a refresh on map move that fails, as the search's `SDKError` or the map's `TomTomMapError`, instead of only logging it
 
 ## 0.5.9
 
 ### Patch Changes
 
-- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - The README links the repository's security policy page, which sends a vulnerability report to TomTom's HackerOne program
+- The README links the repository's security policy page, which sends a vulnerability report to TomTom's HackerOne program
 
 ## 0.5.8
 
 ### Patch Changes
 
-- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - The `license` field reads `SEE LICENSE IN LICENSE.txt`, the form npm and license scanners recognise, so they point to the package's own `LICENSE.txt` instead of reporting an unknown license
+- The `license` field reads `SEE LICENSE IN LICENSE.txt`, the form npm and license scanners recognise, so they point to the package's own `LICENSE.txt` instead of reporting an unknown license
 
-- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - Installs beside `@tomtom-org/maps-sdk` 1.0.0 and every later 1.x release: the peer range on the SDK runs up to `<2.0.0` instead of stopping below 1.0.0
+- Installs beside `@tomtom-org/maps-sdk` 1.0.0 and every later 1.x release: the peer range on the SDK runs up to `<2.0.0` instead of stopping below 1.0.0
 
-- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - The package page on npm and the API reference of its entry points say the plugin is in Public Preview until its 1.0.0 release, as its guides already do
+- The package page on npm and the API reference of its entry points say the plugin is in Public Preview until its 1.0.0 release, as its guides already do
 
-- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - A refresh on map move, or the clear on `remove`, that fails is logged as a warning instead of leaving an unhandled rejection, for example while the map's style failed to load
+- A refresh on map move, or the clear on `remove`, that fails is logged as a warning instead of leaving an unhandled rejection, for example while the map's style failed to load
 
 ## 0.5.7
 
 ### Patch Changes
 
-- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - Plugins are side-effect free, so your bundler drops every part of a plugin your app doesn't use
+- Plugins are side-effect free, so your bundler drops every part of a plugin your app doesn't use
   
   - Each plugin declares `"sideEffects": false`, and its knob catalogue and other module-level tables are dropped when nothing reads them
   - flyover takes `@turf/turf` as a peer dependency, the copy the SDK already requires, instead of bundling its own
@@ -42,40 +42,40 @@
 
 ### Patch Changes
 
-- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - license: the privacy clause of `LICENSE.txt` now links the TomTom Privacy Policy, https://www.tomtom.com/privacy/
+- license: the privacy clause of `LICENSE.txt` now links the TomTom Privacy Policy, https://www.tomtom.com/privacy/
 
-- Thanks [@JulianChinAFoeng-TomTom](https://github.com/JulianChinAFoeng-TomTom)! - tests: each package's unit test run now fails when its coverage drops below the goals in `TESTING.md`
+- tests: each package's unit test run now fails when its coverage drops below the goals in `TESTING.md`
 
 ## 0.5.5
 
 ### Patch Changes
 
-- Thanks [@AlvaroGraca-TomTom](https://github.com/AlvaroGraca-TomTom)! - No code change: this version is on the `latest` npm tag, which the previous one missed
+- No code change: this version is on the `latest` npm tag, which the previous one missed
 
 ## 0.5.4
 
 ### Patch Changes
 
-- Thanks [@AlvaroGraca-TomTom](https://github.com/AlvaroGraca-TomTom)! - No code change: this version is on the `latest` npm tag, which the previous one missed
+- No code change: this version is on the `latest` npm tag, which the previous one missed
 
 ## 0.5.3
 
 ### Patch Changes
 
-- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - The README's Project setup link opens the page again, and its quickstart shows a POI category search and updating or removing a place module
+- The README's Project setup link opens the page again, and its quickstart shows a POI category search and updating or removing a place module
 
 ## 0.5.2
 
 ### Patch Changes
 
-- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - The package ships without source maps, so a stack trace through the plugin points into its minified bundle
+- The package ships without source maps, so a stack trace through the plugin points into its minified bundle
   - An app's own source maps still lead a trace to the plugin's frames (`dist/index.es.js:1:2345`); share such a trace in a report and TomTom maps it back to the source
 
 ## 0.5.1
 
 ### Patch Changes
 
-- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - Modules keep the `base-map` marker type under the renamed `markerType`, which needs `@tomtom-org/maps-sdk` `>=0.61.0`.
+- Modules keep the `base-map` marker type under the renamed `markerType`, which needs `@tomtom-org/maps-sdk` `>=0.61.0`.
   
   - Modules keep drawing as `base-map` by default under the renamed `markerType`
   - The peer dependency on `@tomtom-org/maps-sdk` is the range `>=0.61.0 <1.0.0`, the first release with `markerType`
@@ -86,21 +86,21 @@
 
 ### Minor Changes
 
-- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - Requires `@tomtom-org/maps-sdk` `>=0.59.0 <1.0.0`: each module's viewport searches run through the SDK's new `createLatestRequest`, with no change to what the plugin shows or cancels
+- Requires `@tomtom-org/maps-sdk` `>=0.59.0 <1.0.0`: each module's viewport searches run through the SDK's new `createLatestRequest`, with no change to what the plugin shows or cancels
 
-- Thanks [@JulianChinAFoeng-TomTom](https://github.com/JulianChinAFoeng-TomTom)! - **Breaking:** `searchOptions` takes the SDK's grouped `filters` — `searchOptions: { filters: { poiCategories } }` — and `update()` merges `filters` member by member, like the rest of `searchOptions`. It takes no `cursor`: every module searches the first page of the current viewport
+- **Breaking:** `searchOptions` takes the SDK's grouped `filters` — `searchOptions: { filters: { poiCategories } }` — and `update()` merges `filters` member by member, like the rest of `searchOptions`. It takes no `cursor`: every module searches the first page of the current viewport
 
 ## 0.4.0
 
 ### Minor Changes
 
-- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** `ViewportPlaces.remove` throws for an unknown ID, as `update` does, instead of logging to the console
+- **Breaking:** `ViewportPlaces.remove` throws for an unknown ID, as `update` does, instead of logging to the console
 
 ### Patch Changes
 
-- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - Built with the latest minor releases of the plugin build toolchain; no change to the plugin's API or peer dependencies
+- Built with the latest minor releases of the plugin build toolchain; no change to the plugin's API or peer dependencies
 
-- Thanks [@JulianChinAFoeng-TomTom](https://github.com/JulianChinAFoeng-TomTom)! - Viewport searches call `discoverPlaces`, following the SDK renaming `search`
+- Viewport searches call `discoverPlaces`, following the SDK renaming `search`
 - Updated dependencies:
   - @tomtom-org/maps-sdk@0.58.0
 
@@ -108,11 +108,9 @@
 
 ### Minor Changes
 
-- Thanks [@AlvaroGraca-TomTom](https://github.com/AlvaroGraca-TomTom)!
-  
-  - **Breaking:** `searchOptions` no longer accepts `geoBias`; each module always searches the current viewport
-  - A new viewport cancels the search a module still has in flight
-  - Accept every SDK release below 1.0: the peer dependency on `@tomtom-org/maps-sdk` is the range `>=0.55.1 <1.0.0` instead of an exact version
+- **Breaking:** `searchOptions` no longer accepts `geoBias`; each module always searches the current viewport
+- A new viewport cancels the search a module still has in flight
+- Accept every SDK release below 1.0: the peer dependency on `@tomtom-org/maps-sdk` is the range `>=0.55.1 <1.0.0` instead of an exact version
 
 ### Patch Changes
 
@@ -124,7 +122,7 @@
 
 ### Features
 
-* improve api reference types, adjust syntax for agent toolkit plugin, and improve agents.md ([9428902](https://github.com/tomtom-international/maps-sdk-js/commit/9428902605299302fdbb206f22a514e6761d0716))
+* improve api reference types, adjust syntax for agent toolkit plugin, and improve agents.md
 
 ## [0.2.0](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-viewport-places-v0.1.8...maps-sdk-plugin-viewport-places-v0.2.0) (2026-03-16)
 
@@ -135,59 +133,59 @@
 
 ### Features
 
-* improve poi categories relationship with search ([52f5a26](https://github.com/tomtom-international/maps-sdk-js/commit/52f5a265dbe0ae4cbb3386de3740cb887ed1a11c))
-* incident details service improvements and added agent tools ([9f3058d](https://github.com/tomtom-international/maps-sdk-js/commit/9f3058dd55fde278ea8d8b58ddb223c354dd9ada))
+* improve poi categories relationship with search
+* incident details service improvements and added agent tools
 
 ## [0.1.8](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-viewport-places-v0.1.7...maps-sdk-plugin-viewport-places-v0.1.8) (2026-02-16)
 
 
 ### Bug Fixes
 
-* omit bounding box and position from search options in viewport places plugin since they should be automatically set ([a2ffd50](https://github.com/tomtom-international/maps-sdk-js/commit/a2ffd503c58cbf0c17c678b54cf6f83d8074936f))
+* omit bounding box and position from search options in viewport places plugin since they should be automatically set
 
 ## [0.1.6](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-viewport-places-v0.1.5...maps-sdk-plugin-viewport-places-v0.1.6) (2026-01-30)
 
 
 ### Features
 
-* **viewport-places:** improve types ([817678e](https://github.com/tomtom-international/maps-sdk-js/commit/817678e6d280560307bfb445bf183136aca69a41))
+* **viewport-places:** improve types
 
 
 ### Bug Fixes
 
-* improve release workflow and update documentation ([905a7ed](https://github.com/tomtom-international/maps-sdk-js/commit/905a7ed0f3770ce51ac2937a948ef4ad6b8bfcaa))
+* improve release workflow and update documentation
 
 ## [0.1.5](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-viewport-places-v0.1.4...maps-sdk-plugin-viewport-places-v0.1.5) (2026-01-30)
 
 
 ### Bug Fixes
 
-* improve release workflow and update documentation ([905a7ed](https://github.com/tomtom-international/maps-sdk-js/commit/905a7ed0f3770ce51ac2937a948ef4ad6b8bfcaa))
+* improve release workflow and update documentation
 
 ## [0.1.4](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-viewport-places-v0.1.3...maps-sdk-plugin-viewport-places-v0.1.4) (2026-01-30)
 
 
 ### Features
 
-* **viewport-places:** improve types ([817678e](https://github.com/tomtom-international/maps-sdk-js/commit/817678e6d280560307bfb445bf183136aca69a41))
+* **viewport-places:** improve types
 
 ## [0.1.3](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-viewport-places-v0.1.2...maps-sdk-plugin-viewport-places-v0.1.3) (2026-01-30)
 
 
 ### Features
 
-* **viewport-places:** improve TSDocs ([01ced36](https://github.com/tomtom-international/maps-sdk-js/commit/01ced36e895f679e0f92f2241d9442c9415e0eb2))
+* **viewport-places:** improve TSDocs
 
 ## [0.1.2](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-viewport-places-v0.1.1...maps-sdk-plugin-viewport-places-v0.1.2) (2026-01-29)
 
 
 ### Features
 
-* simplify viewport places method name, and improve api reference docs ([46c7de1](https://github.com/tomtom-international/maps-sdk-js/commit/46c7de1f504839a796d8052567069b5d87ccdb0b))
+* simplify viewport places method name, and improve api reference docs
 
 ## [0.1.1](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-viewport-places-v0.1.0...maps-sdk-plugin-viewport-places-v0.1.1) (2026-01-29)
 
 
 ### Features
 
-* add plugins workspace with first plugin to easily display search-powered layers of places on the map ([eac82a2](https://github.com/tomtom-international/maps-sdk-js/commit/eac82a2ebe731e87463564eb5e1331089ca1cc70))
+* add plugins workspace with first plugin to easily display search-powered layers of places on the map

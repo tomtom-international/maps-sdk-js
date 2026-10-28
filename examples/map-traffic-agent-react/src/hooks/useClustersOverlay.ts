@@ -6,7 +6,7 @@ import type { AgentInstance } from './useAgentBootstrap';
 /**
  * Owns the ClustersOverlay (the pin layer) and keeps it in sync with the
  * cluster list. Click handler dispatches focus through the focus hook —
- * cluster ids may live in any entry, so the caller resolves the owning entry
+ * cluster ids may live in any dataset, so the caller resolves the owning dataset
  * itself.
  */
 export function useClustersOverlay(

@@ -45,12 +45,12 @@ vi.mocked(resolveWithin).mockImplementation(async ({ queries }) => {
 // The scan reads the session preferences and redraws its scan-area outline through these.
 const state = {
     siteSelection: new SiteSelectionState(),
-    byod: { entries: [], findById: () => undefined },
+    byod: { datasets: [], findById: () => undefined },
     customGeometries: {
-        entries: [],
-        addEntry: vi.fn(async () => 'scan-area'),
-        getEntryGeometriesModule: vi.fn(async () => ({})),
-        showEntry: vi.fn(),
+        datasets: [],
+        addDataset: vi.fn(async () => 'scan-area'),
+        getDatasetGeometriesModule: vi.fn(async () => ({})),
+        showDataset: vi.fn(),
     },
 } as unknown as ToolState;
 
@@ -99,7 +99,7 @@ describe('findWhitespace', () => {
 
     it('returns an error for an unknown demand layer', async () => {
         const result = await findWhitespace({}).execute(
-            { areas: ['Downtown'], targetCategories: ['gym'], colocation: 'avoid', demandByodEntryId: 'missing' },
+            { areas: ['Downtown'], targetCategories: ['gym'], colocation: 'avoid', demandByodDatasetId: 'missing' },
             state,
         );
         expect(result.error).toContain('No BYOD layer "missing"');

@@ -106,7 +106,7 @@ const SITE_SESSION_STATE =
     '- Analyses you run accumulate as on-screen panels for the session; later tools (e.g. ' +
     'generateSiteReport) read those results from session state rather than from your messages, so you ' +
     'can build on earlier analyses without re-running them.\n' +
-    '- Loaded BYOD layers and their entry ids persist for the session — use recallState to see what is ' +
+    '- Loaded BYOD layers and their dataset ids persist for the session — use recallState to see what is ' +
     'loaded and reuse a layer by id across analyses instead of re-loading it.\n' +
     '- Session preferences (catchment, weights, demand anchors) set via updateSitePreferences carry across ' +
     'turns; a later analysis inherits them unless its own arguments override them.';
@@ -150,8 +150,8 @@ const SITE_TOOLS_GUIDANCE =
     'dedicated tools do not cover (a custom metric over already-loaded data, or authoring a derived / BYOD ' +
     'layer). ' +
     'BRING-YOUR-OWN-DATA — load a layer with addByodSource (URL), read the profile it returns, then style ' +
-    "with setByodLayers; to ANALYSE the user's data, pass its entry id into an analysis " +
-    '(candidatesByodEntryId / demandByodEntryId / existingByodEntryId), not by eyeballing the map. ' +
+    "with setByodLayers; to ANALYSE the user's data, pass its dataset id into an analysis " +
+    '(candidatesByodDatasetId / demandByodDatasetId / existingByodDatasetId), not by eyeballing the map. ' +
     'ALWAYS style a BYOD layer in the brand colour #EE6748 — a translucent fill (fill-opacity ~0.3–0.5) ' +
     'with #EE6748 for fill-color and fill-outline-color / line-color / circle-color as the geometry needs. ' +
     'Use this SAME colour every time; never pick a random or different colour per run, UNLESS the user ' +
@@ -228,7 +228,7 @@ export const buildSiteTools = (): Record<string, ToolEntry | ToolEntryBuilder> =
     addByodSource: builtin.addByodSource,
     setByodLayers: builtin.setByodLayers,
     updateByodDisplay: builtin.updateByodDisplay,
-    // Data / sandbox escape hatches. analyseData runs ad-hoc analysis over loaded entries (incl. BYOD);
+    // Data / sandbox escape hatches. analyseData runs ad-hoc analysis over loaded datasets (incl. BYOD);
     // processData authors NEW renderable layers (incl. agent-authored BYOD); both are classifier-gated.
     // recallState (always-active, cheap) lists what's loaded. findReachableAreas stays out — its reach
     // computation overlaps the domain tools' own catchment internals.

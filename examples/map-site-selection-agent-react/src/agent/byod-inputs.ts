@@ -9,15 +9,15 @@ import { clipPolygons, unionPolygons } from './geometry';
 // any of that; we only read `state.byod.findById(id).data` (a GeoJSON FeatureCollection) and join it
 // against an analysis geometry with turf.
 
-// Read a loaded BYOD entry's FeatureCollection, or throw a message the agent can relay to the user.
-export const requireByodFeatures = (state: ToolState, entryId: string): FeatureCollection => {
-    const entry = state.byod.findById(entryId);
-    if (!entry) {
-        const loaded = state.byod.entries.map((candidate) => candidate.id);
+// Read a loaded BYOD dataset's FeatureCollection, or throw a message the agent can relay to the user.
+export const requireByodFeatures = (state: ToolState, datasetId: string): FeatureCollection => {
+    const dataset = state.byod.findById(datasetId);
+    if (!dataset) {
+        const loaded = state.byod.datasets.map((candidate) => candidate.id);
         const hint = loaded.length ? ` Loaded layers: ${loaded.join(', ')}.` : ' No BYOD layers are loaded yet.';
-        throw new Error(`No BYOD layer "${entryId}".${hint} Load one with addByodSource first.`);
+        throw new Error(`No BYOD layer "${datasetId}".${hint} Load one with addByodSource first.`);
     }
-    return entry.data;
+    return dataset.data;
 };
 
 // Fallback label keys, in priority order — a last resort when the caller doesn't name a label

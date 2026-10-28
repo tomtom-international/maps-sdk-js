@@ -110,15 +110,15 @@ The plugin ships a `DEFAULT_TOOLS` registry that covers search, routing, traffic
 | `replaceWaypointInRoute` | Overwrite a single waypoint of the current route in place — origin, destination or by index |
 | `getCurrentWaypoints` | Get the staged waypoint slots (origin, stops, destination) |
 | `startRouteMonitor` | Recalculate an already-calculated route on a cadence (default 60 s) so its live-traffic delays stay current |
-| `stopRouteMonitor` | Stop recalculating a route. The entry keeps its last data |
+| `stopRouteMonitor` | Stop recalculating a route. The dataset keeps its last data |
 | `findReachableAreas` | Calculate isochrone/isodistance polygons from one or more origins (in private preview, so the API key needs Calculate Reachable Range access) |
 
 ### Traffic
 
 | Tool | Description |
 |---|---|
-| `getTrafficIncidents` | Fetch traffic incidents within an area (viewport, named place, route corridor, polygon, IDs). By default, the entry keeps refreshing |
-| `setTrafficIncidentsMonitor` | Turn background refreshing of an already-loaded incidents entry on or off |
+| `getTrafficIncidents` | Fetch traffic incidents within an area (viewport, named place, route corridor, polygon, IDs). By default, the dataset keeps refreshing |
+| `setTrafficIncidentsMonitor` | Turn background refreshing of an already-loaded incidents dataset on or off |
 | `clusterIncidents` | Group loaded incidents into hotspots (DBSCAN) with road and category labels, delay totals and trends |
 | `focusIncidents` | Highlight a subset of incidents by id (`analyseData` can pick them by category or severity) on the map and dim the rest |
 | `getTrafficAreaAnalytics` | Fetch historical traffic analytics (speed, congestion, travel time) for an area |
@@ -127,28 +127,28 @@ The plugin ships a `DEFAULT_TOOLS` registry that covers search, routing, traffic
 
 | Tool | Description |
 |---|---|
-| `createTracker` | Watch loaded entries with generated code and log an alert when its condition turns true (e.g. an incident near a hospital) |
+| `createTracker` | Watch loaded datasets with generated code and log an alert when its condition turns true (e.g. an incident near a hospital) |
 | `getTrackers` | List the active trackers and whether each is firing |
 | `getTrackerHistory` | Read the alerts and events trackers have logged, for one tracker or since a time |
-| `clearTracker` | Stop a tracker. The entries it watched stay |
+| `clearTracker` | Stop a tracker. The datasets it watched stay |
 
 ### Bring-your-own-data (BYOD)
 
 | Tool | Description |
 |---|---|
-| `addByodSource` | Ingest a customer-authored GeoJSON source (URL or inline `FeatureCollection`) and profile its shape. The entry has no layers and renders nothing until the agent sets them with `setByodLayers` |
-| `setByodLayers` | Restyle a BYOD entry by replacing its MapLibre layers (type and data-driven paint), using the entry's data `profile` |
+| `addByodSource` | Ingest a customer-authored GeoJSON source (URL or inline `FeatureCollection`) and profile its shape. The dataset has no layers and renders nothing until the agent sets them with `setByodLayers` |
+| `setByodLayers` | Restyle a BYOD dataset by replacing its MapLibre layers (type and data-driven paint), using the dataset's data `profile` |
 | `updateByodDisplay` | Show, hide or clear BYOD layers on the map |
 
-> See the [Bring your own data](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/byod) guide for ingestion patterns, the visibility lifecycle and how BYOD entries feed into `analyseData` / `processData`.
+> See the [Bring your own data](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/byod) guide for ingestion patterns, the visibility lifecycle and how BYOD datasets feed into `analyseData` / `processData`.
 
 ### Unified data tools — scope-aware code generation
 
 | Tool | Description |
 |---|---|
-| `analyseData` | Aggregate or chart entries (`places`, `routes`, `incidents`, `geometries`, `trafficAreaAnalytics`, `byod`) with dynamic JS. The scope the classifier emits narrows the schema each turn |
-| `processData` | Transform entries, with dynamic JS, into new `places`, `placeConnections`, `geometries`, `byod` or a `fitOnMap` camera move |
-| `monitorAnalysis` | Start or stop recomputing an `analyseData` analysis whenever its source entries change |
+| `analyseData` | Aggregate or chart datasets (`places`, `routes`, `incidents`, `geometries`, `trafficAreaAnalytics`, `byod`) with dynamic JS. The scope the classifier emits narrows the schema each turn |
+| `processData` | Transform datasets, with dynamic JS, into new `places`, `placeConnections`, `geometries`, `byod` or a `fitOnMap` camera move |
+| `monitorAnalysis` | Start or stop recomputing an `analyseData` analysis whenever its source datasets change |
 
 `executeMaplibreCode` runs arbitrary MapLibre JS against the live `Map` instance, an escape hatch for custom layers, animations and raster overlays. Its code runs in your page with no sandbox, so it's not in `DEFAULT_TOOLS`. Add it with `tools: { executeMaplibreCode: createExecuteMaplibreCodeTool() }` only where you trust the model.
 
@@ -169,10 +169,10 @@ const agent = createMapAgent(map, {
 
 | Tool | Description |
 |---|---|
-| `updatePlacesDisplay` | Show, hide or restyle place entries on the map |
-| `updateRoutesDisplay` | Show, hide or swap route entries, switch the highlighted alternative or fit the camera |
+| `updatePlacesDisplay` | Show, hide or restyle place datasets on the map |
+| `updateRoutesDisplay` | Show, hide or swap route datasets, switch the highlighted alternative or fit the camera |
 | `updateWaypointsDisplay` | Show staged waypoint markers without the route line |
-| `updateTrafficAreaAnalyticsDisplay` | Show, hide or swap traffic-area-analytics entries |
+| `updateTrafficAreaAnalyticsDisplay` | Show, hide or swap traffic-area-analytics datasets |
 | `clearMap` | Remove displayed places, routes, BYOD layers or all features |
 
 ### Map control
@@ -199,8 +199,8 @@ const agent = createMapAgent(map, {
 
 | Tool | Description |
 |---|---|
-| `recallState` | Read session state: a snapshot of the places, routes and ranges entries with the map style and layer configs, one kind's entries (`places`, `routes`, `ranges`, `geometries`, `byod`, …), or one entry by `{ kind, id }` |
-| `setEntryMode` | Switch a slice between `multiple` (default) and `single` entry modes |
+| `recallState` | Read session state: a snapshot of the places, routes and ranges datasets with the map style and layer configs, one kind's datasets (`places`, `routes`, `ranges`, `geometries`, `byod`, …), or one dataset by `{ kind, id }` |
+| `setDatasetMode` | Switch a slice between `multiple` (default) and `single` dataset modes |
 | `resetState` | Reset every state slice and the map style to their defaults |
 
 ### Utilities
@@ -242,11 +242,11 @@ const agent = createMapAgent<MyState>(map, {
     // Custom state slices — only custom fields needed, built-in slices are created automatically
     state: { fleet: new FleetState() },
 
-    // Per-kind data-entry config. `enabled: false` removes the kind from the tool surface
+    // Per-kind dataset config. `enabled: false` removes the kind from the tool surface
     // (drops its recall/display/fetch tools and the kind from analyseData/processData scope).
-    // `entryMode` switches the slice between 'multiple' (default) and 'single' (latest only).
-    dataEntries: {
-        routes: { entryMode: 'single' },
+    // `datasetMode` switches the slice between 'multiple' (default) and 'single' (latest only).
+    datasets: {
+        routes: { datasetMode: 'single' },
         byod: { enabled: false },
     },
 
@@ -364,19 +364,19 @@ type ToolEntry<S extends ToolState = ToolState, Scope = unknown> = {
 
 ## State management
 
-> See the [State](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/state) guide for a per-slice deep dive, `entryMode` semantics (`multiple` vs `single`), inspecting state from your application and adding custom slices.
+> See the [State](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/state) guide for a per-slice deep dive, `datasetMode` semantics (`multiple` vs `single`), inspecting state from your application and adding custom slices.
 
 `ToolState` holds one slice per feature area. Each slice manages lazily initialized map modules and an append-only history of the results the session produces. The built-in slices are:
 
-- `PlacesState` — place / geometry entry history
+- `PlacesState` — place / geometry dataset history
 - `RoutingState` — route history, planning waypoint slots, route parameters
-- `RangeState` — reachable-range entries
-- `CustomGeometriesState` — derived polygon entries produced by `processData` (union, difference, h3-coverage, …)
-- `BYODState` — bring-your-own-data GeoJSON layer entries
+- `RangeState` — reachable-range datasets
+- `CustomGeometriesState` — derived polygon datasets produced by `processData` (union, difference, h3-coverage, …)
+- `BYODState` — bring-your-own-data GeoJSON layer datasets
 - `BaseMapState` — viewport, style, language, raw `mapLibreMap`
 - `TrafficTilesState` — visibility of the real-time traffic flow and incident tile overlays
-- `TrafficAreaAnalyticsState` — historical traffic-area-analytics entries and per-entry visualisation
-- `TrafficIncidentsState` — fetched incident entries, registered analyses, focused subsets and the optional polling monitor
+- `TrafficAreaAnalyticsState` — historical traffic-area-analytics datasets and per-dataset visualisation
+- `TrafficIncidentsState` — fetched incident datasets, registered analyses, focused subsets and the optional polling monitor
 - `MapPOIsState` — POI category visibility and filters
 
 `createMapAgent` constructs the built-in slices. To add custom slices, define an interface that extends `ToolState` and pass it as the type parameter. You provide only the custom fields:
@@ -392,7 +392,7 @@ const agent = createMapAgent<MyState>(map, {
 });
 
 agent.state.fleet;   // FleetState — custom slice
-agent.state.places;  // PlacesState — append-only history of place entries
+agent.state.places;  // PlacesState — append-only history of place datasets
 ```
 
 ## Privacy
@@ -455,7 +455,7 @@ const agent = createMapAgent(map, {
     // The prefix is prepended above the whole prompt as a heading-less preamble; the suffix is
     // appended under an "ADDITIONAL INSTRUCTIONS" heading.
     systemPromptPrefix: 'You work for Acme Logistics.',
-    systemPromptSuffix: 'Never expose internal entry ids to the user.',
+    systemPromptSuffix: 'Never expose internal dataset ids to the user.',
 });
 
 // Append-only: keep the whole base prompt, add instructions
@@ -574,7 +574,7 @@ For the complete, always-current list of exports, including factories, tool-regi
 - [Agent Toolkit guides](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/overview) — full documentation set:
     - [How it works](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/how-it-works) — two-phase pipeline (classifier + tool loop), prompt assembly, observability
     - [Tools](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/tools) — per-tool reference
-    - [State](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/state) — per-slice reference, entry modes, custom slices
+    - [State](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/state) — per-slice reference, dataset modes, custom slices
     - [Customizing tools](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/customizing-tools) — add, replace, remove or start from a blank slate
     - [Code generation](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/code-generation) — `analyseData` / `processData` / `createTracker` / `clusterIncidents` / `executeMaplibreCode` (threat model included)
     - [Scope-aware data tools](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/scope-aware-data-tools) — per-turn scope mechanism

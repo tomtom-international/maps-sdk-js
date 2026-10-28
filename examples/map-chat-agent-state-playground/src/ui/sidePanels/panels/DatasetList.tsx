@@ -4,25 +4,25 @@ import { type VisibilityMode, VisibilityToggle } from '../VisibilityToggle';
 import { isRowActivationKey } from './rowActivation';
 
 /**
- * Generic list-of-entries renderer used by Places / Routes / Ranges panels. Keeps the per-panel
- * components tiny — they only have to map their entry shape to a label + optional subtitle, and
+ * Generic list-of-datasets renderer used by Places / Routes / Ranges panels. Keeps the per-panel
+ * components tiny — they only have to map their dataset shape to a label + optional subtitle, and
  * provide the visibility/delete/show callbacks.
  */
-export type EntryListItem = {
+export type DatasetListItem = {
     id: string;
     label: string;
     subtitle?: string;
     timestamp: number;
 };
 
-type EntryListProps = {
-    items: EntryListItem[];
+type DatasetListProps = {
+    items: DatasetListItem[];
     emptyMessage: string;
-    /** Open the details panel for this entry. */
+    /** Open the details panel for this dataset. */
     onShowDetails: (id: string) => void;
-    /** Permanently remove this entry from agent state. */
+    /** Permanently remove this dataset from agent state. */
     onDelete: (id: string) => void;
-    /** Read this entry's visibility-mode (managed by the parent rail). */
+    /** Read this dataset's visibility-mode (managed by the parent rail). */
     visibility: (id: string) => VisibilityMode;
     onVisibilityChange: (id: string, mode: VisibilityMode) => void;
 };
@@ -30,14 +30,14 @@ type EntryListProps = {
 const formatTimestamp = (ts: number): string =>
     new Date(ts).toLocaleString(undefined, { hour: '2-digit', minute: '2-digit', month: 'short', day: 'numeric' });
 
-export function EntryList({
+export function DatasetList({
     items,
     emptyMessage,
     onShowDetails,
     onDelete,
     visibility,
     onVisibilityChange,
-}: EntryListProps) {
+}: DatasetListProps) {
     if (items.length === 0) {
         return <div className="px-3 py-6 text-center text-[11px] text-(--ui-text-low-em)">{emptyMessage}</div>;
     }

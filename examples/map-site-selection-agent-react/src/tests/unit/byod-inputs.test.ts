@@ -42,7 +42,7 @@ const SQUARE: Polygon = box(0, 0, 10, 10).geometry;
 // A ToolState is only narrowed to read `.byod`, so a byod-only stub is enough.
 const stateWithByod = (id: string, data: FeatureCollection): ToolState =>
     ({
-        byod: { findById: (queried: string) => (queried === id ? { id, data } : undefined), entries: [{ id }] },
+        byod: { findById: (queried: string) => (queried === id ? { id, data } : undefined), datasets: [{ id }] },
     }) as unknown as ToolState;
 
 describe('byodCandidateSites', () => {
@@ -176,7 +176,7 @@ describe('outerBoundary', () => {
 });
 
 describe('requireByodFeatures', () => {
-    it('returns the entry data when the id is loaded', () => {
+    it('returns the dataset data when the id is loaded', () => {
         const data = fc([point(1, 1, { name: 'a' })]);
         expect(requireByodFeatures(stateWithByod('e1', data), 'e1')).toBe(data);
     });

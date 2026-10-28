@@ -8,20 +8,20 @@ See [base reference](../agent-toolkit.md) for setup, [tools.md](./tools.md) for 
 
 ## Inputs
 
-Both tools take any combination of `placesEntryIDs` / `routesEntryIDs` / `incidentsEntryIDs` / `geometriesEntryIDs` /
-`trafficAreaAnalyticsEntryIDs` / `byodEntryIDs` plus a `code` string (a JS function body). The sandbox receives one
-per-entry record per kind — no merged collection:
+Both tools take any combination of `placesDatasetIDs` / `routesDatasetIDs` / `incidentsDatasetIDs` / `geometriesDatasetIDs` /
+`trafficAreaAnalyticsDatasetIDs` / `byodDatasetIDs` plus a `code` string (a JS function body). The sandbox receives one
+per-dataset record per kind — no merged collection:
 
-| Kind (`EntryDataKind`) | Sandbox identifier | Value per entry |
+| Kind (`AnalysableDatasetKind`) | Sandbox identifier | Value per dataset |
 |---|---|---|
-| `places` | `placesByEntry` | `FeatureCollection` |
-| `routes` | `routesByEntry` | `FeatureCollection` |
-| `incidents` | `incidentsByEntry` | incident array |
-| `customGeometries` | `geometriesByEntry` | polygon array, keyed by the tagged source `${kind}:${id}` (a place's, a range's or a custom geometry's polygons) |
-| `trafficAreaAnalytics` | `trafficAreaAnalyticsByEntry` | `FeatureCollection` of tile / hex regions |
-| `byod` | `byodByEntry` | `FeatureCollection` |
+| `places` | `placesByDataset` | `FeatureCollection` |
+| `routes` | `routesByDataset` | `FeatureCollection` |
+| `incidents` | `incidentsByDataset` | incident array |
+| `customGeometries` | `geometriesByDataset` | polygon array, keyed by the tagged source `${kind}:${id}` (a place's, a range's or a custom geometry's polygons) |
+| `trafficAreaAnalytics` | `trafficAreaAnalyticsByDataset` | `FeatureCollection` of tile / hex regions |
+| `byod` | `byodByDataset` | `FeatureCollection` |
 
-Span entries with `Object.values(...)` (`.flatMap((fc) => fc.features)` for collections, `.flat()` for arrays).
+Span datasets with `Object.values(...)` (`.flatMap((fc) => fc.features)` for collections, `.flat()` for arrays).
 
 Libraries also injected: `turf`, `h3`, `routeUtils` (core's route section and progress helpers, `getSectionsWithin`,
 `getImportantRoads`, `compareRoutes` and `isHairpin` included), `cluster(incidents, params?, previous?, now?)`
@@ -37,9 +37,9 @@ Libraries also injected: `turf`, `h3`, `routeUtils` (core's route section and pr
 
 ## `processData`
 
-- Extra inputs: `label?`, `entryId?` (overwrite), `operation?`, `show?`.
+- Extra inputs: `label?`, `datasetId?` (overwrite), `operation?`, `show?`.
 - `code` returns one of `{ places }` (optionally with attached `geometries` and `placeConnections`), `{ geometries }`
-  (a new `customGeometries` entry) or `{ byod }`; `fitOnMap` composes with any of them.
+  (a new `customGeometries` dataset) or `{ byod }`; `fitOnMap` composes with any of them.
 
 ## `clusterIncidents`
 
@@ -100,7 +100,7 @@ helper docs follow the active kinds: the cross-kind cheat-sheet when more than o
 - **Contract:** picking a scopable tool without a valid scope fails classifier validation. Two attempts; then the tool keeps
   its unscoped surface for the turn.
 - **`classifier: false`:** scoping never engages.
-- **`dataEntries[kind].enabled: false`:** the kind leaves both surfaces and the scope enum.
+- **`datasets[kind].enabled: false`:** the kind leaves both surfaces and the scope enum.
 - **Observe:** `onClassify` receives `activeToolNames` and `toolScopes`:
 
 ```ts
@@ -125,7 +125,7 @@ const fleetScopeSchema = z.object({
 });
 
 const fleetAnalyseBuilder: ToolEntryBuilder<MyState, FleetScope> = ({ scope }) => ({
-    description: scope ? `Analyse ${scope.kinds.join(' + ')} entries via dynamic JS.` : 'Analyse fleet data.',
+    description: scope ? `Analyse ${scope.kinds.join(' + ')} datasets via dynamic JS.` : 'Analyse fleet data.',
     inputSchema: buildFleetSchema(scope),
     execute: executeFleetAnalyse,
     scopeSchema: fleetScopeSchema,

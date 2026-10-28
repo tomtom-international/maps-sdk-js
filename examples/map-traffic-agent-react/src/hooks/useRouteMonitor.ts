@@ -26,15 +26,15 @@ export function useRouteMonitor(agent: AgentInstance | undefined) {
         unsubs.push(routing.events.on('monitor-start', refresh));
         unsubs.push(routing.events.on('monitor-stop', refresh));
         unsubs.push(
-            routing.events.on('monitor-tick', ({ entryId }) => {
-                if (!routing.isMonitored(entryId)) return;
+            routing.events.on('monitor-tick', ({ datasetId }) => {
+                if (!routing.isMonitored(datasetId)) return;
                 setRouteLastTickAt(Date.now());
                 setRouteTickCount((n) => n + 1);
                 refresh();
             }),
         );
-        // Recalculations land via entries-change too — keep summaries fresh.
-        unsubs.push(routing.events.on('entries-change', refresh));
+        // Recalculations land via datasets-change too — keep summaries fresh.
+        unsubs.push(routing.events.on('datasets-change', refresh));
 
         return () => {
             for (const unsub of unsubs) unsub();
@@ -46,19 +46,19 @@ export function useRouteMonitor(agent: AgentInstance | undefined) {
 
     // Frame a monitored corridor on the map — fit to the route geometry's bbox. Click a route card's
     // locate button to focus.
-    const frameRoute = (entryId: string) => {
+    const frameRoute = (datasetId: string) => {
         if (!agent) return;
-        const entry = agent.state.routing.entries.find((e) => e.id === entryId);
-        if (!entry) return;
-        const bbox = bboxFromGeoJSON(entry.data);
+        const dataset = agent.state.routing.datasets.find((e) => e.id === datasetId);
+        if (!dataset) return;
+        const bbox = bboxFromGeoJSON(dataset.data);
         if (!bbox) return;
         frameBounds(agent.state.baseMap.mapLibreMap, bbox);
     };
 
     // Stop one corridor's monitor — the Monitoring panel surfaces a route per card, so Stop is per-route.
-    const stopRoute = (entryId: string) => {
+    const stopRoute = (datasetId: string) => {
         if (!agent) return;
-        if (agent.state.routing.isMonitored(entryId)) agent.state.routing.stopMonitoring(entryId);
+        if (agent.state.routing.isMonitored(datasetId)) agent.state.routing.stopMonitoring(datasetId);
     };
 
     return {

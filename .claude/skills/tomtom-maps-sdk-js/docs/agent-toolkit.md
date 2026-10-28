@@ -15,7 +15,7 @@ Subsystems live in `docs/agent-toolkit/` — read the matching file too.
 |---|---|---|
 | Tools registry & custom tools | `agent-toolkit/tools.md` | `DEFAULT_TOOLS` / `TOOL_NAMES`, `ToolEntry` / `ToolEntryBuilder`, add / replace / remove / hand-pick tools, `locatePlace` / `getViewportBias`, `createGetCurrentLocationTool`, `createClarifyIntentTool`, opt-in `executeMaplibreCode` / `createExecuteMaplibreCodeTool`, `getTrafficIncidents` `where` |
 | Scope-aware data tools | `agent-toolkit/data-tools.md` | `analyseData` / `processData` / `createTracker` / `clusterIncidents`, the sandbox and its injected identifiers, per-turn scoping, scopable custom tools |
-| State | `agent-toolkit/state.md` | `ToolState` slices and their module accessors, tagged geometries ids, custom slices, entry mode, `getStateDigest` |
+| State | `agent-toolkit/state.md` | `ToolState` slices and their module accessors, tagged geometries ids, custom slices, dataset mode, `getStateDigest` |
 | Classifier & system prompt | `agent-toolkit/prompt-and-classifier.md` | `createDefaultClassifier` / custom classifier, `classificationPrompt`, `alwaysActive`, `BASE_SYSTEM_PROMPT` / `SYSTEM_PROMPT_SECTIONS` / `composeSystemPrompt`, prefix / suffix |
 | BYOD | `agent-toolkit/byod.md` | `addByodSource` / `setByodLayers` / `updateByodDisplay`, `BYODDataProfile`, untrusted-data handling, the default public-https URL policy and `byod.validateSourceUrl` |
 
@@ -35,11 +35,11 @@ import {
     BASE_SYSTEM_PROMPT,
     composeSystemPrompt,
     SYSTEM_PROMPT_SECTIONS,
-    ENTRY_MODE_SLICE_NAMES,
+    DATASET_MODE_SLICE_NAMES,
     getViewportBias,
     locatePlace,
-    type EntryDataKind,
-    type EntryModeSliceName,
+    type AnalysableDatasetKind,
+    type DatasetModeSliceName,
     type MapAgentInstance,
     type MapAgentOptions,
     type StateSlice,
@@ -107,12 +107,12 @@ agent.destroy(); // calls reset() on every state slice that implements StateSlic
 
 1. **Intent classification** (step 0 of each user message) — a pre-pass (a second LLM call when the first answer fails
    validation) picks the subset of tools for the turn from each tool's `classificationPrompt`. For *scopable* tools (`analyseData`, `processData`, `createTracker`, `clusterIncidents`) it also emits
-   `toolScopes[<name>]` naming the entry kinds the turn touches; `prepareStep` rebuilds those tools' `description` +
+   `toolScopes[<name>]` naming the dataset kinds the turn touches; `prepareStep` rebuilds those tools' `description` +
    `inputSchema` for the turn. Detail: `agent-toolkit/prompt-and-classifier.md`, `agent-toolkit/data-tools.md`.
 2. **Tool loop** — the model calls tools until it answers, capped at `maxSteps` (default 10).
    Tools return compact summaries; full data lives in `agent.state`.
 
-Results are stored as entries with stable ids (`places-3`, `routes-1`) that the model re-reads with `recallState` —
+Results are stored as datasets with stable ids (`places-3`, `routes-1`) that the model re-reads with `recallState` —
 *"add a stop after the first one"* works across turns.
 
 ---
@@ -137,11 +137,11 @@ const agent = createMapAgent(map, {
     },
     includeDefaultTools: true,           // false → only what `tools` lists
 
-    // Per data-entry kind, keyed by DataEntryKind: places / routes / incidents / customGeometries /
+    // Per dataset kind, keyed by DatasetKind: places / routes / incidents / customGeometries /
     // trafficAreaAnalytics / byod / ranges
-    dataEntries: {
-        routes: { entryMode: 'single' },
-        byod: { enabled: false },        // drops byod from the data tools + its TOOLS_BY_DATA_ENTRY_KIND tools
+    datasets: {
+        routes: { datasetMode: 'single' },
+        byod: { enabled: false },        // drops byod from the data tools + its TOOLS_BY_DATASET_KIND tools
     },
 
     byod: {
@@ -209,7 +209,7 @@ map.mapLibreMap?.remove();   // tear down MapLibre when unmounting
 
 - Sent to the model provider: every message + system prompt; the classifier's copy (default classifier: up to 8 earlier messages × 300 chars, tunable via `createDefaultClassifier({ maxHistoryMessages, maxHistoryMessageLength })`; a custom classifier sends what it sends; `classifier: false` turns it off); tool results (places, addresses, coords, reverse-geocoded addresses, viewport, device location, `analyseData` / `processData` output over BYOD, ≤200 tracker events per tracker, more when querying all trackers).
 - The provider is the integrator's processor: DPA, EEA region where offered.
-- `agent.state` is in-memory only; `resetState` or `agent.destroy()` clears all of it. `single` entry mode and entry removal can drop data sooner, but don't count on that for erasure. No browser storage. Chat history is the integrator's: erasure = clear it + `agent.destroy()`.
+- `agent.state` is in-memory only; `resetState` or `agent.destroy()` clears all of it. `single` dataset mode and dataset removal can drop data sooner, but don't count on that for erasure. No browser storage. Chat history is the integrator's: erasure = clear it + `agent.destroy()`.
 - Send less: remove tools, `classifier: false`, replace a tool with one returning less.
 - Guide: `guides/plugins/agent-toolkit/what-the-agent-sends.mdx`.
 
@@ -219,10 +219,10 @@ map.mapLibreMap?.remove();   // tear down MapLibre when unmounting
 
 - **Coordinates are `[lng, lat]`** everywhere.
 - **Tools return summaries, not GeoJSON.** Custom tools should do the same: small JSON to the model, data to a state slice.
-- **Modules are per entry.** Each entry owns lazy modules, reached through its slice: `state.places.getEntryPlacesModule(id, markerType)`,
-  `state.routing.getEntryRoutingModule(id)`, `state.ranges.getEntryRangesModule(id)`, `state.customGeometries.getEntryGeometriesModule(id)`,
-  `getEntryModule(id)` on `byod` / `trafficIncidents` / `trafficAreaAnalytics`. Prefer the slice writers
-  (`state.places.addPlaceResult(...)`, `state.byod.addEntry(...)`) plus the display tools.
+- **Modules are per dataset.** Each dataset owns lazy modules, reached through its slice: `state.places.getDatasetPlacesModule(id, markerType)`,
+  `state.routing.getDatasetRoutingModule(id)`, `state.ranges.getDatasetRangesModule(id)`, `state.customGeometries.getDatasetGeometriesModule(id)`,
+  `getDatasetModule(id)` on `byod` / `trafficIncidents` / `trafficAreaAnalytics`. Prefer the slice writers
+  (`state.places.addPlaceResult(...)`, `state.byod.addDataset(...)`) plus the display tools.
 - **Stateful custom tools need a recall path.** Store results on a `StateSlice` the model can re-read — it won't remember them.
 - **`classifier: false` disables scoping.** Every tool is offered every turn and scopable tools keep their unscoped surface.
 - **One run at a time per agent.** Scoping mutates the shared tool objects each turn (only `prepareStep` itself is

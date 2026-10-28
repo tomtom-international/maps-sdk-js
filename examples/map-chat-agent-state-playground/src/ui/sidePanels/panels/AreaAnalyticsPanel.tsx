@@ -1,67 +1,67 @@
-import type { EntryMode, TrafficAreaAnalyticsEntry } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
-import { EntryModeToggle } from '../EntryModeToggle';
+import type { DatasetMode, TrafficAreaAnalyticsDataset } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+import { DatasetModeToggle } from '../DatasetModeToggle';
 import { type Agent, useSliceSnapshot } from '../useAgentSnapshot';
 import type { VisibilityMode } from '../VisibilityToggle';
-import { EntryList } from './EntryList';
+import { DatasetList } from './DatasetList';
 import { ModeRow } from './ModeRow';
 import { PanelShell } from './PanelShell';
 
 type AreaAnalyticsPanelProps = {
     agent: Agent;
-    entries: readonly TrafficAreaAnalyticsEntry[];
-    onShowDetails: (entry: TrafficAreaAnalyticsEntry) => void;
-    onDelete: (entry: TrafficAreaAnalyticsEntry) => void;
+    datasets: readonly TrafficAreaAnalyticsDataset[];
+    onShowDetails: (dataset: TrafficAreaAnalyticsDataset) => void;
+    onDelete: (dataset: TrafficAreaAnalyticsDataset) => void;
     visibility: (id: string) => VisibilityMode;
     onVisibilityChange: (id: string, mode: VisibilityMode) => void;
 };
 
-const summary = (entry: TrafficAreaAnalyticsEntry): string => {
-    const regions = entry.data.features.length;
+const summary = (dataset: TrafficAreaAnalyticsDataset): string => {
+    const regions = dataset.data.features.length;
     const word = regions === 1 ? 'region' : 'regions';
     return `${regions} ${word}`;
 };
 
 export function AreaAnalyticsPanel({
     agent,
-    entries,
+    datasets,
     onShowDetails,
     onDelete,
     visibility,
     onVisibilityChange,
 }: AreaAnalyticsPanelProps) {
-    const entryMode = useSliceSnapshot(
+    const datasetMode = useSliceSnapshot(
         agent.state.trafficAreaAnalytics.events,
         'mode-change',
-        () => agent.state.trafficAreaAnalytics.entryMode,
+        () => agent.state.trafficAreaAnalytics.datasetMode,
     );
-    const handleModeChange = (mode: EntryMode) => {
+    const handleModeChange = (mode: DatasetMode) => {
         void agent.state.trafficAreaAnalytics
-            .setEntryMode(mode)
+            .setDatasetMode(mode)
             .catch((error) => console.error('Failed to set traffic-area-analytics mode', error));
     };
 
-    const items = entries.map((entry) => ({
-        id: entry.id,
-        label: entry.label,
-        subtitle: summary(entry),
-        timestamp: entry.timestamp,
+    const items = datasets.map((dataset) => ({
+        id: dataset.id,
+        label: dataset.label,
+        subtitle: summary(dataset),
+        timestamp: dataset.timestamp,
     }));
 
-    const findEntry = (id: string) => entries.find((e) => e.id === id);
+    const findDataset = (id: string) => datasets.find((e) => e.id === id);
     const handleShow = (id: string) => {
-        const entry = findEntry(id);
-        if (entry) onShowDetails(entry);
+        const dataset = findDataset(id);
+        if (dataset) onShowDetails(dataset);
     };
     const handleDelete = (id: string) => {
-        const entry = findEntry(id);
-        if (entry) onDelete(entry);
+        const dataset = findDataset(id);
+        if (dataset) onDelete(dataset);
     };
 
     const clearShown = async () => {
         try {
-            const shown = [...agent.state.trafficAreaAnalytics.shownEntryIds];
+            const shown = [...agent.state.trafficAreaAnalytics.shownDatasetIds];
             for (const id of shown) {
-                await agent.state.trafficAreaAnalytics.hideEntry(id);
+                await agent.state.trafficAreaAnalytics.hideDataset(id);
             }
         } catch (error) {
             console.error('Failed to clear area analytics', error);
@@ -75,11 +75,11 @@ export function AreaAnalyticsPanel({
             action={{ label: 'Hide all', onClick: clearShown }}
             controls={
                 <ModeRow>
-                    <EntryModeToggle value={entryMode} onChange={handleModeChange} />
+                    <DatasetModeToggle value={datasetMode} onChange={handleModeChange} />
                 </ModeRow>
             }
         >
-            <EntryList
+            <DatasetList
                 items={items}
                 emptyMessage='No analytics yet. Ask the assistant for "traffic last week in …".'
                 onShowDetails={handleShow}

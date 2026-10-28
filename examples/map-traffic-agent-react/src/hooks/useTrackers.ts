@@ -10,33 +10,33 @@ const TOAST_TTL_MS = 12_000;
 export type TrackerToast = TrackerEvent & { seq: number };
 
 /**
- * A watched area = a shown traffic-incidents entry, with the trackers (if any) that read it. The tracker
+ * A watched area = a shown traffic-incidents dataset, with the trackers (if any) that read it. The tracker
  * panel groups by area, so an operator sees "what am I watching, where".
  */
 export type WatchedArea = {
-    entryId: string;
+    datasetId: string;
     label: string;
     trackers: Tracker[];
 };
 
 type Grouping = { areas: WatchedArea[]; ungrouped: Tracker[] };
 
-// Group trackers by the traffic-incidents entry they watch (their spatial "area"). Every SHOWN incident
-// entry becomes a watched area, even with no trackers — loading an area (getTrafficIncidents) is itself
-// "watching" it. A tracker's inputs are its analysis `affectedEntryIds`; one bound to exactly one incident
-// entry nests under that area. Trackers spanning several areas, or none (e.g. a pure places/routes rule),
+// Group trackers by the traffic-incidents dataset they watch (their spatial "area"). Every SHOWN incident
+// dataset becomes a watched area, even with no trackers — loading an area (getTrafficIncidents) is itself
+// "watching" it. A tracker's inputs are its analysis `affectedDatasetIds`; one bound to exactly one incident
+// dataset nests under that area. Trackers spanning several areas, or none (e.g. a pure places/routes rule),
 // fall into `ungrouped` (rendered as the "Other" group).
 function groupByArea(agent: AgentInstance, trackers: readonly Tracker[]): Grouping {
-    const entries = agent.state.trafficIncidents.entries;
-    const incidentEntryIds = new Set(entries.map((e) => e.id));
+    const datasets = agent.state.trafficIncidents.datasets;
+    const incidentDatasetIds = new Set(datasets.map((e) => e.id));
     const byArea = new Map<string, Tracker[]>();
     // Seed an (initially empty) group per shown area so areas with no trackers still surface.
-    for (const id of agent.state.trafficIncidents.shownEntryIds) byArea.set(id, []);
+    for (const id of agent.state.trafficIncidents.shownDatasetIds) byArea.set(id, []);
     const ungrouped: Tracker[] = [];
 
     for (const tracker of trackers) {
         // Trackers carry their own input ids, apart from the Analyses registry.
-        const areaIds = tracker.affectedEntryIds.filter((id) => incidentEntryIds.has(id));
+        const areaIds = tracker.affectedDatasetIds.filter((id) => incidentDatasetIds.has(id));
         // Single-area → nest under that area; multi-area or area-less → "Other".
         if (areaIds.length !== 1) {
             ungrouped.push(tracker);
@@ -48,9 +48,9 @@ function groupByArea(agent: AgentInstance, trackers: readonly Tracker[]): Groupi
     }
 
     const areas: WatchedArea[] = [];
-    for (const [entryId, group] of byArea) {
-        const entry = entries.find((e) => e.id === entryId);
-        areas.push({ entryId, label: entry?.label ?? entryId, trackers: group });
+    for (const [datasetId, group] of byArea) {
+        const dataset = datasets.find((e) => e.id === datasetId);
+        areas.push({ datasetId, label: dataset?.label ?? datasetId, trackers: group });
     }
     return { areas, ungrouped };
 }
@@ -61,7 +61,7 @@ function groupByArea(agent: AgentInstance, trackers: readonly Tracker[]): Groupi
  *
  * Trackers are a thin reducer over the analyses registry — `trackers-change` fires on create/clear/enable
  * AND whenever a rule crosses an edge. The area grouping + KPIs also depend on live incident data, so we
- * additionally re-derive on the incidents slice's `entries-change`.
+ * additionally re-derive on the incidents slice's `datasets-change`.
  */
 export function useTrackers(agent: AgentInstance | undefined) {
     const [trackers, setTrackers] = useState<readonly Tracker[]>([]);
@@ -90,9 +90,9 @@ export function useTrackers(agent: AgentInstance | undefined) {
         sync();
 
         const unsubChange = agent.state.trackers.events.on('trackers-change', sync);
-        const unsubEntries = agent.state.trafficIncidents.events.on('entries-change', sync);
-        // Watched areas are seeded from the SHOWN entries, and an entry is shown right AFTER it's added
-        // (a separate `shown-change` after `entries-change`), so the list must re-derive on show/hide too.
+        const unsubDatasets = agent.state.trafficIncidents.events.on('datasets-change', sync);
+        // Watched areas are seeded from the SHOWN datasets, and a dataset is shown right AFTER it's added
+        // (a separate `shown-change` after `datasets-change`), so the list must re-derive on show/hide too.
         const unsubShown = agent.state.trafficIncidents.events.on('shown-change', sync);
         const unsubEvent = agent.state.trackers.events.on('tracker-event', (event) => {
             sync();
@@ -108,7 +108,7 @@ export function useTrackers(agent: AgentInstance | undefined) {
 
         return () => {
             unsubChange();
-            unsubEntries();
+            unsubDatasets();
             unsubShown();
             unsubEvent();
             dismissTimers.forEach(clearTimeout);
@@ -132,9 +132,9 @@ export function useTrackers(agent: AgentInstance | undefined) {
 
     // Frame a watched area on the map — its fetched bbox (same anchor as the highlight box), so an area
     // with zero incidents still frames. Click an area card to focus.
-    const focusArea = (entryId: string) => {
+    const focusArea = (datasetId: string) => {
         if (!agent) return;
-        const bbox = agent.state.trafficIncidents.entries.find((e) => e.id === entryId)?.params.bbox;
+        const bbox = agent.state.trafficIncidents.datasets.find((e) => e.id === datasetId)?.params.bbox;
         if (!bbox || !isBBoxWithArea(bbox)) return;
         frameBounds(agent.state.baseMap.mapLibreMap, bbox);
     };

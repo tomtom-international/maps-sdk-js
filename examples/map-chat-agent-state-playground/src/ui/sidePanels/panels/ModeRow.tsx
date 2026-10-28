@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-// Single labelled row used by the entry-list panels to host the entry-mode toggle alongside the
+// Single labelled row used by the dataset-list panels to host the dataset-mode toggle alongside the
 // visibility legend. Kept tiny — just a flex row with the SDK's panel typography.
 export function ModeRow({ children }: { children: ReactNode }) {
     return (

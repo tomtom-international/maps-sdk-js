@@ -13,7 +13,7 @@ const CORRIDOR_ROUTE_CONFIG: RoutingModuleConfig = {
     widthPreset: 's',
     // A monitored corridor is a backdrop, not a planned trip — drop the per-route ETA bubbles
     // (top-level flag that showRoutes honours). Waypoint pins are dropped via
-    // showEntry({ showWaypoints: false }) below.
+    // showDataset({ showWaypoints: false }) below.
     summaryBubbles: { visible: false },
     layers: {
         mainLines: {
@@ -26,13 +26,13 @@ const CORRIDOR_ROUTE_CONFIG: RoutingModuleConfig = {
 };
 
 /**
- * Displays the monitored route corridors through each entry's own SDK RoutingModule
+ * Displays the monitored route corridors through each dataset's own SDK RoutingModule
  * (rather than a separate overlay): applies the faint corridor styling, then shows the
- * entry so the module renders the outlined route AND its on-route traffic incidents.
- * Re-shows on each tick (the monitor overwrites `entry.data` in place) and hides on stop.
+ * dataset so the module renders the outlined route AND its on-route traffic incidents.
+ * Re-shows on each tick (the monitor overwrites `dataset.data` in place) and hides on stop.
  */
 export function useMonitoredRouteDisplay(agent: AgentInstance | undefined) {
-    // Entries we've shown, so we can hide them again when their monitor stops.
+    // Datasets we've shown, so we can hide them again when their monitor stops.
     const shownRef = useRef<Set<string>>(new Set());
 
     useEffect(() => {
@@ -41,38 +41,38 @@ export function useMonitoredRouteDisplay(agent: AgentInstance | undefined) {
         let cancelled = false;
 
         const apply = async () => {
-            const monitored = new Set(routing.entries.filter((e) => routing.isMonitored(e.id)).map((e) => e.id));
+            const monitored = new Set(routing.datasets.filter((e) => routing.isMonitored(e.id)).map((e) => e.id));
             for (const id of monitored) {
                 try {
-                    const module = await routing.getEntryRoutingModule(id);
+                    const module = await routing.getDatasetRoutingModule(id);
                     if (cancelled) return;
                     module.applyConfig(CORRIDOR_ROUTE_CONFIG);
-                    await routing.showEntry(id, { showWaypoints: false });
+                    await routing.showDataset(id, { showWaypoints: false });
                     shownRef.current.add(id);
                 } catch {
-                    // Entry may have been removed between event and render; ignore.
+                    // Dataset may have been removed between event and render; ignore.
                 }
             }
             for (const id of [...shownRef.current]) {
                 if (monitored.has(id)) continue;
                 shownRef.current.delete(id);
                 try {
-                    await routing.hideEntry(id);
+                    await routing.hideDataset(id);
                 } catch {
                     // Already gone; ignore.
                 }
             }
         };
 
-        // Serialise runs so overlapping events (a tick emits entries-change + monitor-tick
-        // together) can't interleave two showEntry calls on the same module.
+        // Serialise runs so overlapping events (a tick emits datasets-change + monitor-tick
+        // together) can't interleave two showDataset calls on the same module.
         let chain: Promise<void> = Promise.resolve();
         const schedule = () => {
             chain = chain.then(() => (cancelled ? undefined : apply())).catch(() => undefined);
         };
 
         const unsubs = [
-            routing.events.on('entries-change', schedule),
+            routing.events.on('datasets-change', schedule),
             routing.events.on('monitor-tick', schedule),
             routing.events.on('monitor-start', schedule),
             routing.events.on('monitor-stop', schedule),
@@ -83,7 +83,7 @@ export function useMonitoredRouteDisplay(agent: AgentInstance | undefined) {
             cancelled = true;
             for (const unsub of unsubs) unsub();
             for (const id of [...shownRef.current]) {
-                void routing.hideEntry(id).catch(() => undefined);
+                void routing.hideDataset(id).catch(() => undefined);
             }
             shownRef.current.clear();
         };

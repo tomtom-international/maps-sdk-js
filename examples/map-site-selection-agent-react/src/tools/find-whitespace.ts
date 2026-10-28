@@ -61,7 +61,7 @@ const findWhitespaceBaseSchema = z.object({
         .describe(
             'Concept-specific POI types signalling demand. Use SPECIFIC terms that each map to one clean category (gym → "university", "public transport", "supermarket", "sports shop"). Avoid generic words like "office" or "shop" — they resolve to unrelated compounds (Post Office, Pawn Shop) and pollute the signal. Omit to use the session-default anchors.',
         ),
-    demandByodEntryId: z
+    demandByodDatasetId: z
         .string()
         .optional()
         .describe(
@@ -446,9 +446,9 @@ const renderWhitespace = async (
     byodDemandPoints: readonly { label: string; position: [number, number] }[],
     targetFeatures: SearchFeature[],
 ): Promise<{ demandLegend: DemandLegend; demandComposition: DemandComposition }> => {
-    // Scan-area outline (its own entry) + numbered, coloured opportunity hexes + peer markers.
-    for (const entry of state.customGeometries.entries.filter((e) => e.provenance.operation === 'whitespace-area')) {
-        await state.customGeometries.removeEntry(entry.id);
+    // Scan-area outline (its own dataset) + numbered, coloured opportunity hexes + peer markers.
+    for (const dataset of state.customGeometries.datasets.filter((e) => e.provenance.operation === 'whitespace-area')) {
+        await state.customGeometries.removeDataset(dataset.id);
     }
     const areaFeature = {
         type: 'Feature',
@@ -456,15 +456,15 @@ const renderWhitespace = async (
         geometry: area,
         properties: { name: `Scan area: ${resolved.label}` },
     } as unknown as PolygonFeature<CommonPlaceProps>;
-    const areaEntryId = await state.customGeometries.addEntry(
+    const areaDatasetId = await state.customGeometries.addDataset(
         [areaFeature],
         { operation: 'whitespace-area', sourceIds: [] },
         `Scan area: ${resolved.label}`,
     );
     // Styled before showing — no default-theme flash.
-    const areaGeometries = await state.customGeometries.getEntryGeometriesModule(areaEntryId, 'outline');
+    const areaGeometries = await state.customGeometries.getDatasetGeometriesModule(areaDatasetId, 'outline');
     styleScanArea(areaGeometries);
-    await state.customGeometries.showEntry(areaEntryId, 'outline');
+    await state.customGeometries.showDataset(areaDatasetId, 'outline');
 
     // Every scanned cell as a plain, thin outline — shows the full grid coverage. Drawn before the
     // numbered pockets so the coloured, filled top-N sit on top of the bare grid.
@@ -670,8 +670,8 @@ const executeFindWhitespace = (async (params: FindWhitespaceInput, state: ToolSt
 
     try {
         // User-supplied demand points (from a BYOD layer) augment the searched anchor demand.
-        const byodDemandPoints = params.demandByodEntryId
-            ? byodCandidateSites(requireByodFeatures(state, params.demandByodEntryId))
+        const byodDemandPoints = params.demandByodDatasetId
+            ? byodCandidateSites(requireByodFeatures(state, params.demandByodDatasetId))
             : [];
         const byodDemandPositions = byodDemandPoints.map((point) => point.position);
 

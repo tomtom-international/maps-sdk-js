@@ -12,7 +12,7 @@ import type { FactorContribution, FactorValues, FactorWeights, SkippedFactor } f
 // `Feature<Point, …Props>` — its coordinates are the geometry, its analysis attributes live in
 // `properties` — and a set of them is a `FeatureCollection`. Catchment / hex / overlap polygons travel
 // alongside as `PolygonFeature`s keyed by the matching feature `id` (the same points-plus-geometries
-// shape the toolkit's PlacesEntry uses). This lets a result be handed to the toolkit's BYOD /
+// shape the toolkit's PlacesDataset uses). This lets a result be handed to the toolkit's BYOD /
 // customGeometries / processData machinery later with no reshaping. Read coordinates back with
 // `getPosition(feature)` from @tomtom-org/maps-sdk/core.
 //

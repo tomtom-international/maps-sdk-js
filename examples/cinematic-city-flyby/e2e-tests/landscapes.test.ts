@@ -9,18 +9,26 @@ test.use({ contextOptions: { reducedMotion: 'reduce' } });
 // A small page, which a software renderer draws in time over the terrain.
 test.use({ viewport: { width: 800, height: 500 } });
 
+// Streets at zoom 15 and above: below that the camera is the 10 km fallback and the buildings are gone.
+const CITY_ZOOM_TILE = /\/map-display\/tile\/(?:1[5-9]|[2-9]\d)\/\d+\/\d+\.pbf/;
+
 // The controls walk tries only the first options of each select, so it never reaches the landscapes,
 // which fly over a 3D terrain, nor the Manga look, which draws through a pass of its own.
-test('a landscape over the 3D terrain, then the Manga look, draw without an error', { tag: TAG_PROD }, async ({
-    page,
-}) => {
+test('a landscape over the 3D terrain, then a city close enough for its buildings, draws without an error', {
+    tag: TAG_PROD,
+}, async ({ page }) => {
     // The terrain's tiles, the textured ground and the trees on it take a software renderer seconds a frame.
-    test.setTimeout(surfacesTestTimeout(2, 0));
+    test.setTimeout(surfacesTestTimeout(3, 0));
     const pageErrors = await loadProdExample(page, 'cinematic-city-flyby');
 
     await page.selectOption('#ui-flyby', { label: 'Dolomites' });
     await waitForSurfacesStill(page);
     await page.selectOption('#ui-theme', { label: 'Manga' });
+    await waitForSurfacesStill(page);
+
+    const cityTiles = page.waitForRequest((request) => CITY_ZOOM_TILE.test(request.url()));
+    await page.selectOption('#ui-flyby', { label: 'Rome' });
+    await cityTiles;
     await waitForSurfacesStill(page);
     expectNoPageErrors(pageErrors);
 });

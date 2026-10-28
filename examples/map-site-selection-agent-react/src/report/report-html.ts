@@ -125,7 +125,7 @@ const whitespaceSection = (whitespace: NonNullable<ReturnType<typeof getResultsS
         .join('');
     // Demand make-up: how many POIs of each category drive the demand signal (fuller than the legend).
     const compRows = whitespace.demandComposition
-        .map((entry) => `<tr><td>${escapeHtml(entry.category)}</td><td class="n">${entry.count}</td></tr>`)
+        .map((dataset) => `<tr><td>${escapeHtml(dataset.category)}</td><td class="n">${dataset.count}</td></tr>`)
         .join('');
     const composition = whitespace.demandComposition.length
         ? `<table><thead><tr><th>Demand category</th><th class="n">POIs</th></tr></thead><tbody>${compRows}</tbody></table>`

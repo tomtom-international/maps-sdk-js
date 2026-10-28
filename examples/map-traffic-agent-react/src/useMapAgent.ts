@@ -29,7 +29,7 @@ export function useMapAgent(options: UseMapAgentOptions) {
 
     const { analyticsState } = useTrafficAnalytics(agent);
     const { selectedIncident, selectIncident, pageIncident, clearSelectedIncident } = useSelectedIncident(agent);
-    const { incidents, entryId: panelEntryId, focusEntry } = useIncidents(agent);
+    const { incidents, datasetId: panelDatasetId, focusDataset } = useIncidents(agent);
     const focus = useFocus(agent);
     const { clusters, clearClusters } = useClusters(agent);
     const monitor = useMonitor(agent);
@@ -62,19 +62,19 @@ export function useMapAgent(options: UseMapAgentOptions) {
         routeCountRef.current = n;
     }, [routeMonitor.monitoredRoutes.length]);
 
-    // Focusing a watched area frames it on the map AND points the summary/triage panels at that entry,
+    // Focusing a watched area frames it on the map AND points the summary/triage panels at that dataset,
     // so the summary always reflects the area the operator last focused.
-    const focusArea = (entryId: string) => {
-        focusTrackerArea(entryId);
-        focusEntry(entryId);
+    const focusArea = (datasetId: string) => {
+        focusTrackerArea(datasetId);
+        focusDataset(datasetId);
         setFocusKind('area');
     };
 
     // Focusing a monitored route frames the corridor on the map AND points the summary/triage panels at
     // that route's on-route incidents.
-    const focusRoute = (entryId: string) => {
-        routeMonitor.frameRoute(entryId);
-        focusRouteIncidents(entryId);
+    const focusRoute = (datasetId: string) => {
+        routeMonitor.frameRoute(datasetId);
+        focusRouteIncidents(datasetId);
         setFocusKind('route');
     };
 
@@ -89,12 +89,12 @@ export function useMapAgent(options: UseMapAgentOptions) {
     const showRoute = inRouteMode && focusKind === 'route';
     const panelIncidents = showRoute ? routeIncidents : incidents;
 
-    // The summary's live-status (dot + "updated Ns ago · N") belongs to the monitored entry, but its
-    // title/KPIs follow the focused/displayed entry. Only claim "live" when those are the SAME entry —
+    // The summary's live-status (dot + "updated Ns ago · N") belongs to the monitored dataset, but its
+    // title/KPIs follow the focused/displayed dataset. Only claim "live" when those are the SAME dataset —
     // otherwise the chip would assert a focused area is refreshing when it's a different area's monitor
     // (and route-corridor incidents have no incident-area monitor at all).
     const summaryMonitored =
-        !showRoute && monitor.monitoredEntryId != null && monitor.monitoredEntryId === panelEntryId;
+        !showRoute && monitor.monitoredDatasetId != null && monitor.monitoredDatasetId === panelDatasetId;
 
     return {
         agent,
@@ -122,7 +122,7 @@ export function useMapAgent(options: UseMapAgentOptions) {
         // analyses (analyseData results + charts)
         analyses,
         toggleAnalysisMonitor: toggleMonitor,
-        // monitor — `summaryMonitored` gates the summary card's live-status to the focused entry
+        // monitor — `summaryMonitored` gates the summary card's live-status to the focused dataset
         summaryMonitored,
         lastAnalysisAt: monitor.lastAnalysisAt,
         snapshotCount: monitor.snapshotCount,

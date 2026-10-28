@@ -1,22 +1,22 @@
-import type { EntryMode } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+import type { DatasetMode } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 
-type EntryModeToggleProps = {
-    value: EntryMode;
-    onChange: (mode: EntryMode) => void;
+type DatasetModeToggleProps = {
+    value: DatasetMode;
+    onChange: (mode: DatasetMode) => void;
 };
 
-const OPTIONS: { mode: EntryMode; label: string; title: string }[] = [
-    { mode: 'multiple', label: 'Multiple', title: 'Overlay multiple entries on the map' },
-    { mode: 'single', label: 'Single', title: 'Keep only the latest entry — older ones are dropped' },
+const OPTIONS: { mode: DatasetMode; label: string; title: string }[] = [
+    { mode: 'multiple', label: 'Multiple', title: 'Overlay multiple datasets on the map' },
+    { mode: 'single', label: 'Single', title: 'Keep only the latest dataset — older ones are dropped' },
 ];
 
 // Two-state segmented control matching VisibilityToggle's chrome, used to flip a state slice
-// between `multiple` (overlay) and `single` (latest-only) entry mode.
-export function EntryModeToggle({ value, onChange }: EntryModeToggleProps) {
+// between `multiple` (overlay) and `single` (latest-only) dataset mode.
+export function DatasetModeToggle({ value, onChange }: DatasetModeToggleProps) {
     return (
         <div
             role="radiogroup"
-            aria-label="Entry mode"
+            aria-label="Dataset mode"
             className="inline-flex overflow-hidden rounded-(--ui-rounded-5) border border-(--ui-border-low-em) bg-(--ui-surface-0)"
         >
             {OPTIONS.map(({ mode, label, title }) => {

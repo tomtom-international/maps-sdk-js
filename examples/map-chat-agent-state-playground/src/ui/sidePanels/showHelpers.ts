@@ -1,9 +1,9 @@
 import { bboxFromGeoJSON, type HasBBox, type Place, type PolygonFeatures } from '@tomtom-org/maps-sdk/core';
 import type {
-    BYODEntry,
-    CustomGeometriesEntry,
-    RangesEntry,
-    RoutesEntry,
+    BYODDataset,
+    CustomGeometriesDataset,
+    RangesDataset,
+    RoutesDataset,
 } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 import type { Agent } from './useAgentSnapshot';
@@ -15,38 +15,38 @@ import type { Agent } from './useAgentSnapshot';
  * bbox. Kept here (not in the plugin) so the demo can call it directly from UI handlers without
  * spinning up the full tool pipeline.
  */
-export async function showRouteEntry(agent: Agent, entry: RoutesEntry): Promise<void> {
-    // RoutingModules are per-entry: `showEntry` lazy-inits the entry's own module and, only in
-    // `single` entry mode, hides the other shown routes. The rail hides its previous selection itself.
-    await agent.state.routing.showEntry(entry.id);
-    const bbox = bboxFromGeoJSON(entry.data as HasBBox);
+export async function showRouteDataset(agent: Agent, dataset: RoutesDataset): Promise<void> {
+    // RoutingModules are per-dataset: `showDataset` lazy-inits the dataset's own module and, only in
+    // `single` dataset mode, hides the other shown routes. The rail hides its previous selection itself.
+    await agent.state.routing.showDataset(dataset.id);
+    const bbox = bboxFromGeoJSON(dataset.data as HasBBox);
     if (bbox) {
         agent.state.baseMap.mapLibreMap.fitBounds(bbox as LngLatBoundsLike, { padding: 64 });
     }
 }
 
 /**
- * Render every stored reachable-range polygon in an entry on the map and frame
- * the union. Drops origin pins so the user can see which origins the entry
- * came from. No-op for entries stored without polygons (defensive — should
+ * Render every stored reachable-range polygon in a dataset on the map and frame
+ * the union. Drops origin pins so the user can see which origins the dataset
+ * came from. No-op for datasets stored without polygons (defensive — should
  * never happen in practice).
  */
-export async function showRangeEntry(agent: Agent, entry: RangesEntry): Promise<void> {
-    const features = entry.data.flatMap((r) => r.polygon?.features ?? []);
+export async function showRangeDataset(agent: Agent, dataset: RangesDataset): Promise<void> {
+    const features = dataset.data.flatMap((r) => r.polygon?.features ?? []);
     if (features.length === 0) return;
     const merged: PolygonFeatures = { type: 'FeatureCollection', features };
-    // Per-entry ReachableRangesModule + PlacesModule — each ranges entry owns its
-    // own pair so multiple entries can be drawn at once and switching the
-    // active entry only swaps modules, not data.
-    const rangesModule = await agent.state.ranges.getEntryRangesModule(entry.id, 'outline');
+    // Per-dataset ReachableRangesModule + PlacesModule — each ranges dataset owns its
+    // own pair so multiple datasets can be drawn at once and switching the
+    // active dataset only swaps modules, not data.
+    const rangesModule = await agent.state.ranges.getDatasetRangesModule(dataset.id, 'outline');
     await rangesModule.show(merged);
 
     // Origin pins sit alongside the polygons — one per range, labelled with
     // its query (or coordinates) so the user can identify each origin.
-    const placesModule = await agent.state.ranges.getEntryPlacesModule(entry.id);
-    const originPlaces: Place[] = entry.data.map((r, i) => ({
+    const placesModule = await agent.state.ranges.getDatasetPlacesModule(dataset.id);
+    const originPlaces: Place[] = dataset.data.map((r, i) => ({
         type: 'Feature',
-        id: `range-origin-${entry.id}-${i}`,
+        id: `range-origin-${dataset.id}-${i}`,
         geometry: { type: 'Point', coordinates: r.origin.position },
         properties: {
             type: 'Point Address',
@@ -62,22 +62,22 @@ export async function showRangeEntry(agent: Agent, entry: RangesEntry): Promise<
         agent.state.baseMap.mapLibreMap.fitBounds(bbox as LngLatBoundsLike, { padding: 50 });
     }
     // Track the active selection so the next user prompt can flag it as a UI-driven change.
-    await agent.state.ranges.markEntryShown(entry.id);
+    await agent.state.ranges.markDatasetShown(dataset.id);
 }
 
 /**
- * Render a custom-geometries entry's polygons on the map and frame the bbox.
+ * Render a custom-geometries dataset's polygons on the map and frame the bbox.
  *
- * The slice's `showEntry` handles the per-entry GeometriesModule lifecycle (single-mode
+ * The slice's `showDataset` handles the per-dataset GeometriesModule lifecycle (single-mode
  * hides siblings, fill style application, `_shown` flag); this helper layers the camera fit
- * on top so the rail's "show details" affordance matches `showRangeEntry`.
+ * on top so the rail's "show details" affordance matches `showRangeDataset`.
  */
-export async function showCustomGeometriesEntry(agent: Agent, entry: CustomGeometriesEntry): Promise<void> {
-    if (entry.data.length === 0) return;
-    await agent.state.customGeometries.showEntry(entry.id);
+export async function showCustomGeometriesDataset(agent: Agent, dataset: CustomGeometriesDataset): Promise<void> {
+    if (dataset.data.length === 0) return;
+    await agent.state.customGeometries.showDataset(dataset.id);
     const bbox = bboxFromGeoJSON({
         type: 'FeatureCollection',
-        features: entry.data,
+        features: dataset.data,
     } as unknown as HasBBox);
     if (bbox) {
         agent.state.baseMap.mapLibreMap.fitBounds(bbox as LngLatBoundsLike, { padding: 50 });
@@ -85,18 +85,18 @@ export async function showCustomGeometriesEntry(agent: Agent, entry: CustomGeome
 }
 
 /**
- * Render a BYOD (bring-your-own-data) entry's customer GeoJSON on the map and
+ * Render a BYOD (bring-your-own-data) dataset's customer GeoJSON on the map and
  * frame its bbox.
  *
- * The slice's `showEntry` owns the per-entry CustomGeoJSONModule lifecycle
+ * The slice's `showDataset` owns the per-dataset CustomGeoJSONModule lifecycle
  * (single-mode hides siblings, `_shown` flag); this helper layers the camera fit
  * on top so the rail's "show details" affordance matches the other slices.
  */
-export async function showByodEntry(agent: Agent, entry: BYODEntry): Promise<void> {
-    // The slice draws nothing for an entry without layers, so there is nothing to frame either.
-    if (entry.data.features.length === 0 || entry.layers.length === 0) return;
-    await agent.state.byod.showEntry(entry.id);
-    const bbox = bboxFromGeoJSON(entry.data as unknown as HasBBox);
+export async function showByodDataset(agent: Agent, dataset: BYODDataset): Promise<void> {
+    // The slice draws nothing for a dataset without layers, so there is nothing to frame either.
+    if (dataset.data.features.length === 0 || dataset.layers.length === 0) return;
+    await agent.state.byod.showDataset(dataset.id);
+    const bbox = bboxFromGeoJSON(dataset.data as unknown as HasBBox);
     if (bbox) {
         agent.state.baseMap.mapLibreMap.fitBounds(bbox as LngLatBoundsLike, { padding: 50 });
     }

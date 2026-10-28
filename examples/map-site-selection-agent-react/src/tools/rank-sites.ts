@@ -76,9 +76,9 @@ const buildRankSitesSchema = (households: boolean) =>
             .optional()
             .describe(
                 'Candidate sites to compare by address: { address, label? }. Omit when supplying ' +
-                    'candidatesByodEntryId instead. At least 2 sites total (addresses + BYOD features), max 50.',
+                    'candidatesByodDatasetId instead. At least 2 sites total (addresses + BYOD features), max 50.',
             ),
-        candidatesByodEntryId: z
+        candidatesByodDatasetId: z
             .string()
             .optional()
             .describe(
@@ -94,7 +94,7 @@ const buildRankSitesSchema = (households: boolean) =>
                     'BYOD site is labelled "<noun> <rank>" (e.g. "District 1"), so the label matches its numbered map ' +
                     'pin. Omit to default to "Site". Ignored for address candidates, which keep their address.',
             ),
-        demandByodEntryId: z
+        demandByodDatasetId: z
             .string()
             .optional()
             .describe(
@@ -106,7 +106,7 @@ const buildRankSitesSchema = (households: boolean) =>
             .string()
             .optional()
             .describe(
-                'REQUIRED when demandByodEntryId is set: the numeric property of the demand layer to sum (e.g. ' +
+                'REQUIRED when demandByodDatasetId is set: the numeric property of the demand layer to sum (e.g. ' +
                     '"population", "spend", "income"). Pick a genuine measure from the layer profile addByodSource ' +
                     'returned — never an id/code.',
             ),
@@ -292,8 +292,8 @@ const resolveCandidates = async (
         });
     }
 
-    if (params.candidatesByodEntryId) {
-        const byodFeatures = requireByodFeatures(state, params.candidatesByodEntryId);
+    if (params.candidatesByodDatasetId) {
+        const byodFeatures = requireByodFeatures(state, params.candidatesByodDatasetId);
         candidates.push(...byodCandidateSites(byodFeatures).map((site) => ({ ...site, byod: true })));
         byodBoundary = outerBoundary(byodFeatures);
     }
@@ -386,9 +386,9 @@ export const rankSites: ToolEntryBuilder = () => {
                 : 'three-factor model — Spend power, ') +
             'Competition, Accessibility (parking) — with a glass-box per-factor score breakdown, optional hard gates, ' +
             'and user weights. Sites come from addresses and/or the features of a loaded BYOD layer ' +
-            "(candidatesByodEntryId; polygons/lines are ranked by their centroid) — e.g. rank the customer's own " +
+            "(candidatesByodDatasetId; polygons/lines are ranked by their centroid) — e.g. rank the customer's own " +
             'parcels. Supply a BYOD demand layer ' +
-            '(demandByodEntryId) to score the Spend power factor from your own data. Catchment, weights, and travel mode ' +
+            '(demandByodDatasetId) to score the Spend power factor from your own data. Catchment, weights, and travel mode ' +
             "default to the session preferences when omitted. Draws every site's catchment, competitor pins, and " +
             'nearest-competitor/parking lines; full ranking in the Shortlist panel. Large-format / car-dependent ' +
             'concepts (DIY, furniture, big-box grocery, drive-through) use a driving catchment and a parking gate; ' +
@@ -411,16 +411,16 @@ const executeRankSites = (async (params: RankSitesInput, state: ToolState) => {
     ]);
     try {
         const { walking, walkReachMeters, driveMinutes } = resolveCatchment(state, params);
-        if (params.demandByodEntryId && !params.demandProperty) {
+        if (params.demandByodDatasetId && !params.demandProperty) {
             progress.done();
             return {
-                error: 'demandProperty is required with demandByodEntryId: name the numeric field to sum (e.g. "population"), taken from the layer profile addByodSource returned.',
+                error: 'demandProperty is required with demandByodDatasetId: name the numeric field to sum (e.g. "population"), taken from the layer profile addByodSource returned.',
             };
         }
         const demandLayer: DemandLayer | undefined =
-            params.demandByodEntryId && params.demandProperty
+            params.demandByodDatasetId && params.demandProperty
                 ? {
-                      features: requireByodFeatures(state, params.demandByodEntryId),
+                      features: requireByodFeatures(state, params.demandByodDatasetId),
                       property: params.demandProperty,
                   }
                 : undefined;
@@ -439,7 +439,7 @@ const executeRankSites = (async (params: RankSitesInput, state: ToolState) => {
         if (candidates.length < 2) {
             progress.done();
             return {
-                error: `Need at least 2 candidate sites to rank; resolved ${candidates.length}. Provide more addresses or a BYOD layer (candidatesByodEntryId).`,
+                error: `Need at least 2 candidate sites to rank; resolved ${candidates.length}. Provide more addresses or a BYOD layer (candidatesByodDatasetId).`,
             };
         }
 

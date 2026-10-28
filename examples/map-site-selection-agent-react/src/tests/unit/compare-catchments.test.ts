@@ -19,12 +19,12 @@ const storeNetwork = turf.featureCollection(
         turf.point([-115.2 + index * 0.01, 36.17], { name: `Store ${index + 1}` }),
     ),
 );
-const state = { byod: { findById: () => ({ data: storeNetwork }), entries: [] } } as unknown as ToolState;
+const state = { byod: { findById: () => ({ data: storeNetwork }), datasets: [] } } as unknown as ToolState;
 
 describe('resolveExisting', () => {
     it('builds catchments for the first eight sites of a BYOD network only, and reports the rest as dropped', async () => {
         const { existing, skipped } = await resolveExisting(
-            { proposed: { address: 'Fremont Street' }, existingByodEntryId: 'stores' },
+            { proposed: { address: 'Fremont Street' }, existingByodDatasetId: 'stores' },
             state,
             { walking: false, walkReachMeters: 800, driveMinutes: 10 },
         );

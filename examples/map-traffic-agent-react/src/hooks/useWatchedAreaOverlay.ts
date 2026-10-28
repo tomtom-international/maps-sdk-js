@@ -4,8 +4,8 @@ import type { AgentInstance } from './useAgentBootstrap';
 
 /**
  * Owns the WatchedAreaOverlay (the green box + "Live · …" pill around each shown incident area). Waits
- * for the base style to load, then keeps the overlay in sync with the SHOWN entries — re-deriving on
- * `shown-change` (an entry is shown right after it's added) and `entries-change` (bbox/label updates).
+ * for the base style to load, then keeps the overlay in sync with the SHOWN datasets — re-deriving on
+ * `shown-change` (a dataset is shown right after it's added) and `datasets-change` (bbox/label updates).
  */
 export function useWatchedAreaOverlay(agent: AgentInstance | undefined) {
     useEffect(() => {
@@ -17,8 +17,8 @@ export function useWatchedAreaOverlay(agent: AgentInstance | undefined) {
 
         const push = () => {
             if (!overlay) return;
-            const shown = slice.shownEntryIds;
-            const areas = slice.entries
+            const shown = slice.shownDatasetIds;
+            const areas = slice.datasets
                 .filter((e) => shown.has(e.id))
                 .map((e) => ({ id: e.id, bbox: e.params.bbox, label: e.label }));
             void overlay.setAreas(areas);
@@ -33,7 +33,7 @@ export function useWatchedAreaOverlay(agent: AgentInstance | undefined) {
         if (map.isStyleLoaded()) onLoad();
         else map.once('load', onLoad);
 
-        const unsubs = [slice.events.on('shown-change', push), slice.events.on('entries-change', push)];
+        const unsubs = [slice.events.on('shown-change', push), slice.events.on('datasets-change', push)];
 
         return () => {
             map.off('load', onLoad);

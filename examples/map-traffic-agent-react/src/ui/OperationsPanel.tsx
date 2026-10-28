@@ -30,9 +30,9 @@ export type OperationsPanelProps = {
     lastSeenAt: number;
     onToggle: (trackerId: string, enabled: boolean) => void;
     onClear: (trackerId: string) => void;
-    onFocusArea: (entryId: string) => void;
-    onFocusRoute: (entryId: string) => void;
-    onStopRoute: (entryId: string) => void;
+    onFocusArea: (datasetId: string) => void;
+    onFocusRoute: (datasetId: string) => void;
+    onStopRoute: (datasetId: string) => void;
     onSeen: () => void;
 };
 
@@ -105,7 +105,7 @@ export function OperationsPanel({
                             <>
                                 {areas.map((area) => (
                                     <AreaCard
-                                        key={area.entryId}
+                                        key={area.datasetId}
                                         area={area}
                                         onToggle={onToggle}
                                         onClear={onClear}
@@ -114,7 +114,7 @@ export function OperationsPanel({
                                 ))}
                                 {routes.map((route) => (
                                     <RouteCard
-                                        key={route.entryId}
+                                        key={route.datasetId}
                                         route={route}
                                         onFocus={onFocusRoute}
                                         onStop={onStopRoute}
@@ -171,14 +171,14 @@ function AreaCard({
     area: WatchedArea;
     onToggle: (id: string, enabled: boolean) => void;
     onClear: (id: string) => void;
-    onFocusArea: (entryId: string) => void;
+    onFocusArea: (datasetId: string) => void;
 }) {
     return (
         <div className="flex flex-col rounded-(--ui-rounded-10) border border-(--ui-border-low-em) bg-(--ui-surface-0)">
             <div className="p-3">
                 <button
                     type="button"
-                    onClick={() => onFocusArea(area.entryId)}
+                    onClick={() => onFocusArea(area.datasetId)}
                     title={`Frame ${area.label} on the map`}
                     className="flex w-full cursor-pointer items-center gap-2 bg-transparent p-0 text-left"
                 >
@@ -198,7 +198,7 @@ function AreaCard({
                             tracker={tracker}
                             onToggle={onToggle}
                             onClear={onClear}
-                            onFocus={() => onFocusArea(area.entryId)}
+                            onFocus={() => onFocusArea(area.datasetId)}
                         />
                     ))}
                 </div>
@@ -219,8 +219,8 @@ function RouteCard({
     onStop,
 }: {
     route: MonitoredRoute;
-    onFocus: (entryId: string) => void;
-    onStop: (entryId: string) => void;
+    onFocus: (datasetId: string) => void;
+    onStop: (datasetId: string) => void;
 }) {
     // The fastest alternative right now (lowest live travel time) anchors the read; the others read as
     // "+Nm slower" against it.
@@ -241,7 +241,7 @@ function RouteCard({
                     </span>
                     <IconButton
                         label={`Show ${route.label} on the map`}
-                        onClick={() => onFocus(route.entryId)}
+                        onClick={() => onFocus(route.datasetId)}
                         size="sm"
                     >
                         <LocateGlyph />
@@ -293,7 +293,7 @@ function RouteCard({
                 </span>
                 <button
                     type="button"
-                    onClick={() => onStop(route.entryId)}
+                    onClick={() => onStop(route.datasetId)}
                     aria-label={`Stop monitoring ${route.label}`}
                     className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full border border-(--ui-border-low-em) bg-(--ui-surface-0) px-3 py-2 text-[13px] font-semibold transition-colors hover:bg-(--ui-surface-1)"
                     style={{ color: playbook.status.error }}

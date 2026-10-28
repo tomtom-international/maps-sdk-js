@@ -273,8 +273,8 @@ const bindBackgroundClose = async (state: ToolState): Promise<void> => {
 
 // Raise the dot/connector/label layers to the top of the stack so they read over every polygon
 // fill, whatever drew last. Indexes 0-1 (catchment fill + border) stay tucked under roads/labels.
-const raiseOverlayMarkerLayers = async (state: ToolState, entryId: string): Promise<void> => {
-    const module = await state.byod.getEntryModule(entryId);
+const raiseOverlayMarkerLayers = async (state: ToolState, datasetId: string): Promise<void> => {
+    const module = await state.byod.getDatasetModule(datasetId);
     const map = state.baseMap.mapLibreMap;
     for (const layerId of module.sourceAndLayerIDs.data.layerIDs.slice(2)) {
         if (map.getLayer(layerId)) map.moveLayer(layerId);
@@ -283,8 +283,8 @@ const raiseOverlayMarkerLayers = async (state: ToolState, entryId: string): Prom
 
 // Click a marker → popup with its POI name + category. CustomGeoJSONModule gives per-source click
 // events (and auto pointer-cursor on hover); the source is named 'data' in the BYOD slice.
-const attachMarkerPopups = async (state: ToolState, entryId: string): Promise<void> => {
-    const module = await state.byod.getEntryModule(entryId);
+const attachMarkerPopups = async (state: ToolState, datasetId: string): Promise<void> => {
+    const module = await state.byod.getDatasetModule(datasetId);
     const events = (
         module.events as Record<
             string,
@@ -429,7 +429,7 @@ const drawRankedPins = (state: ToolState, pins: RankedPin[]): void => {
     }
 };
 
-/** Pin a ranking whose catchments drawCatchment painted into the `rangesId` entry. */
+/** Pin a ranking whose catchments drawCatchment painted into the `rangesId` dataset. */
 export const drawRankedSites = (state: ToolState, rangesId: string, sites: RankedSiteView[]): void => {
     drawRankedPins(state, sites);
     shownRanking = { state, rangesId, sites };
@@ -449,9 +449,9 @@ export const restyleRankedSites = async (styles: ReadonlyMap<string, RankedSiteS
     const restyled = { state, rangesId, sites };
     shownRanking = restyled;
     drawRankedPins(state, sites);
-    if (!state.ranges.entries.some((entry) => entry.id === rangesId)) return;
+    if (!state.ranges.datasets.some((dataset) => dataset.id === rangesId)) return;
 
-    const catchments = await state.ranges.getEntryGeometriesModule(rangesId, 'outline');
+    const catchments = await state.ranges.getDatasetGeometriesModule(rangesId, 'outline');
     // A later restyle or ranking took over while the module loaded, and paints its own colours.
     if (shownRanking !== restyled) return;
 
@@ -467,7 +467,7 @@ const SITE_OVERLAY_ID = 'site-overlay';
 
 /**
  * Draw (or replace) the single rich overlay: the catchment polygon (styled per Figma), connector
- * lines, and markers — all one BYOD entry, so re-running any analysis swaps it atomically. Pass
+ * lines, and markers — all one BYOD dataset, so re-running any analysis swaps it atomically. Pass
  * empty arrays (and no catchment) to clear it.
  */
 export const drawRichOverlay = async (
@@ -479,19 +479,19 @@ export const drawRichOverlay = async (
 ): Promise<void> => {
     closeActivePopup();
     clearSiteMarker();
-    for (const entry of [...state.byod.entries]) {
-        if (entry.id === SITE_OVERLAY_ID || entry.id.startsWith(`${SITE_OVERLAY_ID}-`)) {
-            await state.byod.removeEntry(entry.id);
+    for (const dataset of [...state.byod.datasets]) {
+        if (dataset.id === SITE_OVERLAY_ID || dataset.id.startsWith(`${SITE_OVERLAY_ID}-`)) {
+            await state.byod.removeDataset(dataset.id);
         }
     }
     if (points.length === 0 && lines.length === 0 && !catchment) return;
-    const entryId = await state.byod.addEntry(buildOverlay(points, lines, catchment), label, {
+    const datasetId = await state.byod.addDataset(buildOverlay(points, lines, catchment), label, {
         explicitId: SITE_OVERLAY_ID,
         layers: OVERLAY_LAYERS,
     });
-    await state.byod.showEntry(entryId);
-    await raiseOverlayMarkerLayers(state, entryId);
-    await attachMarkerPopups(state, entryId);
+    await state.byod.showDataset(datasetId);
+    await raiseOverlayMarkerLayers(state, datasetId);
+    await attachMarkerPopups(state, datasetId);
 };
 
 /**
@@ -529,8 +529,8 @@ const addHexNumberMarkers = (state: ToolState, hexes: NumberedHex[]): void => {
 
 /** Draw (or replace) coloured hexes, each numbered by an HTML badge at its centre. */
 export const drawNumberedHexes = async (state: ToolState, label: string, hexes: NumberedHex[]): Promise<void> => {
-    for (const entry of [...state.customGeometries.entries]) {
-        if (entry.provenance.operation === 'whitespace') await state.customGeometries.removeEntry(entry.id);
+    for (const dataset of [...state.customGeometries.datasets]) {
+        if (dataset.provenance.operation === 'whitespace') await state.customGeometries.removeDataset(dataset.id);
     }
     clearHexNumberMarkers();
     if (hexes.length === 0) return;
@@ -542,9 +542,9 @@ export const drawNumberedHexes = async (state: ToolState, label: string, hexes: 
                 properties: { name: hex.label, color: hex.color },
             }) as unknown as PolygonFeature<CommonPlaceProps>,
     );
-    const entryId = await state.customGeometries.addEntry(features, { operation: 'whitespace', sourceIds: [] }, label);
+    const datasetId = await state.customGeometries.addDataset(features, { operation: 'whitespace', sourceIds: [] }, label);
     // Configured before showing — no default-theme flash.
-    const geometriesModule = await state.customGeometries.getEntryGeometriesModule(entryId, 'filled');
+    const geometriesModule = await state.customGeometries.getDatasetGeometriesModule(datasetId, 'filled');
     const config = geometriesModule.getConfig();
     geometriesModule.updateConfig({
         // The fill sits above the roads (below labels) but fades out as the user zooms in: pockets
@@ -558,7 +558,7 @@ export const drawNumberedHexes = async (state: ToolState, label: string, hexes: 
         line: { ...config?.line, color: PER_FEATURE_COLOR, width: 2, opacity: 1 },
         beforeLayerConfig: LINE_BEFORE_LAYER,
     });
-    await state.customGeometries.showEntry(entryId, 'filled');
+    await state.customGeometries.showDataset(datasetId, 'filled');
     addHexNumberMarkers(state, hexes);
 };
 
@@ -577,22 +577,22 @@ export const drawHexOutlineGrid = async (
     label: string,
     hexes: Feature<Polygon | MultiPolygon>[],
 ): Promise<void> => {
-    for (const entry of [...state.customGeometries.entries]) {
-        if (entry.provenance.operation === 'whitespace-grid') await state.customGeometries.removeEntry(entry.id);
+    for (const dataset of [...state.customGeometries.datasets]) {
+        if (dataset.provenance.operation === 'whitespace-grid') await state.customGeometries.removeDataset(dataset.id);
     }
     if (hexes.length === 0) return;
     const features = hexes.map(
         (hex, index) =>
             ({ ...hex, id: `whitespace-grid-${index}`, properties: {} }) as unknown as PolygonFeature<CommonPlaceProps>,
     );
-    const entryId = await state.customGeometries.addEntry(
+    const datasetId = await state.customGeometries.addDataset(
         features,
         { operation: 'whitespace-grid', sourceIds: [] },
         label,
     );
     // Configure the module before showing, so the grid renders straight to a hairline grey outline with
     // a transparent fill (no 5px flash), split across the layer stack: fill below roads, line below labels.
-    const module = await state.customGeometries.getEntryGeometriesModule(entryId, 'outline');
+    const module = await state.customGeometries.getDatasetGeometriesModule(datasetId, 'outline');
     const config = module.getConfig();
     module.updateConfig({
         fill: { ...config?.fill, opacity: 0 },
@@ -604,5 +604,5 @@ export const drawHexOutlineGrid = async (
         },
         beforeLayerConfig: SPLIT_BEFORE_LAYER,
     });
-    await state.customGeometries.showEntry(entryId, 'outline');
+    await state.customGeometries.showDataset(datasetId, 'outline');
 };

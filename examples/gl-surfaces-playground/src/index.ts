@@ -192,9 +192,10 @@ const labelOf = (id: string): string => {
 };
 
 // One light for the whole map, fixed to the compass so it stays put as the map turns. The textured
-// surfaces and the 3D buildings both follow it, so the tree crowns and the shadows agree.
+// surfaces and the 3D buildings both follow it, so the tree crowns and the shadows agree. A low sun
+// ahead of the opening view of Lake Geneva lays its glint across the water.
 const initialStyling = {
-    view: { light: { direction: 215, altitude: 30, alignment: 'map' } },
+    view: { light: { direction: 150, altitude: 25, alignment: 'map' } },
 } satisfies StylingFoundationsModuleConfig;
 
 (async () => {

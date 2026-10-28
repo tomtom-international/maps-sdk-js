@@ -10,7 +10,7 @@ import { playbook } from '../ui/lib/playbook-tokens';
  * state layer intentionally owns no presentation: this brand visual (color, font, copy) lives here.
  *
  * The box rides a single {@link GeometriesModule} (one FeatureCollection of all areas, re-shown on
- * change); the pills are HTML MapLibre markers (an outline can't carry a corner chip), diffed by entry id.
+ * change); the pills are HTML MapLibre markers (an outline can't carry a corner chip), diffed by dataset id.
  */
 export type WatchedAreaBox = { id: string; bbox: BBox; label: string };
 

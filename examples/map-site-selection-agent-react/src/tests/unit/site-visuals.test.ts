@@ -28,8 +28,8 @@ const show = vi.fn<Catchments['show']>();
 const state = {
     baseMap: { mapLibreMap: {} },
     ranges: {
-        entries: [{ id: 'ranking' }],
-        getEntryGeometriesModule: () => {
+        datasets: [{ id: 'ranking' }],
+        getDatasetGeometriesModule: () => {
             const pending = Promise.withResolvers<Catchments>();
             pendingModules.push(pending);
             return pending.promise;

@@ -19,17 +19,17 @@ Flat record of the 50 default tools; `TOOL_NAMES` lists their names and `ToolNam
 - **Traffic area analytics**: `getTrafficAreaAnalytics`, `updateTrafficAreaAnalyticsDisplay` (show / hide only; the look is `setMapStyling`'s)
 - **Trackers (geofence / proximity alerts)**: `createTracker`, `getTrackers`, `getTrackerHistory`, `clearTracker`
 - **Data tools (scopable)**: `analyseData`, `processData`, `monitorAnalysis` — [data-tools.md](./data-tools.md)
-- **Map display**: `updatePlacesDisplay`, `updateRoutesDisplay`, `updateWaypointsDisplay`, `clearMap` — which entries show, not how they look
+- **Map display**: `updatePlacesDisplay`, `updateRoutesDisplay`, `updateWaypointsDisplay`, `clearMap` — which datasets show, not how they look
 - **Map control**: `flyTo`, `zoomInOrOut`, `setPitchBearing`, `setMapStandardStyle`, `getStandardMapStyles`, `setLanguage`, `setGeopoliticalView`
 - **Map styling**: `setMapStyling` — what the base map shows (layer groups, POI icons, the live traffic overlays) and how it looks, and the look of every layer the agent drew
 - **MapLibre direct**: `getMapStyleLayers`, `setLayerProperties` (`changes: [{ layerId, paint?, layout? }]`)
-- **State**: `recallState`, `setEntryMode`, `resetState`
+- **State**: `recallState`, `setDatasetMode`, `resetState`
 - **Utilities**: `clarifyIntent`, `help`
 
 Names are stable; reference entries as `DEFAULT_TOOLS.locatePlace`. Seven entries are builders (`ToolEntryBuilder`):
 `discoverPlaces`, `analyseData`, `processData`, `createTracker`, `clusterIncidents`, `recallState`, `setMapStyling`.
 
-`TOOLS_BY_DATA_ENTRY_KIND` maps each `DataEntryKind` to the tools dropped when `dataEntries[kind].enabled` is `false`.
+`TOOLS_BY_DATASET_KIND` maps each `DatasetKind` to the tools dropped when `datasets[kind].enabled` is `false`.
 `getDefaultToolPrompts()` returns `Record<ToolName, readonly string[]>` of every tool's `examplePrompts` — chat-UI starter
 suggestions from the same source as the `help` tool.
 
@@ -48,7 +48,7 @@ suggestions from the same source as the `help` tool.
   the layers the agent drew take their module catalogues under `places.` (`PlacesModule`, the ranges' origin pins too),
   `routes.` (`RoutingModule`), `geometries.` (custom geometries, place boundaries, ranges drawn as geometries),
   `ranges.` (`ReachableRangesModule`), `traffic.areaAnalytics.` and `traffic.incidentDetails.`, minus `visible`,
-  `markerType` and `fill.style`, which the display tools set per entry; families `places`, `routes`, `geometries`,
+  `markerType` and `fill.style`, which the display tools set per dataset; families `places`, `routes`, `geometries`,
   `ranges`, `trafficAreaAnalytics`, `trafficIncidentDetails`; each slice's `SliceKnobs` (`state.routing.knobs`,
   `state.places.geometriesKnobs`, …) sets the knob on every module of that kind and on each one created later;
   `theme: { colors | imageUrl, mode }` themes the map and returns `switchedStyle` when it had to switch the standard style.
@@ -65,22 +65,22 @@ suggestions from the same source as the `help` tool.
   (`compareRoutes`). The waypoint tools and `recallState({ kind: 'routes', id })` return the same summary.
   It takes no display options beyond `showOnMap`: the pins are `updateRoutesDisplay`'s `waypoints`, the summary bubbles
   `setMapStyling`'s `routes.summaryBubbles.visible`.
-- **`updateRoutesDisplay`** — `waypoints: false` hides an entry's pins, and every later show keeps them hidden
+- **`updateRoutesDisplay`** — `waypoints: false` hides a dataset's pins, and every later show keeps them hidden
   (`RoutingState.setWaypointsShown`); `selectedIndex` calls `RoutingModule.selectRoute`; `focus: { sectionTypes?, roads?, pick? }`
-  rings sections of each targeted entry's selected route with `setSectionFocus` and fits the camera to them, and
+  rings sections of each targeted dataset's selected route with `setSectionFocus` and fits the camera to them, and
   `focus: null` clears the ring. `sectionTypes` are the counted types plus `motorway`, `distinct`, `leg`, `country`,
   `curve` and `curvyStretch`, `roads` match road numbers or street names, and `pick` is `'all'` (default), `'longest'`,
   `'mostDelay'`, `'curviest'` (highest `curvinessScore`) or a 0-based index in driving order. Drawing every curve is
-  `setMapStyling`'s `routes.sections.curve.visible` and `routes.sections.curvyStretch.visible`. With no `add` / `addMatching`, these target the latest entry; the result's `focused` lists
-  each entry's `sectionCount` and `lengthInMeters`. The camera moves only for `add` / `addMatching` or a focus that
+  `setMapStyling`'s `routes.sections.curve.visible` and `routes.sections.curvyStretch.visible`. With no `add` / `addMatching`, these target the latest dataset; the result's `focused` lists
+  each dataset's `sectionCount` and `lengthInMeters`. The camera moves only for `add` / `addMatching` or a focus that
   finds sections. A monitor tick keeps the selected alternative and rings the same focus on the recalculated route.
 - **Errors** — a failed TomTom service or map call returns `{ error, code }`, `code` being the `SDKErrorCode`, the
   error text ending with whether retrying helps.
-- **`recallState`** — reads state, never fetches. No args: session snapshot (places / routes / ranges index, entry modes,
-  map style, POIs, traffic). `{ kind }`: that kind's index. `{ kind, id }`: one entry's summarised detail.
+- **`recallState`** — reads state, never fetches. No args: session snapshot (places / routes / ranges index, dataset modes,
+  map style, POIs, traffic). `{ kind }`: that kind's index. `{ kind, id }`: one dataset's summarised detail.
   Kinds: `places`, `routes`, `ranges`, `geometries`, `byod`, `incidents`, `trafficAreaAnalytics`.
 - **`help`** — `{ mode: 'summary' | 'detail', query?, tag? }`, surfacing each tool's `description`, `examplePrompts` and `relatedTools`.
-- **`setEntryMode`** — `{ slice, mode }`; see [state.md](./state.md).
+- **`setDatasetMode`** — `{ slice, mode }`; see [state.md](./state.md).
 
 ---
 
@@ -148,7 +148,7 @@ type ToolEntryBuilder<S, Scope = unknown> = (options: ToolBuildOptions<Scope>) =
 type ToolBuildOptions<Scope = unknown> = {
     featureFlags?: FeatureFlags;
     scope?: Scope;                            // undefined at creation and when the turn emitted no scope
-    enabledDataKinds?: readonly EntryDataKind[]; // kinds left enabled by dataEntries
+    enabledDataKinds?: readonly AnalysableDatasetKind[]; // kinds left enabled by datasets
 };
 ```
 
@@ -179,9 +179,9 @@ const getFleetVehicle: ToolEntry = {
                 poi: { name: `Vehicle ${vehicleId}`, categories: [], localizedCategories: [] },
             },
         };
-        // Appends a places entry; the model shows it with updatePlacesDisplay.
-        const entryId = await state.places.addPlaceResult(place, `Vehicle ${vehicleId}`);
-        return { vehicleId, entryId, position };
+        // Appends a places dataset; the model shows it with updatePlacesDisplay.
+        const datasetId = await state.places.addPlaceResult(place, `Vehicle ${vehicleId}`);
+        return { vehicleId, datasetId, position };
     },
     tags: ['location'],
     examplePrompts: ['Where is vehicle TT-001?', 'Show fleet vehicle on the map'],
@@ -204,7 +204,7 @@ execute: async ({ name }, state, options) => {
         const position = getViewportBias(state.baseMap);
         const place = await locatePlace(name, 'poi', position && { position }, options);
         if (!place) return { status: 'not_found' };
-        return { entryId: await state.places.addPlaceResult(place, name) };
+        return { datasetId: await state.places.addPlaceResult(place, name) };
     } catch (error) {
         return { error: `Lookup failed: ${error instanceof Error ? error.message : String(error)}` };
     }
@@ -223,7 +223,7 @@ createMapAgent(map, {
 });
 ```
 
-A tool you add or replace overrides `dataEntries[kind].enabled: false`.
+A tool you add or replace overrides `datasets[kind].enabled: false`.
 
 ## `getCurrentLocation` precision
 

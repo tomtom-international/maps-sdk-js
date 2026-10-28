@@ -90,7 +90,7 @@ landmarks.events.on('click', (landmark) => landmarks.setLandmarkColors({ [landma
 | `forest` | Woodland | Broadleaf crowns and firs, with leaf clumps and shadows up close |
 | `grass` | Parks, grassland, sport and outdoor areas, cemeteries | Mown lawns in stripes and flowered meadows, swaying in gusts |
 | `scrub` | Shrubland and heath | Bushes in clumps, each with its shadow |
-| `farmland` | Agricultural land | Field parcels with furrows, tracks and hedges |
+| `farmland` | Agricultural land | Field parcels lined up with the roads around them, with furrows, tracks and hedges |
 | `sand` | Sandy land | Dunes shaded by the sun, ripples across the wind, wet sand along the water |
 | `mud` | Mud flats and beds that run dry | Creeks and puddles that mirror the sky |
 | `gravel` | Shingle | Banks of stones in every shade |

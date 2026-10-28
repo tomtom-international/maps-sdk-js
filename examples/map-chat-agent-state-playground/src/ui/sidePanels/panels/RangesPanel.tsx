@@ -1,25 +1,25 @@
-import type { EntryMode, RangesEntry } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
-import { EntryModeToggle } from '../EntryModeToggle';
+import type { DatasetMode, RangesDataset } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+import { DatasetModeToggle } from '../DatasetModeToggle';
 import { type Agent, useSliceSnapshot } from '../useAgentSnapshot';
 import type { VisibilityMode } from '../VisibilityToggle';
-import { EntryList } from './EntryList';
+import { DatasetList } from './DatasetList';
 import { ModeRow } from './ModeRow';
 import { PanelShell } from './PanelShell';
 
 type RangesPanelProps = {
     agent: Agent;
-    entries: readonly RangesEntry[];
-    onShowDetails: (entry: RangesEntry) => void;
-    onDelete: (entry: RangesEntry) => void;
+    datasets: readonly RangesDataset[];
+    onShowDetails: (dataset: RangesDataset) => void;
+    onDelete: (dataset: RangesDataset) => void;
     visibility: (id: string) => VisibilityMode;
     onVisibilityChange: (id: string, mode: VisibilityMode) => void;
 };
 
-const summary = (entry: RangesEntry): string => {
-    // Multi-origin entries carry the same budgets across every range, so we
+const summary = (dataset: RangesDataset): string => {
+    // Multi-origin datasets carry the same budgets across every range, so we
     // sample the first range for the budget summary and prefix the origin
     // count to disambiguate "30 min from one place" vs "30 min from three".
-    const budgets = entry.data[0]?.budgets ?? [];
+    const budgets = dataset.data[0]?.budgets ?? [];
     const budgetStr = budgets
         .map((b) => {
             if (b.type === 'timeMinutes') return `${b.value} min`;
@@ -27,45 +27,45 @@ const summary = (entry: RangesEntry): string => {
             return `${b.value} ${b.type}`;
         })
         .join(', ');
-    return entry.data.length === 1 ? budgetStr : `${entry.data.length} origins · ${budgetStr}`;
+    return dataset.data.length === 1 ? budgetStr : `${dataset.data.length} origins · ${budgetStr}`;
 };
 
 export function RangesPanel({
     agent,
-    entries,
+    datasets,
     onShowDetails,
     onDelete,
     visibility,
     onVisibilityChange,
 }: RangesPanelProps) {
-    const entryMode = useSliceSnapshot(agent.state.ranges.events, 'mode-change', () => agent.state.ranges.entryMode);
-    const handleModeChange = (mode: EntryMode) => {
-        void agent.state.ranges.setEntryMode(mode).catch((error) => console.error('Failed to set ranges mode', error));
+    const datasetMode = useSliceSnapshot(agent.state.ranges.events, 'mode-change', () => agent.state.ranges.datasetMode);
+    const handleModeChange = (mode: DatasetMode) => {
+        void agent.state.ranges.setDatasetMode(mode).catch((error) => console.error('Failed to set ranges mode', error));
     };
 
-    const items = entries.map((entry) => ({
-        id: entry.id,
-        label: entry.label,
-        subtitle: summary(entry),
-        timestamp: entry.timestamp,
+    const items = datasets.map((dataset) => ({
+        id: dataset.id,
+        label: dataset.label,
+        subtitle: summary(dataset),
+        timestamp: dataset.timestamp,
     }));
 
-    const findEntry = (id: string) => entries.find((e) => e.id === id);
+    const findDataset = (id: string) => datasets.find((e) => e.id === id);
     const handleShow = (id: string) => {
-        const entry = findEntry(id);
-        if (entry) onShowDetails(entry);
+        const dataset = findDataset(id);
+        if (dataset) onShowDetails(dataset);
     };
     const handleDelete = (id: string) => {
-        const entry = findEntry(id);
-        if (entry) onDelete(entry);
+        const dataset = findDataset(id);
+        if (dataset) onDelete(dataset);
     };
 
     const clearShown = async () => {
         try {
-            // hideEntry handles polygon + origin-pin clears AND emits
+            // hideDataset handles polygon + origin-pin clears AND emits
             // shown-change. Walk every currently-shown id.
-            const shown = [...agent.state.ranges.shownEntryIds];
-            await Promise.all(shown.map((id) => agent.state.ranges.hideEntry(id)));
+            const shown = [...agent.state.ranges.shownDatasetIds];
+            await Promise.all(shown.map((id) => agent.state.ranges.hideDataset(id)));
         } catch (error) {
             console.error('Failed to clear ranges', error);
         }
@@ -78,11 +78,11 @@ export function RangesPanel({
             action={{ label: 'Hide all', onClick: clearShown }}
             controls={
                 <ModeRow>
-                    <EntryModeToggle value={entryMode} onChange={handleModeChange} />
+                    <DatasetModeToggle value={datasetMode} onChange={handleModeChange} />
                 </ModeRow>
             }
         >
-            <EntryList
+            <DatasetList
                 items={items}
                 emptyMessage="No ranges computed yet. Ask the assistant for an isochrone."
                 onShowDetails={handleShow}

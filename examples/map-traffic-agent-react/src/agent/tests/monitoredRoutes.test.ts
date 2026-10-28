@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { monitoredRoutes } from '../monitoredRoutes';
 
 type Routing = Parameters<typeof monitoredRoutes>[0];
-type Entry = Routing['entries'][number];
+type Dataset = Routing['datasets'][number];
 
 const routes = (delays: number[]): Routes =>
     ({
@@ -25,27 +25,27 @@ const routes = (delays: number[]): Routes =>
         ],
     }) as unknown as Routes;
 
-const entry = (id: string, data: Routes = routes([])): Entry =>
-    ({ id, label: `Route ${id}`, timestamp: 1, data }) as unknown as Entry;
+const dataset = (id: string, data: Routes = routes([])): Dataset =>
+    ({ id, label: `Route ${id}`, timestamp: 1, data }) as unknown as Dataset;
 
-const routing = (entries: Entry[], monitoredIds: string[]): Routing => ({
-    entries,
-    isMonitored: (entryId) => monitoredIds.includes(entryId),
+const routing = (datasets: Dataset[], monitoredIds: string[]): Routing => ({
+    datasets,
+    isMonitored: (datasetId) => monitoredIds.includes(datasetId),
 });
 
 describe('monitoredRoutes', () => {
-    it('lists only the entries whose monitor runs', () => {
-        const result = monitoredRoutes(routing([entry('routes-0'), entry('routes-1')], ['routes-1']));
-        expect(result.map((route) => route.entryId)).toEqual(['routes-1']);
+    it('lists only the datasets whose monitor runs', () => {
+        const result = monitoredRoutes(routing([dataset('routes-0'), dataset('routes-1')], ['routes-1']));
+        expect(result.map((route) => route.datasetId)).toEqual(['routes-1']);
     });
 
-    it('leaves out an entry that reuses a monitored id after a reset', () => {
+    it('leaves out a dataset that reuses a monitored id after a reset', () => {
         // After `reset()` stopped the monitor of `routes-0`, a plain route takes the same id again.
-        expect(monitoredRoutes(routing([entry('routes-0')], []))).toEqual([]);
+        expect(monitoredRoutes(routing([dataset('routes-0')], []))).toEqual([]);
     });
 
     it('sums the on-route traffic delays of each alternative', () => {
-        const [route] = monitoredRoutes(routing([entry('routes-0', routes([60, 120]))], ['routes-0']));
+        const [route] = monitoredRoutes(routing([dataset('routes-0', routes([60, 120]))], ['routes-0']));
         expect(route.alternatives).toEqual([
             {
                 index: 0,

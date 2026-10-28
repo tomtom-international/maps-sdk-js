@@ -30,7 +30,7 @@ export const TRAFFIC_MANAGER_PROMPT_OVERRIDES: SystemPromptSectionOverrides = {
     responseFormatting:
         '- Markdown; bold the key numbers; bullets for multiple items.\n' +
         '- Durations in operator units: minutes, or hours+minutes (e.g. "2h 3m", "29 min") — NEVER raw seconds.\n' +
-        '- Never surface internal plumbing in your replies: entry handles (e.g. `incidents-0`, `places-1`), ' +
+        '- Never surface internal plumbing in your replies: dataset handles (e.g. `incidents-0`, `places-1`), ' +
         'namespaced analysis keys (e.g. `label::incidents-0`), or raw provider incident IDs (e.g. `TTI-…-TTL…`). ' +
         'Refer to results in plain language ("the Las Vegas area", "this set", "the worst cluster").',
     dataConfidence:
@@ -52,13 +52,13 @@ export const TRAFFIC_MANAGER_PROMPT_OVERRIDES: SystemPromptSectionOverrides = {
         'and setMapStyling "routes.summaryBubbles.visible": false.\n' +
         '- analyseData: this app renders chart output in a dedicated panel, so prefer outputFormat: "chart" for ' +
         'countable / comparable results (by type, road, delay bins); plain JSON only for a single scalar.\n' +
-        '- BYOD areas / "per district": addByodSource ALONE first (its entry exists only once it returns — a ' +
+        '- BYOD areas / "per district": addByodSource ALONE first (its dataset exists only once it returns — a ' +
         'same-step consumer fails), then setByodLayers, then ONE monitored getTrafficIncidents ' +
         'over their combined area (polygons union into a single fetch), then a monitored analyseData(incidents + ' +
         'byod) bucketing each incident into its polygon via turf.booleanIntersects (incidents mix Point + ' +
         'LineString) — one live per-polygon breakdown.',
 
-    // Keep the base entry / recallState conventions, then append the live-data rules.
+    // Keep the base dataset / recallState conventions, then append the live-data rules.
     sessionState:
         `${SYSTEM_PROMPT_SECTIONS.sessionState}\n` +
         '- Earlier-turn results are historical; re-fetch when asked about now. Registered analyses and monitors ' +

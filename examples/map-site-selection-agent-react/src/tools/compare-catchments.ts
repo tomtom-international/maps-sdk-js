@@ -31,9 +31,9 @@ const compareCatchmentsSchema = z.object({
         .max(MAX_EXISTING)
         .optional()
         .describe(
-            'The EXISTING sites the proposed one might cannibalize, by address (1-8). Omit when supplying existingByodEntryId.',
+            'The EXISTING sites the proposed one might cannibalize, by address (1-8). Omit when supplying existingByodDatasetId.',
         ),
-    existingByodEntryId: z
+    existingByodDatasetId: z
         .string()
         .optional()
         .describe(
@@ -110,8 +110,8 @@ export const resolveExisting = async (
     }
 
     let unbuilt = 0;
-    if (params.existingByodEntryId) {
-        const candidates = byodCandidateSites(requireByodFeatures(state, params.existingByodEntryId));
+    if (params.existingByodDatasetId) {
+        const candidates = byodCandidateSites(requireByodFeatures(state, params.existingByodDatasetId));
         for (const [index, candidate] of candidates.entries()) {
             if (existing.length >= MAX_EXISTING) {
                 unbuilt = candidates.length - index;
@@ -166,7 +166,7 @@ export const compareCatchments: ToolEntry = {
             if (existing.length === 0) {
                 progress.done();
                 return {
-                    error: 'No existing sites could be resolved. Provide existing addresses or a BYOD layer (existingByodEntryId).',
+                    error: 'No existing sites could be resolved. Provide existing addresses or a BYOD layer (existingByodDatasetId).',
                 };
             }
 
@@ -236,22 +236,22 @@ export const compareCatchments: ToolEntry = {
                 })),
             );
 
-            for (const entry of state.customGeometries.entries.filter(
+            for (const dataset of state.customGeometries.datasets.filter(
                 (e) => e.provenance.operation === 'catchment-overlap',
             )) {
-                await state.customGeometries.removeEntry(entry.id);
+                await state.customGeometries.removeDataset(dataset.id);
             }
             if (overlapFeatures.length > 0) {
-                const entryId = await state.customGeometries.addEntry(
+                const datasetId = await state.customGeometries.addDataset(
                     // customGeometries is generically typed to CommonPlaceProps; overlap
                     // polygons carry only name/color, so cast as the codebase does elsewhere.
                     overlapFeatures as unknown as PolygonFeature<CommonPlaceProps>[],
                     { operation: 'catchment-overlap', sourceIds: [] },
                     `Catchment overlap: ${proposed.label}`,
                 );
-                await state.customGeometries.showEntry(entryId, 'filled');
+                await state.customGeometries.showDataset(datasetId, 'filled');
                 // Pink overlap fill sits beneath the roads, its border below the labels.
-                const overlapGeometries = await state.customGeometries.getEntryGeometriesModule(entryId, 'filled');
+                const overlapGeometries = await state.customGeometries.getDatasetGeometriesModule(datasetId, 'filled');
                 positionPolygonLayers(overlapGeometries);
             }
             await drawRichOverlay(state, `Cannibalization: ${proposed.label}`, [], connectors);

@@ -7,8 +7,8 @@ import { useCallback, useEffect, useRef, useSyncExternalStore } from 'react';
  * surface into React via `useSyncExternalStore`, no polling.
  *
  * The plugin's state slices mutate their internal arrays in place (e.g. `PlacesState.addPlaceResult`
- * does `this._entries.push(...)`) and their getters return the same reference. `useSyncExternalStore`
- * compares snapshots via `Object.is`, so naive `() => state.places.entries` would never trigger a
+ * does `this._datasets.push(...)`) and their getters return the same reference. `useSyncExternalStore`
+ * compares snapshots via `Object.is`, so naive `() => state.places.datasets` would never trigger a
  * re-render even though the array's contents changed.
  *
  * The hook reconciles this by holding the latest snapshot in a wrapper object (`{ value }`) that
@@ -21,7 +21,7 @@ type AnyEvents = { on(type: string, handler: () => void): () => void };
 type EventBinding = { events: AnyEvents; types: readonly string[] };
 
 // State slices mutate their arrays in place (`PlacesState.addPlaceResult` calls `Array.push`),
-// so two consecutive `state.places.entries` reads return the same reference even when contents
+// so two consecutive `state.places.datasets` reads return the same reference even when contents
 // changed. Shallow-copying arrays here gives downstream `useMemo` / prop-comparison checks a
 // fresh reference whenever an event fires — without forcing every consumer to remember a spread.
 const refreshSnapshot = <T>(value: T): T => (Array.isArray(value) ? ([...value] as unknown as T) : value);

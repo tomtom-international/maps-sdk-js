@@ -27,8 +27,8 @@ export function useHeatmapOverlay(agent: AgentInstance | undefined, incidents: I
             overlay.setMode(vizModeRef.current);
             overlayRef.current = overlay;
             // If incidents already arrived before style load, render them now.
-            const allEntries = agent.state.trafficIncidents.entries;
-            const latest = allEntries[allEntries.length - 1];
+            const allDatasets = agent.state.trafficIncidents.datasets;
+            const latest = allDatasets[allDatasets.length - 1];
             if (latest) overlay.setIncidents(latest.data);
         };
 
@@ -48,7 +48,7 @@ export function useHeatmapOverlay(agent: AgentInstance | undefined, incidents: I
     }, [agent]);
 
     // Sync overlay with the snapshot React already has — avoids a second
-    // entries-change subscription competing with useIncidents for the source
+    // datasets-change subscription competing with useIncidents for the source
     // of truth.
     useEffect(() => {
         overlayRef.current?.setIncidents(incidents.items);

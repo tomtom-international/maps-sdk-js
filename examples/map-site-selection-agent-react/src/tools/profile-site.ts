@@ -297,10 +297,10 @@ const trafficNote = async (position: [number, number], timeZone: string | undefi
 // passes false and instead draws the Figma pin + address label itself (drawSiteMarker), so the single
 // site doesn't get two stacked pins/labels. `drawGeometry` defaults to true (the SDK 'outline' fill style);
 // profileSite passes false and renders the catchment itself (drawRichOverlay) in the exact Figma style.
-// Returns the id of the ranges entry the catchments live in.
+// Returns the id of the ranges dataset the catchments live in.
 export const drawCatchment = async (
     state: ToolState,
-    entryLabel: string,
+    datasetLabel: string,
     ranges: ReachableRange[],
     showOriginPin = true,
     drawGeometry = true,
@@ -309,8 +309,8 @@ export const drawCatchment = async (
     // A fresh catchment supersedes the previous site marker and ranked pins (their owners re-add them).
     clearSiteMarker();
     clearRankedPins();
-    for (const entry of [...state.ranges.entries]) await state.ranges.removeEntry(entry.id);
-    const rangesId = await state.ranges.addEntry({ label: entryLabel, data: ranges });
+    for (const dataset of [...state.ranges.datasets]) await state.ranges.removeDataset(dataset.id);
+    const rangesId = await state.ranges.addDataset({ label: datasetLabel, data: ranges });
     // rangeColors (one per range) stamps `properties.color` so fill/border paint per feature.
     const features = ranges.flatMap((range, index) =>
         (range.polygon?.features ?? []).map((feature: PolygonFeatures['features'][number]) =>
@@ -319,7 +319,7 @@ export const drawCatchment = async (
     );
     const merged = { type: 'FeatureCollection', features } as PolygonFeatures;
     if (drawGeometry) {
-        const geometriesModule = await state.ranges.getEntryGeometriesModule(rangesId, 'outline');
+        const geometriesModule = await state.ranges.getDatasetGeometriesModule(rangesId, 'outline');
         // Configured before showing — no default-theme flash.
         styleCatchment(geometriesModule, !!rangeColors);
         await geometriesModule.show(merged);
@@ -331,10 +331,10 @@ export const drawCatchment = async (
             geometry: { type: 'Point', coordinates: range.origin.position },
             properties: { type: 'Point Address', address: { freeformAddress: range.origin.query ?? '' } },
         }));
-        const placesModule = await state.ranges.getEntryPlacesModule(rangesId);
+        const placesModule = await state.ranges.getDatasetPlacesModule(rangesId);
         await placesModule.show(pins);
     }
-    await state.ranges.markEntryShown(rangesId);
+    await state.ranges.markDatasetShown(rangesId);
     if (features.length > 0) {
         fitBesidePanel(state, turf.bbox(merged) as BBox, 60);
     }
@@ -513,9 +513,9 @@ export const executeProfileSite = (async (params: ProfileSiteInput, state: ToolS
             // earlier "Las Vegas Convention Center" locate) so the focused profile shows ONLY our Figma site pin —
             // otherwise the SDK pin and the custom pin stack on the same spot. profileSite draws its
             // own competitor/parking markers via the BYOD overlay, so it never needs state.places.
-            // `clearShownEntries` only hides — the entries stay in history, so a later
-            // analyseData({ placesEntryIDs: [...] }) can still resolve them (reset() would wipe them).
-            await state.places.clearShownEntries();
+            // `clearShownDatasets` only hides — the datasets stay in history, so a later
+            // analyseData({ placesDatasetIDs: [...] }) can still resolve them (reset() would wipe them).
+            await state.places.clearShownDatasets();
             // The Figma on-map address label under the site pin (single-site cue).
             drawSiteMarker(state, position, label);
 

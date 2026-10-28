@@ -1,11 +1,11 @@
 import { EyeIcon, EyeOffIcon, SelectionIcon } from './Icons';
 
 /**
- * Per-entry visibility policy. Tracked at the rail level (not in agent-toolkit state) since
- * it's a UI concern: how this entry should behave relative to the active selection.
+ * Per-dataset visibility policy. Tracked at the rail level (not in agent-toolkit state) since
+ * it's a UI concern: how this dataset should behave relative to the active selection.
  *
- * - `on-selection`: shown only while it's the active entry in the details panel. (default)
- * - `always-shown`: kept on the map regardless of which entry is active.
+ * - `on-selection`: shown only while it's the active dataset in the details panel. (default)
+ * - `always-shown`: kept on the map regardless of which dataset is active.
  * - `always-hidden`: never auto-shown, even when activated.
  */
 export type VisibilityMode = 'on-selection' | 'always-shown' | 'always-hidden';
@@ -22,8 +22,8 @@ const OPTIONS: { mode: VisibilityMode; label: string; title: string; Icon: typeo
 ];
 
 /**
- * Compact 3-state segmented control for an entry's visibility policy. The active option uses
- * the SDK's `--ui-surface-brand-red` accent so the choice stays legible at the small entry-row
+ * Compact 3-state segmented control for a dataset's visibility policy. The active option uses
+ * the SDK's `--ui-surface-brand-red` accent so the choice stays legible at the small dataset-row
  * font size.
  */
 export function VisibilityToggle({ value, onChange }: VisibilityToggleProps) {
