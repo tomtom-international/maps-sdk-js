@@ -1,0 +1,286 @@
+---
+title: Route styling
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.7"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The [Routing module](./routes.mdx) draws routes in its own look. `color`, `widthPreset` and `opacity` style the whole route,
+`waypoints.sizePreset` and `waypoints.label` the waypoints, `summaryBubbles` the bubbles, and `layers` each layer. You can try them all on the
+route style playground. Styling knobs reach route layers only through the
+[accent](./styling-map-colors.mdx#the-accent-what-a-theme-reaches-beyond-the-base-map), which a route without a `color`
+defaults to, the label and halo colours its [summary bubbles](#summary-bubbles) take, and the delay colours of its
+[traffic sections](./routes-sections.mdx#layer-overrides).
+
+<GuideDemo demo="route-styling-playground" />
+
+## Colour, width and waypoint size
+
+```javascript
+import { RoutingModule } from '@tomtom-org/maps-sdk/map';
+
+const routingModule = await RoutingModule.create(map, {
+    color: '#DF1B12',        // the route line, its outline (a darker shade) and the waypoint pins
+    widthPreset: 'l',        // 's' | 'm' | 'l'
+    widthFactor: 1.2,        // multiplies the preset, 0.5 to 2
+    opacity: 0.7,            // the route lines and their outlines, 0 to 1
+    waypoints: {
+        sizePreset: 's',     // 's' | 'm' | 'l'
+        sizeFactor: 1.5,     // multiplies the preset, 0.5 to 2
+    },
+});
+```
+
+- A factor multiplies its preset instead of replacing it, and is clamped to its `range` in
+  `routingKnobCatalogue`, which `knobEntryOf(routingKnobCatalogue, 'widthFactor')` reads.
+- `opacity` fades the route lines and their outlines, selected and deselected. Each
+  [section](./routes-sections.mdx) keeps its own `sections.<type>.opacity`, and the waypoints, bubbles and
+  instruction lines stay opaque.
+- The instruction arrows keep one size whatever the `widthPreset`, and follow only `widthFactor`.
+- The [stop marks](./routes.mdx#stop-marks) scale with their pins, by preset and factor, and stay
+  centred in the pin head at every zoom.
+- The waypoint labels follow the map's light or dark theme, like the labels of places and geometries, with
+  dark text on a white halo on a light map and the reverse on a dark one. `waypoints.label` sets their colour,
+  halo and size, as `label` does for [places](./places-styling.mdx#label-styling). [Waypoints](./routes.mdx#pins-per-role)
+  covers pins per role, your own labels and icons per waypoint.
+
+Without a `color`, routes take the map's
+[accent](./styling-map-colors.mdx#the-accent-what-a-theme-reaches-beyond-the-base-map) when a theme sets one, or
+the SDK's route blue otherwise:
+
+```javascript
+const brandedRoutes = await RoutingModule.create(map, { color: '#DF1B12' }); // stays red through any theme
+const themedRoutes = await RoutingModule.create(map); // follows map.mapColors.accent
+```
+
+## Summary bubbles
+
+Each route carries a bubble with its duration, distance and traffic delay. `summaryBubbles` decides what it says,
+which routes carry one, where it sits, how it looks and at which zooms it appears. You can try each setting on the
+summary bubbles playground:
+
+<GuideDemo demo="route-summary-bubbles-playground" />
+
+```javascript
+const routingModule = await RoutingModule.create(map, {
+    summaryBubbles: {
+        fields: ['duration', 'trafficDelay'], // drops the distance
+        minZoom: 8,                           // hidden while the whole country is in view
+        color: '#1A2024',                     // the bubble, deselected routes a shade darker
+        label: { size: 14, typeface: 'serif' },
+    },
+});
+```
+
+- `fields` lists `duration`, `distance`, `durationDifference` and `trafficDelay`. The first field a route carries
+  is in bold and the others follow it muted. The traffic delay takes its own line, and only on routes with a
+  delay.
+- `durationDifference` times each other route against the selected one, such as `+6 min`. The selected route
+  shows none, and neither does a route whose duration rounds to the same minute.
+- A bubble with nothing to say isn't drawn. `['trafficDelay']` shows bubbles only on delayed routes,
+  `['durationDifference']` only on the routes you can switch to, and `[]` shows none.
+- By default, the bubble follows the map. Once a [theme](./styling-map-colors.mdx) sets the `labelHalo` colour, the
+  bubble takes it, lightened to stand off the land, and once it sets `label`, the text takes that. Without them,
+  the bubble is white on a light style and dark grey on a dark one.
+- The text takes whichever of dark or light reads on the bubble, including a `color` of your own, and
+  `label.color` overrides the selected route's text.
+- `label.size`, `label.opacity`, `label.typeface` and `label.customTypeface` work as they do for
+  [waypoint labels](./styling-typeface.mdx#your-routes-places-and-geometries).
+
+### Which routes, and where
+
+Alternatives often share most of their way, so each bubble sits on its route's longest
+[distinct section](../core/utilities/routes.mdx#getdistinctsections), a stretch of road the route has to
+itself, where the other bubbles can't hide it. `routes` picks which routes carry one, to keep them out of the way of a
+panel or popup of your own:
+
+```javascript
+routingModule.updateConfig({
+    summaryBubbles: {
+        routes: 'alternatives',  // the selected route's trip is in your own panel
+        fields: ['duration', 'durationDifference'],
+    },
+});
+```
+
+- The first route's bubble sits halfway along its longest distinct section, and each next one takes whichever
+  point a quarter, half or three quarters along its own is farthest from the bubbles before it. A route with no
+  distinct section, or none as long as 5% of the route, uses its whole length.
+- The routes of one `calculateRoute` call carry their [`sections.distinct`](../core/routes.mdx#section-types),
+  which the module reads. It compares the routes itself only when one lacks them, such as a route you built.
+  Show one response's routes, all of them: distinct sections found against other routes than those shown,
+  such as a subset or the routes of two calls, can put a bubble on a road they share.
+- `routes` is `'all'` by default. `'selected'` keeps the selected route's bubble alone, and `'alternatives'`
+  every bubble but that one.
+- The bubbles stay where they are when you select another route or change `routes`, so the one a user just
+  clicked stays under their pointer. `selectRoute` updates the routes they show on and their duration
+  differences.
+
+### Your own text
+
+To write your own text, set `label.title`. A function receives each route's summary and returns its text, again
+whenever another route is selected, so it can read `routeState`, and a route it returns an empty string for gets
+no bubble:
+
+```javascript
+routingModule.updateConfig({
+    summaryBubbles: {
+        label: {
+            title: (summary) => (summary.properties.routeIndex === 0 ? `Fastest, ${summary.properties.formattedDuration}` : ''),
+        },
+    },
+});
+```
+
+- The text comes in plain, in the bubble's font and colour. A MapLibre expression works too, such as
+  `['get', 'formattedDuration']`, and draws every bubble.
+- `RoutingModuleSerializableConfig` keeps an expression title and leaves out a function one.
+
+## Layer overrides
+
+`layers` is keyed by part (`mainLines`, `waypoints`, `sections`, …) and then by layer. Each entry is a partial
+MapLibre layer, and its `paint` and `layout` merge property by property onto the layer the rest of the config
+built. Section layers are in [Route sections](./routes-sections.mdx#layer-overrides).
+
+```javascript
+const routingModule = await RoutingModule.create(map, {
+    widthPreset: 's',
+    layers: {
+        mainLines: {
+            routeLine: { paint: { 'line-blur': 1 } } // keeps the 's' width, the colour and the opacity
+        }
+    }
+});
+```
+
+- Name only the properties you change. The ones you leave out keep the values `widthPreset`, `widthFactor`,
+  `color` and `opacity` set.
+- Don't spread `defaultRoutingLayers` into an entry. It holds the layers drawn with the default config, so its
+  `line-width` replaces the one your `widthPreset` and `widthFactor` computed. Read it for the layer names and
+  their default values.
+- For the route's opacity, set `opacity`, or `sections.<type>.opacity` for a section, rather than a
+  `line-opacity` override.
+
+## Every setting as data
+
+`routingKnobCatalogue` lists every plain-valued display setting of the module with its kind, its range or
+options, and its default where one value holds everywhere. Each id is the setting's path in the config, so a UI
+can build its controls from it without a loaded map:
+
+```javascript
+import { routingKnobCatalogue } from '@tomtom-org/maps-sdk/map';
+
+const tunnelKnobs = routingKnobCatalogue.filter(({ id }) => id.startsWith('sections.tunnel.'));
+// [{ id: 'sections.tunnel.visible', kind: 'toggle', description: '…', default: true }, …,
+//  { id: 'sections.tunnel.style', kind: 'enum', description: '…', options: ['halo', 'inline'], default: 'inline' }, …]
+```
+
+The route-wide knobs come first, then each [section type](./routes-sections.mdx)'s knobs, where `<type>` stands
+for any of `drawnSectionTypes`:
+
+| Id | Kind |
+|---|---|
+| `visible` | toggle |
+| `color` | color |
+| `widthPreset`, `waypoints.sizePreset` | enum: `s`, `m` or `l` |
+| `widthFactor`, `waypoints.sizeFactor` | factor, 0.5 to 2 |
+| `opacity` | number, 0 to 1 |
+| `highlight.outline.widthFactor` | factor, 1 to 1.25 |
+| `highlight.section.outline.color` | color |
+| `highlight.section.outline.widthFactor` | factor, 0.5 to 2 |
+| `waypoints.icon.style.fillColor`, `waypoints.icon.style.outlineColor` | color |
+| `waypoints.icon.style.outlineOpacity` | number, 0 to 1 |
+| `waypoints.icon.start.style.fillColor`, `waypoints.icon.start.style.outlineColor`, `waypoints.icon.middle.style.fillColor`, `waypoints.icon.middle.style.outlineColor`, `waypoints.icon.finish.style.fillColor`, `waypoints.icon.finish.style.outlineColor` | color |
+| `waypoints.icon.start.style.outlineOpacity`, `waypoints.icon.middle.style.outlineOpacity`, `waypoints.icon.finish.style.outlineOpacity` | number, 0 to 1 |
+| `waypoints.stopNumbering` | enum: `numbers`, `letters` or `none` |
+| `waypoints.highlight.sizeFactor` | factor, 1 to 1.5 |
+| `waypoints.label.visible` | toggle |
+| `waypoints.label.color`, `waypoints.label.haloColor` | color |
+| `waypoints.label.size` | number, 6 to 48 pixels |
+| `waypoints.label.haloWidth` | number, 0 to 10 pixels |
+| `waypoints.label.opacity` | number, 0 to 1 |
+| `waypoints.label.font` | enums: `mapFonts` |
+| `waypoints.label.typeface` | enum: `mapTypefaces`, following the map's typeface by default |
+| `waypoints.entryPoints` | enum: `main-when-available` or `ignore` |
+| `displayUnits.distance.type` | enum: `metric`, `imperial_us` or `imperial_uk` |
+| `displayUnits.distance.kilometers`, `displayUnits.distance.meters`, `displayUnits.distance.miles`, `displayUnits.distance.feet`, `displayUnits.distance.yards` | text |
+| `displayUnits.time.hours`, `displayUnits.time.minutes` | text |
+| `summaryBubbles.visible` | toggle |
+| `summaryBubbles.routes` | enum: `all`, `selected` and `alternatives` |
+| `summaryBubbles.fields` | enums: `duration`, `distance`, `durationDifference` and `trafficDelay` |
+| `summaryBubbles.minZoom`, `summaryBubbles.maxZoom` | number, 0 to 22 |
+| `summaryBubbles.color`, `summaryBubbles.label.color` | color |
+| `summaryBubbles.label.size` | number, 6 to 48 pixels |
+| `summaryBubbles.label.opacity` | number, 0 to 1 |
+| `summaryBubbles.label.typeface` | enum: `mapTypefaces`, the map's typeface unset |
+| `countryCrossings.visible` | toggle |
+| `countryCrossings.minZoom` | number, 0 to 22 |
+| `countryCrossings.color`, `countryCrossings.label.color` | color |
+| `sections.<type>.visible` | toggle |
+| `sections.<type>.color` | color |
+| `sections.<type>.opacity` | number, 0 to 1 |
+| `sections.<type>.widthPreset` | enum: `s`, `m` or `l` |
+| `sections.<type>.widthFactor` | factor, 0.5 to 2 |
+| `sections.<type>.style`, `sections.<type>.pattern` | enum |
+| `sections.<type>.icon.image` | image |
+| `sections.<type>.icon.placement` | enum |
+| `sections.<type>.icon.sizeFactor` | factor, 0.25 to 2 |
+| `sections.speedLimit.sign.placement`, `sections.speedLimit.sign.priority`, `sections.speedLimit.sign.unit` | enum |
+| `sections.speedLimit.sign.minZoom` | number, 0 to 22 |
+| `sections.curve.kerb.visible` | toggle |
+| `sections.curve.kerb.color` | color |
+
+- A section type lists only the knobs it supports. `speedLimit` takes only `visible` and `sign`.
+  `traffic`, which colours its line by delay, has no `color`, `pattern` or `icon` entry. `curve` has a `kerb`
+  in place of a `pattern`.
+- `routingKnobIds` lists the ids in catalogue order. `RoutingKnobId` is their union, and
+  `RoutingKnobValueOf<ID>` is the plain value one takes.
+- The unit labels after distances and durations are `text` entries with no default. A `displayUnits` knob left
+  unset takes its value from the [global configuration](../core/global-config.mdx).
+- The catalogue leaves out `layers`, `beforeLayerConfig`, the waypoint images and `mapping`, the
+  `title` of waypoint and bubble labels, and their `customTypeface`, which take structured, MapLibre or function
+  values. It leaves out `events` too.
+- Its entries share their shape, `KnobEntry`, with every [module's catalogue](./modules.mdx#every-setting-as-data).
+
+## Layer positioning
+
+By default, the route lines sit below the map's labels and the route icons above them. `beforeLayerConfig`
+moves them. It takes one target for the whole route (`'top'` or a key of `mapStyleLayerIDs`), or a record keyed
+by part, plus `all` for the parts it leaves out:
+
+- `mainLines` - The route lines, and every section line drawn with them.
+- `instructionLines` - The guidance lines and their arrows, above the route lines by default.
+- `icons` - Waypoints, summary bubbles, border crossings and section icons. The tunnel sign and
+  icons requested by generated section types sit lowest. A target puts them all beneath it in that order.
+
+```javascript
+// Route lines under the road network; instruction lines and icons stay where they are
+routingModule.updateConfig({ beforeLayerConfig: { mainLines: 'lowestRoadLine' } });
+```
+
+- Each part keeps its own layers in order wherever it goes. `applyConfig` and `updateConfig` restack them at
+  runtime.
+- A target the style lacks (the satellite style has no `lowestRoadLine`) puts the part on top. A missing `lowest3D` goes under the POIs first.
+- `getLayerToRenderLinesUnder()` follows `mainLines`, and returns `undefined` when the lines are on top.
+- The speed limit signs are not a part. Their
+  [`sign.priority`](./routes-sections.mdx#speed-limits-are-posted-not-banded) decides which symbols they give way
+  to, wherever the parts are.
+
+## Related guides and examples
+
+### Related guides
+- [Routing module](./routes.mdx) - Showing routes and waypoints, events and shown data
+- [Route sections](./routes-sections.mdx) - The overlays drawn per stretch of road, on the same set of knobs
+- [Map modules](./modules.mdx#every-setting-as-data) - The knob kinds every catalogue shares
+
+### Related examples
+- [Route style playground](../../examples/route-styling-playground) - The route's colour, width, opacity, waypoint size, waypoint label colour and clicked outline on knobs, and a toggle that hides it
+- [Route summary bubbles playground](../../examples/route-summary-bubbles-playground) - What the bubbles say, which routes carry one, their colour, typeface and zooms on knobs, and a title of your own per route
+- [Route waypoints playground](../../examples/route-waypoints-playground) - Per-role pins, stop numbering, labels, hover growth, a category pin per stop and a finish image of your own
+- [React route planner](../../examples/react-route-planner) - Summary bubbles on the alternatives alone, each timing its route against the selected one, and a click on one to pick it
+- [Map theme](../../examples/map-theme) - A route following the accent of a theme

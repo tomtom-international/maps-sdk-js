@@ -1,0 +1,110 @@
+---
+title: Landmarks 3D plugin
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.3.1"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The Landmarks 3D plugin turns a `TomTomMap` into a 3D city. Well-known buildings stand as detailed models, every other building rises with windows and shadows, and the ground takes on rippling water, fields and asphalt, with trees on its woods and parks. The example below draws all of it around the Eiffel Tower, and a slider moves the sun across the day:
+
+<GuideDemo demo="landmarks-3d-city" />
+
+The plugin has three parts. Use any one of them alone, or combine them for the whole city. Each part has its own guide:
+
+| Guide | Class | Draws | Access |
+| --- | --- | --- | --- |
+| [3D landmarks](./landmarks-3d-landmarks.mdx) | `Landmarks3D` | Textured 3D models of well-known buildings, such as stadiums, cathedrals and towers | [Private Preview](https://docs.tomtom.com/legal/private-preview), on request |
+| [3D buildings](./landmarks-3d-buildings.mdx) | `Buildings3D` | The base map's buildings in 3D, with windows, lit windows at night and shadows from the sun or the moon | [Public Preview](https://docs.tomtom.com/legal/public-preview), any API key |
+| [GL surfaces](./landmarks-3d-gl-surfaces.mdx) | `GLSurfaces` | The style's water, land cover and roads as textures, with 3D trees on woods, parks and meadows | Public Preview, any API key |
+
+## Installation
+
+<Blockquote>
+    This plugin uses `@tomtom-org/maps-sdk`, `maplibre-gl` and `three` as peer dependencies. Install all three, whichever parts you use.
+</Blockquote>
+
+```bash
+npm install @tomtom-org/maps-sdk maplibre-gl three @tomtom-org/maps-sdk-plugin-landmarks-3d
+```
+
+1. Follow the [SDK Project Setup](../../introduction/project-setup.mdx) to create a `TomTomMap`.
+2. Pitch the camera. From straight above, a 3D city looks flat.
+3. Create the parts you want. Each one starts drawing once the map is ready, so there is nothing to await.
+
+## A whole 3D city
+
+To draw the whole city, create the three parts, then place the map's light they share:
+
+```javascript
+import { StylingFoundationsModule } from '@tomtom-org/maps-sdk/map';
+import { Buildings3D, GLSurfaces, Landmarks3D } from '@tomtom-org/maps-sdk-plugin-landmarks-3d';
+
+new GLSurfaces(map);
+new Buildings3D(map);
+new Landmarks3D(map);
+await StylingFoundationsModule.get(map, { view: { light: { direction: 240, altitude: 25, alignment: 'map' } } });
+```
+
+- The three parts draw through one Three.js renderer. A landmark the buildings draw among them loads onto the GPU once.
+- `Buildings3D` draws the landmarks among its buildings, so they share its sun, its sky and its shadows. See [With 3D landmarks](./landmarks-3d-buildings.mdx#with-3d-landmarks).
+- A dark style turns all three to night: lit windows, a darker ground and the moon's light.
+- Each part comes back after `setStyle`, in the look of the new style.
+- On [3D terrain](../map/terrain.mdx#3d-elevation), all three stand on the raised ground. A landmark or a building stands on the lowest ground under it, and the textures and trees follow the relief.
+
+### Share the map's light
+
+The buildings, the landmarks under them and the surfaces take their sun from the map's light, which the styling module's [`view.light` knobs](../map/styling-globe-and-sky.mdx#the-light-on-3d-buildings) set. One light for all of them lines up the tree crowns, the dunes and the glint on the water with the buildings' shadows, and the trees stand in those shadows.
+
+- With `alignment: 'map'`, the light keeps its compass direction as the map rotates. Otherwise, it turns with the map, and the buildings and the surfaces turn with it.
+- The standard styles place no light of their own. Until you set one, the sun comes from the south-west on light styles and the moon from the south-east on dark ones. Satellite imagery is a daylit photograph, so `streetSatellite` takes a day sun from the south-west.
+- To light one part on its own, set its `light.direction` or `light.altitude` knob. A knob you set wins over the map's light.
+- The trees take the buildings' shadows only under one sun for both, which the parts share by default. If you give them different suns, with their own light knobs or a `Buildings3D` preset of another theme, the trees leave the buildings' shadows out.
+
+## Set the look with knobs
+
+The look of each part is a set of knobs, listed in its catalogue: `landmarks3DKnobCatalogue`, `buildings3DKnobCatalogue` and `glSurfacesKnobCatalogue`. Each part's guide lists its knobs and what they follow while you leave them unset.
+
+```javascript
+import { setKnob } from '@tomtom-org/maps-sdk/map';
+import { Buildings3D } from '@tomtom-org/maps-sdk-plugin-landmarks-3d';
+import { buildings3DKnobCatalogue } from '@tomtom-org/maps-sdk-plugin-landmarks-3d/knobs';
+
+const buildings = new Buildings3D(map, { facade: { pattern: 'office' } }); // the knobs to start with
+buildings.updateConfig({ walls: { variation: 0.3 } });                      // the parts you name
+setKnob(buildings, buildings3DKnobCatalogue, 'light.altitude', 12);        // one knob, held as data
+buildings.resetConfig();                                                    // every knob unset again
+```
+
+Every part follows the same rules as a [map module](../map/modules.mdx#setting-a-knob-by-its-id):
+
+- The catalogues come from `@tomtom-org/maps-sdk-plugin-landmarks-3d/knobs`, which imports nothing from three.js. Read them at startup, to check values or build a settings panel, and `import()` the plugin itself only when the map first draws 3D.
+- `applyConfig(config)` replaces every knob, and `updateConfig(config)` replaces each part of the configuration you name and keeps the others. Note that `updateConfig({ walls: { variation: 0.3 } })` also unsets the other `walls` knobs you set.
+- For values held as data, from a control, storage or a language model, use `setKnob` and `setKnobs` with the part's catalogue. They check every value before anything changes, and keep every knob you don't name.
+- `getKnob` returns the value in force: the one you set, otherwise what the part follows or its default. `getConfig()` returns only the knobs you set, and `resetKnob` unsets one.
+- `setVisible(false)` hides a part, the same as `updateConfig({ visible: false })`, and `isVisible()` reports it.
+
+## API reference
+
+- [`Landmarks3D`](/maps-sdk-js/api-reference/classes/plugins.Landmarks3D.html)
+- [`Buildings3D`](/maps-sdk-js/api-reference/classes/plugins.Buildings3D.html)
+- [`GLSurfaces`](/maps-sdk-js/api-reference/classes/plugins.GLSurfaces.html)
+
+## Related guides and examples
+
+### Related guides
+- **[How plugins work](./how-plugins-work.mdx)** - What every plugin of the SDK has in common
+- **[Globe and sky](../map/styling-globe-and-sky.mdx#the-light-on-3d-buildings)** - The map's light, which the three parts share
+- **[Terrain](../map/terrain.mdx)** - Hillshade and 3D elevation, which the three parts stand on
+- **[three.js custom layers](../map/three-js-custom-layers.mdx)** - Your own three.js scene on the map, as this plugin draws its own
+- **[Map effects plugin](./map-effects.mdx)** - Bloom, depth of field and more over the 3D city
+
+### Related examples
+- **[3D city: landmarks, buildings and surfaces](../../examples/landmarks-3d-city)** - The Eiffel Tower, the buildings round it and the textured Champ de Mars with its trees, under one sun from dawn to dusk
+- **[3D city on satellite](../../examples/satellite-3d-city)** - Sydney Harbour's water, trees, towers, bridge and Opera House over satellite imagery, on default settings
+- **[3D city at night](../../examples/night-3d-city)** - Westminster's lit windows and moonlit Thames on a dark style, glowing under bloom and glare
+- **[Cinematic city fly-by](../../examples/cinematic-city-flyby)** - A bird's-eye flight round the landmarks of eight cities and down their avenues, over 3D buildings, and over five landscapes on the terrain

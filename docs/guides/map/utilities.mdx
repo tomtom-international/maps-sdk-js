@@ -1,0 +1,99 @@
+---
+title: Map utilities
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.7"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+These standalone functions from `@tomtom-org/maps-sdk/map` are tree-shaken out of your bundle unless you import them.
+
+## Padded bounds
+
+Panels, sidebars and headers drawn over the map hide part of it. These utilities measure the part that stays visible, so you can centre on it or fit an area inside it.
+
+| Function | Returns |
+| --- | --- |
+| `calculatePaddedBBox` | The bounding box of the visible area |
+| `calculatePaddedCenter` | The centre of the visible area |
+| `calculateFittingBBox` | A larger bounding box that, zoomed to, shows a target area inside the visible part |
+
+Each returns `null` if the visible area is too small.
+
+### calculatePaddedBBox
+
+Returns the `[west, south, east, north]` bounding box of the map area that no given element overlaps. On a view across the antimeridian, west is greater than east.
+
+- `map` - A `TomTomMap` or a MapLibre map.
+- `surroundingElements` - The elements over the map, or their DOM selectors.
+- `paddingPX` - Optional extra padding around them and the map edges, 0 by default.
+
+An element spanning the map's full width cuts the area from the top or bottom, and one spanning its full height from the left or right. Any other element, such as a toolbar inset from the edges, a corner panel or a panel touching one edge, cuts it from the side that leaves the most of it visible. On a rotated or tilted map, the box surrounds the visible area.
+
+The red box below is the area that the left and right panels and the inset toolbar leave free.
+
+### calculatePaddedCenter
+
+Returns the `[longitude, latitude]` centre of `calculatePaddedBBox`'s box, to centre the map where it looks balanced against the panels. It takes `map` and `surroundingElements`.
+
+<GuideDemo demo="padded-bbox" />
+
+### calculateFittingBBox
+
+Returns an expanded bounding box that shows `toBeContainedBBox` entirely inside the visible area when the map zooms to it. It takes `map`, `toBeContainedBBox`, `surroundingElements` and `paddingPX` ([API reference](/maps-sdk-js/api-reference/functions/map.calculateFittingBBox.html)).
+
+It expands the latitudes in Web Mercator, as `fitBounds` frames them, so the target clears the panels at every latitude, and they stay within Web Mercator's ±85.051129. The returned longitudes can pass ±180, which `fitBounds` takes as is: east always does for a `toBeContainedBBox` across the antimeridian, with west greater than east, and either one does when the expansion reaches past it.
+
+<GuideDemo demo="padded-fitting-bbox" />
+
+The target area is blue. The red box is what the map zooms to so the target clears the panels.
+
+```javascript
+import { calculateFittingBBox, TomTomMap } from '@tomtom-org/maps-sdk/map';
+
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+
+const fittingBBox = calculateFittingBBox({
+    map,
+    toBeContainedBBox: [4.8, 52.3, 4.95, 52.4],
+    surroundingElements: ['#panel-left', '#panel-top', '#panel-right'],
+    paddingPX: 20,
+});
+
+if (fittingBBox) {
+    map.mapLibreMap.fitBounds(fittingBBox);
+}
+```
+
+### Selectors or elements
+
+`surroundingElements` takes element references, DOM selectors or a mix:
+
+```javascript
+calculatePaddedBBox({ map, surroundingElements: [document.getElementById('sidebar'), '#header'] });
+```
+
+### How it works
+
+1. The SDK measures each element's bounds relative to the map container. It ignores elements outside the container and selectors that match nothing.
+2. The visible area shrinks past each element, plus `paddingPX`. A full-width bar shrinks it from its closest edge, the top or bottom, and a full-height bar from the left or right. Any other element, whether it floats, sits in a corner or touches one edge, shrinks the visible area from the side that leaves the most of it visible. If two sides leave the same area, the side nearest a map edge wins.
+
+## Local frame matrix
+
+`localFrameMatrix` lines up a custom layer's WebGL or three.js scene with the map, in metres around an origin. The [three.js custom layers](./three-js-custom-layers.mdx) guide covers it.
+
+## API reference
+
+- [`calculatePaddedBBox`](/maps-sdk-js/api-reference/functions/map.calculatePaddedBBox.html)
+- [`calculatePaddedCenter`](/maps-sdk-js/api-reference/functions/map.calculatePaddedCenter.html)
+- [`calculateFittingBBox`](/maps-sdk-js/api-reference/functions/map.calculateFittingBBox.html)
+- [`localFrameMatrix`](/maps-sdk-js/api-reference/functions/map.localFrameMatrix.html)
+
+## Related guides and examples
+
+- [Calculate map bounds that exclude surrounding UI panels](../../examples/padded-bbox)
+- [Ensure a bounding box is visible between UI panels](../../examples/padded-fitting-bbox)

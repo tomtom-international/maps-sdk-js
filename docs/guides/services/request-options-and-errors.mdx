@@ -1,0 +1,253 @@
+---
+title: Request options and errors
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.7"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+Every service call takes the same options on top of its own parameters: request validation, overrides of the global configuration and a signal to cancel it. Each call runs these steps in order:
+
+1. An already-aborted `signal` rejects at once, before any work.
+2. The [global configuration](../core/global-config.mdx) is merged under the call's parameters.
+3. The resulting `commonBaseURL` is checked, even with `validateRequest: false`. An insecure one rejects with [`INSECURE_BASE_URL`](#error-handling).
+4. The parameters are validated, unless `validateRequest: false`.
+5. The request is built.
+6. The request is sent, and a `429` is retried as the call's and the global [`retry`](../core/global-config.mdx#retry) set.
+7. The response is parsed.
+
+## Request validation
+
+Before sending, the SDK checks the parameters against the service's schema. A malformed call fails early with a message in the SDK's terms, and never reaches the API or your usage quota.
+
+```javascript
+import { discoverPlaces } from '@tomtom-org/maps-sdk/services';
+
+await discoverPlaces({ query: 'Eiffel Tower', validateRequest: false });
+```
+
+- `validateRequest: false` skips the check for that call. This saves CPU when you know the inputs are good.
+- A failed check rejects with an [`SDKError`](#error-handling) whose `issues` lists the Zod issues.
+- Keep it on while developing.
+
+Validation rejects a parameter the service doesn't know, and names it. The check reads the parameters you pass, not the global configuration merged under them, and a parameter set to `undefined` counts as absent. When the service takes that name inside an object parameter, the message points you there:
+
+```javascript doc-resolution-skip
+// Rejects with INVALID_REQUEST:
+// "poiCategories is not a parameter of AlongRouteSearch. Did you mean filters.poiCategories?"
+await discoverPlaces({ route, maxDetourTimeSeconds: 600, poiCategories: ['FUEL_STATION'] });
+```
+
+```javascript
+await discoverPlaces({ route, maxDetourTimeSeconds: 600, filters: { poiCategories: ['FUEL_STATION'] } });
+```
+
+Note that only top-level names are checked. An unknown key inside an object parameter, such as `filters`, goes unreported.
+
+An along-route search also needs a `query` or at least one filter other than `indexes`, since without either the service has nothing to look for.
+
+## Per-call overrides
+
+You can pass the API key, language, geopolitical view, base URL and retry behaviour of the [global configuration](../core/global-config.mdx) to a single call instead. They override the global values for that call only:
+
+```javascript
+// French for this call only; later calls keep the global language
+await discoverPlaces({ query: 'restaurants', language: 'fr-FR' });
+
+// Give up on a rate-limited search after 2 seconds; the global wait and factor still apply
+await getSearchSuggestions({ query: 'coffee', geoBias: { position: [4.9041, 52.3676] }, retry: { timeoutMs: 2000 } });
+```
+
+- A call's `retry` overrides the global [`retry`](../core/global-config.mdx#retry) field by field, so `retry: { timeoutMs: 2000 }` keeps the global wait and factor. To turn retrying off for one call, pass `retry: undefined`.
+- Each service fixes its own endpoint path and API version. You can't override either.
+- To send every request through a proxy that holds the key server-side, set the global `commonBaseURL`. See [Proxying your API calls](../security/proxying-api-calls.mdx).
+
+## Cancelling a request
+
+Every call accepts a `signal`, an [`AbortSignal`](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal). Aborting it cancels the HTTP request and rejects the call with an `SDKAbortError`, whose `name` is `'AbortError'`.
+
+- Aborting also cancels a pending `429` retry, so an aborted call never waits out its backoff.
+- An already-aborted signal rejects before the request is built, so nothing is sent.
+- `discoverPlaces`, `discoverOnePlace`, `geocode` and `geocodeOne` also take a query string on its own, which carries no options. To cancel one of them, pass the signal in the params form, as in `geocodeOne({ query, signal })`.
+- `calculateReachableRanges` takes it as a second argument, for all its ranges at once.
+
+### Keeping only the latest request
+
+When a new request supersedes an older one (a click lookup, a search-as-you-type box, a search re-run on every map move), a slow earlier response can land after a faster later one and overwrite it.
+
+`createLatestRequest` keeps only the latest request. Each `run` hands your callback a fresh signal and, by default, aborts the run before it. `cancel` aborts without starting another:
+
+```javascript
+import { createLatestRequest, reverseGeocode } from '@tomtom-org/maps-sdk/services';
+
+const latestLookup = createLatestRequest();
+
+map.mapLibreMap.on('click', async (event) => {
+    const lookup = await latestLookup.run((signal) =>
+        reverseGeocode({ position: event.lngLat.toArray(), signal })
+    );
+    if (!lookup.current) return; // a newer click or a cancel retired it
+    showAddress(lookup.value);
+});
+
+clearButton.addEventListener('click', latestLookup.cancel);
+```
+
+- A retired request resolves `{ current: false }` and never rejects, so there is no `SDKAbortError` to catch.
+- An answer that lands after a `cancel` is also dropped. A bare `signal` can't do this once the response is in.
+- It rethrows the current request's errors, including a deadline composed onto the signal, so a timeout still reads as a failure.
+- One callback can chain several calls on the same signal. A newer run drops the whole chain, wherever it got to.
+- `isRunning()` reports whether a request is in flight. Use one `createLatestRequest()` per thing that can be superseded independently.
+- **It cancels, but it does not debounce.** Every `run` still sends its request. To send fewer while the user types or drags, debounce the input and call `run` from the debounced handler.
+
+Some requests start faster than they answer, such as a route re-planned while the user drags it. By default, each one aborts the last, so nothing shows until the drag pauses. To show each answer as it arrives, set `supersede: 'on-answer'`:
+
+```javascript
+import { calculateRoute, createLatestRequest } from '@tomtom-org/maps-sdk/services';
+
+const latestRoute = createLatestRequest({ supersede: 'on-answer' });
+
+const planRoute = async (locations) => {
+    const result = await latestRoute.run((signal) => calculateRoute({ locations, signal }));
+    if (result.current) await routingModule.showRoutes(result.value);
+};
+```
+
+- The older requests keep running. When a newer one answers, it aborts the older ones still in flight.
+- An older answer that arrives after a newer one resolves `{ current: false }`, so the route never steps back.
+- The [route dragging plugin](../plugins/route-dragging.mdx) re-plans this way while you drag.
+
+### Deadlines
+
+There is no `timeout` option. Instead, compose a deadline onto the `signal`, alone or with your own cancellation:
+
+```javascript
+import { calculateRoute, createLatestRequest, getSearchSuggestions } from '@tomtom-org/maps-sdk/services';
+
+// A short deadline for a search box
+await getSearchSuggestions({
+    query: 'coffee',
+    geoBias: { position: [4.9041, 52.3676] },
+    signal: AbortSignal.timeout(3000)
+});
+
+// A longer one for a route, still retired by the next run
+const latestRoute = createLatestRequest();
+const route = await latestRoute.run((signal) =>
+    calculateRoute({
+        locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+        signal: AbortSignal.any([signal, AbortSignal.timeout(15000)])
+    })
+);
+```
+
+- A deadline that fires rejects with `SDKAbortError`, like a manual abort. Its `cause` tells the two apart. It holds the signal's reason, which is a `TimeoutError` for `AbortSignal.timeout`.
+- Under `createLatestRequest`, the deadline is the only abort that rejects. A retired run resolves `{ current: false }`.
+- The global [`retry.timeoutMs`](../core/global-config.mdx#retry) is unrelated. It limits how long the SDK retries a `429`.
+
+## Error handling
+
+A service call rejects with an `SDKError`. Its `code` is one of the [error codes](../core/errors.mdx#error-codes) every SDK error shares, and its `canRetry` says whether the call is [worth retrying](../core/errors.mdx#retrying). Its `service` names the service that failed as a [`ServiceName`](/maps-sdk-js/api-reference/types/services.ServiceName.html), such as `'Geocode'` or `'ReachableRange'`.
+
+On a service call, some codes carry more:
+
+- `INVALID_REQUEST` lists in `issues` why the SDK's request validation failed. A request the service couldn't build, such as a geometry type it doesn't search sent with `validateRequest: false`, gets it too.
+- `NETWORK_NOT_AVAILABLE` holds what `fetch` threw in `cause`, and `ABORTED` holds the abort reason.
+- `NOT_FOUND` also comes from `geocodeOne` or `discoverOnePlace` finding no place.
+
+Two subclasses of `SDKError` carry more fields:
+
+| Error | When | Carries |
+| --- | --- | --- |
+| `SDKServiceError` | The API answered with an error status | `status`, `apiErrorCode` (the API's own name for the error, when it gave one) and `privatePreviewAccess`. See [A key refused access](#a-key-refused-access) |
+| `SDKAbortError` | The `signal` was aborted | `cause`, the abort reason |
+
+To get an empty result rather than a `NOT_FOUND` from `discoverOnePlace` or `geocodeOne`, use `discoverPlaces` or `geocode`.
+
+```javascript
+import { discoverPlaces, SDKError, SDKServiceError } from '@tomtom-org/maps-sdk/services';
+
+try {
+    const results = await discoverPlaces({
+        query: 'coffee',
+        geoBias: { position: [4.9041, 52.3676] },
+        signal: AbortSignal.timeout(5000)
+    });
+} catch (error) {
+    if (!(error instanceof SDKError)) throw error;
+
+    switch (error.code) {
+        case 'ABORTED':
+            console.error('Search timed out');
+            break;
+        case 'INVALID_CREDENTIALS':
+            console.error('Check the API key');
+            break;
+        case 'INSUFFICIENT_PERMISSIONS':
+            if (error instanceof SDKServiceError && error.apiErrorCode === 'InvalidReferer') {
+                console.error('Add this domain to the API key');
+            } else {
+                console.error(`Enable this API for the API key: ${error.message}`);
+            }
+            break;
+        case 'RATE_LIMITED':
+            console.error('Rate limited, even after retrying');
+            break;
+        case 'NETWORK_NOT_AVAILABLE':
+            console.error('No connection');
+            break;
+        default:
+            console.error(`${error.service} failed (${error.code}, SDK ${error.sdkVersion}): ${error.message}`);
+    }
+}
+```
+
+- **Branch on `code`, not on `message`.** The codes are the stable part.
+- A `429` that rejects has already been retried for as long as [`retry`](../core/global-config.mdx#retry) allows. The SDK replaces the API's message with a standard one.
+- The map reports its own failures with the same codes. See [Map errors](../map/tomtom-map.mdx#map-errors).
+
+The code below geocodes a batch of addresses in parallel under one deadline, and reads each failure from `Promise.allSettled` by its `code` and `canRetry`:
+
+```javascript
+import { geocodeOne, SDKError } from '@tomtom-org/maps-sdk/services';
+
+const queries = ['Damrak 1, Amsterdam', 'Plaza Mayor, Madrid', 'qzxqzxqzx'];
+const signal = AbortSignal.timeout(10000);
+const results = await Promise.allSettled(queries.map((query) => geocodeOne({ query, signal })));
+
+results.forEach((result, index) => {
+    if (result.status === 'fulfilled') {
+        console.log(`OK    ${queries[index]}: ${result.value.properties.address.freeformAddress}`);
+    } else if (result.reason instanceof SDKError) {
+        console.log(`FAIL  ${queries[index]}: ${result.reason.code}, canRetry ${result.reason.canRetry}`);
+    } else {
+        throw result.reason;
+    }
+});
+```
+
+The [batch geocoding example](../../examples/nodejs-batch-geocode) runs a longer batch in Node.js, a latitude-first position among them, and says for each failure whether the API or the SDK raised it.
+
+### A key refused access
+
+A `401` rejects with `INVALID_CREDENTIALS`, and a `403` with `INSUFFICIENT_PERMISSIONS`. The `SDKServiceError`'s `apiErrorCode` names the cause of a `403`, such as `'InvalidReferer'` for the key's domain restriction. On a [Private Preview](https://docs.tomtom.com/legal/private-preview) API, such as [Calculate Reachable Range](./routing/reachable-ranges.mdx), its `privatePreviewAccess` names the access to request. [A key refused access](../core/errors.mdx#a-key-refused-access) lists the causes and their fixes, the same on services and the map, with code that reads them.
+
+## Related guides and examples
+
+### Related guides
+- [Services quickstart](./quickstart.mdx)
+- [Global configuration](../core/global-config.mdx): the settings every call inherits
+- [Errors](../core/errors.mdx): the codes every SDK error shares, and how to read a refused API key
+- [Places services quickstart](./places/quickstart.mdx)
+- [Routing services quickstart](./routing/quickstart.mdx)
+- [Proxying your API calls](../security/proxying-api-calls.mdx): keeping the API key server-side
+
+### Related examples
+- [Search playground](../../examples/search-playground): one `createLatestRequest` behind every keystroke, pick and page
+- [Reverse geocoding playground](../../examples/rev-geo-playground): a click lookup that retires the previous click's request
+- [Node.js geocoding](../../examples/nodejs-geocode): service calls on a server
+- [Node.js batch geocoding](../../examples/nodejs-batch-geocode): a batch whose failures are told apart by `code`, under one deadline

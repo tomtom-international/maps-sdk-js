@@ -1,0 +1,216 @@
+---
+title: three.js custom layers
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.7"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+A MapLibre custom layer draws your own WebGL scene inside the map, and three.js can draw it for you. `localFrameMatrix` lines the scene up with the map, so you build it in metres around a place and it stands among the map's 3D buildings. `addCustomLayer` keeps the layer in its place through style switches, and lets its objects take clicks and hovers.
+
+<GuideDemo demo="three-js-custom-layer" />
+
+## Aligning a three.js camera with the map
+
+In your custom layer's `render`, pass MapLibre's `defaultProjectionData.mainMatrix` and your scene's origin to `localFrameMatrix`, then copy the result into your camera's projection:
+
+```typescript
+import { localFrameMatrix, TomTomMap } from '@tomtom-org/maps-sdk/map';
+import type { CustomLayerInterface } from 'maplibre-gl';
+import { Camera, Scene, WebGLRenderer } from 'three';
+
+const origin: [number, number] = [4.8932, 52.3731];
+const map = new TomTomMap({ mapLibre: { container: 'map', center: origin, zoom: 17, pitch: 60 } });
+
+const scene = new Scene(); // x runs east, y north and z up from the origin, in metres
+const camera = new Camera();
+let renderer: WebGLRenderer;
+
+const threeLayer: CustomLayerInterface = {
+    id: 'three-scene',
+    type: 'custom',
+    renderingMode: '3d',
+    onAdd: (mapLibreMap, gl) => {
+        renderer ??= new WebGLRenderer({ canvas: mapLibreMap.getCanvas(), context: gl, antialias: true });
+        renderer.autoClear = false;
+    },
+    render: (_gl, options) => {
+        const matrix = localFrameMatrix(options.defaultProjectionData.mainMatrix, origin, {
+            centerLatitude: map.mapLibreMap.getCenter().lat,
+        });
+        camera.projectionMatrix.fromArray(matrix);
+        camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
+        renderer.resetState();
+        renderer.render(scene, camera);
+    },
+};
+
+map.addCustomLayer(threeLayer, { beforeLayerConfig: 'lowest3D' });
+```
+
+Four settings keep three.js and MapLibre out of each other's way:
+
+- `renderingMode: '3d'` - The layer shares the depth buffer with the map's 3D buildings and terrain, so each hides what stands behind it.
+- `renderer.autoClear = false` - three.js draws over the map MapLibre has drawn so far, instead of clearing it.
+- `renderer.resetState()` - three.js forgets the WebGL state it remembers, which MapLibre changed since the last frame.
+- `renderer ??=` - The layer keeps one renderer for the map. MapLibre calls `onAdd` again each time you re-add the layer, and the map keeps its WebGL context.
+
+The standard styles ship their 3D buildings hidden, except the driving ones. To show them, set the `buildings3D` layer group of the [`BaseMapModule`](./base-map.mdx) visible.
+
+Note that `map.transform` and `getMatrixForModel`, which many three.js and MapLibre snippets online call, don't exist in MapLibre GL JS 6, the version the SDK runs on.
+
+## The local frame
+
+`localFrameMatrix` returns a `Float64Array`. It composes the matrix in double precision, so a street-scale scene doesn't jitter as the camera moves.
+
+- `origin` - The frame's origin, `[longitude, latitude]`.
+- `altitude` - The origin's height above sea level, in metres. By default, 0.
+- `units` - The units of x and y. By default, `'meters'`, metres on the ground at the origin. With `'mercatorMeters'`, they're EPSG:3857 (Web Mercator) metres, the frame of geometry authored in that coordinate system. Up is in metres in both.
+- `centerLatitude` - The latitude of the map's centre, `map.mapLibreMap.getCenter().lat`.
+
+MapLibre draws the heights of its 3D buildings and terrain at the map centre's latitude, not at their own. Pass `centerLatitude`, and your heights and altitudes scale as theirs do wherever the camera goes. Without it, they scale at the origin's latitude.
+
+Note that the frame's metres are EPSG:3857's, measured on the WGS84 equator's radius. They're 0.11% longer than the metres of MapLibre's `MercatorCoordinate`, so a point placed with one and drawn in the other lands 11 cm off every 100 m.
+
+The frame is flat, so keep a scene within a few kilometres of its origin. It works in the mercator projection, not on the globe.
+
+## Raw WebGL
+
+The matrix serves any WebGL program, not only three.js. A shader uniform takes single precision, so convert the matrix once you've composed it:
+
+```typescript
+const matrix = localFrameMatrix(options.defaultProjectionData.mainMatrix, origin, { altitude: groundMetres });
+gl.uniformMatrix4fv(matrixLocation, false, Float32Array.from(matrix));
+```
+
+Your vertices then stay small numbers around the origin, which single precision holds.
+
+## Placing the layer
+
+`map.addCustomLayer` adds your layer as soon as the map is ready, and keeps it in its place in the layer stack:
+
+```typescript
+const layer = map.addCustomLayer(threeLayer, { beforeLayerConfig: 'lowest3D' });
+
+// Later, when you no longer need it:
+layer.remove();
+```
+
+- `beforeLayerConfig` - Where the layer goes, as a module's [`beforeLayerConfig`](./modules.mdx#appearance-vocabulary) does. By default, `'top'`.
+- `'lowest3D'` - Under the style's 3D buildings, otherwise under the POIs, otherwise on top. Use it for a 3D layer: it draws over the roads, shares its depth with the buildings and stays under the labels.
+- Module layers placed at `'lowest3D'` or lower, such as route lines and areas before `lowestLabel`, stay under a `'lowest3D'` layer, even the ones a module adds later. Those placed higher, at `'poi'`, `'lowestPlaceLabel'`, `'country'` or `'top'`, go over it.
+- A module layer placed at the same target as your layer always goes under it. Two custom layers at one target stack in the order you add them, the last on top.
+- Each layer needs an id of its own: `addCustomLayer` throws for an id the map already has, until that layer's `remove()`.
+- After every `setStyle`, the layer goes back to its place before the modules restore themselves, added again if the switch dropped it, and the module layers go back over or under it as they were. You don't need a [style change handler](./styles.mdx#preserving-custom-maplibre-layers).
+
+## Clicking and hovering your objects
+
+A custom layer draws no map features, so MapLibre can't tell what lies under the pointer. Give `addCustomLayer` a `hitTest` that can, and the objects it returns take the map's [user events](./user-events.mdx#custom-layer-objects):
+
+```typescript
+let frameMatrix: Float64Array | undefined; // set in `render`, where you compute it
+
+// A point of the scene on screen, in pixels, with its depth: nearer is smaller.
+const toScreen = (east: number, north: number, up: number) => {
+    const clip = new Vector4(east, north, up, 1).applyMatrix4(new Matrix4().fromArray(frameMatrix ?? []));
+    const { clientWidth, clientHeight } = map.mapLibreMap.getCanvas();
+    return {
+        x: ((clip.x / clip.w + 1) / 2) * clientWidth,
+        y: ((1 - clip.y / clip.w) / 2) * clientHeight,
+        depth: clip.z / clip.w,
+    };
+};
+
+const vehicles = map.addCustomLayer(vehiclesLayer, {
+    beforeLayerConfig: 'lowest3D',
+    hitTest: (point) =>
+        agents
+            .map((agent) => ({ agent, screen: toScreen(agent.east, agent.north, agent.height / 2) }))
+            .filter(({ screen }) => Math.hypot(screen.x - point.x, screen.y - point.y) < 20)
+            .sort((a, b) => a.screen.depth - b.screen.depth)
+            .map(({ agent }) => ({ id: agent.id, properties: { line: agent.line } })),
+    setState: (id, state) => highlightAgent(id, state),
+    events: { cursorOnHover: 'pointer' },
+});
+
+vehicles.events.on('click', (vehicle) => inspector.show(vehicle.properties?.line));
+```
+
+- `hitTest` - Gets the pointer's position in pixels and returns the objects under it, the topmost first, each with an `id` and optional `properties`. Handlers receive the same objects.
+- `setState` - Draws an object's event state, `'hover'`, `'long-hover'`, `'click'`, `'contextmenu'` or `'recently-hovered'`, and `undefined` once it's gone. A custom layer has no feature state for the SDK to keep it in.
+- `events` - The hover cursor and grace period over the layer's objects.
+
+Your objects then behave as a module's features do. The topmost hit takes the event, whether it's your object or a feature drawn over it, and nothing under it fires: a click on a vehicle no longer reaches the road beneath. A click outranks a hover, and a new one takes the state off the object clicked before.
+
+Note that the hit tester owns the depth. The SDK doesn't know what stands in front of your objects, so a screen projection like the one above also hits a vehicle behind a 3D building. Hits rank by the layer stack too, so if you listen to the 3D buildings, a click on a vehicle in front of a building goes to the building, which sits above a `'lowest3D'` layer. The hit tester runs on every pointer move while a handler listens to the layer, so project positions you already have rather than raycasting meshes.
+
+## Drawing many moving objects
+
+To draw hundreds of objects of a few models, give each model one `InstancedMesh` and write each instance's matrix, in metres of the local frame, every frame.
+
+In Chrome on Windows, WebGL runs on Direct3D 11 through ANGLE. There, rewriting a buffer the GPU drew from in the last frames makes Chrome's GPU process wait for the GPU. Usage hints such as `DynamicDrawUsage` or `StreamDrawUsage`, and indexed draws, don't avoid the wait. Rotate three sets of instance buffers instead, so you only write a buffer the GPU has finished with:
+
+```typescript
+import { BufferGeometry, DynamicDrawUsage, InstancedBufferAttribute, InstancedMesh, Matrix4 } from 'three';
+
+const capacity = 500;
+// A geometry with the same vertices and index as `shape`, and instance attributes of its own.
+const sameShape = (shape: BufferGeometry) => {
+    const geometry = new BufferGeometry();
+    for (const [name, attribute] of Object.entries(shape.attributes)) geometry.setAttribute(name, attribute);
+    geometry.setIndex(shape.index);
+    return geometry;
+};
+
+// One CPU array, three GPU buffers: each is rewritten three frames after its draw.
+const matrices = new Float32Array(capacity * 16);
+const sets = [0, 1, 2].map((index) => ({
+    geometry: index === 0 ? shape : sameShape(shape),
+    matrix: new InstancedBufferAttribute(matrices, 16).setUsage(DynamicDrawUsage),
+}));
+const mesh = new InstancedMesh(sets[0].geometry, material, capacity);
+// three.js computes an InstancedMesh's bounds once, from its first instances, and culls by them.
+mesh.frustumCulled = false;
+let current = 0;
+
+// Once per frame, with this frame's instances written into `matrices`.
+const commit = (count: number) => {
+    current = (current + 1) % sets.length;
+    const next = sets[current];
+    mesh.geometry = next.geometry;
+    mesh.instanceMatrix = next.matrix;
+    mesh.count = count;
+    next.matrix.clearUpdateRanges();
+    next.matrix.addUpdateRange(0, count * 16);
+    next.matrix.needsUpdate = true;
+};
+
+const placement = new Matrix4();
+agents.forEach((agent, index) => {
+    placement.makeRotationZ(agent.heading).setPosition(agent.east, agent.north, 0).toArray(matrices, index * 16);
+});
+commit(agents.length);
+```
+
+With 480 vehicles and walkers at 60 frames per second, the three sets brought the GPU process's main thread from 13.8 ms a frame down to 8.6 ms. Rotate any other attribute you rewrite every frame, such as `instanceColor`, the same way.
+
+## API reference
+
+- [`TomTomMap.addCustomLayer`](/maps-sdk-js/api-reference/classes/map.TomTomMap.html#addcustomlayer)
+- [`CustomLayer`](/maps-sdk-js/api-reference/classes/map.CustomLayer.html)
+- [`CustomLayerOptions`](/maps-sdk-js/api-reference/types/map.CustomLayerOptions.html)
+- [`CustomLayerHitTest`](/maps-sdk-js/api-reference/types/map.CustomLayerHitTest.html)
+- [`localFrameMatrix`](/maps-sdk-js/api-reference/functions/map.localFrameMatrix.html)
+- [`LocalFrameOptions`](/maps-sdk-js/api-reference/types/map.LocalFrameOptions.html)
+
+## Related guides and examples
+
+- [About MapLibre](./about-maplibre.mdx)
+- [Map styles](./styles.mdx)
+- [User interaction events](./user-events.mdx)
+- [Landmarks 3D plugin](../plugins/landmarks-3d.mdx), which draws its landmarks and buildings with three.js
+- [three.js custom layer example](../../examples/three-js-custom-layer)

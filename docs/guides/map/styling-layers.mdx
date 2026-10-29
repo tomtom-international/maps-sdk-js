@@ -1,0 +1,118 @@
+---
+title: Editing style layers
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.7"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+`styling.layers` edits the loaded style's layers directly, for what the knobs of the [Styling Foundations module](./styling.mdx) don't cover. This advanced tier depends on the style version, so prefer a [knob](./styling.mdx#knobs) or [`setMapColors`](./styling-map-colors.mdx) wherever one covers your need.
+
+## The advanced tier: `styling.layers`
+
+`styling.layers.query(...)` selects style layers and returns a [`LayerSelection`](/maps-sdk-js/api-reference/classes/map.LayerSelection.html) to edit their paint, layout, filter or visibility:
+
+```javascript
+styling.layers.query({ group: 'roadLabels' }).setPaint({ 'text-color': '#93c5fd' });
+styling.layers.query({ metadataGroups: ['water'], layerTypes: ['fill'] }).setPaint({ 'fill-opacity': 0.6 });
+styling.layers.query({ idIncludes: ['railway'] }).setVisible(false);
+styling.layers.query({ group: 'trafficFlow', layerTypes: ['line'] }).setPaint({ 'line-blur': 2 });
+styling.layers.query({ ids: ['Water - Fill'] }).setPaint({ 'fill-color': '#1e3a5f' });
+styling.layers.query({ group: 'roadLabels' }).reset(); // undo the edits made on those layers
+styling.layers.query({ group: 'railways' }).layerIds;  // what matched, in draw order
+```
+
+| Query field | Selects by |
+| --- | --- |
+| `group` | A base-map group, named as in [`BaseMapModule`](./base-map.mdx), or the layers of another style-owned module: `pois`, `trafficFlow`, `trafficIncidents`, `hillshade` (`styleModuleLayerGroupNames`) |
+| `metadataGroups` | The style's own `metadata.group` values, for groups the SDK does not name |
+| `layerTypes` | MapLibre layer types: `line`, `fill`, `symbol`, … |
+| `sourceLayers` | Vector-tile source layers: `roads`, `places`, `poi`, … |
+| `ids` | Exact layer ids |
+| `idIncludes`, `idExcludes` | Fragments the layer id must, or must not, contain (case-insensitive) |
+
+A layer must match every field you give, so other fields narrow a `group`. A query covers every style layer, whichever module shows or hides it.
+
+## Values derived from the style's own
+
+To build a value from the one it replaces, pass `setPaint` or `setLayout` a function instead of a value. It receives the value beneath your edit and the layer id, and returns the value to draw:
+
+```javascript
+const motorway = ['==', ['get', 'category'], 'motorway'];
+// A `case` can't hold a zoom ramp, so a layer whose colour is one keeps it
+const isRamp = (value) => ['interpolate', 'interpolate-hcl', 'interpolate-lab', 'step'].includes(value[0]);
+
+styling.layers.query({ group: 'roadLabels' }).setPaint({
+    // Motorway names in magenta, every other road keeping the colour it had
+    'text-color': (color) =>
+        typeof color === 'string' || (Array.isArray(color) && !isRamp(color))
+            ? ['case', motorway, '#c026d3', color]
+            : color,
+});
+```
+
+- The value beneath is the style's own, or the one a knob set, such as `colors.label` from [`setMapColors`](./styling-map-colors.mdx). The function runs again whenever that value changes, after a style switch or a knob change, so your edit and the knob compose.
+- It is `undefined` where the style leaves the property unset. It can also be a legacy `{ stops: [...] }` function, which an expression can't hold, so check its shape before you wrap it.
+- MapLibre accepts `["zoom"]` only as the input of a top-level `interpolate` or `step`. To derive a zoom ramp, rewrite the output of each stop instead of wrapping the ramp.
+- A value MapLibre rejects throws from `setPaint` or `setLayout`. If it's rejected only later, after a style switch or a knob change, the SDK warns once and the layer keeps the value beneath.
+- `reset()` puts back the value beneath.
+
+## Narrowing a layer's filter
+
+To hide some of a layer's features and keep the rest of its filter, add a filter clause. `addFilterClause` joins the clause to the style's own filter with `all`, and `removeFilterClause` takes it out again:
+
+```javascript
+const majorRoads = ['in', ['get', 'category'], ['literal', ['motorway', 'trunk', 'primary']]];
+const roadLabels = styling.layers.query({ group: 'roadLabels' });
+
+roadLabels.addFilterClause(majorRoads); // only the major roads keep their names
+roadLabels.removeFilterClause(majorRoads); // every road name again
+```
+
+- The clauses also narrow a filter you set with `setFilter`, and the filters other modules add, such as the POI categories.
+- To keep the labels inside an area, add `['within', area]`, where `area` is a GeoJSON `Polygon` or `MultiPolygon`. Note that MapLibre's `within` tests points and lines only, so on a layer of polygons, such as the 3D buildings, it hides every feature. No filter can cut a polygon at an area's edge.
+
+## Only the style's own layers
+
+`styling.layers` and the knobs reach only the layers the loaded style declares. To override the layers a data-owned module adds, use its own `layers` configuration, which it merges over its defaults and keeps across style switches:
+
+| Module | Its `layers` entries |
+|---|---|
+| [Places](./places-styling.mdx) | `main`, `micro`, `selected`, the cluster layers, and those of its connections and entry points |
+| [Routing](./routes-styling.mdx) | the route lines, waypoints, sections and their labels, by group (`mainLines`, `sections`, …) |
+| [Geometries](./geometries.mdx), [Reachable ranges](./reachable-ranges.mdx) | `fill`, `line`, `label`, `lineLabel` |
+| [Traffic incident details](./traffic-incident-details.mdx) | the incident lines, from `highlightHalo` to `innerPattern`, and the three markers |
+| [Traffic area analytics](./traffic-area-analytics-module.mdx) | `heatmap`, each grid's fill, outline, extrusion and highlight, and the region |
+
+The layers you add through `map.mapLibreMap` are yours to style.
+
+In the demo below, one switch fades the traffic flow, POIs and road labels through `styling.layers` groups, and brings a city's incidents and boundary forward through their modules' `layers` configs.
+
+<GuideDemo demo="traffic-incident-focus" />
+
+## What an edit keeps
+
+- After a style switch that carries state, the SDK re-applies your edits on top of the knobs, as long as the layers still exist. It works out each derived value again from the new style. A clean switch (`resetState: true`) drops every edit.
+- `setFilter` replaces the filter the style gave a layer. The filters other modules add, such as POI categories, still narrow it. To narrow the style's filter instead of replacing it, use [`addFilterClause`](#narrowing-a-layers-filter).
+- `setVisible(true)` doesn't show a layer that its module hides, such as the POIs after `pois.setVisible(false)`.
+- Edits are not part of `getConfig()`, because they apply to this style only.
+
+## How durable is it?
+
+Layer ids, property expressions and even which layers exist depend on the style the map loads, which an SDK minor release can change. They aren't part of the [public API](../../introduction/versioning-and-support-policy.mdx#what-the-public-api-is). An edit through a query that matches nothing warns once and does nothing. Reading its `layerIds` gives an empty list without a warning.
+
+You can still use `map.mapLibreMap` underneath ([which to use when](./about-maplibre.mdx#when-to-use-tomtom-sdk-vs-direct-maplibre)). Note that a `setPaintProperty` on a style layer there is not re-applied after a style switch.
+
+## Related guides and examples
+
+### Related guides
+- **[Map styling](./styling.mdx#how-durable-is-this)** — the knobs, and which of them depend on the TomTom styles
+- **[About MapLibre](./about-maplibre.mdx)** — the raw MapLibre map underneath
+
+### Related examples
+- **[Map styling playground](../../examples/map-styling-playground)** — every knob on a panel built from the catalogue, and layer edits, a derived colour and a filter clause among them
+- **[Traffic incident focus](../../examples/traffic-incident-focus)** — `styling.layers` groups and module `layers` configs applied and reset by one switch

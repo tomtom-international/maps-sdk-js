@@ -1,0 +1,288 @@
+---
+title: GL surfaces
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.3.1"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+`GLSurfaces`, part of the [Landmarks 3D plugin](./landmarks-3d.mdx), textures the water, land cover, built-up ground and roads of a `TomTomMap` with WebGL materials, and grows 3D trees on its woods, parks and meadows. Water ripples in the wind, mirrors the sky and rolls in onto open shores, forests show sunlit tree crowns, fields break into parcels and roads take on asphalt. Everything is drawn in the style's own colours, for the season you pick. The playground below puts the surface, season, tree, sky and wind knobs on one panel, beside the map's light:
+
+<GuideDemo demo="gl-surfaces-playground" />
+
+## What it textures
+
+| Surface | Drawn over | Looks like |
+| --- | --- | --- |
+| `water` | Seas, lakes, rivers and streams | Waves that move with the wind, mirror the sky towards the horizon and glint in the sun, their faces lit from the light's side and their sparkles shimmering. Out at sea they run with the wind and lean towards the shores around them; near an open shore they turn to come in towards it and break in foam. Gusts drift across open water between brighter slicks. Canals, ponds and harbours stay calmer, and mirror the sky more |
+| `ice` | Glaciers, and snow and ice seen from afar | Snow drifts lit by the sun, patches of bare blue ice and fields of crevasses |
+| `forest` | Woodland | Broadleaf crowns and conifers, with leaf clumps up close and shadows between them |
+| `grass` | Grassland, parks, sports grounds, cemeteries and campsites | Mown lawns in stripes and long meadow grass dotted with flowers, with gusts of wind running over them |
+| `scrub` | Shrubland and heath | Bushes in clumps over dry grass, each lit on the sun's side and casting a shadow |
+| `farmland` | Agricultural land | Field parcels in crop tones, lined up with the roads and farm tracks around them, with rows and furrows, tracks between them and hedges between farms |
+| `sand` | Sandy land cover | Dunes lit by the sun, with ripples across the wind and wet sand along the water |
+| `mud` | Mud flats, and the beds of lakes and rivers that run dry | Wet and drier stretches, with creeks and puddles that mirror the sky |
+| `gravel` | Shingle | Banks of stones in every shade, rounded and lit one by one up close |
+| `rock` | Other bare land, breakwaters and groynes | Weathered ridges |
+| `paving` | Squares, pedestrian streets, platforms, piers and bridges | Slabs, smaller slabs or bricks in staggered rows, each stone its own shade, with joints up close |
+| `urban` | Built-up areas and the grounds of towns, industry, shops, schools, hospitals and airports | Lots of lighter and darker ground with stains of use, kept faint |
+| `roads` | Eight road fills, from streets to motorways, and the asphalt areas: car parks, service areas, runways and aprons. Paths, tracks and ferries stay flat | Smooth asphalt, softly streaked along each road, with the odd patch and crack. Up close, the roads' lanes show polished wheel paths, darker middles and sealed joints |
+
+`surfaceKinds` lists them. The materials vary the style's colour rather than replace it, so a restyle or [map colours](../map/styling-map-colors.mdx) carry through to the textures.
+
+### 3D trees
+
+Trees stand on woods, parks, gardens, meadows, scrub, heaths, orchards, cemeteries and playgrounds, each as densely as that kind of ground grows them. Wild woods are the densest, parks and meadows open, and orchards stand in rows. They grow in from zoom 15, sway in the wind and cast shadows away from the sun. Their foliage takes the style's woodland and park colours. On satellite, it takes the colours of the crowns the imagery shows under them.
+
+- **Five kinds**: round-crowned broadleaf trees, conifers, bushes, slender columnar trees such as poplars and cypresses, and flat-topped umbrella trees such as stone pines. Each kind of ground and where it lies decide the mix: few conifers in the tropics and more towards the poles, umbrella trees only where it's warm, south of about 46°, and columnar trees most in cemeteries and gardens. Each kind's `shareFactor` knob makes it more or less common.
+- **Up a mountain**: on [3D terrain](../map/terrain.mdx#3d-elevation), conifers take over the woods as the ground climbs, and the trees thin and shrink towards the treeline, some 1,900 m high in the Alps and lower towards the poles.
+- **Roads, paths, railways and streams** through a wood keep the crowns off them, so they show between the trees from above. Seen tilted, the trees in front of a path still stand before it, so the map draws the path over their crowns too, as strongly as `trees.tracks.intensity`.
+
+## Get started
+
+Install the plugin as the [overview](./landmarks-3d.mdx#installation) shows. `GLSurfaces` draws with Three.js, so install `three` for the surfaces alone too. To texture the map, create the class. It starts drawing once the map is ready:
+
+```javascript
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { GLSurfaces } from '@tomtom-org/maps-sdk-plugin-landmarks-3d';
+
+const map = new TomTomMap({ mapLibre: { container: 'map', center: [6.6323, 46.507], zoom: 14.5, pitch: 70 } });
+const surfaces = new GLSurfaces(map);
+```
+
+- It draws inside the style, right after the layers it textures. Labels, bridges, buildings and every layer your app adds above them stay on top. The trees go under the labels, and under the routes, places and geometries drawn there, whichever came first. See [Place the trees](#place-the-trees).
+- It comes back after `setStyle`, in the new style's colours. On `streetSatellite`, it textures the water and the roads and grows the trees, in the imagery's colours.
+- Every texture is anchored to the ground and fades its details out before they shrink below a few pixels, so it stays calm while you pan and zoom. Waves seen from afar smooth into a glitter of the sun.
+- Over [3D terrain](../map/terrain.mdx#3d-elevation), the textures follow the raised ground and the trees stand on it.
+- It needs WebGL2.
+- `surfaces.setVisible(false)` hides it, and the map draws as it would without the plugin.
+- `surfaces.remove()` takes the surfaces and the trees off the map for good, with the WebGL resources they hold. Call it when your app drops the surfaces but keeps the map. To show them again, create a new `GLSurfaces`.
+
+## Tune the surfaces
+
+The look of the surfaces is a set of knobs, listed in `glSurfacesKnobCatalogue`. They follow the rules every part of the plugin follows ([Set the look with knobs](./landmarks-3d.mdx#set-the-look-with-knobs)):
+
+```javascript
+import { setKnob } from '@tomtom-org/maps-sdk/map';
+import { glSurfacesKnobCatalogue } from '@tomtom-org/maps-sdk-plugin-landmarks-3d/knobs';
+
+surfaces.updateConfig({ wind: { direction: 270, speedFactor: 2 } });         // a brisk westerly
+setKnob(surfaces, glSurfacesKnobCatalogue, 'surfaces.roads.intensity', 0);  // flat roads, as the style draws them
+surfaces.updateConfig({ light: { direction: 260, altitude: 12 } });          // a low evening sun
+surfaces.resetConfig();                                                       // every knob back to its default
+```
+
+- Every surface sits in one part, `surfaces`. So `updateConfig({ surfaces: { roads: { intensity: 0 } } })` also unsets the knobs you set for the water, the forest and the other surfaces. To change one surface and keep the others, use `setKnob` or `setKnobs`, as above.
+- The sky the water mirrors is the map's own sky where the style sets one. Otherwise, it's a day sky on light styles and on `streetSatellite`, and a night sky on other dark ones, where the water glints in the moonlight. `getKnob` reports the colour in force.
+- While the water, the grass or the trees from zoom 16 show and the wind blows, the map draws every display frame. To let it rest, set `wind.speedFactor` to 0, which holds them still. Do that too for readers who ask for less motion, with `matchMedia('(prefers-reduced-motion: reduce)')`.
+
+### Colour them for a season
+
+Each surface and the trees are coloured for a season, from the style's own colours: `spring`, `summer`, `autumn`, `winter` or `snow`, as `surfaceSeasons` lists them. The `season` knob sets it for everything, and a part's own, such as `surfaces.farmland.season`, overrides it for that part. Each shade within a surface, such as the cereal fields or the foam, has a colour knob of its own:
+
+```javascript
+surfaces.updateConfig({ season: 'winter' });                                                 // bare fields, pale grass
+setKnob(surfaces, glSurfacesKnobCatalogue, 'trees.season', 'autumn');                       // the trees alone turn
+setKnob(surfaces, glSurfacesKnobCatalogue, 'surfaces.farmland.colors.rapeseed', '#f2d43a');  // brighter rapeseed
+```
+
+- The seasons shade the style's colours, so the [map colours](../map/styling-map-colors.mdx) you set, such as `colors.vegetation`, carry through every season.
+- `getKnob` reports an unset colour knob as the style's colour, shaded for the season in force. On satellite, the surfaces have no style colour to shade, so it reports none.
+- `snow` covers the land and the trees in snow and hides the patterns under it. The water stays open, in a colder blue.
+
+### Share the map's light
+
+The surfaces take their sun from the map's light, as every part of the plugin does ([Share the map's light](./landmarks-3d.mdx#share-the-maps-light)). With [`Buildings3D`](./landmarks-3d-buildings.mdx) beside them, the tree crowns, the dunes and the glint on the water line up with the buildings' shadows. To light them both with a low sun from the west, set the map's light:
+
+```javascript
+import { StylingFoundationsModule } from '@tomtom-org/maps-sdk/map';
+import { Buildings3D } from '@tomtom-org/maps-sdk-plugin-landmarks-3d';
+
+const buildings = new Buildings3D(map);
+await StylingFoundationsModule.get(map, { view: { light: { direction: 260, altitude: 20, alignment: 'map' } } });
+```
+
+- With `Buildings3D` on the map, the trees also stand in the buildings' shadows: a crown in a tower's shade loses its sunlit side.
+- On `streetSatellite`, the water mirrors a day sky under the day sun.
+
+The knobs belong to `GLSurfaces`. It adds its own layers to the loaded style and reads the map's sky and light, which it never writes:
+
+```d2
+direction: right
+
+Surfaces: "GLSurfaces: glSurfacesKnobCatalogue" {
+  style: {
+    fill: "#e8f5e9"
+    stroke: "#1b5e20"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 16
+  }
+}
+
+MapLibre: MapLibre map {
+  style: {
+    fill: "#e8eef8"
+    stroke: "#295DAA"
+    stroke-width: 2
+    font-color: "#295DAA"
+    border-radius: 8
+    font-size: 16
+  }
+
+  Targets: "Land cover, water and road layers\ndrawn as the style draws them" {
+    style: {
+      fill: "#295DAA"
+      stroke: "#295DAA"
+      font-color: white
+      border-radius: 4
+      font-size: 14
+    }
+  }
+  Added: "gl-surfaces-* layers\nright after each run of them" {
+    style: {
+      fill: "#295DAA"
+      stroke: "#295DAA"
+      font-color: white
+      border-radius: 4
+      font-size: 14
+    }
+  }
+  Sky: "The style's sky" {
+    style: {
+      fill: "#295DAA"
+      stroke: "#295DAA"
+      font-color: white
+      border-radius: 4
+      font-size: 14
+    }
+  }
+  Light: "The map's light,\nset by view.light" {
+    style: {
+      fill: "#295DAA"
+      stroke: "#295DAA"
+      font-color: white
+      border-radius: 4
+      font-size: 14
+    }
+  }
+}
+
+Surfaces -> MapLibre.Added: "adds, and shows or hides with visible" {
+  style.stroke: "#1b5e20"
+}
+MapLibre.Added -> MapLibre.Targets: "textures their pixels" {
+  style.stroke: "#295DAA"
+}
+MapLibre.Sky -> Surfaces: "sky.color, sky.horizonColor while unset" {
+  style.stroke: "#295DAA"
+  style.stroke-dash: 4
+}
+MapLibre.Light -> Surfaces: "light.direction, light.altitude while unset" {
+  style.stroke: "#295DAA"
+  style.stroke-dash: 4
+}
+```
+
+### Place the trees
+
+The textures always draw right after the layers they texture. The trees go under the style's lowest label by default. Set `beforeLayerConfig` to put them elsewhere, as the map modules take [`beforeLayerConfig`](../map/modules.mdx#appearance-vocabulary):
+
+```javascript
+const surfaces = new GLSurfaces(map, { beforeLayerConfig: 'lowest3D' }); // under the 3D buildings
+surfaces.updateConfig({ beforeLayerConfig: 'top' });                     // over everything
+```
+
+- It takes `'top'` or a key of `mapStyleLayerIDs`. On a style without that layer, the trees go on top, or under the POIs for a missing `lowest3D`, as a module's layers do.
+- The trees also go under every layer a module or your app put right under the one it names. So a route, a place or a geometry drawn there stays over the trees, whichever you added first.
+- It isn't a knob: it moves the trees' layers rather than restyling them, so `glSurfacesKnobCatalogue` doesn't list it. `resetConfig()` puts the trees back under the labels.
+
+### Knobs
+
+| Knob | Values | Unset |
+|---|---|---|
+| `visible` | `true` or `false` | `true` |
+| `season` | `spring`, `summer`, `autumn`, `winter` or `snow`, the season every part is coloured for | `summer` |
+| `surfaces.water.season`, `surfaces.ice.season`, `surfaces.forest.season`, `surfaces.grass.season`, `surfaces.scrub.season`, `surfaces.farmland.season`, `surfaces.sand.season`, `surfaces.mud.season`, `surfaces.gravel.season`, `surfaces.rock.season`, `surfaces.paving.season`, `surfaces.urban.season`, `surfaces.roads.season`, `trees.season` | a season, for that part alone | `season` |
+| `surfaces.water.intensity`, `surfaces.ice.intensity`, `surfaces.forest.intensity`, `surfaces.grass.intensity`, `surfaces.scrub.intensity`, `surfaces.farmland.intensity`, `surfaces.sand.intensity`, `surfaces.mud.intensity`, `surfaces.gravel.intensity`, `surfaces.rock.intensity`, `surfaces.paving.intensity`, `surfaces.urban.intensity`, `surfaces.roads.intensity` | 0 (the style's flat colour) to 1 | `1` for water, `0.9` for forest and farmland, `0.7` for paving and roads, `0.5` for urban and `0.8` for the rest |
+| `surfaces.water.reflection.intensity` | 0 to 1: how much the water mirrors the sky, more towards the horizon as on real water | `1` |
+| `surfaces.water.glint.intensity` | 0 to 1: how brightly the waves catch the sun or the moon | `1` |
+| `surfaces.water.glint.color` | a CSS colour, the colour of the glint | sunlight on light styles and `streetSatellite`, a dimmer moonlight on dark ones |
+| `surfaces.water.waves.heightFactor` | 0 to 3: how steep the wind waves on open water stand, 0 leaving a mirror | `1` |
+| `surfaces.water.enclosed.waves.heightFactor` | 0 to 1: how steep the ripples on canals, ponds and harbours stand, times the open water's | `0.3` |
+| `surfaces.water.shore.intensity` | 0 to 1: how strongly an open shore shows its shallows, its waves rolling in and its breakers | `1` |
+| `surfaces.water.shore.reachMeters` | 0 to 400: how far out from an open shore the waves turn fully to roll in, in metres. Farther out, they lean towards the shores around them | `160` |
+| `surfaces.forest.crowns.sizeFactor` | 0.5 to 2: how wide the forest's crowns stand, times their usual 8 m or so | `1` |
+| `surfaces.forest.conifer.fraction` | 0 to 1: the share of the forest's crowns that are conifers | `0.38` |
+| `surfaces.grass.mown.fraction` | 0 to 1: the share of lawns that are mown in stripes, rather than left long with flowers | `0.5` |
+| `surfaces.grass.stripes.intensity` | 0 to 1: how strongly the mown stripes show | `0.5` |
+| `surfaces.grass.flowers.fraction` | 0 to 0.2: the share of the long grass's half-metre squares holding a flower | `0.02` |
+| `surfaces.farmland.parcels.sizeFactor` | 0.5 to 3: how large the field parcels are, times their usual 35 to 125 m across | `1` |
+| `surfaces.farmland.rows.intensity`, `surfaces.farmland.hedges.intensity` | 0 to 1: how strongly the rows and furrows, then the hedges, show | `0.5`, `0.85` |
+| `surfaces.sand.dunes.intensity`, `surfaces.sand.ripples.intensity` | 0 to 1: how strongly the dunes, then the wind's ripples, show | `0.5` |
+| `surfaces.sand.wet.widthMeters` | 0 to 12: how far up from the water the sand is wet, in metres | `4` |
+| `surfaces.ice.crevasses.intensity` | 0 to 1: how strongly the crevasses and the bare blue ice show | `0.5` |
+| `surfaces.scrub.bushes.intensity` | 0 to 1: how strongly the bushes and their shadows show | `0.7` |
+| `surfaces.mud.puddles.intensity`, `surfaces.gravel.stones.intensity` | 0 to 1: how strongly the mud's creeks and puddles, then the shingle's stones, show | `0.5` |
+| `surfaces.rock.ridges.intensity`, `surfaces.paving.joints.intensity`, `surfaces.urban.wear.intensity`, `surfaces.roads.wear.intensity` | 0 to 1: how strongly the rock's ridges, the paving's joints, the built-up ground's lots and stains, then the roads' stains, patches and cracks, show | `0.5` |
+| `surfaces.water.colors.shallow`, `surfaces.water.colors.foam`, `surfaces.forest.colors.broadleaf`, `surfaces.forest.colors.conifer`, `surfaces.grass.colors.lush`, `surfaces.grass.colors.dry`, `surfaces.grass.colors.flowers`, `surfaces.farmland.colors.young`, `surfaces.farmland.colors.cereal`, `surfaces.farmland.colors.soil`, `surfaces.farmland.colors.pasture`, `surfaces.farmland.colors.rapeseed`, `surfaces.farmland.colors.stubble`, `surfaces.farmland.colors.hedges`, `surfaces.sand.colors.wet`, `surfaces.ice.colors.crevasses`, `surfaces.scrub.colors.bushes`, `surfaces.mud.colors.wet`, `surfaces.paving.colors.joints`, `trees.colors.broadleaf`, `trees.colors.conifer` | a CSS colour for that shade of the part, whatever its season | the style's colour, shaded for the season |
+| `trees.visible` | `true` or `false`: the 3D trees | `true` |
+| `trees.densityFactor` | 0 to 3: how many trees stand on each kind of ground, times its own density | `1` |
+| `trees.sizeFactor` | 0.5 to 2: how tall the trees and bushes stand, times their usual height | `1` |
+| `trees.species.broadleaf.shareFactor`, `trees.species.conifer.shareFactor`, `trees.species.columnar.shareFactor`, `trees.species.umbrella.shareFactor`, `trees.species.bush.shareFactor` | 0 to 3: how often each kind grows, times the share its ground and latitude give it. At 0 it grows nowhere, and the other kinds take its place | `1` |
+| `trees.tracks.intensity` | 0 to 1: how strongly the roads, paths, railways and streams through a wood show over the crowns in front of them | `0.6` |
+| `trees.minZoom` | 13 to 19: the zoom the trees grow in from, reaching their full height three quarters of a zoom later | `15` |
+| `trees.shadows.intensity` | 0 to 1: how dark the trees' shadows on the ground are | `0.55` |
+| `light.direction`, `light.altitude` | 0 to 359 degrees clockwise from north, then 5 to 90 degrees above the horizon. The light shades the tree crowns, the trees and the dunes, casts the trees' shadows, and sets where the water glints | the map's light, otherwise `215`, `30` on light styles, `135`, `35` on dark ones and `215`, `35` on `streetSatellite`. A map light below 5° is drawn at 5° |
+| `sky.color`, `sky.horizonColor` | a CSS colour, the sky the water mirrors overhead and at the horizon | the map's sky, otherwise a day or a night sky by the style's theme, and a day sky on `streetSatellite` |
+| `wind.direction` | 0 to 359 degrees clockwise from north, where the wind blows from. The waves and the sand ripples lie across it | `225` |
+| `wind.speedFactor` | 0 to 4: how fast the waves, the grass and the trees move, 0 holding them still | `1` |
+
+## How it renders
+
+For each run of style layers it textures, the plugin adds three things right after the run:
+
+- **A copy** of what the map has drawn so far.
+- **Keys**: copies of the run's layers paint each surface in a key colour of its own.
+- **The materials**: a last layer shades each surface's material where its key shows, from the style's colour there, then mixes it over the copy.
+
+The materials draw on a grid over each tile, projected as the map projects its tiles:
+
+- **Dense screens**: on 1.5 or more pixels per CSS pixel, they shade one pixel for each 2 by 2. Their details fade out by CSS pixels, so shading every pixel would cost 4 times as much for what no one sees, while the edges between surfaces keep the screen's resolution.
+- **3D terrain**: the grid is the terrain's own mesh, raised as the terrain raises it, so a ridge hides what lies behind it.
+- **Shores**: before drawing the water, from zoom 12.5, it measures how far each pixel of water lies from the nearest shore, at a quarter of the screen's resolution, so the waves know where to roll in.
+- **Roads**: before drawing them, from zoom 15, it finds which way each road runs and how wide it is, at the same resolution, so the asphalt follows it.
+
+The trees are placed on the GPU from the keyed ground, then drawn as instanced 3D shapes before the labels.
+
+## Limits
+
+- It textures the standard TomTom styles. A style of your own needs the same layer ids and properties to be textured.
+- While water, grass or trees move, the map redraws every frame, which costs battery on a phone. Set `wind.speedFactor` to 0 where that matters.
+
+## API reference
+
+[`GLSurfaces`](/maps-sdk-js/api-reference/classes/plugins.GLSurfaces.html) · [`glSurfacesKnobCatalogue`](/maps-sdk-js/api-reference/variables/plugins.glSurfacesKnobCatalogue.html) · [`surfaceKinds`](/maps-sdk-js/api-reference/variables/plugins.surfaceKinds.html) · [`surfaceSeasons`](/maps-sdk-js/api-reference/variables/plugins.surfaceSeasons.html)
+
+## Related guides and examples
+
+### Related guides
+- **[Map modules](../map/modules.mdx#setting-a-knob-by-its-id)** - `setKnob`, `getKnob` and the rules every knob follows
+- **[Globe and sky](../map/styling-globe-and-sky.mdx#the-light-on-3d-buildings)** - The map's light, which the surfaces share with the 3D buildings
+- **[Landmarks 3D plugin](./landmarks-3d.mdx)** - The plugin's three parts, its installation and the light they share
+- **[3D buildings](./landmarks-3d-buildings.mdx)** - `Buildings3D`, lit by the same light, whose shadows the trees stand in
+- **[Map effects plugin](./map-effects.mdx)** - Bloom, fog, depth of field and more over the textured map
+
+### Related examples
+- **[GL Surfaces playground](../../examples/gl-surfaces-playground)** - Lake Geneva's surfaces, trees and seasons, tuned live on one panel
+- **[3D city: landmarks, buildings and surfaces](../../examples/landmarks-3d-city)** - The surfaces and trees with the buildings and a landmark, under one sun
+- **[3D city on satellite](../../examples/satellite-3d-city)** - The harbour and the trees over satellite imagery, in its colours
+- **[3D city at night](../../examples/night-3d-city)** - The river under the moon on a dark style, with bloom and glare
+- **[3D terrain playground](../../examples/terrain-playground)** - The textures and trees on the terrain, at Hallstatt
+- **[Route fly-over playground](../../examples/route-flyover-playground)** - The textures and trees under a flight over the Alps
+- **[Cinematic city fly-by](../../examples/cinematic-city-flyby)** - The textured ground in each look's season, over cities and five landscapes

@@ -1,0 +1,105 @@
+---
+title: Errors
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.7"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+Every failure the SDK reports, from a service call, the map or a plugin, names what went wrong with a code from one set. This guide covers what every SDK error shares: its codes, the ones worth retrying and how to read a refused API key.
+
+How each part delivers its errors is in its own guide. A [service call](../services/request-options-and-errors.mdx#error-handling) rejects with an `SDKError`. [The map](../map/tomtom-map.mdx#map-errors) reports a `TomTomMapError` to its error handlers, and so do plugins such as [3D Landmarks](../plugins/landmarks-3d-landmarks.mdx#handle-errors).
+
+## Error codes
+
+An SDK error's `code` is an [`SDKErrorCode`](/maps-sdk-js/api-reference/types/core.SDKErrorCode.html):
+
+| `code` | When |
+| --- | --- |
+| `INVALID_REQUEST` | The SDK's request validation failed, a service couldn't build a request you sent with `validateRequest: false`, or the API answered `400` or another `4xx` not listed below |
+| `INSECURE_BASE_URL` | [`commonBaseURL`](./global-config.mdx#commonbaseurl) is neither `https:` nor `http:` on a loopback address |
+| `INVALID_CREDENTIALS` | The API answered `401`, because the key is missing, invalid or expired |
+| `INSUFFICIENT_PERMISSIONS` | The API answered `403`, because the key is valid but not allowed this request. See [A key refused access](#a-key-refused-access) |
+| `NOT_FOUND` | The API answered `404`, or `geocodeOne` or `discoverOnePlace` found no place |
+| `RATE_LIMITED` | The API still answered `429` after the [retries](./global-config.mdx#retry) |
+| `LIVE_SERVICE_NOT_AVAILABLE` | The API answered a `5xx` |
+| `NETWORK_NOT_AVAILABLE` | No response arrived: offline, DNS, TLS or CORS failure |
+| `ABORTED` | The call's `signal` was aborted |
+| `WEBGL_UNSUPPORTED` | The browser can't create the WebGL2 context the map draws with |
+| `WEBGL_CONTEXT_LOST` | The browser took the map's WebGL context away, for example after a GPU reset |
+| `STYLE_LOAD_FAILED` | The map style failed to load, and not because of an HTTP status above |
+| `INTERNAL` | Anything else, such as a response the SDK couldn't read |
+
+- **Branch on `code`, not on `message`.** The codes are the stable part. `sdkErrorCodes`, exported from the Core bundle, lists them all, under the names the TomTom Navigation SDK gives the same failures.
+- Every SDK error also carries `sdkVersion`, the SDK version to quote in a bug report.
+
+## Retrying
+
+An SDK error's `canRetry` is `true` when the failure clears on its own, so the same call is likely to succeed later. That covers `RATE_LIMITED`, `LIVE_SERVICE_NOT_AVAILABLE` and `NETWORK_NOT_AVAILABLE`. On any other code, retrying fails the same way.
+
+Note that a service call answered `429` has already been retried for as long as [`retry`](./global-config.mdx#retry) allows before it rejects. The map doesn't retry its tiles, sprites or glyphs.
+
+## A key refused access
+
+A `401` and a `403` are two different problems. `INVALID_CREDENTIALS` means the API doesn't know the key. `INSUFFICIENT_PERMISSIONS` means the key is valid but may not make this request. Its `apiErrorCode` names the cause of the `403`:
+
+| `apiErrorCode` | Cause | Fix |
+| --- | --- | --- |
+| `'Forbidden'` | The API is not enabled for the key | Enable it for the key, or for a Private Preview API, request access |
+| `'InvalidReferer'` | The key's domain restriction refused the page | Add the page's domain to the key, or set a fixed referrer from your [proxy](../security/hardening-your-proxy.mdx) |
+
+A service call's `SDKServiceError` and the map's `TomTomMapError` both carry `apiErrorCode`, whether the refused request was a service call, the map style, a tile or a plugin's data. Both implement `APIErrorDetails`, from the Core bundle, so one TypeScript function can read either.
+
+### Private Preview APIs
+
+A [Private Preview](https://docs.tomtom.com/legal/private-preview) API, such as [Calculate Reachable Range](../services/routing/reachable-ranges.mdx) or the [3D Landmarks](../plugins/landmarks-3d-landmarks.mdx) tiles, needs access granted to the key. The Freemium and Pay As You Grow plans don't include it. When such an API answers `'Forbidden'`, or a proxy answers a `403` with no body, the error says so in two places:
+
+- **The message** ends with the API that needs access, a link to the Private Preview terms and where to request the access.
+- **`privatePreviewAccess`** carries the same information as data, a `PrivatePreviewAccess` of `{ product, requestAccessURL }`, so you can show your own message.
+
+To tell the reader what to do about a refused key, read the same fields on a service call's error and the map's:
+
+```javascript
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { calculateReachableRange, SDKServiceError } from '@tomtom-org/maps-sdk/services';
+
+const explainRefusedKey = (error) => {
+    if (error.privatePreviewAccess) {
+        const { product, requestAccessURL } = error.privatePreviewAccess;
+        return `${product} needs access on your API key: ${requestAccessURL}`;
+    }
+    if (error.apiErrorCode === 'InvalidReferer') return 'Add this domain to the API key';
+    if (error.code === 'INSUFFICIENT_PERMISSIONS') return 'Enable this API for the API key';
+    if (error.code === 'INVALID_CREDENTIALS') return 'Check the API key';
+    return undefined;
+};
+
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+map.addErrorHandler((error) => {
+    const explanation = explainRefusedKey(error);
+    if (explanation) showMessage(explanation);
+});
+
+try {
+    await calculateReachableRange({ origin: [4.9041, 52.3676], budget: { type: 'timeMinutes', value: 30 } });
+} catch (error) {
+    if (!(error instanceof SDKServiceError)) throw error;
+    showMessage(explainRefusedKey(error) ?? error.message);
+}
+```
+
+## Related guides and examples
+
+### Related guides
+
+- [Request options and errors](../services/request-options-and-errors.mdx): what a service call's error carries, and how to cancel a call or set its deadline.
+- [Map errors](../map/tomtom-map.mdx#map-errors): what the map reports and how it arrives.
+- [Global configuration](./global-config.mdx#retry): how service calls retry a `429`.
+
+### Related examples
+
+- [Batch geocoding](../../examples/nodejs-batch-geocode): reads each failure of a batch by its `code` and `canRetry`.
