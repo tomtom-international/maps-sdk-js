@@ -42,8 +42,8 @@
 .chat-welcome p {
     margin: 0;
     font-family: var(--ui-font-proxima); /* Proxima Nova */
-    font-size: var(--ui-font-body-l); /* 16 / 24 (body m/medium) */
-    line-height: var(--ui-font-body-l-lh);
+    font-size: var(--ui-font-body-m); /* 16 / 24 (body m/medium) */
+    line-height: var(--ui-font-body-m-lh);
     color: var(--ui-text-med-em);
 }
 .chat-welcome strong {
@@ -68,8 +68,8 @@
     border-radius: var(--ui-rounded-20);
     margin: var(--ui-space-3) 0; /* 12 top/bottom → 24px between turns */
     font-family: var(--ui-font-proxima); /* Proxima Nova */
-    font-size: var(--ui-font-body-l); /* 16 */
-    line-height: var(--ui-font-body-l-lh); /* 24 */
+    font-size: var(--ui-font-body-m); /* 16 */
+    line-height: var(--ui-font-body-m-lh); /* 24 */
 }
 
 .message.user {

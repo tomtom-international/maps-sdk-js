@@ -65,7 +65,7 @@ minimumReleaseAgeExclude:
   - "@tomtom-org/*"
 
 catalog:
-  "@tomtom-org/maps-sdk": 1.0.0-rc.6
+  "@tomtom-org/maps-sdk": 1.0.0-rc.7
   "@tomtom-org/maps-sdk-plugin-agent-toolkit": 0.18.0
   "@tomtom-org/maps-sdk-plugin-flyover": 0.1.2
   "@tomtom-org/maps-sdk-plugin-landmarks-3d": 0.3.1
@@ -84,6 +84,7 @@ catalog:
   # nodejs-test-code-setup.ts — so `@tomtom-org/maps-sdk/core` no longer resolves
   # and the SDK e2e suite collects 0 tests. Bump only with a matching harness fix.
   "@playwright/test": 1.60.0
+  "@radix-ui/react-tooltip": ^1.4.1
   "@tailwindcss/node": ^4.3.3
   "@tailwindcss/oxide": ^4.3.3
   "@tailwindcss/vite": ^4.3.3
@@ -107,6 +108,7 @@ catalog:
   culori: ^4.0.2
   jszip: ^3.10.2
   lodash-es: ^4.18.1
+  lucide-react: ~1.59.0
   maplibre-gl: ^6.15.0
   marked: ^18.1.1
   react: ^19.3.1

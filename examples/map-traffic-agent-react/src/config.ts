@@ -8,9 +8,9 @@ const gatewayBaseUrl = process.env.AZURE_GATEWAY_BASE_URL;
 const resourceName = process.env.AZURE_RESOURCE_NAME;
 const azureApiKey = process.env.AZURE_API_KEY;
 
-// AZURE_MODEL_IDS is the leading source — when set, its comma-separated list
-// IS the picker (AZURE_DEPLOYMENT_ID is ignored). When unset, fall back to a
-// single deployment via AZURE_DEPLOYMENT_ID so legacy setups keep working.
+// AZURE_MODEL_IDS is the leading source — when set, the demo uses the first
+// entry of its comma-separated list (AZURE_DEPLOYMENT_ID is ignored). When unset,
+// fall back to a single deployment via AZURE_DEPLOYMENT_ID so legacy setups keep working.
 const modelIds = process.env.AZURE_MODEL_IDS;
 const fallbackDeploymentId = process.env.AZURE_DEPLOYMENT_ID;
 
@@ -36,8 +36,7 @@ if (evalMode && !(evalResourceName && evalApiKey && evalAutDeploymentId)) {
     );
 }
 
-export const availableDeployments: readonly string[] =
-    evalMode && evalAutDeploymentId ? [evalAutDeploymentId] : resolved;
+const availableDeployments: readonly string[] = evalMode && evalAutDeploymentId ? [evalAutDeploymentId] : resolved;
 
 if (availableDeployments.length === 0) {
     throw new Error(

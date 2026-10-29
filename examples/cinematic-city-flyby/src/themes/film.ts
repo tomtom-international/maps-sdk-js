@@ -1,0 +1,162 @@
+import { aerochrome, chromaticFringe, filmGrain, filmHalation, instantFilm } from '../themePasses';
+import { fontsource } from './font';
+import { PALETTES } from './palettes';
+import { type FlybyTheme, look } from './theme';
+
+export const filmThemes = [
+    {
+        label: look('Tilt-shift'),
+        group: 'Camera and film',
+        style: 'streetLight',
+        // A model railway's candy colours: a thin band in focus makes the city a miniature.
+        theme: { colors: ['#f6f3eb', '#4cc3d9', '#ffc845', '#ff6f59', '#7bc950', '#2d3047'], mode: 'light' },
+        sky: { color: '#7fd1ff', horizon: '#ffffff' },
+        font: fontsource('nunito'),
+        sun: { direction: 210, altitude: 50 },
+        buildings: {
+            facade: { pattern: 'mixed', intensity: 0.8 },
+            // The candy colours of the model, each house painted in one.
+            walls: {
+                palette: ['#f6f3eb', '#4cc3d9', '#ffc845', '#ff6f59', '#7bc950'],
+                paletteIntensity: 0.55,
+                variation: 0.15,
+            },
+            windows: { color: '#3d5566' },
+            reflections: { intensity: 0.5 },
+            light: { color: '#ffffff', intensity: 1 },
+            ambientLight: { color: '#ffffff', intensity: 0.6 },
+            shadows: { intensity: 0.8 },
+        },
+        landmarks: { color: '#ffc845' },
+        effects: {
+            bloom: { intensity: 0.4, threshold: 0.8, radius: 16 },
+            depthOfField: { intensity: 20, focus: 0.45, band: 0.18, bokeh: 0.4 },
+            grade: { contrast: 1.15, saturation: 1.5 },
+            fog: { intensity: 0.15, reach: 0.4 },
+            edgeBlur: { intensity: 8, reach: 0.5 },
+            tint: { color: '#ffc845', opacity: 0.03 },
+            vignette: { intensity: -0.2 },
+        },
+        pass: chromaticFringe,
+    },
+    {
+        label: look('Polaroid'),
+        group: 'Camera and film',
+        style: 'streetLight',
+        // Faded instant film: cream, teal, straw, coral, sage and a soft black.
+        theme: { colors: ['#efe9dd', '#7fa7a3', '#c9b37e', '#d98c6a', '#6f8f6a', '#3b3a36'], mode: 'light' },
+        sky: { color: '#9fc3c9', horizon: '#f6e7cf' },
+        font: fontsource('caveat', { italic: false }),
+        sun: { direction: 240, altitude: 30 },
+        buildings: {
+            facade: { pattern: 'mixed', intensity: 0.7 },
+            // The faded print takes a hint of the theme's teal, straw and sage.
+            walls: { color: '#ece3d2', palette: PALETTES.foundations, paletteIntensity: 0.25, variation: 0.15 },
+            windows: { color: '#55686e' },
+            reflections: { intensity: 0.5 },
+            light: { color: '#ffe7c4', intensity: 0.9 },
+            ambientLight: { color: '#e9e2d4', intensity: 0.6 },
+            shadows: { intensity: 0.6 },
+        },
+        landmarks: { color: '#f0e2c8' },
+        effects: {
+            bloom: { intensity: 0.6, threshold: 0.7, radius: 26 },
+            depthOfField: { intensity: 16, focus: 0.3, band: 0.3, bokeh: 0.5 },
+            grade: { contrast: 0.92, saturation: 0.85 },
+            fog: { intensity: 0.4, reach: 0.5 },
+            edgeBlur: { intensity: 5, reach: 0.45 },
+            tint: { color: '#f2c48d', opacity: 0.06 },
+            vignette: { intensity: -0.35 },
+        },
+        pass: instantFilm,
+    },
+    {
+        label: look('Kodachrome'),
+        group: 'Camera and film',
+        style: 'streetLight',
+        // Slide film from the fifties: cream, cobalt, signal red, chrome yellow, bottle green and ink.
+        theme: { colors: ['#efe9dc', '#2b5fa6', '#c8102e', '#e7b10a', '#3f7d4f', '#24201c'], mode: 'light' },
+        sky: { color: '#3f7fc4', horizon: '#f2e2c4' },
+        font: fontsource('dm-serif-display', { bold: false }),
+        sun: { direction: 230, altitude: 35 },
+        buildings: {
+            facade: { pattern: 'mixed', intensity: 0.8 },
+            // Brick and cream stucco, side by side down the street.
+            walls: { color: '#e9dcc3', palette: PALETTES.brick, paletteIntensity: 0.65, variation: 0.2 },
+            roofs: { color: '#b5443a' },
+            windows: { color: '#33445e' },
+            reflections: { intensity: 0.7 },
+            light: { color: '#ffe2b8', intensity: 1 },
+            ambientLight: { color: '#d8e4f0', intensity: 0.5 },
+            shadows: { intensity: 0.85 },
+        },
+        landmarks: { color: '#f0d9b0' },
+        effects: {
+            bloom: { intensity: 0.6, threshold: 0.7, radius: 24 },
+            depthOfField: { intensity: 16, focus: 0.3, band: 0.3, bokeh: 0.6 },
+            grade: { contrast: 1.15, saturation: 1.25 },
+            fog: { intensity: 0.3, reach: 0.5 },
+            edgeBlur: { intensity: 5, reach: 0.45 },
+            tint: { color: '#e7b10a', opacity: 0.05 },
+            vignette: { intensity: -0.45 },
+        },
+        pass: filmHalation,
+    },
+    {
+        label: look('Aerochrome'),
+        group: 'Camera and film',
+        style: 'streetLight',
+        // Infrared film: the parks turn rose under a deep blue sky.
+        theme: { colors: ['#f4f1ec', '#1d6fa3', '#7bb661', '#d8d2c4', '#e04f7a', '#22303c'], mode: 'light' },
+        sky: { color: '#1b4f8c', horizon: '#bfe3f2' },
+        font: fontsource('space-grotesk', { italic: false }),
+        sun: { direction: 220, altitude: 45 },
+        buildings: {
+            reflections: { intensity: 0.6 },
+            facade: { pattern: 'mixed', intensity: 0.6 },
+            light: { color: '#ffffff', intensity: 0.9 },
+            ambientLight: { color: '#e6eef5', intensity: 0.6 },
+            shadows: { intensity: 0.7 },
+        },
+        landmarks: { color: '#f2c2d2' },
+        effects: {
+            bloom: { intensity: 0.5, threshold: 0.75, radius: 20 },
+            depthOfField: { intensity: 14, focus: 0.3, band: 0.3, bokeh: 0.4 },
+            grade: { contrast: 1.1, saturation: 1.3 },
+            fog: { intensity: 0.3, reach: 0.5 },
+            edgeBlur: { intensity: 4, reach: 0.45 },
+            tint: { color: '#e04f7a', opacity: 0.04 },
+            vignette: { intensity: -0.3 },
+        },
+        pass: aerochrome,
+    },
+    {
+        label: look('Noir'),
+        group: 'Camera and film',
+        style: 'monoDark',
+        // Greys only: the grade takes the last of the colour out.
+        theme: { colors: ['#0e0e0e', '#1a1a1a', '#3c3c3c', '#8c8c8c', '#e8e8e8'], mode: 'dark' },
+        sky: { color: '#070707', horizon: '#6b6b6b' },
+        font: fontsource('bodoni-moda'),
+        sun: { direction: 230, altitude: 22 },
+        buildings: {
+            reflections: { intensity: 0.9 },
+            walls: { color: '#5c5c5c' },
+            litWindows: { color: '#fff2d0', fraction: 0.3, intensity: 0.9 },
+            light: { color: '#ffffff', intensity: 1 },
+            ambientLight: { color: '#ffffff', intensity: 0.25 },
+            shadows: { intensity: 0.95 },
+        },
+        landmarks: { color: '#d8d8d8' },
+        effects: {
+            bloom: { intensity: 0.85, threshold: 0.5, radius: 24 },
+            depthOfField: { intensity: 18, focus: 0.3, band: 0.25, bokeh: 1 },
+            grade: { brightness: 0.95, contrast: 1.4, saturation: 0 },
+            fog: { intensity: 0.4, reach: 0.5 },
+            edgeBlur: { intensity: 8, reach: 0.45 },
+            tint: { color: '#1f2937', opacity: 0.1 },
+            vignette: { intensity: -0.75 },
+        },
+        pass: filmGrain,
+    },
+] satisfies FlybyTheme[];

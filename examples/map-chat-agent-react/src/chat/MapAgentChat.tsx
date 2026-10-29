@@ -44,11 +44,6 @@ type MapAgentChatProps = {
     welcomeText?: string;
     /** Optional starter prompts rendered as clickable suggestions while the thread is empty. */
     suggestedPrompts?: readonly string[];
-    /** Optional deployment selector. When `availableDeployments` has more than one entry the
-     * header renders a `<select>`; with one entry it shows a static badge. Omit for no badge. */
-    deploymentId?: string;
-    availableDeployments?: readonly string[];
-    onDeploymentChange?: (deploymentId: string) => void;
     /** Optional running session token totals. When provided, a compact In/Out chip is rendered
      * in the header (hidden until the first turn produces a non-zero count). */
     tokenUsage?: { input: number; output: number };
@@ -58,7 +53,7 @@ type MapAgentChatProps = {
 // Figma start-screen disclaimer — info-accent box pinned just above the composer until the first turn.
 function WelcomeDisclaimer() {
     return (
-        <div className="mb-2 flex items-start gap-1 rounded-(--ui-rounded-10) bg-[#F5F8FA] p-2 font-(family-name:--ui-font-proxima) text-[10px] leading-[14px] font-semibold text-[#5083A7]">
+        <div className="mx-2 mb-3 flex items-start gap-1 rounded-(--ui-rounded-10) bg-[#F5F8FA] p-2 font-(family-name:--ui-font-proxima) text-[10px] leading-[14px] font-semibold text-[#5083A7]">
             <svg
                 viewBox="0 0 24 24"
                 width="16"
@@ -134,9 +129,6 @@ export function MapAgentChat({
     label,
     welcomeText = DEFAULT_WELCOME_TEXT,
     suggestedPrompts,
-    deploymentId,
-    availableDeployments,
-    onDeploymentChange,
     tokenUsage,
     onResizePointerDown,
 }: MapAgentChatProps) {
@@ -177,9 +169,6 @@ export function MapAgentChat({
                     isCollapsed={isCollapsed}
                     onToggle={() => setIsCollapsed((c) => !c)}
                     label={label}
-                    deploymentId={deploymentId}
-                    availableDeployments={availableDeployments}
-                    onDeploymentChange={onDeploymentChange}
                     tokenUsage={tokenUsage}
                 />
                 <ThreadPrimitive.Viewport

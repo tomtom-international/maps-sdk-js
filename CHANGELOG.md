@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.0-rc.7
+
+### Patch Changes
+
+- services: a call that adds its own `apiKey` to a request for the configured proxy sends the proxy's session cookie with it, so `trafficAreaAnalytics` with a Move Portal key works from a page on a site other than the proxy's. A call that changes `commonBaseURL` decides on its own merged config
+
 ## 1.0.0-rc.6
 
 ### Minor Changes

@@ -1,3 +1,5 @@
+import * as Tooltip from '@radix-ui/react-tooltip';
+import { ArrowRight } from 'lucide-react';
 import { useState } from 'react';
 import chevronDownIconRaw from './assets/chevron-down.svg?raw';
 import tomtomLogoRaw from './assets/tomtom-logo.svg?raw';
@@ -8,10 +10,6 @@ type ChatHeaderProps = {
     onToggle: () => void;
     /** Label shown next to the TomTom logo. Defaults to "Maps agent". */
     label?: string;
-    /** Optional deployment selector — renders as a badge (single) or `<select>` (multiple). */
-    deploymentId?: string;
-    availableDeployments?: readonly string[];
-    onDeploymentChange?: (deploymentId: string) => void;
     /** Optional running session token totals. When provided and non-zero, a compact
      * `In … · Out …` chip is rendered next to the title. */
     tokenUsage?: { input: number; output: number };
@@ -58,66 +56,61 @@ function MobileNudge({ isCollapsed }: { isCollapsed: boolean }) {
     );
 }
 
-function ModelBadge({
-    deploymentId,
-    availableDeployments,
-    onDeploymentChange,
-}: {
-    deploymentId: string;
-    availableDeployments: readonly string[];
-    onDeploymentChange?: (deploymentId: string) => void;
-}) {
-    const badgeClass = 'rounded-full bg-(--ui-surface-1) px-2 py-0.5 text-[11px] text-(--ui-text-med-em)';
-    if (availableDeployments.length <= 1 || !onDeploymentChange) {
-        return <span className={badgeClass}>{deploymentId}</span>;
-    }
+const SIGN_UP_URL = 'https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/overview';
+
+function DemoBadge() {
     return (
-        <select
-            className={`${badgeClass} cursor-pointer border-0 outline-none`}
-            value={deploymentId}
-            onChange={(e) => onDeploymentChange(e.target.value)}
-            aria-label="Model"
-        >
-            {availableDeployments.map((id) => (
-                <option key={id} value={id}>
-                    {id}
-                </option>
-            ))}
-        </select>
+        <Tooltip.Provider delayDuration={0}>
+            <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                    <button
+                        type="button"
+                        className="flex h-6 shrink-0 cursor-pointer items-center gap-1 rounded-full border-0 bg-(--ui-surface-info-accent-1) pr-2.5 pl-1.5 font-(family-name:--ui-font-gilroy) text-[12px] leading-4 font-bold text-(--ui-text-info-on-base)"
+                    >
+                        <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true">
+                            <path d="M8.99999 2L3 9H6.99999V14L13 7H8.99999V2Z" />
+                        </svg>
+                        Demo
+                    </button>
+                </Tooltip.Trigger>
+                <Tooltip.Portal>
+                    <Tooltip.Content
+                        className="ui-tooltip flex w-[216px] flex-col gap-3 rounded-xl! p-3! text-[14px]! leading-[18px]"
+                        sideOffset={6}
+                        collisionPadding={8}
+                    >
+                        This demo is made with TomTom’s Agent Toolkit Plugin. Create a free account to build your own.
+                        <a
+                            href={SIGN_UP_URL}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex h-8 items-center justify-center gap-2 rounded-full border border-(--ui-border-med-em) bg-(--ui-surface-0) font-bold text-(--ui-text-high-em) no-underline"
+                        >
+                            Get started
+                            <ArrowRight size={14} strokeWidth={2.5} aria-hidden="true" />
+                        </a>
+                        <Tooltip.Arrow className="ui-tooltip-arrow" width={12} height={6} />
+                    </Tooltip.Content>
+                </Tooltip.Portal>
+            </Tooltip.Root>
+        </Tooltip.Provider>
     );
 }
 
-export function ChatHeader({
-    isCollapsed,
-    onToggle,
-    label = 'Maps agent',
-    deploymentId,
-    availableDeployments,
-    onDeploymentChange,
-    tokenUsage,
-}: ChatHeaderProps) {
+export function ChatHeader({ isCollapsed, onToggle, label = 'Maps agent', tokenUsage }: ChatHeaderProps) {
     return (
         <>
             <MobileNudge isCollapsed={isCollapsed} />
-            <div className="box-border flex h-[52px] shrink-0 flex-row items-center gap-1.5 rounded-[40px] bg-(--ui-surface-0) py-1 pr-1 pl-4 shadow-(--ui-elevation-e3)">
-                <span
-                    className="flex shrink-0 items-center [&_svg]:block [&_svg]:h-6 [&_svg]:w-[94px]"
-                    aria-label="TomTom"
-                >
+            <div className="box-border flex h-[52px] shrink-0 flex-row items-center gap-1.5 rounded-[40px] bg-(--ui-surface-0) py-1 pr-3 pl-4 shadow-(--ui-elevation-e3)">
+                <span role="img" aria-label="TomTom" className="mr-1.5 flex shrink-0 [&_svg]:block">
                     <Icon raw={tomtomLogoRaw} />
                 </span>
                 <span className="h-[21px] w-[0.75px] shrink-0 bg-(--ui-border-low-em)" aria-hidden="true" />
-                <span className="ml-[9px] flex-1 font-(family-name:--ui-font-gilroy) text-[16px] leading-[15px] font-bold text-(--ui-text-high-em)">
+                <span className="ml-1.5 min-w-0 flex-1 truncate font-(family-name:--ui-font-gilroy) text-[14px] leading-5 font-bold text-(--ui-text-high-em)">
                     {label}
                 </span>
                 {tokenUsage && <TokenUsageBadge input={tokenUsage.input} output={tokenUsage.output} />}
-                {deploymentId && availableDeployments && (
-                    <ModelBadge
-                        deploymentId={deploymentId}
-                        availableDeployments={availableDeployments}
-                        onDeploymentChange={onDeploymentChange}
-                    />
-                )}
+                <DemoBadge />
                 <button
                     onClick={onToggle}
                     aria-label={isCollapsed ? 'Expand chat' : 'Collapse chat'}

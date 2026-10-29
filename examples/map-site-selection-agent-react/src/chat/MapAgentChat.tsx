@@ -38,7 +38,7 @@ function usePendingClarify(): { key: string; questions: ClarifyIntentQuestion[] 
 // Figma start-screen disclaimer — info-accent box pinned just above the composer until the first turn.
 function WelcomeDisclaimer() {
     return (
-        <div className="mb-2 flex items-start gap-1 rounded-(--ui-rounded-10) bg-[#F5F8FA] p-2 font-(family-name:--ui-font-proxima) text-[10px] leading-[14px] font-semibold text-[#5083A7]">
+        <div className="mx-2 mb-3 flex items-start gap-1 rounded-(--ui-rounded-10) bg-[#F5F8FA] p-2 font-(family-name:--ui-font-proxima) text-[10px] leading-[14px] font-semibold text-[#5083A7]">
             <svg
                 viewBox="0 0 24 24"
                 width="16"

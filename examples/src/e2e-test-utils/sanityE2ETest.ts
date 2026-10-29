@@ -52,6 +52,8 @@ export type SanityE2ETestOptions = {
     readySelector?: string;
     /** TEMPORARY: selector → fixed value, for elements whose content changes between runs. */
     uiPinnedValues?: Record<string, string>;
+    /** TEMPORARY: CSS for the chrome shot only, where live data changes the layout, not just the text. */
+    uiPinnedStyle?: string;
     /**
      * Whether the example draws a map at all (default: true).
      *
@@ -82,6 +84,7 @@ export const sanityE2ETest = async (options: SanityE2ETestOptions) => {
         settleMs = 0,
         readySelector,
         uiPinnedValues = {},
+        uiPinnedStyle,
         rendersMap = true,
     } = options;
 
@@ -115,6 +118,7 @@ export const sanityE2ETest = async (options: SanityE2ETestOptions) => {
         mapSelector,
         timeout: mapLoadTimeout,
         pinnedValues: uiPinnedValues,
+        pinnedStyle: uiPinnedStyle,
     });
 
     expectNoPageErrors(pageErrors);

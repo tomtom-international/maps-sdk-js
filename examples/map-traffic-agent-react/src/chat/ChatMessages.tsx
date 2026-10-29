@@ -53,7 +53,7 @@ function SuggestedPrompts({ prompts }: { prompts: readonly string[] }) {
             <h2 className="m-0 w-full font-(family-name:--ui-font-gilroy) text-[16px] leading-[24px] font-bold text-(--ui-text-high-em)">
                 Pick a prompt
             </h2>
-            <div className="flex w-full flex-col gap-2">
+            <div className="flex w-full flex-col gap-4">
                 {visible.map((prompt) => (
                     <ThreadPrimitive.Suggestion
                         key={prompt}

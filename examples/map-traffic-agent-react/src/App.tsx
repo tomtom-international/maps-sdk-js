@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { MapAgentChat } from './chat';
-import { useAgentSettings } from './hooks/useAgentSettings';
+import { defaultDeploymentId } from './config';
 import { AnalysesPanel } from './ui/AnalysesPanel';
 import { AnalyticsControlPanel } from './ui/AnalyticsControlPanel';
 import { ClusterPanel } from './ui/ClusterPanel';
@@ -27,24 +27,7 @@ const SUGGESTED_PROMPTS = [
 const MIN_CHAT_WIDTH = 320; // px
 const DEFAULT_CHAT_WIDTH = 380; // px — initial width; drag the handle to resize
 
-// Centred 8px above the map's bottom edge, clear of the panels along its sides and of the copyright attribution
-// in the bottom-right, which nothing may cover.
-// Pointer events off so the map stays draggable under it.
-function DemoOnlyPill() {
-    return (
-        <div className="pointer-events-none absolute bottom-2 left-1/2 z-10 flex -translate-x-1/2 items-center gap-[4.5px] rounded-full bg-[#004B7F]/80 px-[9px] py-[4.5px] font-(family-name:--ui-font-proxima) text-[9.75px] leading-[13.5px] font-semibold text-white">
-            <svg viewBox="0 0 24 24" width="13.5" height="13.5" fill="currentColor" aria-hidden="true">
-                <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeWidth="1.5" />
-                <path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z" transform="translate(12 12) scale(.62) translate(-11 -12)" />
-            </svg>
-            <span>Demo only</span>
-        </div>
-    );
-}
-
 export function App() {
-    const { settings, setDeploymentId, availableDeployments } = useAgentSettings();
-
     const {
         transport,
         analyticsState,
@@ -82,9 +65,7 @@ export function App() {
         setTrackerEnabled,
         clearTracker,
         focusTrackerArea,
-    } = useMapAgent({
-        deploymentId: settings.deploymentId,
-    });
+    } = useMapAgent({ deploymentId: defaultDeploymentId });
 
     // Drag-resizable chat width (desktop only). Capped at half the viewport — "to the middle".
     const [chatWidth, setChatWidth] = useState(DEFAULT_CHAT_WIDTH);
@@ -220,7 +201,6 @@ export function App() {
                     </div>
                 </div>
                 <TrackerToasts toasts={trackerToasts} onDismiss={dismissToast} />
-                <DemoOnlyPill />
             </div>
             {/* Chat column — fixed-but-resizable width on desktop, full width on mobile. */}
             <div className="relative flex shrink-0 max-sm:w-full" style={isMobile ? undefined : { width: chatWidth }}>
@@ -230,9 +210,6 @@ export function App() {
                         label="Live Traffic Agent"
                         welcomeText={WELCOME_TEXT}
                         suggestedPrompts={SUGGESTED_PROMPTS}
-                        deploymentId={settings.deploymentId}
-                        availableDeployments={availableDeployments}
-                        onDeploymentChange={setDeploymentId}
                         onResizePointerDown={isMobile ? undefined : startResize} // We move the handle inside the chat viewport so the resize icon maintains the chat scrolling behavior
                     />
                 ) : (

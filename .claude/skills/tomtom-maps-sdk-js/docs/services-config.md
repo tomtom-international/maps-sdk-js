@@ -39,7 +39,7 @@ TomTomConfig.instance.reset();
 | Key | Default | Notes |
 |---|---|---|
 | `apiKey` | `''` | |
-| `commonBaseURL` | `'https://api.tomtom.com'` | Only for routing every request (services, style, tiles, sprites, glyphs) through your own proxy. Leave `apiKey` unset too for proxy-credentials mode: no key sent, `credentials: 'include'`. Must be absolute and `https:`; `http:` only for loopback (`localhost`, `*.localhost`, `127.x`, `[::1]`), else `INSECURE_BASE_URL`, even with `validateRequest: false`. See [Proxying your API calls](https://docs.tomtom.com/maps-sdk-js/guides/security/proxying-api-calls.md). |
+| `commonBaseURL` | `'https://api.tomtom.com'` | Only for routing every request (services, style, tiles, sprites, glyphs) through your own proxy. Leave `apiKey` unset too for proxy-credentials mode: no key sent, `credentials: 'include'`. A call that adds its own `apiKey` and stays on this host sends the key and keeps `credentials: 'include'` (the Move Portal key on `trafficAreaAnalytics`). Must be absolute and `https:`; `http:` only for loopback (`localhost`, `*.localhost`, `127.x`, `[::1]`), else `INSECURE_BASE_URL`, even with `validateRequest: false`. See [Proxying your API calls](https://docs.tomtom.com/maps-sdk-js/guides/security/proxying-api-calls.md). |
 | `language` | unset → APIs answer in `NGT` (local language) | `Language` type; `languages` lists them. `Language` lists every language the map labels carry. A service that lacks one answers in local names: search, geocoding and reverse geocoding do for `hi-IN` and `ja-JP`, and route instructions, POI category names and incident descriptions come in the nearest language the API has, else English. The SDK sends each API a code it takes (`zh-Hans` goes out as `zh-CN`, `zh-Hant` as `zh-TW`) and leaves the language off where the API has none close to it, so never map codes yourself |
 | `geopoliticalView` | unset → caller's country default | [below](#geopolitical-view) |
 | `sendUserAgentHeader` | unset → sent, as `true` | `false` stops every service and map request from carrying the `tomtom-user-agent` header (`MapsSDKJS/<version>`; `MapsSDKJS-AgentToolkit/<plugin version>` on what the Agent Toolkit plugin requests). A map reads it at construction |
@@ -75,7 +75,7 @@ See [Geopolitical views](https://docs.tomtom.com/maps-sdk-js/guides/core/geopoli
 
 ## Per-call options
 
-Every service call merges the global config under its own params, so a per-call `apiKey`, `language`, `geopoliticalView`, `commonBaseURL` or `retry` (field by field) wins for that call only. Endpoint paths and API versions are not configurable.
+Every service call merges the global config under its own params, so a per-call `apiKey`, `language`, `geopoliticalView`, `commonBaseURL` or `retry` (field by field) wins for that call only. A per-call `apiKey` under proxy-credentials mode sends the key and keeps `credentials: 'include'` while the call stays on the configured `commonBaseURL`. Endpoint paths and API versions are not configurable.
 
 ```ts
 // Override API key for a specific call

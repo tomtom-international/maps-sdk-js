@@ -91,6 +91,9 @@ export function ChatInput() {
                     </div>
                 </div>
             </ComposerPrimitive.Root>
+            <p className="px-1 text-center font-(family-name:--ui-font-proxima) text-[10px] leading-[14px] text-(--ui-text-low-em)">
+                This is an AI agent. Outputs can be wrong — verify important results.
+            </p>
         </div>
     );
 }

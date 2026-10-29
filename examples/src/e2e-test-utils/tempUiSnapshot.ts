@@ -25,6 +25,8 @@ type TempUiSnapshotArgs = {
     mapSelector: string;
     timeout: number;
     pinnedValues: Record<string, string>;
+    /** CSS applied for the chrome shot only, so layout that follows live data holds still. */
+    pinnedStyle?: string;
 };
 
 /**
@@ -40,6 +42,7 @@ export const checkTempUiSnapshot = async ({
     mapSelector,
     timeout,
     pinnedValues,
+    pinnedStyle,
 }: TempUiSnapshotArgs): Promise<void> => {
     // The baseline is a Linux capture and macOS/Windows rasterise text differently, so a local run
     // would fail on fonts alone. Regenerate through CI — see the upload step in e2e-tests.yml.
@@ -49,6 +52,7 @@ export const checkTempUiSnapshot = async ({
     }
 
     await pinVaryingValues(page, pinnedValues);
+    const pinnedStyleTag = pinnedStyle ? await page.addStyleTag({ content: pinnedStyle }) : undefined;
     const restoreMap = await hideFromPaint(page, mapSelector);
 
     try {
@@ -64,6 +68,7 @@ export const checkTempUiSnapshot = async ({
 
         await expect(page).toHaveScreenshot(BASELINE, { ...UI_TOLERANCE, timeout });
     } finally {
+        await pinnedStyleTag?.evaluate((node: HTMLStyleElement) => node.remove());
         await restoreMap();
     }
 };
