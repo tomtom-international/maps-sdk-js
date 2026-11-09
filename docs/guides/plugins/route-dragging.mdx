@@ -1,0 +1,122 @@
+---
+title: Route dragging plugin
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.0.3"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+`RouteDragging` lets people edit a route by hand. They grab a stop's pin to move it, or pull the
+route line to add a stop, and the route re-plans while the pointer moves.
+
+<GuideDemo demo="route-dragging-plugin" />
+
+```bash
+npm install @tomtom-org/maps-sdk maplibre-gl @tomtom-org/maps-sdk-plugin-route-dragging
+```
+
+`@tomtom-org/maps-sdk` and `lodash-es` are peer dependencies. `lodash-es` is one of the SDK's own, so
+it installs with the SDK.
+
+## Getting started
+
+Create it over a [`RoutingModule`](../map/routes.mdx), then give it the stops:
+
+```javascript
+import { RoutingModule } from '@tomtom-org/maps-sdk/map';
+import { RouteDragging } from '@tomtom-org/maps-sdk-plugin-route-dragging';
+
+const routing = await RoutingModule.create(map);
+const dragging = new RouteDragging(routing, {
+    onRoutes: (routes) => showSummary(routes.features[0].properties.summary),
+});
+
+await dragging.setWaypoints([
+    [4.8897, 52.3731], // Amsterdam
+    [5.1214, 52.0907], // Utrecht
+    [4.4777, 51.9244], // Rotterdam
+]);
+```
+
+- `setWaypoints` shows the stops and plans the route through them.
+- A pin keeps the spot it was grabbed by, so it doesn't jump under the pointer.
+- A new stop pulled off a line goes between the two stops its detour fits best, and never before the
+  origin or after the destination. Set `insertFromRouteLines: false` to keep the lines still.
+- It edits the waypoints the routing module last showed, so its indexes are the pins' own, `null`
+  placeholders included.
+- A moved stop keeps its `pauseDurationSeconds` and `legCostModel`. The place it was, with its
+  address and entry points, stays behind, so the route goes where you dropped it.
+- `remove()` stops listening and drops the plans still in flight.
+
+## Re-planning while you drag
+
+While a drag lasts, the route re-plans every `planIntervalMS`, 500 milliseconds by default, and once more on the drop.
+
+By default it plans with `calculateRoute({ locations, signal })`. To route with your own options, pass `plan`:
+
+```javascript
+new RouteDragging(routing, {
+    plan: (locations, signal) =>
+        calculateRoute({ locations, signal, travelMode: 'truck', maxAlternatives: 2 }),
+});
+```
+
+- `locations` are the waypoints without their `null` placeholders, so a stop's own properties, such
+  as its `pauseDurationSeconds`, travel with it.
+- Pass the `signal` on to every call you make. The plugin aborts a plan once a newer answer is in.
+- `plan: false` plans nothing. You get only the waypoint changes, and plan on `dragend` yourself.
+
+## Answers in order
+
+The plans overlap rather than cancel each other, so a route that takes longer than the interval to
+calculate still shows during the drag.
+
+- `onRoutes` gets each answer as it arrives, with the waypoints it was planned for.
+- An answer older than one already in is dropped, and its request is aborted.
+- `onError` gets a failed plan, or a failure to show the moved waypoints or to show or clear the routes. Without one, the plugin warns in the console.
+
+The same rule is in the services as [`createLatestRequest({ supersede: 'on-answer' })`](../services/request-options-and-errors.mdx#keeping-only-the-latest-request),
+for any request that starts faster than it answers.
+
+## Your own state
+
+When your app keeps the stops in a store of its own, as a React or Vue app does, set `showOnMap: false`.
+The plugin then shows nothing itself:
+
+```javascript
+const dragging = new RouteDragging(routing, {
+    showOnMap: false,
+    onWaypointsChange: (waypoints, { type, kind, waypointIndex, position }) => {
+        if (kind === 'insert' && type === 'dragstart') store.insertStop(waypointIndex, position);
+        else store.moveStop(waypointIndex, position);
+    },
+    onRoutes: (routes) => store.setLiveRoutes(routes),
+});
+```
+
+- Each change carries its `type`: `'dragstart'` once, `'drag'` on every move, then `'dragend'` on the drop.
+- `kind` is `'move'` for a pin, or `'insert'` for a stop pulled off a line, already inserted at `waypointIndex`.
+- Apply every change it reports, then show the waypoints with `routing.showWaypoints`. The plugin
+  follows whatever the routing module shows.
+- `dragging.dragging` tells you whether a drag is under way, so you can hold back your own planning
+  until the drop.
+
+The route planner works this way. It edits its stops from the changes, shows the routes planned during
+a drag, and goes back to its own planning once the stops settle:
+
+<GuideDemo demo="react-route-planner" />
+
+## API reference
+
+For complete documentation see the **[RouteDragging API Reference](/maps-sdk-js/api-reference/classes/plugins.RouteDragging.html)**.
+
+## Related guides and examples
+
+- **[Route dragging plugin](../../examples/route-dragging-plugin)** - A route through three cities, edited by dragging
+- **[React route planner](../../examples/react-route-planner)** - Stops dragged on the map in a full planner
+- **[Routes](../map/routes.mdx#editing-a-route-by-dragging)** - The drag events the plugin listens to
+- **[Request options and errors](../services/request-options-and-errors.mdx#keeping-only-the-latest-request)** - Keeping only the latest answer

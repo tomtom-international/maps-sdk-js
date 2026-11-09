@@ -1,0 +1,46 @@
+[
+  {
+    "source": "/maps-sdk-js",
+    "destination": "/maps-sdk-js/introduction/overview"
+  },
+  {
+    "source": "/maps-sdk-js/guides/services/customizing-services",
+    "destination": "/maps-sdk-js/guides/services/request-options-and-errors"
+  },
+  {
+    "source": "/maps-sdk-js/guides/map/traffic-incident-overlay",
+    "destination": "/maps-sdk-js/guides/map/traffic-incident-details"
+  },
+  {
+    "source": "/maps-sdk-js/examples/traffic-incident-overlay",
+    "destination": "/maps-sdk-js/examples/traffic-incident-details"
+  },
+  {
+    "source": "/maps-sdk-js/guides/services/places/ev-charging-stations-availability",
+    "destination": "/maps-sdk-js/guides/services/places/search"
+  },
+  {
+    "source": "/maps-sdk-js/guides/services/routing/long-distance-ev-routing",
+    "destination": "/maps-sdk-js/guides/services/routing/vehicle"
+  },
+  {
+    "source": "/maps-sdk-js/examples/ldevr-model-id",
+    "destination": "/maps-sdk-js/examples/routing-composite"
+  },
+  {
+    "source": "/maps-sdk-js/examples/ldevr-detailed-vehicle",
+    "destination": "/maps-sdk-js/examples/routing-composite"
+  },
+  {
+    "source": "/maps-sdk-js/examples/ldevr-custom-charging-stops",
+    "destination": "/maps-sdk-js/examples/routing-composite"
+  },
+  {
+    "source": "/maps-sdk-js/examples/ldevr-preferences-playground",
+    "destination": "/maps-sdk-js/examples/route-stop-wait-playground"
+  },
+  {
+    "source": "/maps-sdk-js/examples/ev-charging-stations-custom-display",
+    "destination": "/maps-sdk-js/examples/ev-charging-stations-search"
+  }
+]

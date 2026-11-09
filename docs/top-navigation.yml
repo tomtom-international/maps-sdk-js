@@ -1,0 +1,11 @@
+menuTopTitle: Maps SDK for JavaScript
+menu:
+  - items:
+      - fileId: /introduction/overview
+        title: Introduction
+      - fileId: /guides/how-the-sdk-works
+        title: Guides
+      - fileId: /examples
+        title: Examples
+      - fileId: /reference/overview
+        title: API Reference
