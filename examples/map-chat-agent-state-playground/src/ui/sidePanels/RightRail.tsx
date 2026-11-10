@@ -1,14 +1,10 @@
-import type {
-    BYODDataset,
-    CustomGeometriesDataset,
-    PlacesDataset,
-    RangesDataset,
-    RoutesDataset,
-    TrafficAreaAnalyticsDataset,
-    TrafficIncidentsDataset,
+import {
+    DATASET_KIND_TO_SLICE,
+    type DatasetModeSliceName,
+    type PlacesDataset,
 } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { DatasetDetailsContent } from './DatasetDetailsContent';
+import { DatasetDetailsContent, type RailKind, type RailSelection } from './DatasetDetailsContent';
 import {
     AnalyticsIcon,
     ByodIcon,
@@ -34,7 +30,7 @@ import {
     RoutesPanel,
 } from './panels';
 import { showByodDataset, showCustomGeometriesDataset, showRangeDataset, showRouteDataset } from './showHelpers';
-import { type Agent, useAgentSnapshot } from './useAgentSnapshot';
+import { type Agent, useSliceSnapshot } from './useAgentSnapshot';
 import type { VisibilityMode } from './VisibilityToggle';
 
 type DrawerTab =
@@ -48,7 +44,15 @@ type DrawerTab =
     | 'analyses'
     | 'map';
 
-type RailKind = 'places' | 'routes' | 'ranges' | 'geometries' | 'byod' | 'incidents' | 'areaAnalytics';
+const RAIL_KIND_SLICES = {
+    places: DATASET_KIND_TO_SLICE.places,
+    routes: DATASET_KIND_TO_SLICE.routes,
+    ranges: DATASET_KIND_TO_SLICE.ranges,
+    geometries: DATASET_KIND_TO_SLICE.customGeometries,
+    byod: DATASET_KIND_TO_SLICE.byod,
+    incidents: DATASET_KIND_TO_SLICE.incidents,
+    areaAnalytics: DATASET_KIND_TO_SLICE.trafficAreaAnalytics,
+} as const satisfies Record<RailKind, DatasetModeSliceName>;
 
 const TABS: { id: DrawerTab; label: string; Icon: typeof PinIcon }[] = [
     { id: 'places', label: 'Places', Icon: PinIcon },
@@ -77,15 +81,6 @@ const KIND_ICONS: Record<RailKind, typeof PinIcon> = {
     areaAnalytics: AnalyticsIcon,
 };
 
-type AnyDataset =
-    | { kind: 'places'; dataset: PlacesDataset }
-    | { kind: 'routes'; dataset: RoutesDataset }
-    | { kind: 'ranges'; dataset: RangesDataset }
-    | { kind: 'geometries'; dataset: CustomGeometriesDataset }
-    | { kind: 'byod'; dataset: BYODDataset }
-    | { kind: 'incidents'; dataset: TrafficIncidentsDataset }
-    | { kind: 'areaAnalytics'; dataset: TrafficAreaAnalyticsDataset };
-
 type RightRailProps = { agent: Agent };
 
 const RECENT_SHORTCUT_LIMIT = 6;
@@ -93,14 +88,18 @@ const RECENT_SHORTCUT_LIMIT = 6;
 const visibilityKey = (kind: RailKind, id: string) => `${kind}:${id}`;
 
 // Choose the marker type that's nicest for a dataset's place count.
-const placesMarkerTypeFor = (dataset: PlacesDataset): 'pin' | 'base-map' => (dataset.data.length >= 10 ? 'base-map' : 'pin');
+const placesMarkerTypeFor = (dataset: PlacesDataset): 'pin' | 'base-map' =>
+    dataset.data.features.length >= 10 ? 'base-map' : 'pin';
+
+const useDatasets = <S extends Agent['state'][DatasetModeSliceName]>(slice: S): S['datasets'] =>
+    useSliceSnapshot(slice.events, 'datasets-change', () => slice.datasets);
 
 export function RightRail({ agent }: RightRailProps) {
     // Drawer is closed on first load. The first time the user opens it, default to the 'map' tab;
     // afterwards, remember the last tab they actively chose so reopening restores their selection.
     const [drawerTab, setDrawerTab] = useState<DrawerTab | null>(null);
     const lastTabRef = useRef<DrawerTab>('map');
-    const [activeDataset, setActiveDataset] = useState<AnyDataset | null>(null);
+    const [activeDataset, setActiveDataset] = useState<RailSelection | null>(null);
 
     useEffect(() => {
         if (drawerTab !== null) lastTabRef.current = drawerTab;
@@ -109,48 +108,27 @@ export function RightRail({ agent }: RightRailProps) {
     // does, so it can lay each dataset's intent over the per-slice "shown set" the agent manages.
     const [visibility, setVisibility] = useState<Map<string, VisibilityMode>>(() => new Map());
 
-    const placesDatasets = useAgentSnapshot(
-        useMemo(() => [{ events: agent.state.places.events, types: ['datasets-change'] }], [agent]),
-        () => agent.state.places.datasets,
-    );
-    const routesDatasets = useAgentSnapshot(
-        useMemo(() => [{ events: agent.state.routing.events, types: ['datasets-change'] }], [agent]),
-        () => agent.state.routing.datasets,
-    );
-    const rangesDatasets = useAgentSnapshot(
-        useMemo(() => [{ events: agent.state.ranges.events, types: ['datasets-change'] }], [agent]),
-        () => agent.state.ranges.datasets,
-    );
-    const customGeometriesDatasets = useAgentSnapshot(
-        useMemo(() => [{ events: agent.state.customGeometries.events, types: ['datasets-change'] }], [agent]),
-        () => agent.state.customGeometries.datasets,
-    );
-    const byodDatasets = useAgentSnapshot(
-        useMemo(() => [{ events: agent.state.byod.events, types: ['datasets-change'] }], [agent]),
-        () => agent.state.byod.datasets,
-    );
-    const incidentsDatasets = useAgentSnapshot(
-        useMemo(() => [{ events: agent.state.trafficIncidents.events, types: ['datasets-change'] }], [agent]),
-        () => agent.state.trafficIncidents.datasets,
-    );
-    const areaAnalyticsDatasets = useAgentSnapshot(
-        useMemo(() => [{ events: agent.state.trafficAreaAnalytics.events, types: ['datasets-change'] }], [agent]),
-        () => agent.state.trafficAreaAnalytics.datasets,
-    );
+    const placesDatasets = useDatasets(agent.state.places);
+    const routesDatasets = useDatasets(agent.state.routing);
+    const rangesDatasets = useDatasets(agent.state.ranges);
+    const customGeometriesDatasets = useDatasets(agent.state.customGeometries);
+    const byodDatasets = useDatasets(agent.state.byod);
+    const incidentsDatasets = useDatasets(agent.state.trafficIncidents);
+    const areaAnalyticsDatasets = useDatasets(agent.state.trafficAreaAnalytics);
 
     // Newest-first across every slice that produces datasets — places, routes,
     // ranges, custom geometries, incidents, area analytics — so the user can
     // jump back to a calculated reachable area or a derived polygon as easily
     // as a search result.
     const recentShortcuts = useMemo(() => {
-        const merged: AnyDataset[] = [
-            ...placesDatasets.map((dataset): AnyDataset => ({ kind: 'places', dataset })),
-            ...routesDatasets.map((dataset): AnyDataset => ({ kind: 'routes', dataset })),
-            ...rangesDatasets.map((dataset): AnyDataset => ({ kind: 'ranges', dataset })),
-            ...customGeometriesDatasets.map((dataset): AnyDataset => ({ kind: 'geometries', dataset })),
-            ...byodDatasets.map((dataset): AnyDataset => ({ kind: 'byod', dataset })),
-            ...incidentsDatasets.map((dataset): AnyDataset => ({ kind: 'incidents', dataset })),
-            ...areaAnalyticsDatasets.map((dataset): AnyDataset => ({ kind: 'areaAnalytics', dataset })),
+        const merged: RailSelection[] = [
+            ...placesDatasets.map((dataset): RailSelection => ({ kind: 'places', dataset })),
+            ...routesDatasets.map((dataset): RailSelection => ({ kind: 'routes', dataset })),
+            ...rangesDatasets.map((dataset): RailSelection => ({ kind: 'ranges', dataset })),
+            ...customGeometriesDatasets.map((dataset): RailSelection => ({ kind: 'geometries', dataset })),
+            ...byodDatasets.map((dataset): RailSelection => ({ kind: 'byod', dataset })),
+            ...incidentsDatasets.map((dataset): RailSelection => ({ kind: 'incidents', dataset })),
+            ...areaAnalyticsDatasets.map((dataset): RailSelection => ({ kind: 'areaAnalytics', dataset })),
         ];
         return merged.sort((a, b) => b.dataset.timestamp - a.dataset.timestamp).slice(0, RECENT_SHORTCUT_LIMIT);
     }, [
@@ -191,9 +169,11 @@ export function RightRail({ agent }: RightRailProps) {
     );
 
     const showOnMap = useCallback(
-        async (selection: AnyDataset) => {
+        async (selection: RailSelection) => {
             if (selection.kind === 'places') {
-                await agent.state.places.setShownDatasets([selection.dataset.id], placesMarkerTypeFor(selection.dataset));
+                await agent.state.places.showDataset(selection.dataset.id, {
+                    markerType: placesMarkerTypeFor(selection.dataset),
+                });
             } else if (selection.kind === 'routes') {
                 await showRouteDataset(agent, selection.dataset);
             } else if (selection.kind === 'ranges') {
@@ -214,13 +194,7 @@ export function RightRail({ agent }: RightRailProps) {
     const hideOnMap = useCallback(
         async (kind: RailKind, id: string) => {
             try {
-                if (kind === 'places') await agent.state.places.removeShownDatasets([id]);
-                else if (kind === 'routes') await agent.state.routing.hideDataset(id);
-                else if (kind === 'ranges') await agent.state.ranges.hideDataset(id);
-                else if (kind === 'geometries') await agent.state.customGeometries.hideDataset(id);
-                else if (kind === 'byod') await agent.state.byod.hideDataset(id);
-                else if (kind === 'incidents') await agent.state.trafficIncidents.hideDataset(id);
-                else await agent.state.trafficAreaAnalytics.hideDataset(id);
+                await agent.state[RAIL_KIND_SLICES[kind]].hideDataset(id);
             } catch (error) {
                 console.error('Failed to hide dataset', kind, id, error);
             }
@@ -229,7 +203,7 @@ export function RightRail({ agent }: RightRailProps) {
     );
 
     const showDetails = useCallback(
-        async (selection: AnyDataset) => {
+        async (selection: RailSelection) => {
             const mode = visibility.get(visibilityKey(selection.kind, selection.dataset.id)) ?? 'on-selection';
             try {
                 if (mode === 'on-selection') {
@@ -242,7 +216,8 @@ export function RightRail({ agent }: RightRailProps) {
                         activeDataset.dataset.id !== selection.dataset.id
                     ) {
                         const prevMode =
-                            visibility.get(visibilityKey(activeDataset.kind, activeDataset.dataset.id)) ?? 'on-selection';
+                            visibility.get(visibilityKey(activeDataset.kind, activeDataset.dataset.id)) ??
+                            'on-selection';
                         if (prevMode === 'on-selection') {
                             await hideOnMap(activeDataset.kind, activeDataset.dataset.id);
                         }
@@ -268,23 +243,6 @@ export function RightRail({ agent }: RightRailProps) {
             const previous = visibility.get(key) ?? 'on-selection';
             if (previous === next) return;
 
-            // Find the matching dataset so we can call the right show helper. Pre-bucket the
-            // datasets by kind so the lookup stays a flat dispatch (cognitive complexity stays
-            // low — a 6-way ternary chain trips Biome's threshold).
-            const datasetsByKind: Record<RailKind, readonly { id: string }[]> = {
-                places: placesDatasets,
-                routes: routesDatasets,
-                ranges: rangesDatasets,
-                geometries: customGeometriesDatasets,
-                byod: byodDatasets,
-                incidents: incidentsDatasets,
-                areaAnalytics: areaAnalyticsDatasets,
-            };
-            const findSelection = (): AnyDataset | undefined => {
-                const dataset = datasetsByKind[kind].find((candidate) => candidate.id === id);
-                return dataset ? ({ kind, dataset } as AnyDataset) : undefined;
-            };
-
             setVisibility((prev) => {
                 const map = new Map(prev);
                 if (next === 'on-selection') map.delete(key);
@@ -294,8 +252,8 @@ export function RightRail({ agent }: RightRailProps) {
 
             try {
                 if (next === 'always-shown') {
-                    const selection = findSelection();
-                    if (selection) await showOnMap(selection);
+                    const dataset = agent.state[RAIL_KIND_SLICES[kind]].findById(id);
+                    if (dataset) await showOnMap({ kind, dataset } as RailSelection);
                 } else if (next === 'always-hidden') {
                     await hideOnMap(kind, id);
                     if (activeDataset?.kind === kind && activeDataset.dataset.id === id) {
@@ -310,31 +268,13 @@ export function RightRail({ agent }: RightRailProps) {
                 console.error('Failed to apply visibility change', kind, id, next, error);
             }
         },
-        [
-            activeDataset,
-            areaAnalyticsDatasets,
-            byodDatasets,
-            customGeometriesDatasets,
-            hideOnMap,
-            incidentsDatasets,
-            placesDatasets,
-            rangesDatasets,
-            routesDatasets,
-            showOnMap,
-            visibility,
-        ],
+        [activeDataset, agent, hideOnMap, showOnMap, visibility],
     );
 
     const deleteDataset = useCallback(
         async (kind: RailKind, id: string) => {
             try {
-                if (kind === 'places') await agent.state.places.removeDataset(id);
-                else if (kind === 'routes') await agent.state.routing.removeDataset(id);
-                else if (kind === 'ranges') await agent.state.ranges.removeDataset(id);
-                else if (kind === 'geometries') await agent.state.customGeometries.removeDataset(id);
-                else if (kind === 'byod') await agent.state.byod.removeDataset(id);
-                else if (kind === 'incidents') await agent.state.trafficIncidents.removeDataset(id);
-                else await agent.state.trafficAreaAnalytics.removeDataset(id);
+                await agent.state[RAIL_KIND_SLICES[kind]].removeDataset(id);
                 const key = visibilityKey(kind, id);
                 setVisibility((prev) => {
                     if (!prev.has(key)) return prev;
@@ -454,8 +394,7 @@ export function RightRail({ agent }: RightRailProps) {
                         {isFocusMode && activeDataset ? (
                             <DatasetDetailsContent
                                 key={activeDataset.dataset.id}
-                                dataset={activeDataset.dataset}
-                                kind={activeDataset.kind}
+                                selection={activeDataset}
                                 agent={agent}
                             />
                         ) : (

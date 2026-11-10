@@ -1,5 +1,66 @@
 # Changelog
 
+## 0.19.0
+
+### Minor Changes
+
+- The Agent Toolkit's places, traffic and route results answer the counting and opening-hours questions themselves, so the agent needs fewer calls and no generated code for them
+  
+  - `discoverPlaces` counts every place it returns `byCategory`, every charging station `byConnector`, by type and power, and how many are `openNow`, and says `moreMatched` when the search hit its limit, so the counts cover only those. Each place it lists carries its `distance` and `openingHours`: today's hours, when it next closes or opens in the place's own time, and the days it opens. A charging park also lists its `connectors`. Which of the unlisted places are open is still a question for `analyseDatasets`.
+  - `deriveDatasets` and `recallState` on a places dataset return those same counts and per-place fields. `locatePlace` of a venue returns `distance`, `openingHours` and `connectors`.
+  - `discoverPlaces` takes `chargers: { minPowerKW?, maxPowerKW?, connectors? }`, which on its own searches charging stations.
+  - `getTrafficIncidents` returns a `summary`: incidents `byCategory` and `byMagnitude`, their `totalDelayInSeconds`, and `byRoad`, the 10 roads with most incidents.
+  - A route held up by traffic says how many `jams` it meets, and where the first one is: how far in, how long, its delay and its road.
+  - **Breaking:** `recallState({ slice: 'trafficIncidents', id })` returns that same `summary` in place of `byMagnitude` and `totalDelaySeconds`.
+  - **Breaking:** each cluster from `clusterIncidents`, and `ClusterResult`, names its delay and peak `totalDelayInSeconds` and `peakDelayInSeconds` in place of `totalDelaySeconds` and `peakDelaySeconds`, to match the incidents' `delayInSeconds`.
+
+- **Breaking:** the Agent Toolkit moves the camera and sets the map's locale with one tool each, so the default tools go from 50 to 46
+  
+  - **Breaking:** `moveCamera({ where?, zoomBy?, pitch?, bearing? })` replaces `flyTo`, `zoomInOrOut` and `setPitchBearing`. `where` is `flyTo`'s, and `zoomBy` is `zoomInOrOut`'s `delta`.
+  - **Breaking:** `setMapLocale({ language?, geopoliticalView? })` replaces `setLanguage` and `setGeopoliticalView`. `geopoliticalView: null` resets the view to the default.
+  - **Breaking:** `getStandardMapStyles` is removed: `setMapStandardStyle` lists the style ids.
+
+- **Breaking:** the Agent Toolkit's two code tools are named for what they write: `analyseDatasets` attaches an analysis to the datasets it reads, and `deriveDatasets` writes new ones
+  
+  - **Breaking:** `analyseDatasets` replaces `analyseData`, and `deriveDatasets` replaces `processData`, with the same inputs and outputs. Rename them in a `tools` override, a `ToolName` and the tool parts your chat UI renders.
+
+- **Breaking:** the agent restyles what it drew in place. `updateDatasetDisplay` sets the `fillStyle` of reachable areas and custom geometries and the `originPins` of reachable areas, so a reachable area or a computed polygon changes its look without being calculated again, and the camera stays where it is
+  
+  - `setRoute`, `editRouteWaypoints`, `findReachableAreas` and `getTrafficAreaAnalytics` take `fitBounds`, as `getTrafficIncidents` does: `false` shows the result and keeps the map where it is.
+  - `updateDatasetDisplay` fits the camera when `add` or `addMatching` names the datasets to show, or when a `focus` finds sections. A display field that targets the latest dataset, places' `markerType` included, leaves the camera still.
+  - **Breaking:** `findReachableAreas` takes `originPins` in place of `showOriginPin`, and returns `datasetId` in place of `rangesId`.
+
+- **Breaking:** every Agent Toolkit dataset is a plain GeoJSON `FeatureCollection`, and `producedFrom` records what produced it where the slice can make it again. Every dataset slice shares one surface to add, find, show, focus and monitor it. The default tools go from 46 to 34 and do what they did
+  
+  - **Breaking:** `_module`, `_modules`, `_shown`, `_shownAs`, `_waypointsShown`, `_sectionFocus`, `_monitor`, `_tick`, `_config`, `_configChangeUnsub`, `_focus`, `_byId` and `_geometryByPlaceId` are removed from the dataset types. Read `shownDatasetIds`, `getDatasetModule(id)`, `getDatasetConfig(id)`, `isMonitored(id)` and `getFocus(id)`. `RoutingState.setWaypointsShown` and `keepSectionFocus` replace `_waypointsShown` and `_sectionFocus`.
+  - **Breaking:** `RoutingState.currentDatasetModule` is removed: read `getDatasetModule(id)` with an id from `shownDatasetIds`.
+  - **Breaking:** `BYODDataProfile` and `BYODPropertyProfile` are `DatasetProfile` and `DatasetPropertyProfile`.
+  - **Breaking:** `data` is a `FeatureCollection` on every dataset: `Places` on places, `PolygonFeatures` on custom geometries, `TrafficIncidentDetails` on incidents, and on ranges one polygon per origin and budget, which carries its `origin`, `budget` and `originQuery`. `rangesOf(data)` groups a ranges dataset back into `ReachableRange[]`.
+  - **Breaking:** what a slice keeps beside a dataset stays on the slice, read with a `getDataset*` accessor. `places.getDatasetConnections(id)`, `places.getDatasetGeometries(id)` and `byod.getDatasetLayers(id)` replace `PlacesDataset.connections`, `PlacesDataset.geometries` and `BYODDataset.layers`. On `trafficIncidents`, `getDatasetClusters`, `setDatasetClusters`, `clearDatasetClusters` and `getDatasetClustersRecord` replace `getClusters`, `setClusters`, `clearClusters` and `getClustersRecord`.
+  - **Breaking:** in `analyseDatasets`, `deriveDatasets`, `createTracker` and `clusterIncidents` code, `incidentsByDataset[id]` is a `TrafficIncidentDetails` collection, like the other kinds but geometries, not a `TrafficIncident[]`. `clusterIncidents` and the sandbox's `cluster` take the collection or an array.
+  - **Breaking:** `PlacesAnalysis`, `RoutesAnalysis`, `IncidentsAnalysis`, `CustomGeometriesAnalysis`, `BYODAnalysis` and `TrafficAreaAnalyticsAnalysis` are removed. Use `DatasetAnalysis`, which they aliased.
+  - **Breaking:** the `setDatasetMonitor` tool, `{ slice: 'routing' | 'trafficIncidents', datasetId, enabled, intervalMs? }`, replaces `startRouteMonitor`, `stopRouteMonitor` and `setTrafficIncidentsMonitor`. Its `slice` drops a disabled kind, and the agent drops the tool once routes and incidents are both disabled.
+  - **Breaking:** every dataset slice adds with `addDataset({ label, data, producedFrom, id?, timestamp? })`. Routes, incidents, custom geometries and area analytics require `producedFrom`, BYOD defaults it to `{ kind: 'integrator' }`, and places and ranges have none. It replaces `places.addPlaceResult`, `routing.addRoutes`, `trafficIncidents.addIncidentsDataset`, and the `addDataset` that took its fields as arguments on `customGeometries`, `trafficAreaAnalytics` and `byod`. `AddBYODDatasetOptions` is `BYODDatasetInput`.
+  - **Breaking:** what a dataset was produced from is its `producedFrom`. It replaces `waypoints` and `params` on a routes dataset, `params` on an incidents or area-analytics dataset, `provenance` on a custom-geometries dataset and `source` on a BYOD dataset. `GeometryProvenance`, `BYODSource` and `TrafficAreaAnalyticsParams` are `GeometryProducedFrom`, `BYODProducedFrom` and `TrafficAreaAnalyticsProducedFrom`. `BYODDataset.profile` is removed. Read `state.byod.profile(id)`.
+  - **Breaking:** `replaceDatasetData(id, data, timestamp)` replaces `routing.replaceRouteData`. `findFeature(id)`, which returns `{ feature, dataset }`, replaces `places.findPlaceById` and `trafficIncidents.findDatasetWithIncident`.
+  - **Breaking:** every dataset slice has `showDataset(id)`, `hideDataset(id)` and `getDatasetModule(id)`. `getDatasetModule` replaces `getDatasetPlacesModule` on `places`, `getDatasetRoutingModule`, `getDatasetRangesModule` and `getDatasetGeometriesModule` on `customGeometries`. `routing.findDatasetModule(id)` returns a dataset's module if it has one, and `places.findDatasetGeometriesModule(id)` its boundaries module. On `places`, `showDataset(id, { markerType })` and `hideDataset(id)` replace `setShownDatasets`, `addShownDatasets`, `removeShownDatasets`, `clearShownDatasets` and the `shownAs*Ids` sets. On `ranges`, `showDataset(id, { polygons, fillStyle, originPins })` draws the dataset, an omitted option keeping how a shown dataset draws (one drawn without polygons gets its bands back unless the call sets only `originPins`, and a hidden one draws its bands and origin pins), and replaces `markDatasetShown`. `customGeometries.showDataset` and `trafficIncidents.showDataset` take their options as an object.
+  - **Breaking:** `startMonitoring(id, { fetch }, options?)` monitors a dataset on any dataset slice, and `monitor-tick` carries a `DatasetSnapshot`, `{ takenAt, data }`. `IncidentSnapshot` and `MonitoredArea` are removed. `IncidentFocus` is `DatasetFocus`, and every dataset slice has `setFocus`, `getFocus`, `clearFocus`, `focusedFeatures` and the `focus-change` event. `getMonitorStatus(id)` returns a dataset's monitor status, `idle` for one never monitored.
+  - Every dataset slice has `latestDataset`, `findById(id)` and `profile(id)`, which returns the dataset's `DatasetProfile`. `TrafficAreaAnalyticsState.getDatasetConfig(id)` returns the display config of the dataset's module, or nothing before the module exists. `BaseMapState.hasMap` says whether the agent has a map. Showing a dataset needs that map.
+  - `createMapAgent` and `createToolState` take `undefined` for the map. The agent then reads datasets and never shows, moves or styles a map, and `baseMap.hasMap` is false.
+  - **Breaking:** `editRouteWaypoints({ replace?, remove?, origin?, destination?, stops?, show? })` replaces `addWaypointsToRoute`, `removeWaypointsFromRoute` and `replaceWaypointInRoute`. It applies every edit in that order and recalculates once, on the latest routes dataset, whether or not it is on the map.
+  - **Breaking:** `updateDatasetDisplay({ slice, … })` replaces `updatePlacesDisplay`, `updateRoutesDisplay`, `updateTrafficAreaAnalyticsDisplay`, `updateByodDisplay`, `updateWaypointsDisplay` and `clearMap`. It shows, hides and drops the datasets of every slice, ranges, custom geometries and incidents included, and `{ clear: true }` clears the map. Its `slice` drops the slices of disabled kinds, except `ranges`.
+  - **Breaking:** `recallState` takes `slice` in place of `kind`, with `routing` and `trafficIncidents` for `routes` and `incidents`, and names `routing` in its snapshot. `recallState({ slice: 'trackers' })` replaces `getTrackers` and `getTrackerHistory`, and the `planningSlots` of `recallState({ slice: 'routing' })` replace `getCurrentWaypoints`.
+  - **Breaking:** `show` replaces `showOnMap` on `setRoute`, `findReachableAreas` and `getTrafficAreaAnalytics`. `datasetId` replaces `incidentsDatasetID` on `focusIncidents` and `clusterIncidents` and `byodDatasetId` on `setByodLayers`.
+  - **Breaking:** `DatasetKindMeta`, the type of the `DATASET_KIND_META` rows, drops `recallTool` and `fieldLabel`. Wrap `fieldName` in backticks for the label, and point to `recallState({ slice })` to list a kind's dataset ids.
+
+### Patch Changes
+
+- `alongRoute` names a point along a stored route, such as one hour into the drive, and reads it off the selected alternative, or the first alternative when the route is hidden, without recalculating it. `moveCamera` flies there, `discoverPlaces` and `locatePlace` search around it, and `reverseGeocode` names the place there. Each returns where it landed as `routePoint`, including `routeIndex`
+
+- Agent Toolkit: search places and traffic along part of a route, not only the whole drive
+  
+  `discoverPlaces` (`where.route.stretch` and `maxDetour.stretch`) and `getTrafficIncidents` (`where.route.stretch`) take a window on the selected alternative. `from` and `to` use `travelTimeSeconds` or `distanceMeters`, the same fields as a point along the route, or `percent`, and `last` is the final part. Countries, in ISO alpha-2 or alpha-3, or section types narrow it further. The result's `searchedStretch` names the alternative and the parts covered, and the dataset label names the part searched. A `maxDetour` search now reads the selected alternative with or without a stretch, as a point along the route does.
+
 ## 0.18.0
 
 ### Minor Changes

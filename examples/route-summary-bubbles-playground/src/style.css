@@ -29,9 +29,9 @@ fieldset.ui-form-field {
 
 .ui-hint {
     margin: 0 0 var(--ui-space-4);
-    color: var(--ui-text-med-em, #5c5c5c);
-    font-size: 12px;
-    line-height: 16px;
+    color: var(--ui-text-med-em);
+    font-size: var(--ui-font-caption-m);
+    line-height: var(--ui-font-caption-m-lh);
 }
 
 /* Responsive: max-width 768px */

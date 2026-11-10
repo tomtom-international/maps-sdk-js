@@ -3,7 +3,7 @@ import { DEFAULT_WEIGHTS, type FactorWeights } from './scoring';
 
 // Session-level preferences for the Site Selection agent: catchment size, scoring weights and demand
 // anchors for profileSite / rankSites / findWhitespace. Holding them on a state slice makes them
-// runtime-mutable and shared: tools and the processData / analyseData sandbox read the live
+// runtime-mutable and shared: tools and the deriveDatasets / analyseDatasets sandbox read the live
 // preferences instead of baking thresholds into code.
 
 /** How a catchment is measured: a walking radius or a drive-time isochrone. */

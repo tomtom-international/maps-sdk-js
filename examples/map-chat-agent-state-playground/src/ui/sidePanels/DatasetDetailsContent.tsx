@@ -1,34 +1,35 @@
-import type {
-    BYODDataset,
-    CustomGeometriesDataset,
-    PlacesDataset,
-    RangesDataset,
-    RoutesDataset,
-    TrafficAreaAnalyticsDataset,
-    TrafficIncidentsDataset,
+import {
+    type BYODDataset,
+    type CustomGeometriesDataset,
+    type PlacesDataset,
+    type RangesDataset,
+    type RoutesDataset,
+    rangesOf,
+    type TrafficAreaAnalyticsDataset,
+    type TrafficIncidentsDataset,
 } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import { useMemo } from 'react';
 import { AnalysisChart } from '../../chat';
+import { countLabel } from './countLabel';
 import { type Agent, useAgentSnapshot } from './useAgentSnapshot';
 
-type AnyDataset =
-    | PlacesDataset
-    | RoutesDataset
-    | RangesDataset
-    | CustomGeometriesDataset
-    | BYODDataset
-    | TrafficIncidentsDataset
-    | TrafficAreaAnalyticsDataset;
+/**
+ * A dataset the rail selected, tagged by its kind — avoids structural sniffing across dataset shapes that
+ * share a `FeatureCollection`-shaped `data` (routes vs traffic-area-analytics).
+ */
+export type RailSelection =
+    | { kind: 'places'; dataset: PlacesDataset }
+    | { kind: 'routes'; dataset: RoutesDataset }
+    | { kind: 'ranges'; dataset: RangesDataset }
+    | { kind: 'geometries'; dataset: CustomGeometriesDataset }
+    | { kind: 'byod'; dataset: BYODDataset }
+    | { kind: 'incidents'; dataset: TrafficIncidentsDataset }
+    | { kind: 'areaAnalytics'; dataset: TrafficAreaAnalyticsDataset };
 
-type RailKind = 'places' | 'routes' | 'ranges' | 'geometries' | 'byod' | 'incidents' | 'areaAnalytics';
+export type RailKind = RailSelection['kind'];
 
 type DatasetDetailsContentProps = {
-    dataset: AnyDataset;
-    /**
-     * Discriminator from the rail — avoids structural sniffing across dataset shapes that
-     * share a `FeatureCollection`-shaped `data` (routes vs traffic-area-analytics).
-     */
-    kind: RailKind;
+    selection: RailSelection;
     /** Agent handle — analyses are read on demand from the session-level `state.analyses` registry. */
     agent: Agent;
 };
@@ -42,24 +43,18 @@ const formatTimestamp = (ts: number): string =>
         minute: '2-digit',
     });
 
-const itemCount = (dataset: AnyDataset, kind: RailKind): { count: number; unit: string } => {
-    switch (kind) {
-        case 'places':
-            return { count: (dataset as PlacesDataset).data.length, unit: 'place' };
-        case 'routes':
-            return { count: (dataset as RoutesDataset).data.features.length, unit: 'route' };
-        case 'ranges':
-            return { count: (dataset as RangesDataset).data?.length ?? 0, unit: 'range' };
-        case 'geometries':
-            return { count: (dataset as CustomGeometriesDataset).data.length, unit: 'feature' };
-        case 'byod':
-            return { count: (dataset as BYODDataset).profile.featureCount, unit: 'feature' };
-        case 'incidents':
-            return { count: (dataset as TrafficIncidentsDataset).data.length, unit: 'incident' };
-        case 'areaAnalytics':
-            return { count: (dataset as TrafficAreaAnalyticsDataset).data.features.length, unit: 'region' };
-    }
+const ITEM_UNITS: Record<RailKind, string> = {
+    places: 'place',
+    routes: 'route',
+    ranges: 'range',
+    geometries: 'feature',
+    byod: 'feature',
+    incidents: 'incident',
+    areaAnalytics: 'region',
 };
+
+const itemCount = (selection: RailSelection): number =>
+    selection.kind === 'ranges' ? rangesOf(selection.dataset.data).length : selection.dataset.data.features.length;
 
 function StatRow({ label, value }: { label: string; value: string }) {
     return (
@@ -70,11 +65,9 @@ function StatRow({ label, value }: { label: string; value: string }) {
     );
 }
 
-type Analysis = { name: string; description?: string; outputFormat: string; data: unknown };
-
-// One-line provenance string for a BYOD dataset's source, mirroring the LLM-facing
-// labels the slice uses (integrator / url / inline).
-const byodSource = (source: BYODDataset['source']): string => {
+// One-line label for where a BYOD dataset came from, matching the kinds the slice records
+// (integrator, url, inline).
+const byodSource = (source: BYODDataset['producedFrom']): string => {
     switch (source.kind) {
         case 'url':
             return source.url;
@@ -85,33 +78,34 @@ const byodSource = (source: BYODDataset['source']): string => {
     }
 };
 
-export function DatasetDetailsContent({ dataset, kind, agent }: DatasetDetailsContentProps) {
+export function DatasetDetailsContent({ selection, agent }: DatasetDetailsContentProps) {
+    const { dataset } = selection;
     // Analyses live in the session-level registry, not on the dataset — read them on demand for this dataset
     // and re-render whenever any analysis recomputes. (Mounted with a per-dataset `key`, so the initial
     // snapshot is fresh on selection change.)
     const allAnalyses = useAgentSnapshot(
         useMemo(() => [{ events: agent.state.analyses.events, types: ['analysis-change'] }], [agent]),
-        () => agent.state.analyses.getAnalysesForDataset(dataset.id) as readonly Analysis[],
+        () => agent.state.analyses.getAnalysesForDataset(dataset.id),
     );
     const charts = allAnalyses.filter((a) => a.outputFormat === 'chart');
-    const { count, unit } = itemCount(dataset, kind);
     const isSingleAnalysis = charts.length === 1;
-    const provenance = kind === 'geometries' ? (dataset as CustomGeometriesDataset).provenance : undefined;
-    const byod = kind === 'byod' ? (dataset as BYODDataset) : undefined;
+    const producedFrom = selection.kind === 'geometries' ? selection.dataset.producedFrom : undefined;
+    const byod = selection.kind === 'byod' ? selection.dataset : undefined;
+    const byodProfile = byod && agent.state.byod.profile(byod.id);
 
     return (
         <div className="flex flex-col">
             <div className="flex flex-col gap-1 border-b border-(--ui-border-low-em) bg-(--ui-surface-1) px-3 py-2">
                 <StatRow label="Label" value={dataset.label} />
                 <StatRow label="ID" value={dataset.id} />
-                <StatRow label="Items" value={`${count} ${unit}${count === 1 ? '' : 's'}`} />
+                <StatRow label="Items" value={countLabel(itemCount(selection), ITEM_UNITS[selection.kind])} />
                 <StatRow label="Last modified" value={formatTimestamp(dataset.timestamp)} />
-                {provenance && <StatRow label="Operation" value={provenance.operation ?? 'custom'} />}
-                {provenance && provenance.sourceIds.length > 0 && (
+                {producedFrom && <StatRow label="Operation" value={producedFrom.operation ?? 'custom'} />}
+                {producedFrom && producedFrom.sourceIds.length > 0 && (
                     <div className="flex flex-col gap-0.5 pt-1 text-[12px] leading-[16px]">
                         <span className="text-(--ui-text-low-em)">Sources</span>
                         <ul className="flex flex-col gap-0.5">
-                            {provenance.sourceIds.map((source) => {
+                            {producedFrom.sourceIds.map((source) => {
                                 const display = `${source.kind}:${source.id}`;
                                 return (
                                     <li
@@ -126,20 +120,20 @@ export function DatasetDetailsContent({ dataset, kind, agent }: DatasetDetailsCo
                         </ul>
                     </div>
                 )}
-                {byod && <StatRow label="Source" value={byodSource(byod.source)} />}
-                {byod && byod.profile.geometryTypes.length > 0 && (
-                    <StatRow label="Geometry" value={byod.profile.geometryTypes.join(', ')} />
+                {byod && <StatRow label="Source" value={byodSource(byod.producedFrom)} />}
+                {byodProfile && byodProfile.geometryTypes.length > 0 && (
+                    <StatRow label="Geometry" value={byodProfile.geometryTypes.join(', ')} />
                 )}
             </div>
 
-            {byod && (
+            {byodProfile && (
                 <div className="flex flex-col gap-1 border-b border-(--ui-border-low-em) px-3 py-3">
                     <strong className="text-[13px] font-semibold text-(--ui-text-high-em)">Inferred schema</strong>
-                    {byod.profile.properties.length === 0 ? (
+                    {byodProfile.properties.length === 0 ? (
                         <span className="text-[11px] text-(--ui-text-low-em)">No feature properties.</span>
                     ) : (
                         <ul className="flex flex-col gap-1.5">
-                            {byod.profile.properties.map((property) => (
+                            {byodProfile.properties.map((property) => (
                                 <li key={property.name} className="flex flex-col gap-0.5 text-[11px] leading-[15px]">
                                     <div className="flex items-baseline justify-between gap-3">
                                         <span
@@ -164,10 +158,9 @@ export function DatasetDetailsContent({ dataset, kind, agent }: DatasetDetailsCo
                             ))}
                         </ul>
                     )}
-                    {byod.profile.propertiesOmitted ? (
+                    {byodProfile.propertiesOmitted ? (
                         <span className="text-[11px] text-(--ui-text-low-em)">
-                            +{byod.profile.propertiesOmitted} more{' '}
-                            {byod.profile.propertiesOmitted === 1 ? 'key' : 'keys'}
+                            +{byodProfile.propertiesOmitted} more {byodProfile.propertiesOmitted === 1 ? 'key' : 'keys'}
                         </span>
                     ) : null}
                 </div>

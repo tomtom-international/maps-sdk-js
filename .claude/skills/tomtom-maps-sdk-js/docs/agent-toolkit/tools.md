@@ -7,29 +7,63 @@ See [base reference](../agent-toolkit.md) for setup and `MapAgentOptions`.
 
 ## `DEFAULT_TOOLS` registry
 
-Flat record of the 50 default tools; `TOOL_NAMES` lists their names and `ToolName` is the union type.
+Flat record of the 34 default tools; `TOOL_NAMES` lists their names and `ToolName` is the union type.
 `executeMaplibreCode` is not one of them — see [`executeMaplibreCode` — opt-in](#executemaplibrecode--opt-in).
 
 - **Location**: `locatePlace`, `reverseGeocode`, `getCurrentLocation`, `getViewport`, `calculateBBox`
-- **Places & search**: `discoverPlaces`, `getPOICategoryCodes`
-- **Routing**: `setRoute`, `addWaypointsToRoute`, `removeWaypointsFromRoute`, `replaceWaypointInRoute`, `getCurrentWaypoints`, `startRouteMonitor`, `stopRouteMonitor`
-- **Reachable areas**: `findReachableAreas` — calls `calculateReachableRanges`, in private preview: the API key needs Calculate Reachable Range access ([routing.md](../routing.md#reachable-ranges-isochrones))
-- **BYOD**: `addByodSource`, `setByodLayers`, `updateByodDisplay` — [byod.md](./byod.md)
-- **Traffic incidents**: `getTrafficIncidents`, `setTrafficIncidentsMonitor`, `clusterIncidents`, `focusIncidents`
-- **Traffic area analytics**: `getTrafficAreaAnalytics`, `updateTrafficAreaAnalyticsDisplay` (show / hide only; the look is `setMapStyling`'s)
-- **Trackers (geofence / proximity alerts)**: `createTracker`, `getTrackers`, `getTrackerHistory`, `clearTracker`
-- **Data tools (scopable)**: `analyseData`, `processData`, `monitorAnalysis` — [data-tools.md](./data-tools.md)
-- **Map display**: `updatePlacesDisplay`, `updateRoutesDisplay`, `updateWaypointsDisplay`, `clearMap` — which datasets show, not how they look
-- **Map control**: `flyTo`, `zoomInOrOut`, `setPitchBearing`, `setMapStandardStyle`, `getStandardMapStyles`, `setLanguage`, `setGeopoliticalView`
+- **Places & search**: `discoverPlaces`, `getPOICategoryCodes`. `discoverPlaces` asks for the next seven days of opening
+  hours and each place's time zone, and takes `chargers: { minPowerKW?, maxPowerKW?, connectors? }`, which alone
+  searches charging locations. Its result lists five places, each with `distance` (whole metres), `openingHours:
+  { openNow?, today?, closesAt?, opensAt?, openDays? }` and a charging park's `connectors`, and counts every place it
+  returned `byCategory`, every charging park `byConnector` (`{ connectorType, ratedPowerKW, stations, connectors }`)
+  and how many are `openNow`. `moreMatched: true` says the search hit its limit (100, or the detour `limit`), so the
+  counts cover only those places. A listed place's hours say whether that one is open now or on a given day; which of
+  the others are open is `analyseDatasets`. `deriveDatasets` and `recallState` on a places dataset return the same
+  counts and per-place fields. `locatePlace` of a venue returns `distance`, `openingHours` and `connectors`.
+- **Routing**: `setRoute`, `editRouteWaypoints({ replace?, remove?, origin?, destination?, stops?, show? })` — every edit in one
+  recalculation, applied in that order; `stops` go where they fit best along the route
+- **A point along a route**: `alongRoute: { routeId?, travelTimeSeconds | distanceMeters }` ("1 hour into the drive",
+  "50 km in") reads the point off the selected alternative of a stored route, shown or hidden, with no recalculation.
+  `moveCamera`'s `where` flies there, the `nearby` bias of `discoverPlaces` and `locatePlace` searches around it, and
+  `reverseGeocode` names the place there. Each returns
+  `routePoint: { routeId, routeIndex, position, travelTimeInSeconds, distanceInMeters }`; a hidden route uses index 0,
+  and a value past the end lands on the destination
+- **A part of a route**: `stretch` on `discoverPlaces` (`where.route` or `maxDetour`) and `getTrafficIncidents`
+  (`where.route`) keeps part of the selected alternative. `from` and `to` are each `travelTimeSeconds` or
+  `distanceMeters`, the same fields as `alongRoute`, or `percent` of the length; `last` is the final part in those
+  fields. Countries (ISO alpha-2 or alpha-3) and section types narrow it further. A hidden route uses alternative 0,
+  and a value past the end lands on the destination. The result's `searchedStretch` names the alternative and the
+  parts covered. `maxDetour` searches the selected alternative with or without a stretch. A point into the drive stays
+  `alongRoute`
+- **Reachable areas**: `findReachableAreas({ origins, budgets, show, fillStyle?, originPins?, fitBounds?, hidePreviousDatasets? })` → `{ datasetId, ranges, skipped? }` — calls `calculateReachableRanges`, in private preview: the API key needs Calculate Reachable Range access ([routing.md](../routing.md#reachable-ranges-isochrones))
+- **The camera after a show**: every tool whose `show` is a boolean (`setRoute`, `editRouteWaypoints`,
+  `findReachableAreas`, `getTrafficAreaAnalytics`, `getTrafficIncidents`) takes `fitBounds`, default `true`; `false`
+  shows the result and keeps the map where it is. `updateDatasetDisplay`'s `fitBounds` defaults to fitting when the
+  call names datasets to show (`add` / `addMatching`) or a focus finds sections, so a restyle of the latest dataset
+  keeps the camera where it is. The places and BYOD tools, whose `show` is an
+  object, take its `zoomMode: 'auto' | 'none'`
+- **BYOD**: `addByodSource`, `setByodLayers` — [byod.md](./byod.md)
+- **Traffic incidents**: `getTrafficIncidents`, `clusterIncidents`, `focusIncidents`
+- **Live refresh**: `setDatasetMonitor({ slice: 'routing' | 'trafficIncidents', datasetId, enabled, intervalMs? })` → `{ slice, datasetId, enabled, alreadyInState }` — re-fetches a route (live-traffic delays) or an incidents dataset on a cadence (default 60 s)
+- **Traffic area analytics**: `getTrafficAreaAnalytics` (the look is `setMapStyling`'s)
+- **Trackers (geofence / proximity alerts)**: `createTracker`, `clearTracker`; `recallState({ slice: 'trackers' })` reads them
+- **Data tools (scopable)**: `analyseDatasets`, `deriveDatasets`, `monitorAnalysis` — [data-tools.md](./data-tools.md)
+- **Map display**: `updateDatasetDisplay` — which datasets of a slice show, and the display options their tool
+  took, such as a polygon's fill; colours and widths are `setMapStyling`'s
+- **Map control**: `moveCamera({ where?, zoomBy?, pitch?, bearing? })` (`where` is `{ boundingBox, padding? }` or
+  `{ position, zoom? }` or `{ alongRoute, zoom? }`, not with `zoomBy`), `setMapStandardStyle`, `setMapLocale`
 - **Map styling**: `setMapStyling` — what the base map shows (layer groups, POI icons, the live traffic overlays) and how it looks, and the look of every layer the agent drew
 - **MapLibre direct**: `getMapStyleLayers`, `setLayerProperties` (`changes: [{ layerId, paint?, layout? }]`)
 - **State**: `recallState`, `setDatasetMode`, `resetState`
 - **Utilities**: `clarifyIntent`, `help`
 
-Names are stable; reference entries as `DEFAULT_TOOLS.locatePlace`. Seven entries are builders (`ToolEntryBuilder`):
-`discoverPlaces`, `analyseData`, `processData`, `createTracker`, `clusterIncidents`, `recallState`, `setMapStyling`.
+Names are stable; reference entries as `DEFAULT_TOOLS.locatePlace`. Nine entries are builders (`ToolEntryBuilder`):
+`discoverPlaces`, `analyseDatasets`, `deriveDatasets`, `createTracker`, `clusterIncidents`, `recallState`, `setMapStyling`,
+`updateDatasetDisplay`, `setDatasetMonitor`.
 
 `TOOLS_BY_DATASET_KIND` maps each `DatasetKind` to the tools dropped when `datasets[kind].enabled` is `false`.
+`updateDatasetDisplay` and `setDatasetMonitor` narrow their `slice` to the enabled kinds; `setDatasetMonitor` is dropped
+once `routes` and `incidents` are both disabled.
 `getDefaultToolPrompts()` returns `Record<ToolName, readonly string[]>` of every tool's `examplePrompts` — chat-UI starter
 suggestions from the same source as the `help` tool.
 
@@ -53,8 +87,8 @@ suggestions from the same source as the `help` tool.
   `state.places.geometriesKnobs`, …) sets the knob on every module of that kind and on each one created later;
   `theme: { colors | imageUrl, mode }` themes the map and returns `switchedStyle` when it had to switch the standard style.
   See [map-styling.md](../map-styling.md), [map-theming.md](../map-theming.md).
-- **`setGeopoliticalView`** — `{ geopoliticalView? }` from `geopoliticalViews`; sets it on the map
-  (`setGeopoliticalView`) and in `TomTomConfig`, so later searches follow; omitted resets to the default view.
+- **`setMapLocale`** — `{ language?, geopoliticalView? }`, at least one. Sets each on the map and in `TomTomConfig`,
+  so later searches follow; `geopoliticalView` from `geopoliticalViews`, `null` resets to the default view.
 - **`setRoute`** — requests every travel time (`computeTravelTimeFor: 'all'`) and, besides the default sections,
   `curve` and `curvyStretch`, which the SDK finds in the geometry with no extra request (no guidance, so a turn at a
   junction counts as a curve). Each route summary also carries
@@ -62,23 +96,32 @@ suggestions from the same source as the `help` tool.
   roads (`getImportantRoads`; among alternatives, those on its `sections.distinct`), and `timeInCurvesPercent`, the
   share of its travel time in curves (absent below 0.5%). An alternative adds
   `comparedToBest: { adds?, avoids? }`, the section counts it takes on and stays clear of against route 0
-  (`compareRoutes`). The waypoint tools and `recallState({ kind: 'routes', id })` return the same summary.
-  It takes no display options beyond `showOnMap`: the pins are `updateRoutesDisplay`'s `waypoints`, the summary bubbles
+  (`compareRoutes`). A route held up by traffic adds `jams: { count, first }`, `first` being the jam met first:
+  `startsAfterMeters`, `lengthInMeters`, `delayInSeconds`, its `road` and `categories`. `editRouteWaypoints` and `recallState({ slice: 'routing', id })` return the same summary.
+  It takes no display options beyond `show` and `fitBounds`: the pins are `updateDatasetDisplay`'s `waypoints`, the summary bubbles
   `setMapStyling`'s `routes.summaryBubbles.visible`.
-- **`updateRoutesDisplay`** — `waypoints: false` hides a dataset's pins, and every later show keeps them hidden
-  (`RoutingState.setWaypointsShown`); `selectedIndex` calls `RoutingModule.selectRoute`; `focus: { sectionTypes?, roads?, pick? }`
+- **`updateDatasetDisplay`** — `{ slice, add?, remove?, addMatching?, removeMatching?, drop?, fitBounds?, … }` shows,
+  hides or drops datasets of one slice; `{ clear: true }` with no `slice` hides everything every slice draws. A builder:
+  the `slice` enum drops the slices of disabled kinds, but `ranges` always stays. Places add `markerType` and `geometry` (boundaries). Routing
+  adds `waypoints`, `selectedIndex`, `focus` and `planningSlots: true`, which shows the staged waypoints without a route.
+  Ranges add `fillStyle` and `originPins`, custom geometries `fillStyle`: each display option a producer took when it drew
+  the dataset changes here, never by recalculating it.
+  `waypoints: false` hides a dataset's pins, which monitor ticks and re-shows keep until the dataset is hidden
+  (`RoutingState.setWaypointsShown`, or `showDataset(id, { showWaypoints })` for a hidden one); `selectedIndex` calls `RoutingModule.selectRoute`; `focus: { sectionTypes?, roads?, pick? }`
   rings sections of each targeted dataset's selected route with `setSectionFocus` and fits the camera to them, and
   `focus: null` clears the ring. `sectionTypes` are the counted types plus `motorway`, `distinct`, `leg`, `country`,
   `curve` and `curvyStretch`, `roads` match road numbers or street names, and `pick` is `'all'` (default), `'longest'`,
   `'mostDelay'`, `'curviest'` (highest `curvinessScore`) or a 0-based index in driving order. Drawing every curve is
-  `setMapStyling`'s `routes.sections.curve.visible` and `routes.sections.curvyStretch.visible`. With no `add` / `addMatching`, these target the latest dataset; the result's `focused` lists
+  `setMapStyling`'s `routes.sections.curve.visible` and `routes.sections.curvyStretch.visible`. With no `add` / `addMatching`, the display fields of places, routing, ranges and custom geometries target the latest dataset; the result's `focused` lists
   each dataset's `sectionCount` and `lengthInMeters`. The camera moves only for `add` / `addMatching` or a focus that
   finds sections. A monitor tick keeps the selected alternative and rings the same focus on the recalculated route.
 - **Errors** — a failed TomTom service or map call returns `{ error, code }`, `code` being the `SDKErrorCode`, the
   error text ending with whether retrying helps.
-- **`recallState`** — reads state, never fetches. No args: session snapshot (places / routes / ranges index, dataset modes,
-  map style, POIs, traffic). `{ kind }`: that kind's index. `{ kind, id }`: one dataset's summarised detail.
-  Kinds: `places`, `routes`, `ranges`, `geometries`, `byod`, `incidents`, `trafficAreaAnalytics`.
+- **`recallState`** — reads state, never fetches. No args: session snapshot (places / routing / ranges index, dataset
+  modes, map style, POIs, traffic). `{ slice }`: that slice's index; `routing`'s also lists the `planningSlots` staged for
+  the next `setRoute`. `{ slice, id }`: one dataset's summarised detail. Slices: `places`, `routing`, `ranges`,
+  `geometries`, `byod`, `trafficIncidents`, `trafficAreaAnalytics`, `trackers` (each tracker, whether it's firing, and
+  its alert log; `id` narrows to one, `sinceMs` to the newer events).
 - **`help`** — `{ mode: 'summary' | 'detail', query?, tag? }`, surfacing each tool's `description`, `examplePrompts` and `relatedTools`.
 - **`setDatasetMode`** — `{ slice, mode }`; see [state.md](./state.md).
 
@@ -179,8 +222,8 @@ const getFleetVehicle: ToolEntry = {
                 poi: { name: `Vehicle ${vehicleId}`, categories: [], localizedCategories: [] },
             },
         };
-        // Appends a places dataset; the model shows it with updatePlacesDisplay.
-        const datasetId = await state.places.addPlaceResult(place, `Vehicle ${vehicleId}`);
+        // Appends a places dataset; the model shows it with updateDatasetDisplay.
+        const datasetId = await state.places.addDataset({ label: `Vehicle ${vehicleId}`, data: { type: 'FeatureCollection', features: [place] } });
         return { vehicleId, datasetId, position };
     },
     tags: ['location'],
@@ -204,7 +247,7 @@ execute: async ({ name }, state, options) => {
         const position = getViewportBias(state.baseMap);
         const place = await locatePlace(name, 'poi', position && { position }, options);
         if (!place) return { status: 'not_found' };
-        return { datasetId: await state.places.addPlaceResult(place, name) };
+        return { datasetId: await state.places.addDataset({ label: name, data: { type: 'FeatureCollection', features: [place] } }) };
     } catch (error) {
         return { error: `Lookup failed: ${error instanceof Error ? error.message : String(error)}` };
     }
@@ -217,7 +260,7 @@ execute: async ({ name }, state, options) => {
 createMapAgent(map, {
     model,
     tools: {
-        setLanguage: false,                    // remove
+        setMapLocale: false,                   // remove
         getCurrentLocation: myCustomGetLoc,    // replace (full ToolEntry)
     },
 });
@@ -280,17 +323,23 @@ createMapAgent(map, {
 
 `where: { mode: 'within', … }` takes the same multi-region fields as `discoverPlaces` (`viewport`, `boundingBox`, `queries`,
 `placeIds`, `geometries`, `range`, `route`); they resolve to bboxes and are unioned (≤ 10,000 km²).
+`route.stretch` keeps part of the selected alternative. Several parts share one bbox, so a gap between them is included.
 Omitted `where` means the viewport. A named area beats `viewport: true` when the model sends both.
 
 ```ts
 getTrafficIncidents({});                                                                       // viewport
 getTrafficIncidents({ where: { mode: 'within', queries: [{ query: 'Paris', queryAs: 'place' }] } });
 getTrafficIncidents({ where: { mode: 'within', route: { widthMeters: 1000 } } });              // corridor around the latest route
+getTrafficIncidents({ where: { mode: 'within', route: { widthMeters: 500, stretch: { includeCountries: ['BE'] } } } }); // Belgian part of the selected alternative
 getTrafficIncidents({ where: { mode: 'within', queries: [{ query: 'Amsterdam' }], placeIds: ['G55fc4abe-...'] } });
 ```
 
 Other inputs: `categoryFilter`, `timeValidityFilter` (default `['present']`), `label`, `show` (default `true`), `fitBounds`,
 `monitor` (default `true` when shown), `monitorIntervalMs` (default 60 s).
+
+The result's `summary` counts every incident fetched: `byCategory`, `byMagnitude`, `totalDelayInSeconds` and `byRoad`,
+the 10 roads (first road number) with most incidents, each with its delay. It names no single incident.
+`recallState({ slice: 'trafficIncidents', id })` returns that same `summary`.
 
 ## Start blank, hand-pick built-ins
 
@@ -305,8 +354,8 @@ createMapAgent(map, {
     tools: {
         getFleetVehicle,
         locatePlace: DEFAULT_TOOLS.locatePlace,
-        flyTo: DEFAULT_TOOLS.flyTo,
-        analyseData: DEFAULT_TOOLS.analyseData,
+        moveCamera: DEFAULT_TOOLS.moveCamera,
+        analyseDatasets: DEFAULT_TOOLS.analyseDatasets,
     },
 });
 ```

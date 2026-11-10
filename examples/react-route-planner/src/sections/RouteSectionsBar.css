@@ -112,9 +112,9 @@
     border-radius: var(--ui-rounded-5);
     background: var(--ui-surface-high-em);
     color: var(--ui-text-white);
-    font-size: 10px;
+    font-size: var(--ui-font-title-5);
     font-weight: var(--ui-font-weight-semibold);
-    line-height: 16px;
+    line-height: var(--ui-font-title-5-lh);
     white-space: nowrap;
 }
 
@@ -158,7 +158,7 @@
     overflow: hidden;
     color: var(--ui-text-high-em);
     font-family: var(--ui-font-gilroy);
-    font-size: 10px;
+    font-size: var(--ui-font-title-5);
     font-weight: var(--ui-font-weight-semibold);
     line-height: var(--ui-lane-height);
 }

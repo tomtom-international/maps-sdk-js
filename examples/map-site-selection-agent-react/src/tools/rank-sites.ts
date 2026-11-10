@@ -1,5 +1,5 @@
-import { getPosition, type PolygonFeatures } from '@tomtom-org/maps-sdk/core';
-import type { ReachableRange, ToolEntry, ToolEntryBuilder, ToolState } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+import { getPosition, type ReachableRangeBudget } from '@tomtom-org/maps-sdk/core';
+import type { ToolEntry, ToolEntryBuilder, ToolState } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import * as turf from '@turf/turf';
 import type { FeatureCollection } from 'geojson';
 import { z } from 'zod';
@@ -494,7 +494,7 @@ const executeRankSites = (async (params: RankSitesInput, state: ToolState) => {
             .sort((a, b) => a.rank - b.rank);
 
         progress.step(5);
-        const budget: ReachableRange['budgets'][number] = walking
+        const budget: ReachableRangeBudget = walking
             ? { type: 'distanceKM', value: walkReachMeters / 1000 }
             : { type: 'timeMinutes', value: driveMinutes };
         // Catchment + pin reuse the Shortlist widget's score colour, so map and row read as one
@@ -517,8 +517,8 @@ const executeRankSites = (async (params: RankSitesInput, state: ToolState) => {
                     query: `#${ranked.rank} ${ranked.label}${ranked.excluded ? ' (excluded)' : ` (${ranked.score})`}`,
                     position: ranked.site.position,
                 },
-                budgets: [budget],
-                polygon: { type: 'FeatureCollection', features: [catchments[index]] } as PolygonFeatures,
+                budget,
+                polygon: catchments[index],
             })),
             false, // replaced by drawRankedSites below
             true,
@@ -529,7 +529,6 @@ const executeRankSites = (async (params: RankSitesInput, state: ToolState) => {
             rangesId,
             rankedSites.map((ranked, index) => ({
                 label: ranked.label,
-                catchment: catchments[index],
                 position: ranked.site.position,
                 color: siteColors[index],
                 number: ranked.excluded ? null : ranked.rank,

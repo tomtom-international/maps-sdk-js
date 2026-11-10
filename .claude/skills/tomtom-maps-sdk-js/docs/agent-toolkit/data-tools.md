@@ -1,6 +1,6 @@
 # Agent Toolkit — Scope-aware data tools
 
-The unified `analyseData` / `processData` tools, the sandbox their generated code runs in (`createTracker` and
+The unified `analyseDatasets` / `deriveDatasets` tools, the sandbox their generated code runs in (`createTracker` and
 `clusterIncidents` code too), and per-turn scoping.
 See [base reference](../agent-toolkit.md) for setup, [tools.md](./tools.md) for the registry.
 
@@ -16,26 +16,26 @@ per-dataset record per kind — no merged collection:
 |---|---|---|
 | `places` | `placesByDataset` | `FeatureCollection` |
 | `routes` | `routesByDataset` | `FeatureCollection` |
-| `incidents` | `incidentsByDataset` | incident array |
+| `incidents` | `incidentsByDataset` | `FeatureCollection` (`TrafficIncidentDetails`) |
 | `customGeometries` | `geometriesByDataset` | polygon array, keyed by the tagged source `${kind}:${id}` (a place's, a range's or a custom geometry's polygons) |
 | `trafficAreaAnalytics` | `trafficAreaAnalyticsByDataset` | `FeatureCollection` of tile / hex regions |
 | `byod` | `byodByDataset` | `FeatureCollection` |
 
-Span datasets with `Object.values(...)` (`.flatMap((fc) => fc.features)` for collections, `.flat()` for arrays).
+Span datasets with `Object.values(...)` (`.flatMap((fc) => fc.features)` for collections, `.flat()` for geometries' arrays).
 
 Libraries also injected: `turf`, `h3`, `routeUtils` (core's route section and progress helpers, `getSectionsWithin`,
 `getImportantRoads`, `compareRoutes` and `isHairpin` included), `cluster(incidents, params?, previous?, now?)`
-(DBSCAN, `{ eps?, minMembers?, maxClusters?, preFilter? }`). Standing runs (a monitored analysis, a monitor tick) add
+(DBSCAN over one dataset's collection or a filtered incident array, `{ eps?, minMembers?, maxClusters?, preFilter? }`). Standing runs (a monitored analysis, a monitor tick) add
 `previous`, `now`, `log`.
 
-## `analyseData`
+## `analyseDatasets`
 
 - Extra inputs: `name`, `description?`, `outputFormat?` (`'json'` default, or `'chart'` for a Chart.js config —
   `bar` / `line` / `pie` / `doughnut` / `radar` / `polarArea` / `scatter` / `bubble`), `monitor?`.
 - Returns an `analysisId`. `monitor: true` recomputes the analysis on every source change;
   `monitorAnalysis({ analysisId, enabled })` toggles it later.
 
-## `processData`
+## `deriveDatasets`
 
 - Extra inputs: `label?`, `datasetId?` (overwrite), `operation?`, `show?`.
 - `code` returns one of `{ places }` (optionally with attached `geometries` and `placeConnections`), `{ geometries }`
@@ -51,7 +51,7 @@ in the sandbox; without it the default clustering runs.
 
 ## Sandbox
 
-- **Browser:** `analyseData` / `processData` / `createTracker` / `clusterIncidents` code runs in a Web Worker inside a sandboxed opaque-origin iframe with CSP
+- **Browser:** `analyseDatasets` / `deriveDatasets` / `createTracker` / `clusterIncidents` code runs in a Web Worker inside a sandboxed opaque-origin iframe with CSP
   `default-src 'none'` — no DOM, network or storage. The worker is terminated on timeout (`codeExecution.timeoutMs`,
   default 10 s). The worker libraries load lazily, as a ~770 kB chunk from wherever the app serves the plugin's chunks.
   If the iframe cannot start, the tool returns an error to the model and runs nothing (`console.warn` once); a call
@@ -91,7 +91,7 @@ Threat model: [code generation guide](https://docs.tomtom.com/maps-sdk-js/guides
 ## Per-turn scope
 
 An unscoped data tool documents every enabled kind with its schema docs. To keep each request small, the classifier emits
-`toolScopes[<name>] = { kinds: [...] }` for every scopable tool it picks (`analyseData`, `processData`, `createTracker`,
+`toolScopes[<name>] = { kinds: [...] }` for every scopable tool it picks (`analyseDatasets`, `deriveDatasets`, `createTracker`,
 `clusterIncidents`; `setMapStyling` scopes the same way by knob family, see [tools.md](./tools.md#notes-on-specific-tools)),
 and `prepareStep` rebuilds that tool's `description` + `inputSchema` for the turn with only those kinds. Scoped or not, the
 helper docs follow the active kinds: the cross-kind cheat-sheet when more than one is active, `routeUtils` with routes,
@@ -105,8 +105,8 @@ helper docs follow the active kinds: the cross-kind cheat-sheet when more than o
 
 ```ts
 onClassify: (result) => {
-    console.log(result?.activeToolNames); // ['analyseData', 'recallState']
-    console.log(result?.toolScopes);      // { analyseData: { kinds: ['places', 'routes'] } }
+    console.log(result?.activeToolNames); // ['analyseDatasets', 'recallState']
+    console.log(result?.toolScopes);      // { analyseDatasets: { kinds: ['places', 'routes'] } }
 },
 ```
 

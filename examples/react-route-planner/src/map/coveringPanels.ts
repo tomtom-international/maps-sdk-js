@@ -5,11 +5,11 @@ import type { FlyToOptions, PaddingOptions } from 'maplibre-gl';
 import { reclaimCamera } from './cameraHolder';
 
 /**
- * The panels over the map, for the camera to frame its target between. The sections bar counts by
- * its dock, which spans the map's width: the bar alone, closer to the right edge than to the
- * bottom, would read as a panel on the right.
+ * The panels over the map, for the camera to frame its target between. The sections bar and the
+ * details card are measured apart. In the dock their boxes merge, and that union spans the map's
+ * width up to the card's top, so the card would count for the empty map beside it too.
  */
-const coveringPanels = ['.ui-planner', '.ui-sections-dock'];
+const coveringPanels = ['.ui-planner', '.ui-sections-bar', '.ui-section-details'];
 
 const MARGIN_PX = 48;
 const MOVE_MS = 800;

@@ -15,7 +15,16 @@ import { type RouteCursorStore, useRouteCursor } from '../map/routeCursor';
 import type { MapModules } from '../map/useMapModules';
 import { type ChipLook, CollapseToggle, Hint } from '../panel/fields';
 import { filledStops, type Stop, stopBadge } from '../planner/stops';
-import { type Axis, axisFraction, type Lane, type LaneBlock, routeLanes, stopMarks } from './routeLanes';
+import {
+    type Axis,
+    axisFraction,
+    type Lane,
+    type LaneBlock,
+    routeLanes,
+    sectionBlock,
+    sectionCoordinates,
+    stopMarks,
+} from './routeLanes';
 import { SectionDetailsCard } from './SectionDetailsCard';
 import '../panel/stop.css';
 import './routeLanes.css';
@@ -32,6 +41,8 @@ type RouteSectionsBarProps = {
     /** The section clicked on the bar or on the map, by id, whose details show above the bar. */
     selectedSectionId?: string;
     onSelectSection: (sectionId?: string) => void;
+    /** Opens search along the section whose details are showing, when that section has a stretch. */
+    onSearchAlong?: () => void;
 };
 
 const axisLabels: Record<Axis, string> = { time: 'Time', distance: 'Distance' };
@@ -50,18 +61,25 @@ export const RouteSectionsBar = ({
     onPointAtSection,
     selectedSectionId,
     onSelectSection,
+    onSearchAlong,
 }: RouteSectionsBarProps) => {
     const [axis, setAxis] = useState<Axis>('time');
     const [collapsed, setCollapsed] = useState(false);
     const lanes = routeLanes(route);
-    const blockById = (id?: string) => lanes.flatMap((lane) => lane.blocks).find((block) => block.id === id);
-    const active = blockById(pointedSectionId);
-    const selected = blockById(selectedSectionId);
+    const active = pointedSectionId ? sectionBlock(route, pointedSectionId) : undefined;
+    const selected = selectedSectionId ? sectionBlock(route, selectedSectionId) : undefined;
     const closeDetails = useCallback(() => onSelectSection(undefined), [onSelectSection]);
 
     return (
         <>
-            {selected && <SectionDetailsCard route={route} block={selected} onClose={closeDetails} />}
+            {selected && (
+                <SectionDetailsCard
+                    route={route}
+                    block={selected}
+                    onClose={closeDetails}
+                    onSearchAlong={onSearchAlong}
+                />
+            )}
             <section className="ui-customPanel ui-sections-bar" aria-label="Route sections">
                 <div className="ui-sections-header">
                     <h4 className="ui-subheading">Along the route</h4>
@@ -86,7 +104,7 @@ export const RouteSectionsBar = ({
                             axis={axis}
                             cursorStore={cursorStore}
                             onPickPoint={(point, reach) => {
-                                // The fit measures the dock, so the details card must have left it first.
+                                // The fit measures the details card, so it must have left the map first.
                                 flushSync(() => onSelectSection(undefined));
                                 zoomToPoint(modules, point, reach);
                             }}
@@ -117,8 +135,7 @@ export const RouteSectionsBar = ({
 
 // Fitted to every point of the section: a winding one strays outside `getSectionBBox`'s sampled box.
 const zoomToSection = (modules: MapModules, route: Route, block: LaneBlock) => {
-    const { startPointIndex, endPointIndex } = block.section;
-    const bbox = bboxFromCoordsArray(route.geometry.coordinates.slice(startPointIndex, endPointIndex + 1));
+    const bbox = bboxFromCoordsArray(sectionCoordinates(route, block));
     if (bbox) fitBetweenPanels(modules.map, bbox, 15);
 };
 

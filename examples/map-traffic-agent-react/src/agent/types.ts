@@ -8,8 +8,8 @@ export type Cluster = {
     incidentIds: readonly string[];
     /** Optional evidence the agent computed; UI shows what's present. */
     size?: number;
-    totalDelaySeconds?: number;
-    peakDelaySeconds?: number;
+    totalDelayInSeconds?: number;
+    peakDelayInSeconds?: number;
     diameterKm?: number;
     primaryRoads?: readonly string[];
     primaryCategory?: string;

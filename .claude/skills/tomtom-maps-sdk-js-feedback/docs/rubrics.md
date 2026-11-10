@@ -72,6 +72,7 @@ Signals:
 - A type error on code that matches the documented signature.
 - Different behaviour between runs on identical input.
 - A leaked handler or memory across style changes or module teardown.
+- Code that ran on an SDK 1.x release fails on a later minor or patch release of the same major.
 
 Evidence: a minimal reproduction, the verbatim error and stack, the SDK version, and the documented
 contract it violates. Strip the reproduction until only SDK calls remain; if the bug disappears,
@@ -92,8 +93,10 @@ Anything else is the SDK working as intended.
 ## Do not report
 
 - Your own mistakes: a typo, a forgotten `await`, a wrong import fixed on reading the error.
-- Documented caveats and known limitations. Check the guide and the changelog first. The SDK is a
-  `0.x` public preview, so documented breaking changes between minor versions are expected.
+- Documented caveats and known limitations. Check the guide and the changelog first. A documented
+  breaking change between minor versions is expected in a release in Public or Private Preview: an
+  SDK 0.x release or 1.0.0 release candidate, or a plugin below its own 1.0.0. From SDK 1.0.0, a
+  breaking change in an SDK minor or patch release is `broken`.
 - Upstream behaviour — MapLibre GL, the browser, the bundler, the network — unless the SDK could
   reasonably have shielded the developer; if so, say that explicitly in the report.
 - Taste: naming or API style you would have chosen differently. If it caused a wrong first attempt,

@@ -85,7 +85,7 @@
     z-index: var(--ui-z-panel);
 }
 
-/* SECTIONS DOCK: the map's full width, clicks passing through beside the bar, so a route fit keeps clear of its top edge only */
+/* SECTIONS DOCK: the map's full width, clicks passing through beside the bar. The fit measures the bar and the details card, not this box. */
 
 .ui-sections-dock {
     position: absolute;

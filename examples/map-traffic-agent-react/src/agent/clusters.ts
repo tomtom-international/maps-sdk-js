@@ -12,8 +12,8 @@ type ClustersAnalysisData = {
         memberIds: readonly string[];
         centroid: [number, number];
         size?: number;
-        totalDelaySeconds?: number;
-        peakDelaySeconds?: number;
+        totalDelayInSeconds?: number;
+        peakDelayInSeconds?: number;
         diameterKm?: number;
         primaryRoads?: readonly string[];
         primaryCategory?: string;
@@ -73,8 +73,8 @@ function normaliseGroup(g: RawGroup, incidents: readonly TrafficIncident[], know
         centroid,
         incidentIds: memberIds,
         size: g.size,
-        totalDelaySeconds: g.totalDelaySeconds,
-        peakDelaySeconds: g.peakDelaySeconds,
+        totalDelayInSeconds: g.totalDelayInSeconds,
+        peakDelayInSeconds: g.peakDelayInSeconds,
         diameterKm: g.diameterKm,
         primaryRoads: g.primaryRoads,
         primaryCategory: g.primaryCategory,

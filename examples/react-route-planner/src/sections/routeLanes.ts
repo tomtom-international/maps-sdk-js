@@ -139,6 +139,16 @@ export const routeLanes = (route: Route): Lane[] => {
     return lanes;
 };
 
+/** The block of `id` on any lane, the same section the bar and the map share. */
+export const sectionBlock = (route: Route, id: string): LaneBlock | undefined =>
+    routeLanes(route)
+        .flatMap((lane) => lane.blocks)
+        .find((block) => block.id === id);
+
+/** The vertices of a section, the slice a search and a zoom both use. */
+export const sectionCoordinates = (route: Route, block: LaneBlock): Route['geometry']['coordinates'] =>
+    route.geometry.coordinates.slice(block.section.startPointIndex, block.section.endPointIndex + 1);
+
 /** The section of one of `ids` at a distance along the route, from the lane listed first. */
 export const sectionAt = (route: Route, distanceInMeters: number, ids: readonly LaneId[]): LaneBlock | undefined =>
     routeLanes(route)

@@ -49,7 +49,7 @@ function groupByArea(agent: AgentInstance, trackers: readonly Tracker[]): Groupi
 
     const areas: WatchedArea[] = [];
     for (const [datasetId, group] of byArea) {
-        const dataset = datasets.find((e) => e.id === datasetId);
+        const dataset = agent.state.trafficIncidents.findById(datasetId);
         areas.push({ datasetId, label: dataset?.label ?? datasetId, trackers: group });
     }
     return { areas, ungrouped };
@@ -134,7 +134,7 @@ export function useTrackers(agent: AgentInstance | undefined) {
     // with zero incidents still frames. Click an area card to focus.
     const focusArea = (datasetId: string) => {
         if (!agent) return;
-        const bbox = agent.state.trafficIncidents.datasets.find((e) => e.id === datasetId)?.params.bbox;
+        const bbox = agent.state.trafficIncidents.findById(datasetId)?.producedFrom.bbox;
         if (!bbox || !isBBoxWithArea(bbox)) return;
         frameBounds(agent.state.baseMap.mapLibreMap, bbox);
     };

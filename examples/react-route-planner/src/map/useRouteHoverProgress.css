@@ -6,8 +6,8 @@
     padding: var(--ui-space-2) var(--ui-space-3);
     border-radius: var(--ui-rounded-10);
     box-shadow:
-        0 0 0 1px rgba(0, 0, 0, 0.08),
-        0 2px 12px rgba(0, 0, 0, 0.18);
+        0 0 0 1px var(--ui-border-base-em),
+        var(--ui-elevation-e3);
     font-size: var(--ui-font-caption-m);
     line-height: var(--ui-font-caption-m-lh);
     color: var(--ui-text-med-em);

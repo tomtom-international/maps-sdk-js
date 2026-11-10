@@ -1,4 +1,4 @@
-import { MapIcon, Route } from 'lucide-react';
+import { MapIcon, Route, Spline } from 'lucide-react';
 import { ChipButton, ChipChecklist, ChipChoice, type ChipLook, Select } from '../panel/fields';
 import {
     categoryChips,
@@ -19,51 +19,59 @@ const detourMinuteOptions = [5, 10, 15, 30, 60];
 const scopeLooks: Record<SearchScope, ChipLook> = {
     map: { label: 'Near the map', icon: MapIcon },
     route: { label: 'Along the route', icon: Route },
+    section: { label: 'This stretch', icon: Spline },
 };
 
 /** Where to search, the category shortcuts, and the station filters for charging and fuel. */
-export const SearchOptions = ({ search }: { search: PlaceSearch }) => (
-    <div className="ui-search-options">
-        <div className="ui-search-scope">
-            <ChipChoice
-                label="Search where"
-                options={['map', 'route'] as const}
-                look={(scope) => scopeLooks[scope]}
-                // The scope the search runs in: a route-scoped search falls back to the map while there is no route.
-                value={search.alongRoute ? 'route' : 'map'}
-                disabled={(scope) => scope === 'route' && !search.canSearchAlongRoute}
-                onChange={search.setScope}
-            />
-            {search.alongRoute && (
-                <Select
-                    aria-label="Longest detour"
-                    options={detourMinuteOptions}
-                    optionLabel={(minutes) => `Up to ${minutes} min detour`}
-                    value={search.maxDetourMinutes}
-                    onChange={search.setMaxDetourMinutes}
+export const SearchOptions = ({ search }: { search: PlaceSearch }) => {
+    const scope: SearchScope = search.effectiveScope;
+    const scopes = scope === 'section' ? (['map', 'route', 'section'] as const) : (['map', 'route'] as const);
+    return (
+        <div className="ui-search-options">
+            <div className="ui-search-scope">
+                <ChipChoice
+                    label="Search where"
+                    options={scopes}
+                    look={(option) => scopeLooks[option]}
+                    // The scope the search runs in: a route-scoped search falls back to the map while there is no route.
+                    value={scope === 'map' || search.canSearchAlongRoute ? scope : 'map'}
+                    disabled={(option) => option !== 'map' && !search.canSearchAlongRoute}
+                    onChange={search.setScope}
                 />
-            )}
-        </div>
-        <div className="ui-chip-list" role="group" aria-label="Categories">
-            {categoryChips.map(({ categories, ...look }) => {
-                const active = search.request?.title === look.label;
-                return (
-                    <ChipButton
-                        key={look.label}
-                        look={look}
-                        active={active}
-                        compact
-                        onClick={() =>
-                            active ? search.clear() : search.search(categoryRequest(look.label, categories))
-                        }
+                {scope !== 'map' && (
+                    <Select
+                        aria-label="Longest detour"
+                        options={detourMinuteOptions}
+                        optionLabel={(minutes) => `Up to ${minutes} min detour`}
+                        value={search.maxDetourMinutes}
+                        onChange={search.setMaxDetourMinutes}
                     />
-                );
-            })}
+                )}
+                {scope === 'section' && search.sectionStretch && (
+                    <p className="ui-note">{search.sectionStretch.label}</p>
+                )}
+            </div>
+            <div className="ui-chip-list" role="group" aria-label="Categories">
+                {categoryChips.map(({ categories, ...look }) => {
+                    const active = search.request?.title === look.label;
+                    return (
+                        <ChipButton
+                            key={look.label}
+                            look={look}
+                            active={active}
+                            compact
+                            onClick={() =>
+                                active ? search.clear() : search.search(categoryRequest(look.label, categories))
+                            }
+                        />
+                    );
+                })}
+            </div>
+            {searchesFor(search.request, 'CHARGING_LOCATION') && <ChargingFilters search={search} />}
+            {searchesFor(search.request, 'FUEL_STATION') && <FuelFilter search={search} />}
         </div>
-        {searchesFor(search.request, 'CHARGING_LOCATION') && <ChargingFilters search={search} />}
-        {searchesFor(search.request, 'FUEL_STATION') && <FuelFilter search={search} />}
-    </div>
-);
+    );
+};
 
 const powerOptions = [undefined, ...powerStepsKW];
 

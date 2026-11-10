@@ -1,4 +1,4 @@
-import type { ConnectorType, Fuel, POICategory } from '@tomtom-org/maps-sdk/core';
+import type { ConnectorType, Fuel, POICategory, Route } from '@tomtom-org/maps-sdk/core';
 import type { PlaceFilters, RefinementSuggestion } from '@tomtom-org/maps-sdk/services';
 import {
     BedDouble,
@@ -16,8 +16,11 @@ import type { ChipLook } from '../panel/fields';
 /** What to search for: free text, a category or a brand, with the filters that narrow it. */
 export type SearchRequest = { title: string; query?: string; filters?: PlaceFilters };
 
-/** Around the map's view, or within a detour of the selected route. */
-export type SearchScope = 'map' | 'route';
+/** Around the map's view, within a detour of the selected route, or along the section open on the bar. */
+export type SearchScope = 'map' | 'route' | 'section';
+
+/** The open section, as the polyline along-route search measures its detour on. */
+export type SectionStretch = { id: string; label: string; coordinates: Route['geometry']['coordinates'] };
 
 /** The charging and fuel options, sent only with a search for charging or fuel stations. */
 export type StationFilters = Pick<PlaceFilters, 'connectors' | 'minPowerKW' | 'maxPowerKW' | 'fuelTypes'>;

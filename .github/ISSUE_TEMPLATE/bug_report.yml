@@ -12,7 +12,7 @@ body:
         - If it's a security vulnerability, don't use this form: report it privately, as our [security policy](https://github.com/tomtom-international/maps-sdk-js/security/policy) describes
         - Check if this issue already exists to avoid duplicates
         - Review our [documentation](https://docs.tomtom.com/maps-sdk-js/introduction/overview) to ensure correct usage
-        - This SDK is in Public Preview (0.x) - check the [CHANGELOG](https://github.com/tomtom-international/maps-sdk-js/blob/main/CHANGELOG.md) for recent breaking changes
+        - Check the [CHANGELOG](https://github.com/tomtom-international/maps-sdk-js/blob/main/CHANGELOG.md) for what changed in recent releases
 
   - type: dropdown
     id: package

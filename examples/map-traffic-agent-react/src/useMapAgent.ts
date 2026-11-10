@@ -119,7 +119,7 @@ export function useMapAgent(options: UseMapAgentOptions) {
         // clusters
         clusters,
         clearClusters,
-        // analyses (analyseData results + charts)
+        // analyses (analyseDatasets results + charts)
         analyses,
         toggleAnalysisMonitor: toggleMonitor,
         // monitor — `summaryMonitored` gates the summary card's live-status to the focused dataset

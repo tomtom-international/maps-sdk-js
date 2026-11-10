@@ -21,6 +21,11 @@
 
             <div class="ui-panel-content">
                 <div class="ui-section">
+                    <label class="ui-form-label" for="ui-route">Route</label>
+                    <select id="ui-route" class="ui-dropdown"></select>
+                </div>
+
+                <div class="ui-section">
                     <label class="ui-form-label" for="ui-queryInput">Query</label>
                     <input id="ui-queryInput" class="ui-input" type="text" placeholder="e.g. coffee, hotel...">
                 </div>
@@ -36,6 +41,66 @@
                         <input id="ui-detourSlider" class="ui-slider" type="range" min="1" max="15" step="1" value="5">
                         <span id="ui-detourValue" class="ui-slider-value">5 min</span>
                     </div>
+                </div>
+
+                <div class="ui-section">
+                    <label class="ui-form-label" for="ui-stretch">Search along</label>
+                    <select id="ui-stretch" class="ui-dropdown">
+                        <option value="whole" selected>Whole route</option>
+                        <option value="sections">Section types</option>
+                        <option value="share">Part of the route</option>
+                    </select>
+                    <div id="ui-sectionStretch" hidden>
+                        <div
+                            class="ui-radio-group ui-radio-group-horizontal"
+                            role="radiogroup"
+                            aria-label="How the ticked section types apply"
+                        >
+                            <label class="ui-radio-label">
+                                <input type="radio" name="ui-sectionFilter" value="include" checked>
+                                Only these
+                            </label>
+                            <label class="ui-radio-label">
+                                <input type="radio" name="ui-sectionFilter" value="exclude">
+                                Except these
+                            </label>
+                        </div>
+                        <div
+                            id="ui-sectionTypes"
+                            class="ui-checkbox-list ui-section-types"
+                            role="group"
+                            aria-label="Section types"
+                        ></div>
+                    </div>
+                    <div id="ui-shareStretch" hidden>
+                        <label class="ui-form-label" for="ui-fromSlider">From</label>
+                        <div class="ui-slider-container">
+                            <input
+                                id="ui-fromSlider"
+                                class="ui-slider"
+                                type="range"
+                                min="0"
+                                max="100"
+                                step="5"
+                                value="0"
+                            >
+                            <span id="ui-fromValue" class="ui-slider-value">0%</span>
+                        </div>
+                        <label class="ui-form-label" for="ui-toSlider">To</label>
+                        <div class="ui-slider-container">
+                            <input
+                                id="ui-toSlider"
+                                class="ui-slider"
+                                type="range"
+                                min="0"
+                                max="100"
+                                step="5"
+                                value="100"
+                            >
+                            <span id="ui-toValue" class="ui-slider-value">100%</span>
+                        </div>
+                    </div>
+                    <p id="ui-stretchNote" class="ui-note" role="status"></p>
                 </div>
 
                 <div class="ui-panel-footer">

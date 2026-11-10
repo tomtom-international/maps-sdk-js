@@ -44,7 +44,7 @@ export function useMonitoredRouteDisplay(agent: AgentInstance | undefined) {
             const monitored = new Set(routing.datasets.filter((e) => routing.isMonitored(e.id)).map((e) => e.id));
             for (const id of monitored) {
                 try {
-                    const module = await routing.getDatasetRoutingModule(id);
+                    const module = await routing.getDatasetModule(id);
                     if (cancelled) return;
                     module.applyConfig(CORRIDOR_ROUTE_CONFIG);
                     await routing.showDataset(id, { showWaypoints: false });

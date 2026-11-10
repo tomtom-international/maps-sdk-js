@@ -55,6 +55,7 @@
 }
 
 .ui-store.ui-selected {
+    /* The stores' pin colour (index.ts); Playbook has no amber. */
     border-left-color: #b4530a;
     background-color: var(--ui-surface-1);
 }

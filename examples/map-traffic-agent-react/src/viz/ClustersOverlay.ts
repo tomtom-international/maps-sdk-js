@@ -40,7 +40,7 @@ export class ClustersOverlay {
             el.setAttribute('aria-label', `Cluster ${idx + 1}: ${c.headline} — ${c.incidentIds.length} incidents`);
 
             const delay =
-                c.totalDelaySeconds != null && c.totalDelaySeconds > 0 ? formatDelay(c.totalDelaySeconds) : null;
+                c.totalDelayInSeconds != null && c.totalDelayInSeconds > 0 ? formatDelay(c.totalDelayInSeconds) : null;
             const trendIcon = TREND_ICONS[c.trend];
 
             el.innerHTML = [

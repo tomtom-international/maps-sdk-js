@@ -232,8 +232,26 @@ await placesModule.show(places);
 if (boundary.bbox) map.mapLibreMap.fitBounds(boundary.bbox);
 ```
 
-The SDK has no lookup for an area's administrative subdivisions, such as every district of a city. Which
-levels hold data varies by country.
+To list the areas of one geography type in a country or a bounding box, geocode an empty query with that filter:
+
+```ts
+const regions = await geocode({
+    query: '',
+    limit: 100, // the most one call returns; page on with nextCursor, up to 2,000 areas
+    filters: { countries: ['FR'], geographyTypes: ['CountrySubdivision'] }, // or geoBias: { boundingBox }
+});
+// geometryData takes up to 20 places per call: send them in batches
+const outlines = [];
+for (let i = 0; i < regions.features.length; i += 20) {
+    const batch = regions.features.slice(i, i + 20);
+    outlines.push(...(await geometryData({ geometries: batch, zoom: 8 })).features);
+}
+await geometriesModule.show({ type: 'FeatureCollection', features: outlines });
+```
+
+Those are the areas of the type in the country or the box, not the children of a named area. The SDK has no
+lookup for an area's administrative subdivisions, such as every district of a city. Which levels hold data
+varies by country.
 
 ---
 
@@ -246,7 +264,7 @@ const inCircle = await discoverPlaces({
     geometries: [{ type: 'Circle', coordinates: [4.9, 52.4], radius: 2000 }], // radius in meters
 });
 
-// Bounding box: a fuzzy search biased to it
+// Bounding box: a fuzzy search confined to it
 const inBox = await discoverPlaces({
     filters: { poiCategories: ['BUS_STOP'] },
     geoBias: { boundingBox: [4.72, 52.27, 5.07, 52.43] }, // [west, south, east, north]
@@ -506,7 +524,7 @@ viewportPlaces.remove('restaurants'); // update and remove both throw for an unk
 viewportPlaces.removeAll();
 ```
 
-- Searches on every `moveend`, biased to `map.getBBox()`, first page only; a newer move cancels the
+- Searches on every `moveend`, confined to `map.getBBox()`, first page only; a newer move cancels the
   search in flight. Modules stack in the order added, the first at the bottom.
 - Failures: `add` / `addPOICategories` / `update` reject with what failed. A refresh on move (and the clear of a
   removed module) has no caller, so it goes to `new ViewportPlaces(map, { onError })` (`ViewportPlacesConstructorOptions`,

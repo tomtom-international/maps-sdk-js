@@ -14,7 +14,7 @@ function stringifyToolValue(value: unknown) {
 
 // Pull a `code: string` property out of a tool's input so it can be promoted to its own labelled
 // section and rendered as a real whitespace-preserving code block instead of getting JSON-escaped
-// into a single \n-stuffed line. Hits sandbox tools (analyseData / processData / executeMaplibreCode).
+// into a single \n-stuffed line. Hits sandbox tools (analyseDatasets / deriveDatasets / executeMaplibreCode).
 function takeCode(value: unknown): string | null {
     if (value && typeof value === 'object' && typeof (value as Record<string, unknown>).code === 'string') {
         return (value as Record<string, string>).code;
@@ -29,7 +29,7 @@ function stripCode(value: unknown): unknown {
 
 // Tiny JS pretty-printer. Only kicks in when the LLM emits one-line code; multi-line input is
 // trusted as-is. String / template / comment runs are copied verbatim so we don't mangle their
-// content. Good enough for the typical analyseData / processData sandbox snippet — not a parser.
+// content. Good enough for the typical analyseDatasets / deriveDatasets sandbox snippet — not a parser.
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: JS pretty-printer requires multi-branch character-by-character state machine
 function prettifyJS(code: string): string {
     if (code.includes('\n')) return code;

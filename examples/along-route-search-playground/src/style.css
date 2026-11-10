@@ -4,6 +4,8 @@
 @import "../../src/templates/css/panel/custom-panel.css";
 @import "../../src/templates/css/form/input.css";
 @import "../../src/templates/css/form/checkbox.css";
+@import "../../src/templates/css/form/radio.css";
+@import "../../src/templates/css/form/dropdown.css";
 @import "../../src/templates/css/form/field.css";
 @import "../../src/templates/css/form/slider.css";
 @import "../../src/templates/css/button/button.css";
@@ -25,9 +27,30 @@
 }
 
 .ui-categories-list {
-    max-height: 240px;
+    max-height: 160px;
     overflow-y: auto;
     padding-right: var(--ui-space-1);
+}
+
+.ui-section-types {
+    max-height: 140px;
+    margin-top: var(--ui-space-2);
+    overflow-y: auto;
+}
+
+/* The footer draws its own top border. */
+.ui-customPanel .ui-section:has(+ .ui-panel-footer) {
+    border-bottom: none;
+}
+
+#ui-sectionStretch,
+#ui-shareStretch {
+    margin-top: var(--ui-space-3);
+}
+
+/* The status line is read as body text, so it takes the medium emphasis that clears contrast. */
+#ui-stretchNote {
+    color: var(--ui-text-med-em);
 }
 
 .ui-footer-buttons {

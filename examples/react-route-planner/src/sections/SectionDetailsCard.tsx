@@ -8,10 +8,16 @@ import '../panel/PlaceCard.css';
 import './routeLanes.css';
 import './SectionDetailsCard.css';
 
-type SectionDetailsCardProps = { route: Route; block: LaneBlock; onClose: () => void };
+type SectionDetailsCardProps = {
+    route: Route;
+    block: LaneBlock;
+    onClose: () => void;
+    /** Set when the section has a stretch to search. */
+    onSearchAlong?: () => void;
+};
 
 /** A clicked section: where and when it starts and ends, and what only its kind can tell. */
-export const SectionDetailsCard = ({ route, block, onClose }: SectionDetailsCardProps) => {
+export const SectionDetailsCard = ({ route, block, onClose, onSearchAlong }: SectionDetailsCardProps) => {
     const details = useMemo(() => sectionDetails(route, block), [route, block]);
     const { label, icon: Icon } = laneLook(block.lane);
     useEffect(() => {
@@ -41,21 +47,32 @@ export const SectionDetailsCard = ({ route, block, onClose }: SectionDetailsCard
                     <X />
                 </button>
             </header>
-            <ol className="ui-section-ends" aria-label={details.span}>
-                <SectionEndRow kind="Starts" end={details.start} />
-                <li className="ui-section-span">{details.span}</li>
-                <SectionEndRow kind="Ends" end={details.end} />
-            </ol>
-            {isTraffic(block.section) && <IncidentReport route={route} section={block.section} />}
-            {details.facts.length > 0 && (
-                <dl className="ui-detail-list">
-                    {details.facts.map(({ term, value }) => (
-                        <div key={term}>
-                            <dt>{term}</dt>
-                            <dd>{value}</dd>
-                        </div>
-                    ))}
-                </dl>
+            <div className="ui-section-details-body">
+                <ol className="ui-section-ends" aria-label={details.span}>
+                    <SectionEndRow kind="Starts" end={details.start} />
+                    <li className="ui-section-span">{details.span}</li>
+                    <SectionEndRow kind="Ends" end={details.end} />
+                </ol>
+                {isTraffic(block.section) && <IncidentReport route={route} section={block.section} />}
+                {details.facts.length > 0 && (
+                    <dl className="ui-detail-list">
+                        {details.facts.map(({ term, value }) => (
+                            <div key={term}>
+                                <dt>{term}</dt>
+                                <dd>{value}</dd>
+                            </div>
+                        ))}
+                    </dl>
+                )}
+            </div>
+            {onSearchAlong && (
+                <button
+                    type="button"
+                    className="ui-button ui-button-sm ui-button-full ui-section-search"
+                    onClick={onSearchAlong}
+                >
+                    Search along this stretch
+                </button>
             )}
         </section>
     );

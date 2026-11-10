@@ -2,13 +2,18 @@
 
 .ui-section-details.ui-customPanel {
     position: static;
+    display: flex;
+    flex-direction: column;
     width: 340px;
     max-height: 42vh;
+    overflow: hidden;
     pointer-events: auto;
 }
 
-.ui-section-details > :last-child {
+.ui-section-details-body {
+    min-height: 0;
     padding-bottom: var(--ui-space-3);
+    overflow: auto;
 }
 
 .ui-section-details-header {
@@ -137,4 +142,10 @@
 .ui-incident-extent {
     font-size: var(--ui-font-caption-m);
     color: var(--ui-text-med-em);
+}
+
+.ui-section-search {
+    flex: none;
+    margin-top: var(--ui-space-2);
+    margin-bottom: var(--ui-space-3);
 }

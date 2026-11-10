@@ -20,7 +20,7 @@ export function useWatchedAreaOverlay(agent: AgentInstance | undefined) {
             const shown = slice.shownDatasetIds;
             const areas = slice.datasets
                 .filter((e) => shown.has(e.id))
-                .map((e) => ({ id: e.id, bbox: e.params.bbox, label: e.label }));
+                .map((e) => ({ id: e.id, bbox: e.producedFrom.bbox, label: e.label }));
             void overlay.setAreas(areas);
         };
 

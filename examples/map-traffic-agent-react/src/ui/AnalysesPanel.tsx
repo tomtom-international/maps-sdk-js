@@ -35,7 +35,7 @@ function CollapseGlyph() {
 }
 
 /**
- * Right-rail panel listing the agent's registered analyses (from analyseData), each rendered with
+ * Right-rail panel listing the agent's registered analyses (from analyseDatasets), each rendered with
  * its latest result — a chart when `outputFormat: 'chart'`, otherwise a compact JSON readout.
  * Styled to match the overlay panels (PanelCard header, success Toggle, divider rows). A header
  * toggle expands the SAME panel into a large overlay over the map (bigger charts) and back, leaving

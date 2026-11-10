@@ -44,38 +44,26 @@ export function useFocus(agent: AgentInstance | undefined) {
         agent.state.trafficIncidents.navigateFocus(focus.datasetId, next);
     };
 
-    // Triage panels show items from the latest dataset, so the latest dataset is
-    // the natural target when the UI drives a focus change.
-    const latestDatasetId = (): string | undefined => {
+    // Focuses the ids on the dataset holding the first one. Triage panels show items from the latest
+    // dataset, so the latest dataset is the natural fallback. Returns the focused dataset's id.
+    const focusOnOwningDataset = (ids: readonly string[], reason: string): string | undefined => {
         if (!agent) return undefined;
-        const datasets = agent.state.trafficIncidents.datasets;
-        return datasets[datasets.length - 1]?.id;
+        const slice = agent.state.trafficIncidents;
+        const firstId = ids[0];
+        const owning = firstId ? slice.findFeature(firstId)?.dataset : undefined;
+        const targetId = owning?.id ?? slice.latestDataset?.id;
+        if (targetId) slice.setFocus(targetId, ids, reason);
+        return targetId;
     };
 
     const focusOneIncident = (id: string) => {
-        if (!agent) return;
-        const owning = agent.state.trafficIncidents.findDatasetWithIncident(id);
-        const targetId = owning?.id ?? latestDatasetId();
-        if (!targetId) return;
-        agent.state.trafficIncidents.setFocus(targetId, [id], 'Selected from triage');
-    };
-
-    const focusMany = (ids: string[], reason: string) => {
-        if (!agent) return;
-        const firstId = ids[0];
-        const owning = firstId ? agent.state.trafficIncidents.findDatasetWithIncident(firstId) : undefined;
-        const targetId = owning?.id ?? latestDatasetId();
-        if (!targetId) return;
-        agent.state.trafficIncidents.setFocus(targetId, ids, reason);
+        focusOnOwningDataset([id], 'Selected from triage');
     };
 
     const focusCluster = (c: Cluster) => {
         if (!agent) return;
-        const firstId = c.incidentIds[0];
-        const owning = firstId ? agent.state.trafficIncidents.findDatasetWithIncident(firstId) : undefined;
-        const targetId = owning?.id ?? latestDatasetId();
+        const targetId = focusOnOwningDataset(c.incidentIds, `Cluster · ${c.headline}`);
         if (!targetId) return;
-        agent.state.trafficIncidents.setFocus(targetId, [...c.incidentIds], `Cluster · ${c.headline}`);
         const features = agent.state.trafficIncidents.focusedFeatures(targetId);
         if (features.length === 0) return;
         const bbox = bboxFromGeoJSON({ type: 'FeatureCollection', features });
@@ -99,7 +87,7 @@ export function useFocus(agent: AgentInstance | undefined) {
         focusNext: () => navigateFocus(focusIndex + 1),
         clearFocus,
         focusOneIncident,
-        focusMany,
+        focusMany: focusOnOwningDataset,
         focusCluster,
     };
 }

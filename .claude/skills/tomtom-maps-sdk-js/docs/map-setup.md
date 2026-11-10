@@ -125,7 +125,7 @@ new TomTomMap({ mapLibre: { container: 'map' }, attribution: { position: 'top-le
 // padding: number | { horizontal?, vertical? }; position: any MapLibre control corner
 ```
 
-The logos are black with a white outline on every style, light or dark; nothing to restyle. A soft, blurred backdrop sits behind them by default, so they stand out from map labels; it follows the style's theme across `setStyle` and bleeds past the logos without moving them. `attribution: { backdrop: false }` removes only the backdrop, for a UI that already gives the corner a calm background; the logos stay.
+The logos, their dividers and the text credits follow the style's theme (`map.styleLightDarkTheme`) across `setStyle`: black with a white halo on a light style, white with a black halo on a dark one, `streetSatellite` included; nothing to restyle. A soft, blurred backdrop sits behind them by default, so they stand out from map labels; it follows the theme too, light or dark, and bleeds past the logos without moving them. `attribution: { backdrop: false }` removes only the backdrop, for a UI that already gives the corner a calm background; the logos stay.
 
 - Never hide `.tomtom-attribution-logos` with CSS, remove the control, or change its text.
 - Never lay a panel, badge or control over it. Place corner elements clear of it.

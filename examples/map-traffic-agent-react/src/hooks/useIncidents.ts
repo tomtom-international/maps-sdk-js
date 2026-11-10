@@ -36,10 +36,9 @@ export function useIncidents(agent: AgentInstance | undefined) {
             for (const id of known) if (!liveIds.has(id)) known.delete(id);
 
             // Pinned dataset if it still exists, else fall back to the latest.
-            const dataset =
-                (selectedIdRef.current && datasets.find((e) => e.id === selectedIdRef.current)) ||
-                datasets[datasets.length - 1];
-            setIncidents(dataset ? { label: dataset.label, items: dataset.data } : { label: '', items: [] });
+            const slice = agent.state.trafficIncidents;
+            const dataset = (selectedIdRef.current && slice.findById(selectedIdRef.current)) || slice.latestDataset;
+            setIncidents(dataset ? { label: dataset.label, items: dataset.data.features } : { label: '', items: [] });
             setDatasetId(dataset?.id ?? null);
         };
 

@@ -17,7 +17,7 @@ function stringifyToolValue(value: unknown) {
 
 // Pull a `code: string` property out of a tool's input so it can be promoted to its own labelled
 // section and rendered as a real whitespace-preserving code block instead of getting JSON-escaped
-// into a single \n-stuffed line. Hits sandbox tools (analyseData / processData / executeMaplibreCode).
+// into a single \n-stuffed line. Hits sandbox tools (analyseDatasets / deriveDatasets / executeMaplibreCode).
 function takeCode(value: unknown): string | null {
     if (value && typeof value === 'object' && typeof (value as Record<string, unknown>).code === 'string') {
         return (value as Record<string, string>).code;
@@ -32,7 +32,7 @@ function stripCode(value: unknown): unknown {
 
 // Tiny JS pretty-printer. Only kicks in when the LLM emits one-line code; multi-line input is
 // trusted as-is. String / template / comment runs are copied verbatim so we don't mangle their
-// content. Good enough for the typical analyseData / processData sandbox snippet — not a parser.
+// content. Good enough for the typical analyseDatasets / deriveDatasets sandbox snippet — not a parser.
 function prettifyJS(code: string): string {
     if (code.includes('\n')) return code;
     let out = '';
@@ -155,10 +155,10 @@ function ToolCallSection({ label, children }: { label: string; children: React.R
     );
 }
 
-// The agent-toolkit `analyseData` tool returns a Chart.js configuration alongside the structured
+// The agent-toolkit `analyseDatasets` tool returns a Chart.js configuration alongside the structured
 // analysis when invoked with `outputFormat: "chart"`. Surface it inline so the user sees a
 // chart instead of a JSON blob; fall back to the raw output otherwise.
-const CHART_PRODUCING_TOOLS = new Set(['analyseData']);
+const CHART_PRODUCING_TOOLS = new Set(['analyseDatasets']);
 function extractChartConfig(toolName: string, output: unknown): unknown | null {
     if (!CHART_PRODUCING_TOOLS.has(toolName) || !output || typeof output !== 'object') return null;
     const o = output as { outputFormat?: unknown; analysis?: unknown };
@@ -274,7 +274,7 @@ export function ToolDisclosure({ toolName, input, output, errorText }: ToolCallP
     );
 }
 
-// Inline tool side-effects rendered in place within the turn: a chart (analyseData), the clarify intro
+// Inline tool side-effects rendered in place within the turn: a chart (analyseDatasets), the clarify intro
 // line, report actions, and live progress. The raw input/output disclosure lives in the grouped pill.
 export function ToolCall({ toolName, input, output }: ToolCallProps) {
     const chartConfig = extractChartConfig(toolName, output);

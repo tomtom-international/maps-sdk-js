@@ -67,9 +67,9 @@ The TomTom Maps SDK Agent Toolkit plugin combines:
 - **Vercel AI SDK**: Multi-step agent execution with tool calling
 - **Azure OpenAI**: Natural language understanding
 
-The agent has 15 tools at its disposal:
-- **Data tools**: geocode, reverseGeocode, searchPlaces, calculateRoute
-- **Map tools**: showPlaces, showRoute, clearMap, flyTo, fitBounds, toggleTraffic, togglePOIs, setMapStyle, setLanguage, getViewport, toggleLayers
+The agent starts from the toolkit's default tools: search and geocoding, routing, reachable areas, traffic
+incidents and area analytics, data analysis, and map display, camera and styling. The
+[tools guide](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/tools) lists them all.
 
 ## Architecture
 

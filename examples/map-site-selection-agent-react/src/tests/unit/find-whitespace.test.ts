@@ -49,7 +49,7 @@ const state = {
     customGeometries: {
         datasets: [],
         addDataset: vi.fn(async () => 'scan-area'),
-        getDatasetGeometriesModule: vi.fn(async () => ({})),
+        getDatasetModule: vi.fn(async () => ({})),
         showDataset: vi.fn(),
     },
 } as unknown as ToolState;

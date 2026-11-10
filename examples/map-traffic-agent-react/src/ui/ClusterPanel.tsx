@@ -75,8 +75,8 @@ export function ClusterPanel({ clusters, focusedIds, onFocusCluster, onClearClus
                                 {c.headline}
                             </h4>
                             {(c.size != null ||
-                                c.totalDelaySeconds != null ||
-                                c.peakDelaySeconds != null ||
+                                c.totalDelayInSeconds != null ||
+                                c.peakDelayInSeconds != null ||
                                 c.diameterKm != null) && (
                                 <p
                                     aria-label="Evidence"
@@ -87,23 +87,23 @@ export function ClusterPanel({ clusters, focusedIds, onFocusCluster, onClearClus
                                             {c.size} incidents
                                         </span>
                                     )}
-                                    {c.totalDelaySeconds != null && c.totalDelaySeconds > 0 && (
+                                    {c.totalDelayInSeconds != null && c.totalDelayInSeconds > 0 && (
                                         <>
                                             <span aria-hidden className="text-(--ui-text-low-em)">
                                                 ·
                                             </span>
                                             <span className="text-(--ui-text-med-em)">
-                                                {formatDelay(c.totalDelaySeconds)} total
+                                                {formatDelay(c.totalDelayInSeconds)} total
                                             </span>
                                         </>
                                     )}
-                                    {c.peakDelaySeconds != null && c.peakDelaySeconds > 0 && (
+                                    {c.peakDelayInSeconds != null && c.peakDelayInSeconds > 0 && (
                                         <>
                                             <span aria-hidden className="text-(--ui-text-low-em)">
                                                 ·
                                             </span>
                                             <span className="text-(--ui-text-med-em)">
-                                                peak {formatDelay(c.peakDelaySeconds)}
+                                                peak {formatDelay(c.peakDelayInSeconds)}
                                             </span>
                                         </>
                                     )}

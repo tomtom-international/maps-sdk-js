@@ -1,9 +1,9 @@
 # Agent Toolkit — BYOD (bring-your-own-data)
 
 Customer GeoJSON registered as `byod` datasets — fetched from a URL, passed inline, or added by your app.
-Tools: `addByodSource`, `setByodLayers`, `updateByodDisplay`.
+Tools: `addByodSource`, `setByodLayers`, and `updateDatasetDisplay` with `slice: 'byod'`.
 See [tools.md](./tools.md) for the registry, [state.md](./state.md) for the `byod` slice,
-[data-tools.md](./data-tools.md) for `byod` datasets as `analyseData` / `processData` inputs.
+[data-tools.md](./data-tools.md) for `byod` datasets as `analyseDatasets` / `deriveDatasets` inputs.
 
 ---
 
@@ -14,31 +14,31 @@ addByodSource({ label, url?, data?, datasetId? });   // exactly one of url / dat
 // → { byodDatasetId, label, source: { kind: 'url', url } | { kind: 'inline' }, profile }
 
 setByodLayers({
-    byodDatasetId,
+    datasetId,
     layers: [{ type, paint?, layout?, filter?, id?, beforeID? }], // ≥ 1; replaces the dataset's layers
     show?: { zoomMode: 'auto' | 'none', hidePreviousDatasets?: 'all' | string[] }, // render a hidden dataset / re-fit
 });
-// → { layerCount, layerTypes, shown? }
+// → { datasetId, label, layerCount, layerTypes, shown? }
 
-updateByodDisplay({ action: 'show' | 'hide' | 'remove', datasetIds?, hideOthers?, clearAll? });
-// hideOthers: show only; clearAll: hide only — hides every shown dataset
-// → { affectedIds, shown }
+updateDatasetDisplay({ slice: 'byod', add?, remove?, addMatching?, removeMatching?, clear?, drop?, fitBounds? });
+// clear: hides every shown byod dataset, and with add swaps to those; drop: hides and removes them from history
 ```
 
-From app code: `await agent.state.byod.addDataset(featureCollection, 'Depots', { layers?, source?, explicitId? })`;
+From app code: `await agent.state.byod.addDataset({ label: 'Depots', data: featureCollection, layers?, producedFrom?, id? })`;
 it renders nothing until `await agent.state.byod.showDataset(id)`, which draws it with those `layers`.
+`agent.state.byod.getDatasetLayers(id)` returns the dataset's current layers, which `setByodLayers` replaces.
 
 ## Profile
 
-Every ingest path infers a `BYODDataProfile` locally, in one pass: `featureCount`, `geometryTypes`, and per property
+Every ingest path infers a `DatasetProfile` locally, in one pass: `featureCount`, `geometryTypes`, and per property
 `name`, JSON `types`, `coverage` and capped `examples` (`propertiesOmitted` when capped). `addByodSource` returns it;
-`recallState({ kind: 'byod' })` lists `propertyNames`, and `{ kind: 'byod', id }` returns the profile.
+`recallState({ slice: 'byod' })` lists `propertyNames`, and `{ slice: 'byod', id }` returns the profile.
 
 ## Untrusted data
 
 Model-facing results get a safe profile: **string** example values are withheld (prompt-injection vector),
 `name` / `types` / `coverage` and numeric / boolean examples stay. `recallState` never returns the raw `FeatureCollection`;
-the full profile stays on the dataset for your UI. The model computes over values with `analyseData` / `processData`.
+the full profile stays in `state.byod.profile(id)` for your UI. The model computes over values with `analyseDatasets` / `deriveDatasets`.
 
 ## URL fetch policy
 
@@ -93,8 +93,8 @@ An id absent from the current style puts the layer on top.
 createMapAgent(map, {
     model,
     datasets: {
-        byod: { enabled: false }, // drops byod from analyseData / processData
-                                  // and removes addByodSource / setByodLayers / updateByodDisplay
+        byod: { enabled: false }, // drops byod from analyseDatasets / deriveDatasets and updateDatasetDisplay's slices,
+                                  // and removes addByodSource / setByodLayers
     },
 });
 ```

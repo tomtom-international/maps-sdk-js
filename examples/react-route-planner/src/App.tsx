@@ -2,7 +2,7 @@ import * as Tabs from '@radix-ui/react-tabs';
 import type { Place, Route } from '@tomtom-org/maps-sdk/core';
 import { discoverOnePlace } from '@tomtom-org/maps-sdk/services';
 import { type LucideIcon, RouteIcon, Search, Signpost, SlidersHorizontal } from 'lucide-react';
-import { type Dispatch, useEffect, useState } from 'react';
+import { type Dispatch, useEffect, useMemo, useState } from 'react';
 import { placeTitle } from './format';
 import { flyBetweenPanels } from './map/coveringPanels';
 import { MapPopup } from './map/MapPopup';
@@ -38,6 +38,7 @@ import { SearchOptions } from './search/SearchOptions';
 import { SearchResultsList } from './search/SearchResultsList';
 import { usePlaceSearch } from './search/usePlaceSearch';
 import { RouteSectionsBar } from './sections/RouteSectionsBar';
+import { sectionBlock, sectionCoordinates } from './sections/routeLanes';
 import './App.css';
 
 const tabs = ['plan', 'search', 'options', 'directions'] as const;
@@ -94,21 +95,32 @@ export const App = () => {
     const drag = useStopDrag(modules, stops, options, dispatch, setNotice);
     const plan = useRoutePlan(modules, stops, options, drag);
     const route = plan.routes?.features[plan.selectedIndex];
+    const [pointedSectionId, setPointedSectionId] = useState<string>();
+    // Section ids are new on every calculation, so a section's details hold for the route they were
+    // opened on: a recalculation or another route's pick closes them.
+    const [openSection, setOpenSection] = useState<{ route: Route; id: string }>();
+    const selectedSectionId = openSection && openSection.route === route ? openSection.id : undefined;
+    const sectionStretch = useMemo(() => {
+        if (!route || !selectedSectionId) return undefined;
+        const block = sectionBlock(route, selectedSectionId);
+        if (!block || block.section.endPointIndex <= block.section.startPointIndex) return undefined;
+        return {
+            id: block.id,
+            label: block.label,
+            coordinates: sectionCoordinates(route, block),
+        };
+    }, [route, selectedSectionId]);
     const search = usePlaceSearch(
         modules,
         route,
         stopPlaces(stops).map((place) => place.id),
+        sectionStretch,
     );
     const lookError = useMapLook(modules, look);
     const [tab, setTab] = useState<Tab>('plan');
     const [collapsed, setCollapsed] = useState(false);
     const [targetStopId, setTargetStopId] = useState<string>();
     const [popup, setPopup] = useState<PopupState>();
-    const [pointedSectionId, setPointedSectionId] = useState<string>();
-    // Section ids are new on every calculation, so a section's details hold for the route they were
-    // opened on: a recalculation or another route's pick closes them.
-    const [openSection, setOpenSection] = useState<{ route: Route; id: string }>();
-    const selectedSectionId = openSection && openSection.route === route ? openSection.id : undefined;
     const selectSection = (id?: string) => setOpenSection(id && route ? { route, id } : undefined);
     const cursorStore = useRouteCursorStore();
 
@@ -118,6 +130,21 @@ export const App = () => {
     const pointedIds = pointedSectionId ? [pointedSectionId] : plan.pointedSectionIds;
     const openIds = selectedSectionId ? [selectedSectionId] : undefined;
     useSectionFocus(modules, pointedIds ?? openIds);
+
+    // Closing the card on this route returns the next search to the whole route. A recalculation
+    // closes the card too, but that is a new route object: the section's results stay until the
+    // user changes the scope or searches again.
+    useEffect(() => {
+        const closedOnThisRoute = !openSection || openSection.route === route;
+        if (!sectionStretch && search.scope === 'section' && closedOnThisRoute) search.setScope('route');
+    }, [sectionStretch, search.scope, search.setScope, openSection, route]);
+
+    const searchAlongSection = () => {
+        if (!sectionStretch) return;
+        search.setScope('section');
+        setTab('search');
+        setCollapsed(false);
+    };
 
     const addPlace = (place: Place) => {
         dispatch(addPlaceAction(stops, place, route, targetStopId));
@@ -228,6 +255,7 @@ export const App = () => {
                         onPointAtSection={setPointedSectionId}
                         selectedSectionId={selectedSectionId}
                         onSelectSection={selectSection}
+                        onSearchAlong={sectionStretch ? searchAlongSection : undefined}
                     />
                 </div>
             )}

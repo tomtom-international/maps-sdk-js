@@ -30,7 +30,7 @@
     overflow: hidden;
     border-radius: 10px;
     background: var(--ui-surface-0);
-    box-shadow: var(--ui-elevation-e2, 0 6px 16px -4px rgba(17, 12, 34, 0.16));
+    box-shadow: var(--ui-elevation-e2);
 }
 
 .site-popup .maplibregl-popup-close-button {

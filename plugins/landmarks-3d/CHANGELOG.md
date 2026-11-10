@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.2
+
+### Patch Changes
+
+- landmarks-3d: `Buildings3D.setBuildingColors` colours a building by the id of any of its parts, as `BaseMapModule.setBuildingColors` does, so one colour map serves both
+
 ## 0.3.1
 
 ### Patch Changes

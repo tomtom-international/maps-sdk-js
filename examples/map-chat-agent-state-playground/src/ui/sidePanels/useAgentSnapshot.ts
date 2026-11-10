@@ -6,7 +6,7 @@ import { useCallback, useEffect, useRef, useSyncExternalStore } from 'react';
  * fires on a state slice. Lives in the demo (not the plugin) — wires the plugin's typed event
  * surface into React via `useSyncExternalStore`, no polling.
  *
- * The plugin's state slices mutate their internal arrays in place (e.g. `PlacesState.addPlaceResult`
+ * The plugin's state slices mutate their internal arrays in place (e.g. `PlacesState.addDataset`
  * does `this._datasets.push(...)`) and their getters return the same reference. `useSyncExternalStore`
  * compares snapshots via `Object.is`, so naive `() => state.places.datasets` would never trigger a
  * re-render even though the array's contents changed.
@@ -20,7 +20,7 @@ export type Agent = ReturnType<typeof createMapAgent>;
 type AnyEvents = { on(type: string, handler: () => void): () => void };
 type EventBinding = { events: AnyEvents; types: readonly string[] };
 
-// State slices mutate their arrays in place (`PlacesState.addPlaceResult` calls `Array.push`),
+// State slices mutate their arrays in place (`PlacesState.addDataset` calls `Array.push`),
 // so two consecutive `state.places.datasets` reads return the same reference even when contents
 // changed. Shallow-copying arrays here gives downstream `useMemo` / prop-comparison checks a
 // fresh reference whenever an event fires — without forcing every consumer to remember a spread.

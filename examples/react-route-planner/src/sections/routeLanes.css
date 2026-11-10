@@ -1,4 +1,6 @@
-/* Each lane's colour, as --ui-lane-color on its blocks and on the section card's icon */
+/* Each lane's colour, as --ui-lane-color on its blocks and on the section card's icon.
+   Playbook has no colours for the hex ones. Moderate takes the map's minor-delay label orange
+   (MINOR_DELAY_LABEL_COLOR), which sits between the minor and major lanes. */
 
 .ui-lane-traffic.is-minor {
     --ui-lane-color: var(--ui-surface-warning);

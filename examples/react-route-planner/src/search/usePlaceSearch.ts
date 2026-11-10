@@ -1,11 +1,17 @@
 import { skipToken, useInfiniteQuery } from '@tanstack/react-query';
-import type { Place, Route } from '@tomtom-org/maps-sdk/core';
+import type { PathLike, Place, Route } from '@tomtom-org/maps-sdk/core';
 import { type DiscoverPlacesResponse, discoverPlaces } from '@tomtom-org/maps-sdk/services';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { placeTitle } from '../format';
 import { flyBetweenPanels } from '../map/coveringPanels';
 import type { MapModules } from '../map/useMapModules';
-import { requestFilters, type SearchRequest, type SearchScope, type StationFilters } from './searchRequest';
+import {
+    requestFilters,
+    type SearchRequest,
+    type SearchScope,
+    type SectionStretch,
+    type StationFilters,
+} from './searchRequest';
 
 const RESULTS_PER_PAGE = 20;
 
@@ -13,8 +19,8 @@ type SearchPageParameters = {
     modules: MapModules;
     request: SearchRequest;
     stationFilters: StationFilters;
-    /** Set for an along-route search, with the longest detour it allows. */
-    alongRoute?: { route: Route; maxDetourMinutes: number };
+    /** Set for an along-route search, with the longest detour it allows. `route` may be one section. */
+    alongRoute?: { route: PathLike; maxDetourMinutes: number };
     cursor?: string;
     signal: AbortSignal;
 };
@@ -60,8 +66,66 @@ const useShownPlaces = (modules: MapModules | undefined, found: Place[] | undefi
     return shownPlaces;
 };
 
+type SectionPin = { route?: Route; sectionId?: string; coordinates?: Route['geometry']['coordinates'] };
+
+/**
+ * The scope the chip, the header and a fetch share. A recalculated route keeps the previous
+ * section's polyline, so a later detour or filter searches that stretch again.
+ */
+const sectionQuery = (
+    scope: SearchScope,
+    sectionStretch: SectionStretch | undefined,
+    route: Route | undefined,
+    pin: { current: SectionPin },
+): {
+    effectiveScope: SearchScope;
+    sectionId?: string;
+    holding: boolean;
+    sectionGeometry?: Route['geometry']['coordinates'];
+} => {
+    const holding =
+        scope === 'section' &&
+        sectionStretch === undefined &&
+        pin.current.route !== undefined &&
+        pin.current.route !== route;
+    if (sectionStretch && route)
+        pin.current = { route, sectionId: sectionStretch.id, coordinates: sectionStretch.coordinates };
+    const effectiveScope: SearchScope = scope === 'section' && !sectionStretch && !holding ? 'route' : scope;
+    const sectionId =
+        scope === 'section' ? (sectionStretch?.id ?? (holding ? pin.current.sectionId : undefined)) : undefined;
+    const sectionGeometry =
+        scope === 'section'
+            ? (sectionStretch?.coordinates ?? (holding ? pin.current.coordinates : undefined))
+            : undefined;
+    return { effectiveScope, sectionId, holding, sectionGeometry };
+};
+
+const placesQueryFn =
+    (
+        modules: MapModules,
+        request: SearchRequest,
+        stationFilters: StationFilters,
+        alongRoute: boolean,
+        maxDetourMinutes: number,
+        geometry: PathLike | undefined,
+    ) =>
+    ({ pageParam, signal }: { pageParam?: string; signal: AbortSignal }) =>
+        searchPage({
+            modules,
+            request,
+            stationFilters,
+            alongRoute: alongRoute && geometry ? { route: geometry, maxDetourMinutes } : undefined,
+            cursor: pageParam,
+            signal,
+        });
+
 /** Runs the current request in its scope, a page at a time. */
-export const usePlaceSearch = (modules: MapModules | undefined, route: Route | undefined, routePlaceIds: string[]) => {
+export const usePlaceSearch = (
+    modules: MapModules | undefined,
+    route: Route | undefined,
+    routePlaceIds: string[],
+    sectionStretch: SectionStretch | undefined,
+) => {
     const [request, setRequest] = useState<SearchRequest>();
     const [previewed, setPreviewed] = useState<Place>();
     const [scope, setScope] = useState<SearchScope>('map');
@@ -75,24 +139,27 @@ export const usePlaceSearch = (modules: MapModules | undefined, route: Route | u
     useEffect(() => {
         routeRef.current = route;
     });
-    const alongRoute = scope === 'route' && route !== undefined;
+    const alongRoute = scope !== 'map' && route !== undefined;
+    const sectionPin = useRef<SectionPin>({});
+    const { effectiveScope, sectionId, holding, sectionGeometry } = sectionQuery(
+        scope,
+        sectionStretch,
+        route,
+        sectionPin,
+    );
 
     const query = useInfiniteQuery({
-        queryKey: ['places', request, searchRun, stationFilters, alongRoute && maxDetourMinutes],
+        queryKey: ['places', request, searchRun, stationFilters, alongRoute && maxDetourMinutes, sectionId],
         queryFn:
             modules && request
-                ? ({ pageParam, signal }) =>
-                      searchPage({
-                          modules,
-                          request,
-                          stationFilters,
-                          alongRoute:
-                              alongRoute && routeRef.current
-                                  ? { route: routeRef.current, maxDetourMinutes }
-                                  : undefined,
-                          cursor: pageParam,
-                          signal,
-                      })
+                ? placesQueryFn(
+                      modules,
+                      request,
+                      stationFilters,
+                      alongRoute,
+                      maxDetourMinutes,
+                      effectiveScope === 'section' ? sectionGeometry : routeRef.current,
+                  )
                 : skipToken,
         initialPageParam: undefined as string | undefined,
         getNextPageParam: (page) => page.properties?.nextCursor,
@@ -113,6 +180,7 @@ export const usePlaceSearch = (modules: MapModules | undefined, route: Route | u
     return {
         request,
         search: (next?: SearchRequest) => {
+            if (holding) setScope('route');
             setSearchRun((run) => run + 1);
             showRequest(next);
         },
@@ -128,7 +196,9 @@ export const usePlaceSearch = (modules: MapModules | undefined, route: Route | u
         searching: request !== undefined && query.isFetching,
         error: request && query.error?.message,
         scope,
+        effectiveScope,
         setScope,
+        sectionStretch,
         alongRoute,
         canSearchAlongRoute: route !== undefined,
         maxDetourMinutes,

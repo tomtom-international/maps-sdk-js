@@ -47,14 +47,15 @@ export const TRAFFIC_MANAGER_PROMPT_OVERRIDES: SystemPromptSectionOverrides = {
         'area analytics aggregates completed days and lags a day or two, so it can never answer it — never reach for ' +
         'analytics first and never report its staleness as "no live data available".\n' +
         '- Corridor / "between A and B": setRoute({ parameters: { costModel: { traffic: "historical" }, ' +
-        'maxAlternatives: 2 }, monitor: true, showOnMap: false }) arms the live monitor; the app draws the corridor ' +
-        'and reads on-route incidents. Showing a monitored route yourself: updateRoutesDisplay({ waypoints: false }) ' +
+        'maxAlternatives: 2 }, monitor: true, show: false }) arms the live monitor; the app draws the corridor ' +
+        'and reads on-route incidents. Showing a monitored route yourself: updateDatasetDisplay({ slice: "routing", ' +
+        'waypoints: false }) ' +
         'and setMapStyling "routes.summaryBubbles.visible": false.\n' +
-        '- analyseData: this app renders chart output in a dedicated panel, so prefer outputFormat: "chart" for ' +
+        '- analyseDatasets: this app renders chart output in a dedicated panel, so prefer outputFormat: "chart" for ' +
         'countable / comparable results (by type, road, delay bins); plain JSON only for a single scalar.\n' +
         '- BYOD areas / "per district": addByodSource ALONE first (its dataset exists only once it returns — a ' +
         'same-step consumer fails), then setByodLayers, then ONE monitored getTrafficIncidents ' +
-        'over their combined area (polygons union into a single fetch), then a monitored analyseData(incidents + ' +
+        'over their combined area (polygons union into a single fetch), then a monitored analyseDatasets(incidents + ' +
         'byod) bucketing each incident into its polygon via turf.booleanIntersects (incidents mix Point + ' +
         'LineString) — one live per-polygon breakdown.',
 

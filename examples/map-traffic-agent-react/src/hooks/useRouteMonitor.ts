@@ -48,7 +48,7 @@ export function useRouteMonitor(agent: AgentInstance | undefined) {
     // locate button to focus.
     const frameRoute = (datasetId: string) => {
         if (!agent) return;
-        const dataset = agent.state.routing.datasets.find((e) => e.id === datasetId);
+        const dataset = agent.state.routing.findById(datasetId);
         if (!dataset) return;
         const bbox = bboxFromGeoJSON(dataset.data);
         if (!bbox) return;

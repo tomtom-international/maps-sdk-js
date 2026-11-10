@@ -1269,7 +1269,7 @@ geometriesModule.isVisible();       // false
 // for goes back to its default (on top, just below the titles).
 geometriesModule.updateConfig({ beforeLayerConfig: { fill: 'lowestRoadLine', line: 'lowestLabel' } });
 
-// Your own colours, one per feature in turn — neighbouring regions stay apart
+// Your own colours, taken in turn in feature order. Neighbouring regions can share a colour
 const regions = await GeometriesModule.create(map, { fill: { palette: ['#ffadad', '#ffd6a5', '#caffbf', '#a0c4ff'], opacity: 0.3 } });
 
 // Any MapLibre property the curated fields lack: a partial layer per layer, merged over the curated fields

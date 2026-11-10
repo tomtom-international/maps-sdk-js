@@ -6,7 +6,7 @@ import type { AgentInstance } from './useAgentBootstrap';
 /**
  * Materialise UI-ready clusters from the latest dataset's dedicated clustering state.
  *
- * Clustering is typed first-class incidents state (`trafficIncidents.getClusters`), not a generic
+ * Clustering is typed first-class incidents state (`trafficIncidents.getDatasetClusters`), not a generic
  * analysis. Its monitor-tick re-run is async (a microtask after each tick), so the fresh result lands on
  * the slice's `clusters-change` event — NOT synchronously with `datasets-change`. We re-derive on both:
  * `clusters-change` catches a fresh clustering result; `datasets-change` catches the dataset going away
@@ -18,14 +18,13 @@ export function useClusters(agent: AgentInstance | undefined) {
     useEffect(() => {
         if (!agent) return;
         const recompute = () => {
-            const datasets = agent.state.trafficIncidents.datasets;
-            const latest = datasets[datasets.length - 1];
+            const latest = agent.state.trafficIncidents.latestDataset;
             if (!latest) {
                 setClusters([]);
                 return;
             }
-            const data = agent.state.trafficIncidents.getClusters(latest.id);
-            setClusters(data ? clustersFromAnalysis(data, latest.data) : []);
+            const data = agent.state.trafficIncidents.getDatasetClusters(latest.id);
+            setClusters(data ? clustersFromAnalysis(data, latest.data.features) : []);
         };
         const unsubClusters = agent.state.trafficIncidents.events.on('clusters-change', recompute);
         const unsubDatasets = agent.state.trafficIncidents.events.on('datasets-change', recompute);
@@ -38,9 +37,8 @@ export function useClusters(agent: AgentInstance | undefined) {
 
     const clearClusters = () => {
         if (!agent) return;
-        const datasets = agent.state.trafficIncidents.datasets;
-        const latest = datasets[datasets.length - 1];
-        if (latest) agent.state.trafficIncidents.clearClusters(latest.id);
+        const latest = agent.state.trafficIncidents.latestDataset;
+        if (latest) agent.state.trafficIncidents.clearDatasetClusters(latest.id);
         setClusters([]);
     };
 

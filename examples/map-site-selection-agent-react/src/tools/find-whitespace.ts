@@ -6,6 +6,7 @@ import * as turf from '@turf/turf';
 import type { Feature, FeatureCollection, Point } from 'geojson';
 import { z } from 'zod';
 import { byodCandidateSites, requireByodFeatures } from '../agent/byod-inputs';
+import { replaceGeometriesByOperation } from '../agent/custom-geometries';
 import { type AreaFeature, type AreaGeometry, km2 } from '../agent/geometry';
 import { getSitePreferences } from '../agent/site-selection-state';
 import { householdsEnabled, searchLimit } from '../demographics/experimental-search';
@@ -447,24 +448,21 @@ const renderWhitespace = async (
     targetFeatures: SearchFeature[],
 ): Promise<{ demandLegend: DemandLegend; demandComposition: DemandComposition }> => {
     // Scan-area outline (its own dataset) + numbered, coloured opportunity hexes + peer markers.
-    for (const dataset of state.customGeometries.datasets.filter((e) => e.provenance.operation === 'whitespace-area')) {
-        await state.customGeometries.removeDataset(dataset.id);
-    }
     const areaFeature = {
         type: 'Feature',
         id: 'whitespace-area',
         geometry: area,
         properties: { name: `Scan area: ${resolved.label}` },
     } as unknown as PolygonFeature<CommonPlaceProps>;
-    const areaDatasetId = await state.customGeometries.addDataset(
-        [areaFeature],
-        { operation: 'whitespace-area', sourceIds: [] },
-        `Scan area: ${resolved.label}`,
-    );
-    // Styled before showing — no default-theme flash.
-    const areaGeometries = await state.customGeometries.getDatasetGeometriesModule(areaDatasetId, 'outline');
-    styleScanArea(areaGeometries);
-    await state.customGeometries.showDataset(areaDatasetId, 'outline');
+    const areaDatasetId = await replaceGeometriesByOperation(state, 'whitespace-area', `Scan area: ${resolved.label}`, [
+        areaFeature,
+    ]);
+    if (areaDatasetId) {
+        // Styled before showing — no default-theme flash.
+        const areaGeometries = await state.customGeometries.getDatasetModule(areaDatasetId, 'outline');
+        styleScanArea(areaGeometries);
+        await state.customGeometries.showDataset(areaDatasetId, { fillStyle: 'outline' });
+    }
 
     // Every scanned cell as a plain, thin outline — shows the full grid coverage. Drawn before the
     // numbered pockets so the coloured, filled top-N sit on top of the bare grid.

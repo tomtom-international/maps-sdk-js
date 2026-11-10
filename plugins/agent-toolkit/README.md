@@ -95,7 +95,7 @@ The plugin ships a `DEFAULT_TOOLS` registry that covers search, routing, traffic
 |---|---|
 | `locatePlace` | Resolve a location string (landmark, city, address) to a place; optionally stage as a waypoint |
 | `reverseGeocode` | Convert `[longitude, latitude]` coordinates to an address |
-| `discoverPlaces` | Search for places by text query or POI category within an area |
+| `discoverPlaces` | Search for places by text query or POI category within an area, or along part of a stored route |
 | `getPOICategoryCodes` | Look up TomTom POI category codes from natural-language names |
 | `getCurrentLocation` | Get the user's physical GPS location from the browser |
 | `getViewport` | Get the current map center, zoom and bounding box |
@@ -105,22 +105,17 @@ The plugin ships a `DEFAULT_TOOLS` registry that covers search, routing, traffic
 | Tool | Description |
 |---|---|
 | `setRoute` | Calculate or recalculate a route — provide `locations` (waypoints), `parameters` (route options) or both |
-| `addWaypointsToRoute` | Extend the current route — prepend a new origin, append a new destination, and/or insert intermediate stops |
-| `removeWaypointsFromRoute` | Remove one or more waypoints by index from the current route |
-| `replaceWaypointInRoute` | Overwrite a single waypoint of the current route in place — origin, destination or by index |
-| `getCurrentWaypoints` | Get the staged waypoint slots (origin, stops, destination) |
-| `startRouteMonitor` | Recalculate an already-calculated route on a cadence (default 60 s) so its live-traffic delays stay current |
-| `stopRouteMonitor` | Stop recalculating a route. The dataset keeps its last data |
+| `editRouteWaypoints` | Edit the waypoints of the current route and recalculate it once: replace or remove waypoints by index, extend it with a new origin or destination, and insert stops where they fit best |
 | `findReachableAreas` | Calculate isochrone/isodistance polygons from one or more origins (in private preview, so the API key needs Calculate Reachable Range access) |
 
 ### Traffic
 
 | Tool | Description |
 |---|---|
-| `getTrafficIncidents` | Fetch traffic incidents within an area (viewport, named place, route corridor, polygon, IDs). By default, the dataset keeps refreshing |
-| `setTrafficIncidentsMonitor` | Turn background refreshing of an already-loaded incidents dataset on or off |
+| `getTrafficIncidents` | Fetch traffic incidents within an area (viewport, named place, route corridor or a stretch of one, polygon, IDs). By default, the dataset keeps refreshing |
+| `setDatasetMonitor` | Turn refreshing on or off for a calculated route, so its live-traffic delays stay current, or a loaded incidents dataset (default every 60 s). A stopped dataset keeps its last data |
 | `clusterIncidents` | Group loaded incidents into hotspots (DBSCAN) with road and category labels, delay totals and trends |
-| `focusIncidents` | Highlight a subset of incidents by id (`analyseData` can pick them by category or severity) on the map and dim the rest |
+| `focusIncidents` | Highlight a subset of incidents by id (`analyseDatasets` can pick them by category or severity) on the map and dim the rest |
 | `getTrafficAreaAnalytics` | Fetch historical traffic analytics (speed, congestion, travel time) for an area |
 
 ### Trackers
@@ -128,8 +123,6 @@ The plugin ships a `DEFAULT_TOOLS` registry that covers search, routing, traffic
 | Tool | Description |
 |---|---|
 | `createTracker` | Watch loaded datasets with generated code and log an alert when its condition turns true (e.g. an incident near a hospital) |
-| `getTrackers` | List the active trackers and whether each is firing |
-| `getTrackerHistory` | Read the alerts and events trackers have logged, for one tracker or since a time |
 | `clearTracker` | Stop a tracker. The datasets it watched stay |
 
 ### Bring-your-own-data (BYOD)
@@ -138,23 +131,22 @@ The plugin ships a `DEFAULT_TOOLS` registry that covers search, routing, traffic
 |---|---|
 | `addByodSource` | Ingest a customer-authored GeoJSON source (URL or inline `FeatureCollection`) and profile its shape. The dataset has no layers and renders nothing until the agent sets them with `setByodLayers` |
 | `setByodLayers` | Restyle a BYOD dataset by replacing its MapLibre layers (type and data-driven paint), using the dataset's data `profile` |
-| `updateByodDisplay` | Show, hide or clear BYOD layers on the map |
 
-> See the [Bring your own data](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/byod) guide for ingestion patterns, the visibility lifecycle and how BYOD datasets feed into `analyseData` / `processData`.
+> See the [Bring your own data](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/byod) guide for ingestion patterns, the visibility lifecycle and how BYOD datasets feed into `analyseDatasets` / `deriveDatasets`.
 
 ### Unified data tools — scope-aware code generation
 
 | Tool | Description |
 |---|---|
-| `analyseData` | Aggregate or chart datasets (`places`, `routes`, `incidents`, `geometries`, `trafficAreaAnalytics`, `byod`) with dynamic JS. The scope the classifier emits narrows the schema each turn |
-| `processData` | Transform datasets, with dynamic JS, into new `places`, `placeConnections`, `geometries`, `byod` or a `fitOnMap` camera move |
-| `monitorAnalysis` | Start or stop recomputing an `analyseData` analysis whenever its source datasets change |
+| `analyseDatasets` | Aggregate or chart datasets (`places`, `routes`, `incidents`, `geometries`, `trafficAreaAnalytics`, `byod`) with dynamic JS. The scope the classifier emits narrows the schema each turn |
+| `deriveDatasets` | Transform datasets, with dynamic JS, into new `places`, `placeConnections`, `geometries`, `byod` or a `fitOnMap` camera move |
+| `monitorAnalysis` | Start or stop recomputing an `analyseDatasets` analysis whenever its source datasets change |
 
 `executeMaplibreCode` runs arbitrary MapLibre JS against the live `Map` instance, an escape hatch for custom layers, animations and raster overlays. Its code runs in your page with no sandbox, so it's not in `DEFAULT_TOOLS`. Add it with `tools: { executeMaplibreCode: createExecuteMaplibreCodeTool() }` only where you trust the model.
 
 > See [Code generation](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/code-generation) for the injected identifiers, output contracts and threat model, and [Scope-aware data tools](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/scope-aware-data-tools) for how the per-turn classifier scope keeps the prompt small.
 
-`analyseData`, `processData`, `createTracker` and `clusterIncidents` code is **isolated in the browser, or not run**, unless you opt into `codeExecution.allowMainThreadFallback`. It runs in a Web Worker inside a sandboxed, opaque-origin iframe with no DOM or network access, terminable on timeout. The SDK lazily loads its own bundled turf and h3 for the worker, so a page without a Content Security Policy needs no configuration. A page with one must allow what the sandbox needs, which the code-generation guide lists. The environment decides where the code runs. The browser isolates it, while Node and SSR always run it on the main thread. That boundary has no equivalent there, so the protection is defense-in-depth only. The optional `codeExecution` tunes the browser run:
+`analyseDatasets`, `deriveDatasets`, `createTracker` and `clusterIncidents` code is **isolated in the browser, or not run**, unless you opt into `codeExecution.allowMainThreadFallback`. It runs in a Web Worker inside a sandboxed, opaque-origin iframe with no DOM or network access, terminable on timeout. The SDK lazily loads its own bundled turf and h3 for the worker, so a page without a Content Security Policy needs no configuration. A page with one must allow what the sandbox needs, which the code-generation guide lists. The environment decides where the code runs. The browser isolates it, while Node and SSR always run it on the main thread. That boundary has no equivalent there, so the protection is defense-in-depth only. The optional `codeExecution` tunes the browser run:
 
 ```typescript
 const agent = createMapAgent(map, {
@@ -169,23 +161,15 @@ const agent = createMapAgent(map, {
 
 | Tool | Description |
 |---|---|
-| `updatePlacesDisplay` | Show, hide or restyle place datasets on the map |
-| `updateRoutesDisplay` | Show, hide or swap route datasets, switch the highlighted alternative or fit the camera |
-| `updateWaypointsDisplay` | Show staged waypoint markers without the route line |
-| `updateTrafficAreaAnalyticsDisplay` | Show, hide or swap traffic-area-analytics datasets |
-| `clearMap` | Remove displayed places, routes, BYOD layers or all features |
+| `updateDatasetDisplay` | Show, hide, swap or drop the datasets of any slice, or clear the whole map. For places, it also sets the marker type and draws boundaries. For routes, it switches the highlighted alternative, rings sections such as tolls or a jam, hides the route's pins or shows the staged waypoints |
 
 ### Map control
 
 | Tool | Description |
 |---|---|
-| `flyTo` | Move the camera to a position or bounding box |
-| `zoomInOrOut` | Adjust the zoom level by a delta |
-| `setPitchBearing` | Tilt (pitch) and/or rotate (bearing) the camera |
-| `getStandardMapStyles` | List available standard map style presets |
+| `moveCamera` | Frame a bounding box or fly to a position, zoom in or out, tilt and rotate, in one call |
 | `setMapStandardStyle` | Switch map style (light, dark, satellite, driving, etc.) |
-| `setLanguage` | Change the language for map labels and API responses |
-| `setGeopoliticalView` | Show disputed borders and territory names from a country's view, for the map and later searches |
+| `setMapLocale` | Set the language of map labels and API responses, and the country whose view of disputed borders and territory names the map and later searches follow |
 | `setMapStyling` | Set or reset, by knob id, what the base map shows and how it looks. That covers layer groups such as 3D buildings, the built-in POI icons and their categories, the live traffic overlays and their filters, the hillshade and 3D terrain, sizes, colours, map presets, or a whole theme from a few colours or an image. It also sets the look of every layer the agent drew: places, routes and their sections, polygons, reachable areas, area analytics and fetched incidents. The classifier scope lists only the knob families a turn touches |
 
 ### MapLibre direct access
@@ -199,7 +183,7 @@ const agent = createMapAgent(map, {
 
 | Tool | Description |
 |---|---|
-| `recallState` | Read session state: a snapshot of the places, routes and ranges datasets with the map style and layer configs, one kind's datasets (`places`, `routes`, `ranges`, `geometries`, `byod`, …), or one dataset by `{ kind, id }` |
+| `recallState` | Read session state: a snapshot of the places, routes and ranges datasets with the map style and layer configs, one slice's datasets (`places`, `routing` with its staged waypoints, `ranges`, `geometries`, `byod`, …), one dataset by `{ slice, id }`, or the trackers and the alerts they fired |
 | `setDatasetMode` | Switch a slice between `multiple` (default) and `single` dataset modes |
 | `resetState` | Reset every state slice and the map style to their defaults |
 
@@ -242,8 +226,9 @@ const agent = createMapAgent<MyState>(map, {
     // Custom state slices — only custom fields needed, built-in slices are created automatically
     state: { fleet: new FleetState() },
 
-    // Per-kind dataset config. `enabled: false` removes the kind from the tool surface
-    // (drops its recall/display/fetch tools and the kind from analyseData/processData scope).
+    // Per-kind dataset config. `enabled: false` removes the kind from the tool surface: it drops the
+    // kind's fetch tools, and the kind leaves analyseDatasets/deriveDatasets scope and the slices
+    // updateDatasetDisplay and setDatasetMonitor take.
     // `datasetMode` switches the slice between 'multiple' (default) and 'single' (latest only).
     datasets: {
         routes: { datasetMode: 'single' },
@@ -272,7 +257,7 @@ const agent = createMapAgent<MyState>(map, {
 
     // Per-step providerOptions override — e.g. bump reasoning only on code-exec turns
     stepProviderOptions: ({ activeTools }) =>
-        activeTools?.includes('processData')
+        activeTools?.includes('deriveDatasets')
             ? { openai: { reasoningEffort: 'medium' } }
             : undefined,
 });
@@ -289,7 +274,7 @@ import { createMapAgent } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 createMapAgent(map, { model, tools: { getWeather: myWeatherTool } });
 
 // Remove specific defaults
-createMapAgent(map, { model, tools: { setMapStandardStyle: false, setLanguage: false } });
+createMapAgent(map, { model, tools: { setMapStandardStyle: false, setMapLocale: false } });
 
 // Replace a default tool (full ToolEntry required)
 createMapAgent(map, { model, tools: { discoverPlaces: myCustomSearchTool } });
@@ -298,7 +283,7 @@ createMapAgent(map, { model, tools: { discoverPlaces: myCustomSearchTool } });
 createMapAgent(map, {
     model,
     tools: {
-        setLanguage: false,
+        setMapLocale: false,
         discoverPlaces: myCustomSearchTool,
         getWeather: myWeatherTool,
     },
@@ -326,7 +311,7 @@ const fleetTools = {
             return { vehicleId, position };
         },
         tags: ['fleet'],
-        relatedTools: ['updatePlacesDisplay'],
+        relatedTools: ['updateDatasetDisplay'],
     },
 } satisfies Record<string, ToolEntry>;
 
@@ -371,7 +356,7 @@ type ToolEntry<S extends ToolState = ToolState, Scope = unknown> = {
 - `PlacesState` — place / geometry dataset history
 - `RoutingState` — route history, planning waypoint slots, route parameters
 - `RangeState` — reachable-range datasets
-- `CustomGeometriesState` — derived polygon datasets produced by `processData` (union, difference, h3-coverage, …)
+- `CustomGeometriesState` — derived polygon datasets produced by `deriveDatasets` (union, difference, h3-coverage, …)
 - `BYODState` — bring-your-own-data GeoJSON layer datasets
 - `BaseMapState` — viewport, style, language, raw `mapLibreMap`
 - `TrafficTilesState` — visibility of the real-time traffic flow and incident tile overlays
@@ -399,7 +384,7 @@ agent.state.places;  // PlacesState — append-only history of place datasets
 
 > See the [What the agent sends, and where](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/what-the-agent-sends) guide for the full list.
 
-- **What reaches your model provider**: every message and the system prompt, plus the classifier's copy of earlier messages. By default, that copy holds up to eight messages of 300 characters each, and `classifier: false` turns it off. Tool results go too, including addresses, coordinates, the viewport, the device location, `analyseData` and `processData` output over your BYOD data, and up to 200 events per tracker.
+- **What reaches your model provider**: every message and the system prompt, plus the classifier's copy of earlier messages. By default, that copy holds up to eight messages of 300 characters each, and `classifier: false` turns it off. Tool results go too, including addresses, coordinates, the viewport, the device location, `analyseDatasets` and `deriveDatasets` output over your BYOD data, and up to 200 events per tracker.
 - **The provider is your processor**: sign a DPA with it and pick an EEA region where it offers one.
 - **What stays in memory**: `agent.state`, until the `resetState` tool or `agent.destroy()` clears it. Nothing goes to browser storage. Chat history is yours, so erasing a user's data means clearing it and calling `agent.destroy()`.
 - **To send less**: remove tools (`getCurrentLocation: false`), turn off the classifier or replace a tool with one that returns less.
@@ -511,16 +496,13 @@ createMapAgent(map, { model, tools: { locatePlace: wrappedLocatePlace } });
 
 **Search-only agent (no routing):**
 
+Turning the `routes` kind off drops `setRoute` and `editRouteWaypoints`, and takes the routing slice out of
+`updateDatasetDisplay`:
+
 ```typescript
 const agent = createMapAgent(map, {
     model,
-    tools: {
-        setRoute: false,
-        addWaypointsToRoute: false,
-        removeWaypointsFromRoute: false,
-        replaceWaypointInRoute: false,
-        updateRoutesDisplay: false,
-    },
+    datasets: { routes: { enabled: false } },
 });
 ```
 
@@ -531,7 +513,7 @@ const agent = createMapAgent(map, {
     model,
     tools: {
         setMapStandardStyle: false,
-        setLanguage: false,
+        setMapLocale: false,
         setLayerProperties: false,
         setMapStyling: false,
     },
@@ -566,8 +548,8 @@ For the complete, always-current list of exports, including factories, tool-regi
 | Peer | `zod@^4.6.7` | Schema validation |
 | Peer | `maplibre-gl@^6.15.0` | Map rendering engine |
 | Peer | `@turf/turf@^7` | Geospatial math (distance, bbox, bearing) used by the data tools |
-| Peer | `chart.js@^4` | Chart rendering for `analyseData` outputs |
-| Peer | `h3-js@^4` | H3 hexagonal grid for `processData` coverage / hexgrid visualizations |
+| Peer | `chart.js@^4` | Chart rendering for `analyseDatasets` outputs |
+| Peer | `h3-js@^4` | H3 hexagonal grid for `deriveDatasets` coverage / hexgrid visualizations |
 
 ## References
 
@@ -576,7 +558,7 @@ For the complete, always-current list of exports, including factories, tool-regi
     - [Tools](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/tools) — per-tool reference
     - [State](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/state) — per-slice reference, dataset modes, custom slices
     - [Customizing tools](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/customizing-tools) — add, replace, remove or start from a blank slate
-    - [Code generation](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/code-generation) — `analyseData` / `processData` / `createTracker` / `clusterIncidents` / `executeMaplibreCode` (threat model included)
+    - [Code generation](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/code-generation) — `analyseDatasets` / `deriveDatasets` / `createTracker` / `clusterIncidents` / `executeMaplibreCode` (threat model included)
     - [Scope-aware data tools](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/scope-aware-data-tools) — per-turn scope mechanism
     - [Bring your own data](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/byod) — ingest customer GeoJSON layers
 - [AI SDK v7 documentation](https://ai-sdk.dev/)

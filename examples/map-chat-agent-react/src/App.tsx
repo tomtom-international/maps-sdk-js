@@ -8,19 +8,19 @@ const toolPrompts = getDefaultToolPrompts();
 
 // Starter suggestions pulled from each tool's own `examplePrompts` — the registry stays the source
 // of truth, so a prompt edit there flows here automatically. We hand-pick one prompt per tool to
-// keep the panel diverse and to skip prompts that assume prior state (most `processData` /
-// `analyseData` entries chain off earlier results, so we pick ones the LLM can plan end-to-end).
+// keep the panel diverse and to skip prompts that assume prior state (most `deriveDatasets` /
+// `analyseDatasets` entries chain off earlier results, so we pick ones the LLM can plan end-to-end).
 const SUGGESTED_PROMPTS: readonly string[] = [
     toolPrompts.discoverPlaces[0],
     toolPrompts.setRoute[0],
     toolPrompts.findReachableAreas[1],
     toolPrompts.getTrafficIncidents[0],
     toolPrompts.getTrafficAreaAnalytics[0],
-    toolPrompts.analyseData[8],
-    toolPrompts.processData[6],
+    toolPrompts.analyseDatasets[8],
+    toolPrompts.deriveDatasets[6],
     toolPrompts.setMapStandardStyle[0],
     toolPrompts.locatePlace[4],
-    toolPrompts.flyTo[0],
+    toolPrompts.moveCamera[0],
 ].filter((p): p is string => typeof p === 'string');
 
 const MIN_CHAT_WIDTH = 320; // px

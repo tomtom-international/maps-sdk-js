@@ -36,10 +36,10 @@ const builtin = DEFAULT_TOOLS;
 // Keeping them always-available makes that failure impossible; choosing the RIGHT one is handled by the
 // model + the system-prompt TOOL CHOICE guidance + each tool's description, which is robust.
 //
-// We DO still gate the three tools whose mere presence invites misuse: analyseData / processData (the
+// We DO still gate the three tools whose mere presence invites misuse: analyseDatasets / deriveDatasets (the
 // sandbox — only for computations the dedicated tools don't cover) and updateSitePreferences (must fire
 // only on a STANDING preference, never a one-off request parameter like "…within a 10-min drive").
-export const CLASSIFIER_GATED_TOOLS = ['analyseData', 'processData', 'updateSitePreferences'];
+export const CLASSIFIER_GATED_TOOLS = ['analyseDatasets', 'deriveDatasets', 'updateSitePreferences'];
 export const keepGenericToolsActive = (base: Classifier): Classifier => {
     // Computed once per classifier (not per turn): the always-active names are every tool that isn't
     // classifier-gated. The tool set is static for the session, so reading the keys once is enough.
@@ -78,7 +78,7 @@ const SITE_CAPABILITIES =
     'rank the features of a BYOD layer as candidate sites (polygons/lines by their centroid), score Spend ' +
     'power from a BYOD demand layer, scan ' +
     'whitespace against BYOD demand points, or compare against a BYOD store network. You can also analyse ' +
-    'loaded data (analyseData) and author NEW derived layers from it (processData).\n\n' +
+    'loaded data (analyseDatasets) and author NEW derived layers from it (deriveDatasets).\n\n' +
     'SESSION PREFERENCES: catchment size, travel mode, scoring weights and demand anchors are remembered ' +
     'for the session (updateSitePreferences) and inherited by every analysis until changed.\n\n' +
     'Each tool describes its own exact inputs and when to use it — rely on that, never guess a capability.\n' +
@@ -146,7 +146,7 @@ const SITE_TOOLS_GUIDANCE =
     'generic primitive or claim no tool exists. A plain "show / find / map all the <POIs> here / in <area>" ' +
     'DISPLAY request that is NOT part of an analysis (e.g. "show me the parking in this viewport") is ' +
     'discoverPlaces — it renders every match as pins; locatePlace resolves only ONE named place, so never ' +
-    'use it for a category or multi-place request. Use analyseData / processData only for a computation the ' +
+    'use it for a category or multi-place request. Use analyseDatasets / deriveDatasets only for a computation the ' +
     'dedicated tools do not cover (a custom metric over already-loaded data, or authoring a derived / BYOD ' +
     'layer). ' +
     'BRING-YOUR-OWN-DATA — load a layer with addByodSource (URL), read the profile it returns, then style ' +
@@ -181,8 +181,8 @@ export const buildSiteSystemPromptSuffix = (): string => `${SITE_TOOLS_GUIDANCE}
 export const SITE_AGENT_MAX_STEPS = 10;
 
 // The site domain tools, PLUS the session-preferences tool, PLUS generic built-ins: map control +
-// viewport, geocoding primitives, discoverPlaces (multi-result POI search), the BYOD trio
-// (bring-your-own-data layers at runtime), the data/sandbox escape hatches (analyseData, processData,
+// viewport, geocoding primitives, discoverPlaces (multi-result POI search), the BYOD tools
+// (bring-your-own-data layers at runtime), the data/sandbox escape hatches (analyseDatasets, deriveDatasets,
 // recallState), and pure utilities. The escape hatches let the agent run ad-hoc analysis over loaded
 // data and author derived layers the fixed tools don't cover; the prompt steers it to the dedicated
 // tools first. discoverPlaces handles explicit "show me the X here" display requests the analyses don't
@@ -202,15 +202,13 @@ export const buildSiteTools = (): Record<string, ToolEntry | ToolEntryBuilder> =
     // Session preferences (catchment, weights, demand anchors) — make standing choices stick:
     updateSitePreferences,
     // Map control & camera (no overlap — fixes "I can't change the map"):
-    flyTo: builtin.flyTo,
-    zoomInOrOut: builtin.zoomInOrOut,
-    setPitchBearing: builtin.setPitchBearing,
+    moveCamera: builtin.moveCamera,
     getViewport: builtin.getViewport,
     setMapStandardStyle: builtin.setMapStandardStyle,
-    getStandardMapStyles: builtin.getStandardMapStyles,
-    clearMap: builtin.clearMap,
-    setLanguage: builtin.setLanguage,
+    setMapLocale: builtin.setMapLocale,
     setMapStyling: builtin.setMapStyling,
+    // Shows, hides and drops the datasets of every enabled slice (the BYOD layers included), or clears the map.
+    updateDatasetDisplay: builtin.updateDatasetDisplay,
     // Location primitives (no overlap — fixes the "ask for location then can't" loop):
     locatePlace: builtin.locatePlace,
     reverseGeocode: builtin.reverseGeocode,
@@ -218,7 +216,8 @@ export const buildSiteTools = (): Record<string, ToolEntry | ToolEntryBuilder> =
     // Multi-result POI search + render — fulfils explicit "show me all the parking/EV chargers/… here"
     // display requests that no dedicated analysis covers (locatePlace resolves only ONE place).
     discoverPlaces: builtin.discoverPlaces,
-    // Bring-your-own-data: load a customer GeoJSON layer (by URL), restyle it, and toggle/remove it.
+    // Bring-your-own-data: load a customer GeoJSON layer (by URL) and restyle it; updateDatasetDisplay
+    // toggles or removes it.
     // Always-active (not classifier-gated) — an available capability, like the map controls.
     // addByodSource returns a data profile the agent uses to drive setByodLayers paint. This demo puts
     // no host allowlist on the URL, so the toolkit's built-in policy accepts any public https source;
@@ -227,13 +226,12 @@ export const buildSiteTools = (): Record<string, ToolEntry | ToolEntryBuilder> =
     // validateSourceUrl (e.g. a signed-URL service or a tenant-origin check).
     addByodSource: builtin.addByodSource,
     setByodLayers: builtin.setByodLayers,
-    updateByodDisplay: builtin.updateByodDisplay,
-    // Data / sandbox escape hatches. analyseData runs ad-hoc analysis over loaded datasets (incl. BYOD);
-    // processData authors NEW renderable layers (incl. agent-authored BYOD); both are classifier-gated.
+    // Data / sandbox escape hatches. analyseDatasets runs ad-hoc analysis over loaded datasets (incl. BYOD);
+    // deriveDatasets authors NEW renderable layers (incl. agent-authored BYOD); both are classifier-gated.
     // recallState (always-active, cheap) lists what's loaded. findReachableAreas stays out — its reach
     // computation overlaps the domain tools' own catchment internals.
-    analyseData: builtin.analyseData,
-    processData: builtin.processData,
+    analyseDatasets: builtin.analyseDatasets,
+    deriveDatasets: builtin.deriveDatasets,
     recallState: builtin.recallState,
     // Pure utilities (harmless; `help` lets the agent list its real capabilities):
     help: builtin.help,
@@ -268,6 +266,12 @@ export const buildSiteAgentOptions = (
         classifier: keepGenericToolsActive(createDefaultClassifier({ model })),
         includeDefaultTools: false,
         tools: buildSiteTools(),
+        // No route, incidents or area-analytics data here, so the built-ins don't offer those slices.
+        datasets: {
+            routes: { enabled: false },
+            incidents: { enabled: false },
+            trafficAreaAnalytics: { enabled: false },
+        },
         // Session-preferences slice (catchment size, scoring weights, demand anchors) — runtime-mutable
         // defaults the domain tools and the sandbox read instead of hardcoding thresholds.
         state: { siteSelection: new SiteSelectionState() },

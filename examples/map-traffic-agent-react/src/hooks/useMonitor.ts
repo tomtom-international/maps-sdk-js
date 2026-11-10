@@ -4,7 +4,7 @@ import type { AgentInstance } from './useAgentBootstrap';
 /**
  * Surfaces the actively-monitored area for the chip in the top-left. The chip
  * is gated on `monitor-start`/`monitor-stop` lifecycle events, not on dataset
- * existence — so it only goes "running" once `setTrafficIncidentsMonitor`
+ * existence — so it only goes "running" once `setDatasetMonitor`
  * has been called, and clears on stop or dataset teardown. Snapshot count and
  * last-analysis timestamp track the monitored dataset across its ticks.
  */
@@ -27,7 +27,7 @@ export function useMonitor(agent: AgentInstance | undefined) {
                 setLastAnalysisAt(null);
                 return;
             }
-            const dataset = slice.datasets.find((e) => e.id === id);
+            const dataset = slice.findById(id);
             if (!dataset) {
                 setMonitoredDatasetId(null);
                 setLastAnalysisAt(null);

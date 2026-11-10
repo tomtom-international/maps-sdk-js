@@ -1,4 +1,4 @@
-import type { BBox, CommonPlaceProps, PolygonFeature, PolygonFeatures } from '@tomtom-org/maps-sdk/core';
+import type { BBox, CommonPlaceProps, PolygonFeature } from '@tomtom-org/maps-sdk/core';
 import {
     type CustomGeoJSONLayerSpec,
     type GeometriesModule,
@@ -9,6 +9,7 @@ import type { ToolState } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import * as turf from '@turf/turf';
 import type { Feature, FeatureCollection, LineString, MultiPolygon, Point, Polygon } from 'geojson';
 import { type ExpressionSpecification, Marker, Popup } from 'maplibre-gl';
+import { replaceGeometriesByOperation } from '../agent/custom-geometries';
 import { type AreaGeometry, clipPolygons } from '../agent/geometry';
 import sitePinSvg from './assets/site-pin.svg?raw';
 
@@ -389,7 +390,7 @@ const PIN_PATH =
 export type RankedPin = { position: [number, number]; color: string; number: number | null };
 
 /** A ranked site as drawn: its pin, and the catchment painted in the pin's colour. */
-export type RankedSiteView = RankedPin & { label: string; catchment: Feature<Polygon | MultiPolygon> };
+export type RankedSiteView = RankedPin & { label: string };
 
 /** A site's place in a re-ranking: the pin number and the colour its pin and catchment take. */
 export type RankedSiteStyle = Pick<RankedPin, 'color' | 'number'>;
@@ -446,19 +447,20 @@ export const restyleRankedSites = async (styles: ReadonlyMap<string, RankedSiteS
     );
     if (unchanged) return;
 
-    const restyled = { state, rangesId, sites };
-    shownRanking = restyled;
+    shownRanking = { state, rangesId, sites };
     drawRankedPins(state, sites);
-    if (!state.ranges.datasets.some((dataset) => dataset.id === rangesId)) return;
+    const dataset = state.ranges.findById(rangesId);
+    if (!dataset) return;
 
-    const catchments = await state.ranges.getDatasetGeometriesModule(rangesId, 'outline');
-    // A later restyle or ranking took over while the module loaded, and paints its own colours.
-    if (shownRanking !== restyled) return;
-
-    await catchments.show({
-        type: 'FeatureCollection',
-        features: sites.map((site) => withColor(site.catchment, site.color)),
-    } as PolygonFeatures);
+    // Recoloured in the dataset, so a hide-then-show keeps the new colours and hidden catchments stay hidden.
+    await state.ranges.replaceDatasetData(
+        rangesId,
+        {
+            ...dataset.data,
+            features: dataset.data.features.map((feature, index) => withColor(feature, sites[index].color)),
+        },
+        Date.now(),
+    );
 };
 
 // One shared overlay id across all the site tools, so a new analysis REPLACES the previous markers
@@ -485,8 +487,10 @@ export const drawRichOverlay = async (
         }
     }
     if (points.length === 0 && lines.length === 0 && !catchment) return;
-    const datasetId = await state.byod.addDataset(buildOverlay(points, lines, catchment), label, {
-        explicitId: SITE_OVERLAY_ID,
+    const datasetId = await state.byod.addDataset({
+        label,
+        data: buildOverlay(points, lines, catchment),
+        id: SITE_OVERLAY_ID,
         layers: OVERLAY_LAYERS,
     });
     await state.byod.showDataset(datasetId);
@@ -529,11 +533,7 @@ const addHexNumberMarkers = (state: ToolState, hexes: NumberedHex[]): void => {
 
 /** Draw (or replace) coloured hexes, each numbered by an HTML badge at its centre. */
 export const drawNumberedHexes = async (state: ToolState, label: string, hexes: NumberedHex[]): Promise<void> => {
-    for (const dataset of [...state.customGeometries.datasets]) {
-        if (dataset.provenance.operation === 'whitespace') await state.customGeometries.removeDataset(dataset.id);
-    }
     clearHexNumberMarkers();
-    if (hexes.length === 0) return;
     const features = hexes.map(
         (hex, index) =>
             ({
@@ -542,9 +542,10 @@ export const drawNumberedHexes = async (state: ToolState, label: string, hexes: 
                 properties: { name: hex.label, color: hex.color },
             }) as unknown as PolygonFeature<CommonPlaceProps>,
     );
-    const datasetId = await state.customGeometries.addDataset(features, { operation: 'whitespace', sourceIds: [] }, label);
+    const datasetId = await replaceGeometriesByOperation(state, 'whitespace', label, features);
+    if (!datasetId) return;
     // Configured before showing — no default-theme flash.
-    const geometriesModule = await state.customGeometries.getDatasetGeometriesModule(datasetId, 'filled');
+    const geometriesModule = await state.customGeometries.getDatasetModule(datasetId, 'filled');
     const config = geometriesModule.getConfig();
     geometriesModule.updateConfig({
         // The fill sits above the roads (below labels) but fades out as the user zooms in: pockets
@@ -558,7 +559,7 @@ export const drawNumberedHexes = async (state: ToolState, label: string, hexes: 
         line: { ...config?.line, color: PER_FEATURE_COLOR, width: 2, opacity: 1 },
         beforeLayerConfig: LINE_BEFORE_LAYER,
     });
-    await state.customGeometries.showDataset(datasetId, 'filled');
+    await state.customGeometries.showDataset(datasetId, { fillStyle: 'filled' });
     addHexNumberMarkers(state, hexes);
 };
 
@@ -577,22 +578,15 @@ export const drawHexOutlineGrid = async (
     label: string,
     hexes: Feature<Polygon | MultiPolygon>[],
 ): Promise<void> => {
-    for (const dataset of [...state.customGeometries.datasets]) {
-        if (dataset.provenance.operation === 'whitespace-grid') await state.customGeometries.removeDataset(dataset.id);
-    }
-    if (hexes.length === 0) return;
     const features = hexes.map(
         (hex, index) =>
             ({ ...hex, id: `whitespace-grid-${index}`, properties: {} }) as unknown as PolygonFeature<CommonPlaceProps>,
     );
-    const datasetId = await state.customGeometries.addDataset(
-        features,
-        { operation: 'whitespace-grid', sourceIds: [] },
-        label,
-    );
+    const datasetId = await replaceGeometriesByOperation(state, 'whitespace-grid', label, features);
+    if (!datasetId) return;
     // Configure the module before showing, so the grid renders straight to a hairline grey outline with
     // a transparent fill (no 5px flash), split across the layer stack: fill below roads, line below labels.
-    const module = await state.customGeometries.getDatasetGeometriesModule(datasetId, 'outline');
+    const module = await state.customGeometries.getDatasetModule(datasetId, 'outline');
     const config = module.getConfig();
     module.updateConfig({
         fill: { ...config?.fill, opacity: 0 },
@@ -604,5 +598,5 @@ export const drawHexOutlineGrid = async (
         },
         beforeLayerConfig: SPLIT_BEFORE_LAYER,
     });
-    await state.customGeometries.showDataset(datasetId, 'outline');
+    await state.customGeometries.showDataset(datasetId, { fillStyle: 'outline' });
 };

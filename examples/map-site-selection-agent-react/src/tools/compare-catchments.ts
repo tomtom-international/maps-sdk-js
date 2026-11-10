@@ -1,7 +1,8 @@
-import type { CommonPlaceProps, PolygonFeature, PolygonFeatures } from '@tomtom-org/maps-sdk/core';
-import type { ReachableRange, ToolEntry, ToolState } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+import type { PolygonFeature, ReachableRangeBudget } from '@tomtom-org/maps-sdk/core';
+import type { ToolEntry, ToolState } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import { z } from 'zod';
 import { byodCandidateSites, requireByodFeatures } from '../agent/byod-inputs';
+import { replaceGeometriesByOperation } from '../agent/custom-geometries';
 import { clipPolygons, km2, unionPolygons } from '../agent/geometry';
 import { type ResolvedCatchment, resolveCatchment } from '../agent/site-selection-state';
 import { startProgress } from '../progress/progress-store';
@@ -220,7 +221,7 @@ export const compareCatchments: ToolEntry = {
             }
 
             progress.step(3);
-            const budget: ReachableRange['budgets'][number] = walking
+            const budget: ReachableRangeBudget = walking
                 ? { type: 'distanceKM', value: walkReachMeters / 1000 }
                 : { type: 'timeMinutes', value: driveMinutes };
             await drawCatchment(
@@ -231,27 +232,21 @@ export const compareCatchments: ToolEntry = {
                         query: index === 0 ? `PROPOSED: ${site.label}` : `Existing: ${site.label}`,
                         position: site.position,
                     },
-                    budgets: [budget],
-                    polygon: { type: 'FeatureCollection', features: [site.catchment] } as PolygonFeatures,
+                    budget,
+                    polygon: site.catchment,
                 })),
             );
 
-            for (const dataset of state.customGeometries.datasets.filter(
-                (e) => e.provenance.operation === 'catchment-overlap',
-            )) {
-                await state.customGeometries.removeDataset(dataset.id);
-            }
-            if (overlapFeatures.length > 0) {
-                const datasetId = await state.customGeometries.addDataset(
-                    // customGeometries is generically typed to CommonPlaceProps; overlap
-                    // polygons carry only name/color, so cast as the codebase does elsewhere.
-                    overlapFeatures as unknown as PolygonFeature<CommonPlaceProps>[],
-                    { operation: 'catchment-overlap', sourceIds: [] },
-                    `Catchment overlap: ${proposed.label}`,
-                );
-                await state.customGeometries.showDataset(datasetId, 'filled');
+            const datasetId = await replaceGeometriesByOperation(
+                state,
+                'catchment-overlap',
+                `Catchment overlap: ${proposed.label}`,
+                overlapFeatures,
+            );
+            if (datasetId) {
+                await state.customGeometries.showDataset(datasetId, { fillStyle: 'filled' });
                 // Pink overlap fill sits beneath the roads, its border below the labels.
-                const overlapGeometries = await state.customGeometries.getDatasetGeometriesModule(datasetId, 'filled');
+                const overlapGeometries = await state.customGeometries.getDatasetModule(datasetId, 'filled');
                 positionPolygonLayers(overlapGeometries);
             }
             await drawRichOverlay(state, `Cannibalization: ${proposed.label}`, [], connectors);

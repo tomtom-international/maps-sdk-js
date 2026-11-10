@@ -42,7 +42,7 @@ The agent is not limited to fixed parameters or TomTom data:
   - score the **Spend-power factor** from a BYOD demand/demographics layer,
   - scan whitespace against **your own demand points**,
   - check cannibalization against **your own store network**.
-- **Escape hatch** — the toolkit's generic sandbox tools (`analyseData`, `processData`, `recallState`) are available for ad-hoc analysis over loaded data and for authoring derived/agent-generated layers the fixed tools don't cover.
+- **Escape hatch** — the toolkit's generic sandbox tools (`analyseDatasets`, `deriveDatasets`, `recallState`) are available for ad-hoc analysis over loaded data and for authoring derived/agent-generated layers the fixed tools don't cover.
 
 ## How it works
 

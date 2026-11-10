@@ -13,7 +13,7 @@ import type { FactorContribution, FactorValues, FactorWeights, SkippedFactor } f
 // `properties` — and a set of them is a `FeatureCollection`. Catchment / hex / overlap polygons travel
 // alongside as `PolygonFeature`s keyed by the matching feature `id` (the same points-plus-geometries
 // shape the toolkit's PlacesDataset uses). This lets a result be handed to the toolkit's BYOD /
-// customGeometries / processData machinery later with no reshaping. Read coordinates back with
+// customGeometries / deriveDatasets machinery later with no reshaping. Read coordinates back with
 // `getPosition(feature)` from @tomtom-org/maps-sdk/core.
 //
 // Per-kind hooks read a stable slice reference, so publishing (say) a ranking does not re-render the

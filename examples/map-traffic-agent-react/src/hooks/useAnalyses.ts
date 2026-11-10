@@ -10,7 +10,7 @@ const snapshotAnalyses = (registry: AgentInstance['state']['analyses']): Analysi
     registry.all().map((record) => ({ ...record, monitored: registry.isMonitored(record.analysisId) }));
 
 /**
- * Surfaces every analysis the agent has registered via analyseData (one-shot or monitored), with
+ * Surfaces every analysis the agent has registered via analyseDatasets (one-shot or monitored), with
  * each one's latest result, for the right-rail Analyses panel. Re-reads on `analysis-change` (fires
  * whenever a result lands or a monitored analysis recomputes). `toggleMonitor` flips an analysis
  * between live (recomputes on source change) and off by pausing/resuming its job.

@@ -5,7 +5,7 @@ type ClassificationChipProps = {
 };
 
 // Reads the classifier-emitted scope for `name`, if any, and formats it as `name(kind1, kind2)`.
-// Scopable tools (`analyseData`, `processData`, …) carry a `{ kinds: string[] }` scope; non-scopable
+// Scopable tools (`analyseDatasets`, `deriveDatasets`, …) carry a `{ kinds: string[] }` scope; non-scopable
 // tools render as bare names. Unknown scope shapes fall back to the bare name silently — we
 // don't want a malformed scope payload to break the chip rendering.
 const formatPickedTool = (name: string, scopes: Record<string, unknown> | undefined): string => {

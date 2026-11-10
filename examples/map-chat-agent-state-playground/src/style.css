@@ -69,7 +69,7 @@ body {
     background: var(--ui-surface-0);
     align-self: flex-start;
     color: var(--ui-text-med-em);
-    border: 1px solid var(--ui-border-base-em, #f2f2f2);
+    border: 1px solid var(--ui-border-base-em);
     border-radius: var(--ui-rounded-20) var(--ui-rounded-20) var(--ui-rounded-20) 0;
     min-width: 0;
 }
@@ -199,7 +199,7 @@ body {
 @media (max-width: 640px) {
     .message {
         max-width: 92%;
-        font-size: var(--ui-font-body-s, 0.85rem);
+        font-size: var(--ui-font-body-s);
     }
 }
 

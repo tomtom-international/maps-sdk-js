@@ -50,9 +50,7 @@ export function useSelectedIncident(agent: AgentInstance | undefined) {
                 setSelectedIncident((current) => {
                     if (!current) return null;
                     const shownId = current.incidents[current.index]?.properties.id;
-                    const owning = agent.state.trafficIncidents.datasets.find((e) =>
-                        e.data.some((f) => f.properties.id === shownId),
-                    );
+                    const owning = shownId ? agent.state.trafficIncidents.findFeature(shownId)?.dataset : undefined;
                     return owning && shown.has(owning.id) ? current : null;
                 });
             }),
@@ -63,7 +61,7 @@ export function useSelectedIncident(agent: AgentInstance | undefined) {
 
         sliceUnsubs.push(
             agent.state.trafficIncidents.events.on('datasets-change', ({ datasets }) => {
-                const allData = datasets.flatMap((e) => e.data);
+                const allData = datasets.flatMap((e) => e.data.features);
                 setSelectedIncident((current) => {
                     if (!current) return null;
                     // Re-bind each stacked incident to its freshest version, dropping any whose API id
@@ -92,8 +90,7 @@ export function useSelectedIncident(agent: AgentInstance | undefined) {
 
     const selectIncident = (id: string) => {
         if (!agent) return;
-        const dataset = agent.state.trafficIncidents.findDatasetWithIncident(id);
-        const incident = dataset?.data.find((f) => f.properties.id === id);
+        const incident = agent.state.trafficIncidents.findFeature(id)?.feature;
         if (!incident) return;
         // Panel-driven selection has no map-stack context, so it's a single-item stack.
         setSelectedIncident({ incidents: [incident], index: 0 });

@@ -4,9 +4,16 @@ import {
     type Place,
     type PolygonFeature,
     type PolygonFeatures,
+    type ReachableRangeBudget,
 } from '@tomtom-org/maps-sdk/core';
 import { calculateReachableRange, geocodeOne, trafficAreaAnalytics } from '@tomtom-org/maps-sdk/services';
-import type { ReachableRange, ToolEntry, ToolEntryBuilder, ToolState } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+import type {
+    RangeFeatureProps,
+    ReachableRange,
+    ToolEntry,
+    ToolEntryBuilder,
+    ToolState,
+} from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import { getViewportBias, locatePlace } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import * as turf from '@turf/turf';
 import type { GeoJsonProperties } from 'geojson';
@@ -40,6 +47,13 @@ import { resolveCategories, resolveCategoriesWithNames, wordsOf } from './catego
 
 // A catchment is a polygon feature; reuse the reachable-range service's feature type for both branches.
 export type Catchment = Awaited<ReturnType<typeof calculateReachableRange>>;
+
+// One catchment drawn as a reachable range: its polygon around a labelled origin, for one budget.
+export type CatchmentRange = {
+    origin: ReachableRange['origin'];
+    budget: ReachableRangeBudget;
+    polygon: AreaFeature;
+};
 
 // Promote a raw polygon feature (a catchment, an overlap, a clipped hex) to the SDK's PolygonFeature
 // shape used across the toolkit state — same geometry, a stable `id`, and the required bbox (computed
@@ -301,7 +315,7 @@ const trafficNote = async (position: [number, number], timeZone: string | undefi
 export const drawCatchment = async (
     state: ToolState,
     datasetLabel: string,
-    ranges: ReachableRange[],
+    catchments: CatchmentRange[],
     showOriginPin = true,
     drawGeometry = true,
     rangeColors?: string[],
@@ -310,34 +324,31 @@ export const drawCatchment = async (
     clearSiteMarker();
     clearRankedPins();
     for (const dataset of [...state.ranges.datasets]) await state.ranges.removeDataset(dataset.id);
-    const rangesId = await state.ranges.addDataset({ label: datasetLabel, data: ranges });
-    // rangeColors (one per range) stamps `properties.color` so fill/border paint per feature.
-    const features = ranges.flatMap((range, index) =>
-        (range.polygon?.features ?? []).map((feature: PolygonFeatures['features'][number]) =>
-            rangeColors ? withColor(feature, rangeColors[index]) : feature,
-        ),
-    );
-    const merged = { type: 'FeatureCollection', features } as PolygonFeatures;
-    if (drawGeometry) {
-        const geometriesModule = await state.ranges.getDatasetGeometriesModule(rangesId, 'outline');
-        // Configured before showing — no default-theme flash.
-        styleCatchment(geometriesModule, !!rangeColors);
-        await geometriesModule.show(merged);
-    }
-    if (showOriginPin) {
-        const pins: Place[] = ranges.map((range, index) => ({
-            type: 'Feature',
-            id: `site-${rangesId}-${index}`,
-            geometry: { type: 'Point', coordinates: range.origin.position },
-            properties: { type: 'Point Address', address: { freeformAddress: range.origin.query ?? '' } },
-        }));
-        const placesModule = await state.ranges.getDatasetPlacesModule(rangesId);
-        await placesModule.show(pins);
-    }
-    await state.ranges.markDatasetShown(rangesId);
-    if (features.length > 0) {
-        fitBesidePanel(state, turf.bbox(merged) as BBox, 60);
-    }
+    // Each polygon carries its origin and budget, as every ranges dataset's features do. rangeColors (one per
+    // catchment) stamps `properties.color` so fill/border paint per feature.
+    const data: PolygonFeatures<RangeFeatureProps> = {
+        type: 'FeatureCollection',
+        features: catchments.map(({ origin, budget, polygon }, index) => {
+            const feature = {
+                ...polygon,
+                properties: {
+                    ...polygon.properties,
+                    origin: origin.position,
+                    budget,
+                    ...(origin.query && { originQuery: origin.query }),
+                },
+            } as PolygonFeature<RangeFeatureProps>;
+            return rangeColors ? withColor(feature, rangeColors[index]) : feature;
+        }),
+    };
+    const rangesId = await state.ranges.addDataset({ label: datasetLabel, data });
+    // Styled before the slice draws on it — no default-theme flash.
+    if (drawGeometry) styleCatchment(await state.ranges.getDatasetGeometriesModule(rangesId, 'outline'), !!rangeColors);
+    await state.ranges.showDataset(rangesId, {
+        polygons: drawGeometry ? 'geometries' : 'none',
+        originPins: showOriginPin,
+    });
+    if (data.features.length > 0) fitBesidePanel(state, turf.bbox(data) as BBox, 60);
     return rangesId;
 };
 
@@ -381,9 +392,9 @@ export const executeProfileSite = (async (params: ProfileSiteInput, state: ToolS
     const progress = startProgress('profileSite', buildSteps(addresses.length));
     const { walking, walkReachMeters, driveMinutes } = resolveCatchment(state, params);
     const basis = walking ? `≈${walkReachMeters} m walk radius` : `${driveMinutes}-min drive`;
-    const budgets: ReachableRange['budgets'] = [
-        walking ? { type: 'distanceKM', value: walkReachMeters / 1000 } : { type: 'timeMinutes', value: driveMinutes },
-    ];
+    const budget: ReachableRangeBudget = walking
+        ? { type: 'distanceKM', value: walkReachMeters / 1000 }
+        : { type: 'timeMinutes', value: driveMinutes };
 
     try {
         // Phase 0 — geocode all sites
@@ -416,13 +427,7 @@ export const executeProfileSite = (async (params: ProfileSiteInput, state: ToolS
             await drawCatchment(
                 state,
                 `${concept} catchment (${basis}): ${label}`,
-                [
-                    {
-                        origin: { query: label, position },
-                        budgets,
-                        polygon: { type: 'FeatureCollection', features: [catchment] } as PolygonFeatures,
-                    },
-                ],
+                [{ origin: { query: label, position }, budget, polygon: catchment }],
                 false, // profileSite draws its own Figma pin + label (drawSiteMarker) — no SDK origin pin
                 false, // and renders the catchment itself (drawRichOverlay) in the Figma style — no SDK outline
             );
@@ -513,9 +518,9 @@ export const executeProfileSite = (async (params: ProfileSiteInput, state: ToolS
             // earlier "Las Vegas Convention Center" locate) so the focused profile shows ONLY our Figma site pin —
             // otherwise the SDK pin and the custom pin stack on the same spot. profileSite draws its
             // own competitor/parking markers via the BYOD overlay, so it never needs state.places.
-            // `clearShownDatasets` only hides — the datasets stay in history, so a later
-            // analyseData({ placesDatasetIDs: [...] }) can still resolve them (reset() would wipe them).
-            await state.places.clearShownDatasets();
+            // `clearShown` only hides — the datasets stay in history, so a later
+            // analyseDatasets({ placesDatasetIDs: [...] }) can still resolve them (reset() would wipe them).
+            await state.places.clearShown();
             // The Figma on-map address label under the site pin (single-site cue).
             drawSiteMarker(state, position, label);
 

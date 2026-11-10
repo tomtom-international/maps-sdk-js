@@ -16,7 +16,7 @@
 
 It's built on [MapLibre GL JS](https://docs.tomtom.com/maps-sdk-js/guides/map/about-maplibre) and [GeoJSON](https://geojson.org/). TomTom maps and services work together out of the box, and the MapLibre map stays fully exposed, so its API and plugin ecosystem work alongside the SDK.
 
-> Some capabilities of the SDK are released under [Public Preview](https://docs.tomtom.com/legal/public-preview) to collect feedback from the community. The [release notes](https://docs.tomtom.com/maps-sdk-js/introduction/release-notes) list what changes in each release.
+> From 1.0.0, the SDK follows semantic versioning under its [versioning and support policy](https://docs.tomtom.com/maps-sdk-js/introduction/versioning-and-support-policy). The plugins stay in [Public Preview](https://docs.tomtom.com/legal/public-preview) until their own 1.0.0, or in [Private Preview](https://docs.tomtom.com/legal/private-preview) when their data needs an entitlement on your API key. The [release notes](https://docs.tomtom.com/maps-sdk-js/introduction/release-notes) list what changes in each release.
 
 ## Quickstart
 
@@ -80,13 +80,28 @@ internal one, so it doesn't accept pull requests. It carries:
 - **The AI coding skills** that `npx skills add` installs, under [`.claude/skills/`](./.claude/skills)
 - **The changelogs**: [`CHANGELOG.md`](./CHANGELOG.md) for the SDK, and `plugins/<name>/CHANGELOG.md` next to each
   plugin's `README.md`
-- **A `v<version>` tag for each SDK release**, holding that release's skill and docs.
-  [Installing the skill](https://docs.tomtom.com/maps-sdk-js/guides/ai-coding#installing-the-skill) covers the skill of
+- **A `v<version>` tag for each SDK release**, holding that release's skills and docs.
+  [Installing the skill](https://docs.tomtom.com/maps-sdk-js/guides/ai-coding#installing-the-skill) covers the skills of
   an older SDK version, and the [docs site](https://tomtom-international.github.io/maps-sdk-js/) shows the newest ones.
 
 ## Running an example
 
-**Requirements**: Node.js 22.13+, pnpm 11+ (`corepack enable`) and a [TomTom API key](https://my.tomtom.com/).
+**Requirements**: Node.js 22.13+, pnpm 11+ and a [TomTom API key](https://my.tomtom.com/).
+
+`corepack enable` puts the pnpm shim on your PATH, and the first `pnpm` command downloads the version this repository pins. That works on Node.js 22.14 and later 22.x releases, Node.js 23.7 and later 23.x releases, and Node.js 24. On Node.js 22.13, 23.0 to 23.6, and 25 and later, install Corepack first. Those 22 and 23 releases ship a Corepack that cannot verify current pnpm releases, and Node.js 25 does not include Corepack:
+
+```bash
+npm install -g corepack
+corepack enable
+```
+
+Or install pnpm directly, on Node.js 22.13 and later:
+
+```bash
+npm install -g pnpm@11
+```
+
+Then install and run an example:
 
 ```bash
 pnpm install

@@ -396,10 +396,10 @@ describe('createAgentTelemetry', () => {
 
     it('exposes onToolExecute that emits AgentToolExecution', () => {
         const { sink, events } = fakeSink();
-        createAgentTelemetry('conv-1', sink).onToolExecute({ toolName: 'flyTo', durationMs: 5, isError: false });
+        createAgentTelemetry('conv-1', sink).onToolExecute({ toolName: 'moveCamera', durationMs: 5, isError: false });
 
         const event = events.find((e) => e.name === 'AgentToolExecution');
-        expect(event?.properties.toolName).toBe('flyTo');
+        expect(event?.properties.toolName).toBe('moveCamera');
         expect(event?.properties.isError).toBe('false');
         expect(event?.properties.durationMs).toBe('5');
     });
@@ -423,7 +423,7 @@ describe('createAgentTelemetry', () => {
             fakeAgent({
                 steps: [
                     {
-                        toolCalls: [{ toolName: 'flyTo', input: {}, toolCallId: 't1' }],
+                        toolCalls: [{ toolName: 'moveCamera', input: {}, toolCallId: 't1' }],
                         toolResults: [],
                         content: [{ type: 'tool-error', toolCallId: 't1' }],
                     },

@@ -27,9 +27,8 @@ export function useHeatmapOverlay(agent: AgentInstance | undefined, incidents: I
             overlay.setMode(vizModeRef.current);
             overlayRef.current = overlay;
             // If incidents already arrived before style load, render them now.
-            const allDatasets = agent.state.trafficIncidents.datasets;
-            const latest = allDatasets[allDatasets.length - 1];
-            if (latest) overlay.setIncidents(latest.data);
+            const latest = agent.state.trafficIncidents.latestDataset;
+            if (latest) overlay.setIncidents(latest.data.features);
         };
 
         // If the style is already loaded (common when the agent is re-instantiated

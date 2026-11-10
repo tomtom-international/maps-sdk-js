@@ -31,7 +31,9 @@ export const SearchResultsList = ({ search, onOpen, onAdd }: SearchResultsListPr
             <div className="ui-search-results-header">
                 <span className="ui-subheading">
                     {title}
-                    {search.alongRoute && search.request && ' along the route'}
+                    {search.alongRoute &&
+                        search.request &&
+                        (search.effectiveScope === 'section' ? ' along this stretch' : ' along the route')}
                 </span>
                 <button
                     type="button"
