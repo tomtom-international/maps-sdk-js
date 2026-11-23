@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Patch Changes
+
+- The Vondelpark street-light surface baselines follow the roads the map draws there now
+
 ## 0.3.2
 
 ### Patch Changes

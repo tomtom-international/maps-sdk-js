@@ -66,17 +66,17 @@ minimumReleaseAgeExclude:
 
 catalog:
   "@tomtom-org/maps-sdk": 1.0.0
-  "@tomtom-org/maps-sdk-plugin-agent-toolkit": 0.19.0
+  "@tomtom-org/maps-sdk-plugin-agent-toolkit": 0.19.1
   "@tomtom-org/maps-sdk-plugin-flyover": 0.1.2
   "@tomtom-org/maps-sdk-plugin-landmarks-3d": 0.3.2
   "@tomtom-org/maps-sdk-plugin-map-effects": 0.4.2
   "@tomtom-org/maps-sdk-plugin-map-theme": 0.3.9
   "@tomtom-org/maps-sdk-plugin-route-dragging": 0.0.3
   "@tomtom-org/maps-sdk-plugin-viewport-places": 0.5.10
-  "@ai-sdk/azure": ^4.0.104
-  "@ai-sdk/react": ^4.0.147
-  "@assistant-ui/react": ^0.15.29
-  "@assistant-ui/react-ai-sdk": ^1.4.18
+  "@ai-sdk/azure": ^4.0.126
+  "@ai-sdk/react": ^4.0.177
+  "@assistant-ui/react": ^0.15.36
+  "@assistant-ui/react-ai-sdk": ^1.4.23
   "@microsoft/applicationinsights-web": ^3.4.5
   # Pinned exact: 1.61 changed Playwright's module loader to pull externalized
   # ESM (map/dist/map.es.js) through Node's native require(esm), which bypasses
@@ -99,9 +99,9 @@ catalog:
   "@types/three": ^0.186.0
   "@vitejs/plugin-react": ^6.1.2
   "@vitest/coverage-v8": ^5.0.5
-  ai: ^7.0.143
-  assistant-stream: ^0.3.52
-  "chart.js": ^4.5.1
+  ai: ^7.0.173
+  assistant-stream: ^0.3.57
+  "chart.js": ^4.6.1
   "chartjs-plugin-zoom": ^2.2.0
   "h3-js": ^4.5.0
   jsdom: ^30.1.3

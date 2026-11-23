@@ -60,7 +60,7 @@ npm i @tomtom-org/maps-sdk @tomtom-org/maps-sdk-plugin-agent-toolkit ai zod
 npm i @ai-sdk/openai
 ```
 
-Peer deps (all required): `@tomtom-org/maps-sdk` (`^1.0.0-rc.4`, any 1.x), `@tomtom-org/maps-sdk-plugin-map-theme`, `ai@^7.0.143`,
+Peer deps (all required): `@tomtom-org/maps-sdk` (`^1.0.0-rc.4`, any 1.x), `@tomtom-org/maps-sdk-plugin-map-theme`, `ai@^7.0.173`,
 `zod@^4.6.7`, `maplibre-gl@^6.15.0`, `@turf/turf`, `chart.js`, `h3-js`.
 
 ---
@@ -227,3 +227,5 @@ map.mapLibreMap?.remove();   // tear down MapLibre when unmounting
 - **`classifier: false` disables scoping.** Every tool is offered every turn and scopable tools keep their unscoped surface.
 - **One run at a time per agent.** Scoping mutates the shared tool objects each turn (only `prepareStep` itself is
   serialised), and state is per agent. Create one agent per concurrent session.
+- **`agent.tools` keeps the full surface.** A turn's scope reaches only that run, so
+  `validateUIMessages({ messages, tools: agent.tools })` passes on a history whose calls used kinds the last turn left out.

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.19.1
+
+### Patch Changes
+
+- The `ai` peer dependency moves up to `^7.0.173` and `chart.js` to `^4.6.1`
+
+- A conversation keeps working after a turn scopes a data tool: `agent.tools` keeps every tool's full schema, so validating the history before the next turn no longer fails on an earlier call that used a kind the last turn left out
+
 ## 0.19.0
 
 ### Minor Changes

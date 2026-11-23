@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Patch Changes
+
+- The check that distinct sections of alternative routes stay cheap now finishes under coverage, where the measurement was running out of time
+
 ## 1.0.0
 
 ### Major Changes

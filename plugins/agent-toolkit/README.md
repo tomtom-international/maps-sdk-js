@@ -544,11 +544,11 @@ For the complete, always-current list of exports, including factories, tool-regi
 |---|---|---|
 | Peer | `@tomtom-org/maps-sdk@^1.0.0-rc.4` | TomTom Maps SDK (types, services, map modules), from 1.0.0-rc.4 through every 1.x release |
 | Peer | `@tomtom-org/maps-sdk-plugin-map-theme@>=0.3.0` | Theming the map from a few colours or an image in `setMapStyling` |
-| Peer | `ai@^7.0.143` | Vercel AI SDK (ToolLoopAgent, tool types) |
+| Peer | `ai@^7.0.173` | Vercel AI SDK (ToolLoopAgent, tool types) |
 | Peer | `zod@^4.6.7` | Schema validation |
 | Peer | `maplibre-gl@^6.15.0` | Map rendering engine |
 | Peer | `@turf/turf@^7` | Geospatial math (distance, bbox, bearing) used by the data tools |
-| Peer | `chart.js@^4` | Chart rendering for `analyseDatasets` outputs |
+| Peer | `chart.js@^4.6.1` | Chart rendering for `analyseDatasets` outputs |
 | Peer | `h3-js@^4` | H3 hexagonal grid for `deriveDatasets` coverage / hexgrid visualizations |
 
 ## References

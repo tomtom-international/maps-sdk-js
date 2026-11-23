@@ -84,12 +84,11 @@ export const DEFAULT_WELCOME_TEXT = [
 ].join('\n\n');
 
 type ChatMessagesProps = {
-    errors?: string[];
     /** Optional starter prompts. Rendered only while the thread has no user messages. */
     suggestedPrompts?: readonly string[];
 };
 
-export function ChatMessages({ errors = [], suggestedPrompts }: ChatMessagesProps) {
+export function ChatMessages({ suggestedPrompts }: ChatMessagesProps) {
     return (
         <>
             <AuiIf condition={(s) => s.thread.messages.some((m) => m.role === 'user')}>
@@ -127,12 +126,6 @@ export function ChatMessages({ errors = [], suggestedPrompts }: ChatMessagesProp
             >
                 <ThinkingMessage />
             </AuiIf>
-
-            {errors.map((msg, i) => (
-                <div key={i} className="message error">
-                    {msg}
-                </div>
-            ))}
         </>
     );
 }

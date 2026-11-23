@@ -2,7 +2,8 @@ import { AssistantRuntimeProvider, ThreadPrimitive, useAuiState } from '@assista
 import { useChatRuntime } from '@assistant-ui/react-ai-sdk';
 import type { ClassificationResult, createMapAgent } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import type { ChatTransport, InferAgentUIMessage } from 'ai';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { ChatError, type ChatErrorState, toChatError } from './ChatError';
 import { ChatHeader } from './ChatHeader';
 import { ChatInput } from './ChatInput';
 import { ChatMessages, DEFAULT_WELCOME_TEXT } from './ChatMessages';
@@ -72,19 +73,6 @@ type MapAgentChatProps = {
     classifications?: readonly (ClassificationResult | null)[];
 };
 
-function formatError(error: unknown): string {
-    const statusCode =
-        error instanceof Error && 'statusCode' in error ? (error as { statusCode: number }).statusCode : null;
-    const message = error instanceof Error ? error.message : '';
-
-    if (statusCode === 429 || message.includes('Too Many Requests')) {
-        const retryMatch = message.match(/(\d+)\s*second/i);
-        const retrySuffix = retryMatch ? ` Please wait ${retryMatch[1]} seconds.` : '';
-        return `Rate limit exceeded.${retrySuffix} Try again shortly.`;
-    }
-    return message || 'An unexpected error occurred.';
-}
-
 export function MapAgentChat({
     transport,
     label,
@@ -93,7 +81,7 @@ export function MapAgentChat({
     tokenUsage,
     classifications = [],
 }: MapAgentChatProps) {
-    const [errors, setErrors] = useState<string[]>([]);
+    const [error, setError] = useState<ChatErrorState | null>(null);
 
     const runtime = useChatRuntime({
         transport,
@@ -104,10 +92,25 @@ export function MapAgentChat({
                 parts: [{ type: 'text', text: welcomeText }],
             },
         ],
-        onError: (err) => {
-            setErrors((prev) => [...prev, formatError(err)]);
-        },
+        onError: (runError) => setError(toChatError(runError)),
     });
+
+    // The error belongs to the last run, so the next one clears it.
+    useEffect(
+        () =>
+            runtime.thread.subscribe(() => {
+                if (runtime.thread.getState().isRunning) setError(null);
+            }),
+        [runtime],
+    );
+
+    const retry = () => {
+        const lastUserMessage = runtime.thread
+            .getState()
+            .messages.filter((message) => message.role === 'user')
+            .at(-1);
+        if (lastUserMessage) runtime.thread.startRun({ parentId: lastUserMessage.id });
+    };
 
     const [isCollapsed, setIsCollapsed] = useState(true);
 
@@ -126,7 +129,8 @@ export function MapAgentChat({
                         tokenUsage={tokenUsage}
                     />
                     <ThreadPrimitive.Viewport id="chat-messages" className="flex flex-1 flex-col overflow-y-auto">
-                        <ChatMessages errors={errors} suggestedPrompts={suggestedPrompts} />
+                        <ChatMessages suggestedPrompts={suggestedPrompts} />
+                        {error && <ChatError error={error} onRetry={retry} />}
                         <ThreadPrimitive.ViewportFooter className="sticky bottom-0 mt-auto bg-(--ui-surface-0)">
                             <ChatFooter />
                         </ThreadPrimitive.ViewportFooter>

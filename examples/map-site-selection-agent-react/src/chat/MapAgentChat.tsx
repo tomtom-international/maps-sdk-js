@@ -9,6 +9,7 @@ import {
 import type { ChatTransport, InferAgentUIMessage } from 'ai';
 import { useEffect, useMemo, useState } from 'react';
 import { sendMessageToCurrentThread } from './assistantRuntimeUtils';
+import { ChatError, type ChatErrorState, toChatError } from './ChatError';
 import { ChatHeader } from './ChatHeader';
 import { ChatInput } from './ChatInput';
 import { ChatMessages, DEFAULT_WELCOME_TEXT } from './ChatMessages';
@@ -108,19 +109,6 @@ type MapAgentChatProps = {
     onResizePointerDown?: (e: React.PointerEvent) => void; // Desktop only. We render the resize element as a  DOM child to maintain the scroll viewport behavior
 };
 
-function formatError(error: unknown): string {
-    const statusCode =
-        error instanceof Error && 'statusCode' in error ? (error as { statusCode: number }).statusCode : null;
-    const message = error instanceof Error ? error.message : '';
-
-    if (statusCode === 429 || message.includes('Too Many Requests')) {
-        const retryMatch = message.match(/(\d+)\s*second/i);
-        const retrySuffix = retryMatch ? ` Please wait ${retryMatch[1]} seconds.` : '';
-        return `Rate limit exceeded.${retrySuffix} Try again shortly.`;
-    }
-    return message || 'An unexpected error occurred.';
-}
-
 export function MapAgentChat({
     transport,
     label,
@@ -128,7 +116,7 @@ export function MapAgentChat({
     suggestedPrompts,
     onResizePointerDown,
 }: MapAgentChatProps) {
-    const [errors, setErrors] = useState<string[]>([]);
+    const [error, setError] = useState<ChatErrorState | null>(null);
 
     // Seed the thread with the welcome turn. MUST be a stable reference: a fresh array each render makes
     // the runtime re-link the seed (id "welcome") into a tree that already contains it, which throws
@@ -141,10 +129,25 @@ export function MapAgentChat({
     const runtime = useChatRuntime({
         transport,
         messages: initialMessages,
-        onError: (err) => {
-            setErrors((prev) => [...prev, formatError(err)]);
-        },
+        onError: (runError) => setError(toChatError(runError)),
     });
+
+    // The error belongs to the last run, so the next one clears it.
+    useEffect(
+        () =>
+            runtime.thread.subscribe(() => {
+                if (runtime.thread.getState().isRunning) setError(null);
+            }),
+        [runtime],
+    );
+
+    const retry = () => {
+        const lastUserMessage = runtime.thread
+            .getState()
+            .messages.filter((message) => message.role === 'user')
+            .at(-1);
+        if (lastUserMessage) runtime.thread.startRun({ parentId: lastUserMessage.id });
+    };
 
     // Eval mode only: expose a hook the Playwright proxy calls to drive the agent
     // through the app's real send path.
@@ -181,7 +184,8 @@ export function MapAgentChat({
                             <span className="h-10 w-0.5 rounded-full bg-(--ui-text-low-em) transition-colors group-hover:bg-(--ui-text-high-em) group-active:bg-(--ui-text-high-em)" />
                         </div>
                     )}
-                    <ChatMessages errors={errors} suggestedPrompts={suggestedPrompts} />
+                    <ChatMessages suggestedPrompts={suggestedPrompts} />
+                    {error && <ChatError error={error} onRetry={retry} />}
                     <ThreadPrimitive.ViewportFooter className="sticky bottom-0 mt-auto -mx-2 bg-(--ui-surface-0)">
                         <ChatFooter />
                     </ThreadPrimitive.ViewportFooter>
