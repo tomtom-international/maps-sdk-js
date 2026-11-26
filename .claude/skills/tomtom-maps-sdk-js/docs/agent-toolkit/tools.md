@@ -7,7 +7,7 @@ See [base reference](../agent-toolkit.md) for setup and `MapAgentOptions`.
 
 ## `DEFAULT_TOOLS` registry
 
-Flat record of the 34 default tools; `TOOL_NAMES` lists their names and `ToolName` is the union type.
+Flat record of the 35 default tools; `TOOL_NAMES` lists their names and `ToolName` is the union type.
 `executeMaplibreCode` is not one of them — see [`executeMaplibreCode` — opt-in](#executemaplibrecode--opt-in).
 
 - **Location**: `locatePlace`, `reverseGeocode`, `getCurrentLocation`, `getViewport`, `calculateBBox`
@@ -46,8 +46,8 @@ Flat record of the 34 default tools; `TOOL_NAMES` lists their names and `ToolNam
 - **Traffic incidents**: `getTrafficIncidents`, `clusterIncidents`, `focusIncidents`
 - **Live refresh**: `setDatasetMonitor({ slice: 'routing' | 'trafficIncidents', datasetId, enabled, intervalMs? })` → `{ slice, datasetId, enabled, alreadyInState }` — re-fetches a route (live-traffic delays) or an incidents dataset on a cadence (default 60 s)
 - **Traffic area analytics**: `getTrafficAreaAnalytics` (the look is `setMapStyling`'s)
-- **Trackers (geofence / proximity alerts)**: `createTracker`, `clearTracker`; `recallState({ slice: 'trackers' })` reads them
-- **Data tools (scopable)**: `analyseDatasets`, `deriveDatasets`, `monitorAnalysis` — [data-tools.md](./data-tools.md)
+- **Event rules (geofence / proximity alerts)**: `createEventRule`, `clearEventRule`; `recallState({ slice: 'eventRules' })` reads them; app-defined watches: the `createEventRule` function ([below](#create-an-event-rule-in-a-custom-tool))
+- **Data tools (scopable)**: `analyseDatasets`, `deriveDatasets`, `monitorAnalysis`, `monitorDerivedDataset` — [data-tools.md](./data-tools.md); app-defined derivations: the `deriveDatasets` function ([below](#derive-a-dataset-in-a-custom-tool))
 - **Map display**: `updateDatasetDisplay` — which datasets of a slice show, and the display options their tool
   took, such as a polygon's fill; colours and widths are `setMapStyling`'s
 - **Map control**: `moveCamera({ where?, zoomBy?, pitch?, bearing? })` (`where` is `{ boundingBox, padding? }` or
@@ -58,7 +58,7 @@ Flat record of the 34 default tools; `TOOL_NAMES` lists their names and `ToolNam
 - **Utilities**: `clarifyIntent`, `help`
 
 Names are stable; reference entries as `DEFAULT_TOOLS.locatePlace`. Nine entries are builders (`ToolEntryBuilder`):
-`discoverPlaces`, `analyseDatasets`, `deriveDatasets`, `createTracker`, `clusterIncidents`, `recallState`, `setMapStyling`,
+`discoverPlaces`, `analyseDatasets`, `deriveDatasets`, `createEventRule`, `clusterIncidents`, `recallState`, `setMapStyling`,
 `updateDatasetDisplay`, `setDatasetMonitor`.
 
 `TOOLS_BY_DATASET_KIND` maps each `DatasetKind` to the tools dropped when `datasets[kind].enabled` is `false`.
@@ -77,7 +77,8 @@ suggestions from the same source as the `help` tool.
   `terrain.elevation.visible`, … (not the base map's `buildings3D.hover.*` and `buildings3D.click.*`, which show only under
   a base-map event handler the agent never registers); `reset: true` resets every knob, visibility included, or pass ids; `preset` calls `applyMapPreset`;
   scopable: the classifier emits `{ kinds }` from `look`, `baseMap`, `pois`, `trafficFlow`, `trafficIncidents`, `terrain`
-  and the `set` description lists only those families' ids, while any id stays settable; an unknown id is refused with
+  and the `set` description lists only those families' ids, a long value list several knobs share (the label fonts,
+  road categories) written once as `$name = …`, while any id stays settable; an unknown id is refused with
   the closest ones (`did you mean pois.label.color?`);
   the layers the agent drew take their module catalogues under `places.` (`PlacesModule`, the ranges' origin pins too),
   `routes.` (`RoutingModule`), `geometries.` (custom geometries, place boundaries, ranges drawn as geometries),
@@ -120,7 +121,7 @@ suggestions from the same source as the `help` tool.
 - **`recallState`** — reads state, never fetches. No args: session snapshot (places / routing / ranges index, dataset
   modes, map style, POIs, traffic). `{ slice }`: that slice's index; `routing`'s also lists the `planningSlots` staged for
   the next `setRoute`. `{ slice, id }`: one dataset's summarised detail. Slices: `places`, `routing`, `ranges`,
-  `geometries`, `byod`, `trafficIncidents`, `trafficAreaAnalytics`, `trackers` (each tracker, whether it's firing, and
+  `geometries`, `byod`, `trafficIncidents`, `trafficAreaAnalytics`, `eventRules` (each event rule, whether it's firing, and
   its alert log; `id` narrows to one, `sinceMs` to the newer events).
 - **`help`** — `{ mode: 'summary' | 'detail', query?, tag? }`, surfacing each tool's `description`, `examplePrompts` and `relatedTools`.
 - **`setDatasetMode`** — `{ slice, mode }`; see [state.md](./state.md).
@@ -253,6 +254,102 @@ execute: async ({ name }, state, options) => {
     }
 },
 ```
+
+### Create an event rule in a custom tool
+
+The `createEventRule(state, parameters, executeOptions?)` function is the `createEventRule` tool's `execute`: it dry-runs `parameters.code`, registers the
+event rule, re-runs its code whenever a watched dataset changes, and returns the same result (`ruleId`, `watching`,
+`firingNow`, `summary`) or `{ error }` (`CreateEventRuleResult`). `parameters` (`CreateEventRuleParams`) is `SomeMultiInputIds` (the `*DatasetIDs` fields, at least
+one, of datasets already in state; a call with none doesn't compile) plus `name` (slugged into the id), `condition` (display text) and `code` (sandbox JS
+returning `{ active, members, summary }`, `featureIds` as strings (any other id fails the creation-time gate, and drops a re-run's verdict), reading `byodByDataset[id]` etc. as in [data-tools.md](./data-tools.md)).
+Optional `resolveAfterMs` (app code only; the tool's schema doesn't offer it) holds the resolve until the verdict has
+stayed inactive that long in source-data time (the datasets' latest `timestamp`, not the wall clock): a verdict active
+again meanwhile keeps the open alert with no new `opened`, so a feed that flickers each refresh doesn't churn
+opened/resolved. The hold is checked only when the rule recomputes, so it resolves at the first recompute after the hold,
+and a rule whose datasets stop changing stays open past it. Without it, the first inactive verdict resolves. A negative or
+non-finite value returns `{ error }`; `eventRuleParamsOf` gives it back.
+Remove it with `state.eventRules.unregister(ruleId)`, never add one with `state.eventRules.register` (it stores the record
+without its job, so it never fires); alerts arrive as `rule-event` on `state.eventRules.events`.
+
+Use it when the app knows the watch in advance: a compact tool (`watchZone({ zone })`) instead of `createEventRule`, whose
+schema is several thousand characters per request and whose code the model must write. Interpolate only trusted values
+into `code`, e.g. a `z.enum` value or `JSON.stringify(value)`.
+
+```ts
+import { createEventRule } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+
+inputSchema: z.object({ zone: z.enum(['north', 'south', 'harbour']) }),
+execute: async ({ zone }, state) => {
+    const quoted = JSON.stringify(zone);
+    return createEventRule(state, {
+        byodDatasetIDs: ['vehicles'],
+        name: `zone-${zone}`,
+        condition: `A vehicle is in the ${zone} zone`,
+        code: `const hits = byodByDataset.vehicles.features.filter((f) => f.properties.zone === ${quoted});
+return { active: hits.length > 0, members: [{ datasetId: 'vehicles', featureIds: hits.map((f) => String(f.id)) }], summary: hits.length + ' vehicle(s) in ' + ${quoted} };`,
+    });
+},
+```
+
+### Derive a dataset in a custom tool
+
+The `deriveDatasets(state, parameters, executeOptions?)` function is the `deriveDatasets` tool's `execute`: it runs
+`parameters.code` in the sandbox, writes one new places, custom-geometries or BYOD dataset, and returns the same result
+or `{ error }` (`DeriveDatasetsResult`). `parameters` (`DeriveDatasetsParams`) is `SomeMultiInputIds` (the
+`*DatasetIDs` fields, at least one, of datasets already in state; a call with none doesn't compile) plus `code` (sandbox
+JS returning `{ places?, placeConnections?, geometries?, fitOnMap?, byod? }`, as in [data-tools.md](./data-tools.md)),
+`persist` (`'none'` writes once, `'monitor'` re-derives in place whenever a source changes), and optional `label`,
+`datasetId`, `operation`, `show`, `connectMarkerType`, `keepHistory` (a monitored run also samples each run into the BYOD
+dataset `historyDatasetId` names, `<datasetId>_history`, as in [data-tools.md](./data-tools.md), so an app or event rule
+reads the trend without sampling it itself), `keepEmpty` (a monitored run whose code returns its output empty still
+writes it and keeps it live). `monitoring: true` in the result confirms a monitored run (a ranges-only read, or an id
+shared with a source, stays one-shot; a first run that writes nothing returns `{ error }` and starts no monitor, unless
+`keepEmpty` is set); stop it with `state.derivedDatasets.remove(datasetId)`. A `datasetId` naming a monitored dataset
+of the kind the code returns rewrites that one in place instead (`revised: true`, as in [data-tools.md](./data-tools.md)).
+A BYOD result has no layers, so it draws nothing until you give it some ([byod.md](./byod.md)).
+
+Use it when the app knows the derivation in advance: a compact tool (`showLateVehicles({ minutes })`) instead of
+`deriveDatasets`, whose code the model must write. Interpolate only trusted values into `code`, as for `createEventRule`.
+
+```ts
+import { deriveDatasets } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+
+inputSchema: z.object({ minutes: z.number().int().min(1).max(120) }),
+execute: async ({ minutes }, state) =>
+    deriveDatasets(state, {
+        byodDatasetIDs: ['vehicles'],
+        label: `Late by ${minutes} min or more`,
+        code: `const v = byodByDataset.vehicles;
+return { byod: { ...v, features: v.features.filter((f) => f.properties.delayMinutes >= ${minutes}) } };`,
+        persist: 'monitor',
+    }),
+```
+
+### Save and restore event rules and live derived datasets
+
+`eventRuleParamsOf(state, ruleId)` returns a copy of the `CreateEventRuleParams` a live event rule was created with (by
+the model's tool or the function), `undefined` once paused or cleared; `derivedDatasetParamsOf(state, datasetId)`
+returns the `DeriveDatasetsParams` of a dataset kept live with `persist: 'monitor'` (its `datasetId` and
+`persist: 'monitor'` set, the latest revision's code with the label and display the dataset kept), `undefined` for a
+one-shot, paused, stopped or gone one; `state.derivedDatasets.datasetIds` lists the monitored ones in every slice, each
+after the derived ones it reads, so restoring in that order finds every source. Save them (JSON-safe) and pass them back to
+`createEventRule` / `deriveDatasets` in a later session to bring the agent's standing work back with no model call:
+
+```ts
+const saved = {
+    rules: state.eventRules.rules.map((rule) => eventRuleParamsOf(state, rule.id)),
+    derived: state.derivedDatasets.datasetIds.map((datasetId) => derivedDatasetParamsOf(state, datasetId)),
+};
+localStorage.setItem('agent-setup', JSON.stringify(saved));
+// later, once their source datasets are back in state; derived first (in datasetIds order), since rules may read them
+const restored: typeof saved = JSON.parse(localStorage.getItem('agent-setup') ?? '{ "rules": [], "derived": [] }');
+for (const parameters of restored.derived) if (parameters) await deriveDatasets(state, parameters);
+for (const parameters of restored.rules) if (parameters) await createEventRule(state, parameters);
+```
+
+A derived dataset takes its saved `datasetId` when free; a rule's id is re-slugged from its `name`, so it can differ
+(`hospitals-2` can come back as `hospitals`). The saved
+`code` runs in the sandbox again: restore only parameters your app stored.
 
 ## Replace / remove default tools
 

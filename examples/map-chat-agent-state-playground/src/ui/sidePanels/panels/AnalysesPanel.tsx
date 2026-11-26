@@ -29,7 +29,7 @@ export function AnalysesPanel({ agent }: AnalysesPanelProps) {
 
     if (analyses.length === 0) {
         return (
-            <PanelShell title="Analyses" hint="Every analysis created by analyseDatasets, across all datasets.">
+            <PanelShell title="Analyses" hint="Every analysis analyseDatasets kept, across all datasets.">
                 <p className="m-0 text-[11px] text-(--ui-text-low-em)">
                     No analyses yet. Ask the agent to analyse one of your datasets.
                 </p>
@@ -38,7 +38,7 @@ export function AnalysesPanel({ agent }: AnalysesPanelProps) {
     }
 
     return (
-        <PanelShell title="Analyses" hint="Every analysis created by analyseDatasets, across all datasets.">
+        <PanelShell title="Analyses" hint="Every analysis analyseDatasets kept, across all datasets.">
             <ul className="flex flex-col gap-2">
                 {analyses.map((record: AnalysisRecord) => {
                     const latest = record.history.at(-1);

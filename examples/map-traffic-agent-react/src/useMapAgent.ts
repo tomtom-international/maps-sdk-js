@@ -3,6 +3,7 @@ import { useAgentBootstrap } from './hooks/useAgentBootstrap';
 import { useAnalyses } from './hooks/useAnalyses';
 import { useClusters } from './hooks/useClusters';
 import { useClustersOverlay } from './hooks/useClustersOverlay';
+import { useEventRules } from './hooks/useEventRules';
 import { useFocus } from './hooks/useFocus';
 import { useHeatmapOverlay } from './hooks/useHeatmapOverlay';
 import { useIncidents } from './hooks/useIncidents';
@@ -11,7 +12,6 @@ import { useMonitoredRouteDisplay } from './hooks/useMonitoredRouteDisplay';
 import { useRouteIncidents } from './hooks/useRouteIncidents';
 import { useRouteMonitor } from './hooks/useRouteMonitor';
 import { useSelectedIncident } from './hooks/useSelectedIncident';
-import { useTrackers } from './hooks/useTrackers';
 import { useTrafficAnalytics } from './hooks/useTrafficAnalytics';
 import { useWatchedAreaOverlay } from './hooks/useWatchedAreaOverlay';
 
@@ -37,18 +37,18 @@ export function useMapAgent(options: UseMapAgentOptions) {
     const { routeIncidents, focusRoute: focusRouteIncidents } = useRouteIncidents(agent);
     const { analyses, toggleMonitor } = useAnalyses(agent);
     const {
-        trackers,
-        areas: trackerAreas,
-        ungrouped: ungroupedTrackers,
-        events: trackerEvents,
-        toasts: trackerToasts,
+        eventRules,
+        areas: eventRuleAreas,
+        ungrouped: ungroupedEventRules,
+        events: ruleEvents,
+        toasts: ruleEventToasts,
         dismissToast,
-        lastSeenAt: trackerLastSeenAt,
-        markSeen: markTrackersSeen,
-        setEnabled: setTrackerEnabled,
-        clearTracker,
-        focusArea: focusTrackerArea,
-    } = useTrackers(agent);
+        lastSeenAt: ruleEventsLastSeenAt,
+        markSeen: markRuleEventsSeen,
+        setEnabled: setEventRuleEnabled,
+        clearEventRule,
+        focusArea: focusEventRuleArea,
+    } = useEventRules(agent);
 
     // What the summary/triage panels follow: the last thing the operator focused. A watched area points
     // them at area incidents; a monitored corridor points them at that route's on-route incidents.
@@ -65,7 +65,7 @@ export function useMapAgent(options: UseMapAgentOptions) {
     // Focusing a watched area frames it on the map AND points the summary/triage panels at that dataset,
     // so the summary always reflects the area the operator last focused.
     const focusArea = (datasetId: string) => {
-        focusTrackerArea(datasetId);
+        focusEventRuleArea(datasetId);
         focusDataset(datasetId);
         setFocusKind('area');
     };
@@ -135,17 +135,17 @@ export function useMapAgent(options: UseMapAgentOptions) {
         // viz
         vizMode,
         setVizMode,
-        // trackers
-        trackers,
-        trackerAreas,
-        ungroupedTrackers,
-        trackerEvents,
-        trackerToasts,
+        // event rules
+        eventRules,
+        eventRuleAreas,
+        ungroupedEventRules,
+        ruleEvents,
+        ruleEventToasts,
         dismissToast,
-        trackerLastSeenAt,
-        markTrackersSeen,
-        setTrackerEnabled,
-        clearTracker,
-        focusTrackerArea: focusArea,
+        ruleEventsLastSeenAt,
+        markRuleEventsSeen,
+        setEventRuleEnabled,
+        clearEventRule,
+        focusEventRuleArea: focusArea,
     };
 }

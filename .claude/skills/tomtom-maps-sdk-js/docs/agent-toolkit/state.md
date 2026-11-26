@@ -21,6 +21,12 @@ draws beside a dataset stays on the slice, keyed by dataset id: `places.getDatas
   `profile(id)` (a `DatasetProfile`: feature count, geometry types, properties);
 - writes — `addDataset({ label, data, producedFrom, id?, timestamp? })` (a taken `id` gets `-2`, `-3`, …),
   `replaceDatasetData(id, data, timestamp)`, `removeDataset(id)`, `datasetMode` / `setDatasetMode(mode)`;
+  `upsertDataset({ id, … })` takes `addDataset`'s input with `id` required and resolves to `'added' | 'replaced'`: it adds
+  under a new `id`, otherwise acts as `replaceDatasetData` (redraw, then re-run the event rules and monitored analyses on it),
+  recording the input's `producedFrom` when it has one (routes always do, so a monitor and `editRouteWaypoints` replay the new
+  request, and the planning slots and a shown route's waypoint pins follow it) and keeping the dataset's `label` and side data
+  such as BYOD layers; a places upsert replaces the `connections` and `geometries` it carries and keeps the ones it leaves
+  out; a slice's upserts and `removeDataset` calls run in call order, so the last wins; rejects an empty `id`;
 - map — `showDataset(id, options?)`, `hideDataset(id)`, `shownDatasetIds`, `getDatasetModule(id)`. The slice keeps each
   dataset's SDK modules apart from it, created lazily on first display (all accessors are `async`). Showing a dataset needs
   the map the agent was created with. Pass `undefined` for that map when the agent only reads datasets. `baseMap.hasMap`
@@ -51,8 +57,13 @@ Each dataset slice holds its modules' look as a `SliceKnobs` — `routing.knobs`
 every module of that kind the slice holds and to each one it creates later (`setMapStyling` writes through them).
 `trafficAreaAnalytics` shows a dataset's `activeMetric` only if the dataset fetched it, else its first metric.
 
-Session-level fields: `analyses` (every `analyseDatasets` result), `trackers`, `engine` (re-runs monitored analyses and
-trackers when their source datasets change), `codeExecution` (the sandbox executor).
+Session-level fields: `analyses` (every `analyseDatasets` result but a `persist: 'none'` one), `eventRules`,
+`derivedDatasets` (each dataset `deriveDatasets` wrote with `persist: 'monitor'`, by its id, listed by `datasetIds` after the derived ones each reads; to
+save and restore them, see [tools.md](./tools.md#save-and-restore-event-rules-and-live-derived-datasets); `lastRun(id)` and the
+`derived-dataset-run` event say what its latest run wrote, with a `drift` when its features strayed from what the code
+first wrote, or why it failed; `historyIdOf(id)` names its `keepHistory` BYOD dataset), `engine` (re-runs
+monitored analyses, event rules and derived datasets when their source datasets change), `codeExecution` (the sandbox
+executor).
 
 Common reads from app code:
 

@@ -208,7 +208,7 @@ incidentDetailsModule.updateConfig({ line: { opacity: 1 } }); // live
 
 ### Layer overrides — `layers`
 
-A partial MapLibre layer per layer the module draws, bottom to top (`TrafficIncidentDetailsLayersConfig`): `highlightHalo`, `outline`, `innerSolid`, `innerChevron`, `innerPattern`, `incidentMarker`, `jamMarker`, `closedRoadMarker`. `paint`/`layout` merge per property and win over the incident colours and the highlight; a `beforeID` is ignored; `layout.visibility: 'none'` keeps that layer hidden while the module is shown.
+A partial MapLibre layer per layer the module draws, bottom to top (`TrafficIncidentDetailsLayersConfig`): `highlightHalo`, `outline`, `innerSolid`, `innerChevron`, `innerPattern`, `incidentMarker`, `jamMarker`, `closedRoadMarker`. `paint`/`layout` merge per property and win over the incident colours and the highlight; a `beforeID` is ignored; `layout.visibility: 'none'` keeps that layer hidden while the module is shown. The jam delay text defaults to the jam marker text colour of the traffic incidents part the style loads, not of the map's theme (`streetSatellite` is dark but loads the light part, so dark text); `jamMarker.paint['text-color']` overrides it.
 
 ```ts
 incidentDetailsModule.updateConfig({

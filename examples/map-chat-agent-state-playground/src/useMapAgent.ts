@@ -3,7 +3,7 @@ import { TomTomMap, type TrafficAreaAnalyticsModule } from '@tomtom-org/maps-sdk
 import { type ClassificationResult, createMapAgent } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import type { ChatTransport } from 'ai';
 import { useEffect, useState } from 'react';
-import { API_KEY, createDemoAzure, deploymentId } from './config';
+import { API_KEY, createDemoModel, deploymentId } from './config';
 import { AgentUIMessage, createInstrumentedTransport } from './telemetry';
 import { getCustomLocationTool } from './tools/get-custom-location';
 
@@ -39,7 +39,7 @@ export function useMapAgent() {
         });
 
         const agent = createMapAgent(map, {
-            model: createDemoAzure().chat(deploymentId),
+            model: createDemoModel(deploymentId),
             maxSteps: 10,
             tools: { getCustomLocation: getCustomLocationTool },
             onClassify: (result) => setClassifications((prev) => [...prev, result]),

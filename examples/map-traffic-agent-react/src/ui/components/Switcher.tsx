@@ -8,7 +8,7 @@ export type SwitcherTab<T extends string> = {
 };
 
 /**
- * The segmented control that multiplexes views inside one rail card (e.g. trackers vs notifications in
+ * The segmented control that multiplexes views inside one rail card (e.g. event rules vs notifications in
  * one slot). A group of pill buttons; the selected one gets the raised surface. Pure control: the caller
  * owns the value + the panels it switches between. Equal-width tabs so segment widths stay stable as
  * badges appear/disappear.

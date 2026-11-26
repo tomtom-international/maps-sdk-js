@@ -5,7 +5,7 @@ import type { ChatTransport } from 'ai';
 import { useEffect, useState } from 'react';
 import { setActiveToolState } from '../agent/agent-bridge';
 import { buildSiteAgentOptions } from '../agent/site-agent';
-import { API_KEY, createDemoAzure } from '../config';
+import { API_KEY, createDemoModel } from '../config';
 import { type AgentUIMessage, createAgentTelemetry } from '../telemetry';
 
 type BootstrapOptions = {
@@ -50,7 +50,7 @@ export function useAgentBootstrap({ deploymentId }: BootstrapOptions) {
     useEffect(() => {
         if (!map) return;
 
-        const model = createDemoAzure().chat(deploymentId);
+        const model = createDemoModel(deploymentId);
         const conversationId = crypto.randomUUID();
         const telemetry = createAgentTelemetry(conversationId);
         const created = createMapAgent(map, {

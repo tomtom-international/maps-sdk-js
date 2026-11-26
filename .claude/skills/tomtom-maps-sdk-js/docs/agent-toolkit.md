@@ -6,18 +6,18 @@ No chat UI and no LLM provider are bundled — bring both.
 
 > [Public preview](https://docs.tomtom.com/legal/public-preview) — package is `@tomtom-org/maps-sdk-plugin-agent-toolkit`.
 
-This is the **base reference**: setup, `MapAgentOptions`, the turn lifecycle, and gotchas.
+This is the **base reference**: setup, `MapAgentOptions`, the turn lifecycle, compacting history, and gotchas.
 Subsystems live in `docs/agent-toolkit/` — read the matching file too.
 
 ## Sub-topic references
 
 | Sub-topic | File | When to read |
 |---|---|---|
-| Tools registry & custom tools | `agent-toolkit/tools.md` | `DEFAULT_TOOLS` / `TOOL_NAMES`, `ToolEntry` / `ToolEntryBuilder`, add / replace / remove / hand-pick tools, `locatePlace` / `getViewportBias`, `createGetCurrentLocationTool`, `createClarifyIntentTool`, opt-in `executeMaplibreCode` / `createExecuteMaplibreCodeTool`, `getTrafficIncidents` `where`, route `stretch`, `searchedStretch` |
-| Scope-aware data tools | `agent-toolkit/data-tools.md` | `analyseDatasets` / `deriveDatasets` / `createTracker` / `clusterIncidents`, the sandbox and its injected identifiers, per-turn scoping, scopable custom tools |
+| Tools registry & custom tools | `agent-toolkit/tools.md` | `DEFAULT_TOOLS` / `TOOL_NAMES`, `ToolEntry` / `ToolEntryBuilder`, add / replace / remove / hand-pick tools, `locatePlace` / `getViewportBias`, `createEventRule` function / `CreateEventRuleParams` / `resolveAfterMs`, `deriveDatasets` function / `DeriveDatasetsParams` / `SomeMultiInputIds`, save and restore with `eventRuleParamsOf` / `derivedDatasetParamsOf`, `createGetCurrentLocationTool`, `createClarifyIntentTool`, opt-in `executeMaplibreCode` / `createExecuteMaplibreCodeTool`, `getTrafficIncidents` `where`, route `stretch`, `searchedStretch` |
+| Scope-aware data tools | `agent-toolkit/data-tools.md` | `analyseDatasets` (whether a result is kept, with `persist`) / `deriveDatasets` (whether its dataset stays live, with `persist`, keeps a history of its runs, with `keepHistory`, and starts empty, with `keepEmpty`) / `monitorDerivedDataset` / `createEventRule` / `clusterIncidents`, the sandbox and its injected identifiers, per-turn scoping, scopable custom tools |
 | State | `agent-toolkit/state.md` | `ToolState` slices and their module accessors, tagged geometries ids, custom slices, dataset mode, `getStateDigest` |
-| Classifier & system prompt | `agent-toolkit/prompt-and-classifier.md` | `createDefaultClassifier` / custom classifier, `classificationPrompt`, `alwaysActive`, `BASE_SYSTEM_PROMPT` / `SYSTEM_PROMPT_SECTIONS` / `composeSystemPrompt`, prefix / suffix |
-| BYOD | `agent-toolkit/byod.md` | `addByodSource` / `setByodLayers`, `DatasetProfile`, untrusted-data handling, the default public-https URL policy and `byod.validateSourceUrl` |
+| Classifier & system prompt | `agent-toolkit/prompt-and-classifier.md` | `createDefaultClassifier` (its `temperature`) / custom classifier, `classificationPrompt`, `alwaysActive`, `BASE_SYSTEM_PROMPT` / `SYSTEM_PROMPT_SECTIONS` / `composeSystemPrompt`, prefix / suffix, a `systemPrompt` function read every turn |
+| BYOD | `agent-toolkit/byod.md` | `addByodSource` / `setByodLayers`, `DatasetProfile` (also on a derived BYOD dataset's `deriveDatasets` result), untrusted-data handling, the default public-https URL policy and `byod.validateSourceUrl` |
 
 Read `${CLAUDE_SKILL_DIR}/docs/agent-toolkit/<filename>` directly.
 For multi-topic tasks, read several.
@@ -39,6 +39,7 @@ import {
     getViewportBias,
     locatePlace,
     type AnalysableDatasetKind,
+    type CustomSystemPrompt,
     type DatasetModeSliceName,
     type MapAgentInstance,
     type MapAgentOptions,
@@ -106,14 +107,53 @@ agent.destroy(); // calls reset() on every state slice that implements StateSlic
 ## How a turn runs
 
 1. **Intent classification** (step 0 of each user message) — a pre-pass (a second LLM call when the first answer fails
-   validation) picks the subset of tools for the turn from each tool's `classificationPrompt`. For *scopable* tools (`analyseDatasets`, `deriveDatasets`, `createTracker`, `clusterIncidents`) it also emits
+   validation) picks the subset of tools for the turn from each tool's `classificationPrompt`. For *scopable* tools (`analyseDatasets`, `deriveDatasets`, `createEventRule`, `clusterIncidents`) it also emits
    `toolScopes[<name>]` naming the dataset kinds the turn touches; `prepareStep` rebuilds those tools' `description` +
    `inputSchema` for the turn. Detail: `agent-toolkit/prompt-and-classifier.md`, `agent-toolkit/data-tools.md`.
 2. **Tool loop** — the model calls tools until it answers, capped at `maxSteps` (default 10).
-   Tools return compact summaries; full data lives in `agent.state`.
+   Tools return compact summaries; full data lives in `agent.state`. The calls in one step run at the same time; a
+   built-in tool naming a dataset that doesn't exist yet waits for the calls that started before it in that step, then
+   looks again, so a search and an analysis of its results can share a step.
 
 Results are stored as datasets with stable ids (`places-3`, `routes-1`) that the model re-reads with `recallState` —
 *"add a stop after the first one"* works across turns.
+
+---
+
+## Compacting a long conversation
+
+Every step resends the whole history. For an agent woken by events (monitoring, a game's AI player, any long-running
+headless agent), history grows without bound: fold older turns into a running summary every few turns with
+`compactMessages`, one model call per compaction. Stateless — the caller keeps `summary` and `messages`.
+
+```ts
+import { COMPACT_MESSAGES_INSTRUCTIONS, compactMessages } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+
+const compacted = await compactMessages({
+    model: openai('gpt-4o-mini'),
+    messages,                 // ModelMessage[] since the last compaction
+    summary,                  // previous result's summary; omit the first time
+    keepTurns: 2,             // latest turns kept verbatim; 0 folds everything
+    maxWords: 150,            // default 150
+    instructions: `${COMPACT_MESSAGES_INSTRUCTIONS} Keep every alert the user dismissed.`, // replace or extend
+});
+summary = compacted.summary;     // send it with the next turn, e.g. in the user message
+messages = compacted.messages;   // the kept turns
+if (compacted.usage) tokens += compacted.usage.totalTokens;
+```
+
+- A turn starts at a user message: the cut never separates an assistant's tool calls from their tool results.
+- Folded turns reach the model as text: string and content-array messages alike, each tool call as name + input and
+  each tool result, with every input and result cut to 200 characters.
+- No call (and no `usage`) when there are no more than `keepTurns` turns; it returns the previous summary and every
+  message.
+- Throws an `Error` when the model replies with no text (a content filter, a reasoning-only reply): catch it and keep
+  the old `summary` and `messages`, as nothing was folded.
+- Default `COMPACT_MESSAGES_INSTRUCTIONS`: keep commitments, decisions and facts later turns can't recover; drop what
+  fresh context carries again. Override with your agent's point of view and domain.
+- `keepTurns` must be a whole number ≥ 0, otherwise it throws a `RangeError`.
+- When no summary of the dropped content is needed, the AI SDK's `pruneMessages({ messages, reasoning, toolCalls, emptyMessages })` is cheaper: it drops reasoning and tool call/result parts from older messages with no model call.
+- Guide: `guides/plugins/agent-toolkit/how-it-works.mdx#compacting-a-long-conversation`.
 
 ---
 
@@ -128,6 +168,7 @@ const agent = createMapAgent(map, {
     systemPromptSuffix: 'Always respond in Spanish.',     // under "ADDITIONAL INSTRUCTIONS:"
     // systemPrompt: { identity: '…' },                   // override named sections
     // systemPrompt: `${BASE_SYSTEM_PROMPT}\n\n…`,        // full replacement, ignores prefix/suffix
+    // systemPrompt: () => ({ identity: persona() }),     // either form from a function, read every turn
 
     // Tools — merged over DEFAULT_TOOLS
     tools: {
@@ -154,7 +195,7 @@ const agent = createMapAgent(map, {
     },
 
     // Classifier
-    classifier: createDefaultClassifier({ model: openai('gpt-4o-mini') }), // or a Classifier function, or false
+    classifier: createDefaultClassifier({ model: openai('gpt-4o-mini'), temperature: 0 }), // or a Classifier function, or false
     onClassify: (result) => console.log(result?.activeToolNames, result?.toolScopes),
 
     // Observability and loop control
@@ -207,10 +248,11 @@ map.mapLibreMap?.remove();   // tear down MapLibre when unmounting
 
 ## Privacy
 
-- Sent to the model provider: every message + system prompt; the classifier's copy (default classifier: up to 8 earlier messages × 300 chars, tunable via `createDefaultClassifier({ maxHistoryMessages, maxHistoryMessageLength })`; a custom classifier sends what it sends; `classifier: false` turns it off); tool results (places, addresses, coords, reverse-geocoded addresses, viewport, device location, `analyseDatasets` / `deriveDatasets` output over BYOD, ≤200 tracker events per tracker, more when querying all trackers).
+- Sent to the model provider: every message + system prompt; the classifier's copy (default classifier: up to 8 earlier messages × 300 chars, tunable via `createDefaultClassifier({ maxHistoryMessages, maxHistoryMessageLength })`; a custom classifier sends what it sends; `classifier: false` turns it off); tool results (places, addresses, coords, reverse-geocoded addresses, viewport, device location, `analyseDatasets` / `deriveDatasets` output over BYOD, ≤200 event rule events per event rule, more when querying all event rules).
 - The provider is the integrator's processor: DPA, EEA region where offered.
 - `agent.state` is in-memory only; `resetState` or `agent.destroy()` clears all of it. `single` dataset mode and dataset removal can drop data sooner, but don't count on that for erasure. No browser storage. Chat history is the integrator's: erasure = clear it + `agent.destroy()`.
-- Send less: remove tools, `classifier: false`, replace a tool with one returning less.
+- Send less: remove tools, `classifier: false`, replace a tool with one returning less, fold older turns with
+  `compactMessages` (its call sends the folded turns once more, to the model you pass it).
 - Guide: `guides/plugins/agent-toolkit/what-the-agent-sends.mdx`.
 
 ---
@@ -221,8 +263,8 @@ map.mapLibreMap?.remove();   // tear down MapLibre when unmounting
 - **Tools return summaries, not GeoJSON.** Custom tools should do the same: small JSON to the model, data to a state slice.
 - **Modules are per dataset.** Each slice keeps lazy modules per dataset, reached through it: `getDatasetModule(id)` on every
   dataset slice (places take a `markerType`), plus `getDatasetGeometriesModule(id)` on `places` / `ranges` and
-  `getDatasetPlacesModule(id)` on `ranges`. Prefer the slice writers (`addDataset({ label, data, … })`) plus
-  `showDataset(id)` or the display tools.
+  `getDatasetPlacesModule(id)` on `ranges`. Prefer the slice writers (`addDataset({ label, data, … })`, or
+  `upsertDataset({ id, label, data })` to keep one dataset in step with a live feed) plus `showDataset(id)` or the display tools.
 - **Stateful custom tools need a recall path.** Store results on a `StateSlice` the model can re-read — it won't remember them.
 - **`classifier: false` disables scoping.** Every tool is offered every turn and scopable tools keep their unscoped surface.
 - **One run at a time per agent.** Scoping mutates the shared tool objects each turn (only `prepareStep` itself is

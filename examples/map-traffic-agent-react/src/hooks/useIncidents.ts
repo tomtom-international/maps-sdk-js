@@ -6,7 +6,7 @@ import type { AgentInstance } from './useAgentBootstrap';
  * The example surfaces a single incident snapshot at a time on the heatmap + summary/triage panels.
  * By default that snapshot follows the latest dataset (a fresh `getTrafficIncidents` fetch drives the
  * panels), but the active dataset can be pinned via {@link useIncidents}'s `focusDataset` — clicking a
- * watched-area in the Event tracker points the summary at that area. A new fetch (an unseen dataset id)
+ * watched area in the Monitoring panel points the summary at that area. A new fetch (an unseen dataset id)
  * re-takes focus; monitor ticks (same id, replaced data) keep the pinned area and update it live.
  */
 export function useIncidents(agent: AgentInstance | undefined) {
@@ -60,7 +60,7 @@ export function useIncidents(agent: AgentInstance | undefined) {
         };
     }, [agent]);
 
-    // Point the panels at a specific dataset (e.g. the Event tracker's area button).
+    // Point the panels at a specific dataset (e.g. the Monitoring panel's area button).
     const focusDataset = useCallback((id: string) => focusDatasetRef.current(id), []);
 
     return { incidents, datasetId, focusDataset };

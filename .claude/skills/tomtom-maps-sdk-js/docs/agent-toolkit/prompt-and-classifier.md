@@ -16,6 +16,7 @@ createMapAgent(map, {
         model: openai('gpt-4o-mini'),
         maxHistoryMessages: 8,        // prior user/assistant messages sent (default 8)
         maxHistoryMessageLength: 300, // characters kept per prior message (default 300)
+        temperature: 0,               // repeatable picks on the first attempt (default: the model's own)
     }),
 });
 ```
@@ -23,6 +24,8 @@ createMapAgent(map, {
 - Sees the last user message in full, the prior history truncated, and every tool's `ToolMetadata` — never the system
   prompt, tool results or state.
 - Two attempts; an invalid answer keeps the usable tool names, and a failed call activates every tool (fail-open).
+  `temperature` applies to the first attempt only, and a reasoning model (gpt-5, the o-series) takes none, so leave
+  it unset there.
 - `classifier: false` exposes every tool every turn and disables scoping.
 
 A classifier is a function: `(ctx: ClassifierContext) => Promise<ClassificationResult | null>`, where `ctx` is
@@ -36,7 +39,7 @@ type ClassificationResult = {
     activeToolNames: string[];
     toolScopes?: Record<string, unknown>;    // per-tool scope, validated against scopeSchema in prepareStep
     timeMs: number;
-    usage: { inputTokens; outputTokens; totalTokens };
+    usage: TokenUsage;                       // { inputTokens, outputTokens, totalTokens }, also compactMessages' usage
 };
 ```
 
@@ -110,3 +113,30 @@ ADDITIONAL INSTRUCTIONS:
 
 `composeSystemPrompt(overrides)` returns the string a section-override object assembles (for logging, diffing,
 token checks); passed back as `systemPrompt` it is a full string, so prefix/suffix are ignored. Per-tool mechanics (coordinate order, "near me" vs "in this area") live in tool descriptions, not the prompt.
+
+### A prompt that changes between turns
+
+For instructions that change while the agent runs (a persona's policy the user sets, user preferences), pass a
+function as `systemPrompt`. Don't override `instructions` from `prepareStep` for this: that repeats the composition
+by hand and drops the prefix and suffix.
+
+```ts
+let preferences = 'Avoid toll roads.';
+
+createMapAgent(map, {
+    model,
+    systemPromptSuffix: 'Always use metric units.',             // still applies
+    systemPrompt: () => ({ identity: `You plan trips. The user's preferences: ${preferences}` }), // or a full string
+});
+
+preferences = 'Prefer scenic roads.'; // the next turn runs with it
+```
+
+- Called once at the start of every turn (one `generate` / `stream` call), composed exactly like the static forms
+  (a returned string ignores prefix/suffix), and used for every step of that turn.
+- Return the same text until something actually changes: an unchanged prompt keeps the provider's prompt cache
+  warm. Put per-turn context (the time, live state) in the user message instead.
+- A host `prepareStep` receives the turn's prompt as `initialInstructions`; `instructions` it returns replace it.
+- If the function throws, the turn (`generate` / `stream`) rejects with that error.
+- `CustomSystemPrompt` is the static form, `string | SystemPromptSectionOverrides`: type a function declared on its
+  own as `(): CustomSystemPrompt => …`.

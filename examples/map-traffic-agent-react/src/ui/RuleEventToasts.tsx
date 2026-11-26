@@ -1,19 +1,19 @@
-import type { TrackerToast } from '../hooks/useTrackers';
+import type { RuleEventToast } from '../hooks/useEventRules';
 import { cardShellClass, FeedRow, IconButton } from './components';
-import { AlertGlyph } from './trackerIcons';
+import { AlertGlyph } from './eventRuleIcons';
 
-export type TrackerToastsProps = {
-    toasts: readonly TrackerToast[];
+export type RuleEventToastsProps = {
+    toasts: readonly RuleEventToast[];
     onDismiss: (seq: number) => void;
 };
 
 /**
- * Alert toasts that float over the map's top-right corner. One card per `opened` alert a tracker fires;
- * auto-dismiss after a TTL (managed by `useTrackers`), or × to dismiss early. Reuses the shared
+ * Alert toasts that float over the map's top-right corner. One card per `opened` alert an event rule fires;
+ * auto-dismiss after a TTL (managed by `useEventRules`), or × to dismiss early. Reuses the shared
  * `FeedRow` so a toast and a feed row share anatomy (type icon + title + 2-line summary + status line),
  * with the alert accent as a left border.
  */
-export function TrackerToasts({ toasts, onDismiss }: TrackerToastsProps) {
+export function RuleEventToasts({ toasts, onDismiss }: RuleEventToastsProps) {
     if (toasts.length === 0) return null;
     return (
         <div
@@ -30,7 +30,7 @@ export function TrackerToasts({ toasts, onDismiss }: TrackerToastsProps) {
                         <FeedRow
                             icon={<AlertGlyph />}
                             iconColor="var(--ui-surface-brand-red)"
-                            title={toast.trackerName}
+                            title={toast.ruleName}
                             description={toast.summary}
                             tag={{ label: toast.kind, accent: 'var(--ui-surface-brand-red)' }}
                             at={toast.at}

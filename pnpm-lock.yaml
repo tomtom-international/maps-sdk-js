@@ -40,8 +40,8 @@ catalogs:
       specifier: 1.0.0
       version: 1.0.0
     '@tomtom-org/maps-sdk-plugin-agent-toolkit':
-      specifier: 0.19.1
-      version: 0.19.1
+      specifier: 0.20.0
+      version: 0.20.0
     '@tomtom-org/maps-sdk-plugin-flyover':
       specifier: 0.1.2
       version: 0.1.2
@@ -1362,7 +1362,7 @@ importers:
         version: 1.0.0(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       '@tomtom-org/maps-sdk-plugin-agent-toolkit':
         specifier: 'catalog:'
-        version: 0.19.1(@tomtom-org/maps-sdk-plugin-map-theme@0.3.9(@tomtom-org/maps-sdk@1.0.0(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(culori@4.0.2))(@tomtom-org/maps-sdk@1.0.0(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(@turf/turf@7.4.0)(ai@7.0.173(zod@4.6.7))(chart.js@4.6.1)(h3-js@4.5.0)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 0.20.0(@tomtom-org/maps-sdk-plugin-map-theme@0.3.9(@tomtom-org/maps-sdk@1.0.0(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(culori@4.0.2))(@tomtom-org/maps-sdk@1.0.0(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(@turf/turf@7.4.0)(ai@7.0.173(zod@4.6.7))(chart.js@4.6.1)(h3-js@4.5.0)(maplibre-gl@6.15.0)(zod@4.6.7)
       ai:
         specifier: 'catalog:'
         version: 7.0.173(zod@4.6.7)
@@ -1411,7 +1411,7 @@ importers:
         version: 1.0.0(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       '@tomtom-org/maps-sdk-plugin-agent-toolkit':
         specifier: 'catalog:'
-        version: 0.19.1(@tomtom-org/maps-sdk-plugin-map-theme@0.3.9(@tomtom-org/maps-sdk@1.0.0(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(culori@4.0.2))(@tomtom-org/maps-sdk@1.0.0(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(@turf/turf@7.4.0)(ai@7.0.173(zod@4.6.7))(chart.js@4.6.1)(h3-js@4.5.0)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 0.20.0(@tomtom-org/maps-sdk-plugin-map-theme@0.3.9(@tomtom-org/maps-sdk@1.0.0(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(culori@4.0.2))(@tomtom-org/maps-sdk@1.0.0(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(@turf/turf@7.4.0)(ai@7.0.173(zod@4.6.7))(chart.js@4.6.1)(h3-js@4.5.0)(maplibre-gl@6.15.0)(zod@4.6.7)
       ai:
         specifier: 'catalog:'
         version: 7.0.173(zod@4.6.7)
@@ -1499,7 +1499,7 @@ importers:
         version: 1.0.0(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       '@tomtom-org/maps-sdk-plugin-agent-toolkit':
         specifier: 'catalog:'
-        version: 0.19.1(@tomtom-org/maps-sdk-plugin-map-theme@0.3.9(@tomtom-org/maps-sdk@1.0.0(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(culori@4.0.2))(@tomtom-org/maps-sdk@1.0.0(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(@turf/turf@7.4.0)(ai@7.0.173(zod@4.6.7))(chart.js@4.6.1)(h3-js@4.5.0)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 0.20.0(@tomtom-org/maps-sdk-plugin-map-theme@0.3.9(@tomtom-org/maps-sdk@1.0.0(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(culori@4.0.2))(@tomtom-org/maps-sdk@1.0.0(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(@turf/turf@7.4.0)(ai@7.0.173(zod@4.6.7))(chart.js@4.6.1)(h3-js@4.5.0)(maplibre-gl@6.15.0)(zod@4.6.7)
       ai:
         specifier: 'catalog:'
         version: 7.0.173(zod@4.6.7)
@@ -1746,7 +1746,7 @@ importers:
         version: 1.0.0(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       '@tomtom-org/maps-sdk-plugin-agent-toolkit':
         specifier: 'catalog:'
-        version: 0.19.1(@tomtom-org/maps-sdk-plugin-map-theme@0.3.9(@tomtom-org/maps-sdk@1.0.0(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(culori@4.0.2))(@tomtom-org/maps-sdk@1.0.0(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(@turf/turf@7.4.0)(ai@7.0.173(zod@4.6.7))(chart.js@4.6.1)(h3-js@4.5.0)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 0.20.0(@tomtom-org/maps-sdk-plugin-map-theme@0.3.9(@tomtom-org/maps-sdk@1.0.0(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(culori@4.0.2))(@tomtom-org/maps-sdk@1.0.0(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(@turf/turf@7.4.0)(ai@7.0.173(zod@4.6.7))(chart.js@4.6.1)(h3-js@4.5.0)(maplibre-gl@6.15.0)(zod@4.6.7)
       '@turf/turf':
         specifier: 'catalog:'
         version: 7.4.0
@@ -1927,7 +1927,7 @@ importers:
         version: 1.0.0(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       '@tomtom-org/maps-sdk-plugin-agent-toolkit':
         specifier: 'catalog:'
-        version: 0.19.1(@tomtom-org/maps-sdk-plugin-map-theme@0.3.9(@tomtom-org/maps-sdk@1.0.0(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(culori@4.0.2))(@tomtom-org/maps-sdk@1.0.0(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(@turf/turf@7.4.0)(ai@7.0.173(zod@4.6.7))(chart.js@4.6.1)(h3-js@4.5.0)(maplibre-gl@6.15.0)(zod@4.6.7)
+        version: 0.20.0(@tomtom-org/maps-sdk-plugin-map-theme@0.3.9(@tomtom-org/maps-sdk@1.0.0(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(culori@4.0.2))(@tomtom-org/maps-sdk@1.0.0(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(@turf/turf@7.4.0)(ai@7.0.173(zod@4.6.7))(chart.js@4.6.1)(h3-js@4.5.0)(maplibre-gl@6.15.0)(zod@4.6.7)
       ai:
         specifier: 'catalog:'
         version: 7.0.173(zod@4.6.7)
@@ -6176,8 +6176,8 @@ packages:
       '@types/react':
         optional: true
 
-  '@tomtom-org/maps-sdk-plugin-agent-toolkit@0.19.1':
-    resolution: {integrity: sha512-Riw0co/S27EvaU4toyECktRIWnLyLpgPSw4J55ZtbEha7SIZjbKPHh4XaPiG97eQVASZv+q57eelSboYCPoGsA==}
+  '@tomtom-org/maps-sdk-plugin-agent-toolkit@0.20.0':
+    resolution: {integrity: sha512-kieTYGA6LtqEeG2Dr+R0gogUkS40COBoOH1tbtGkt2QTHW5iixEQgLrIVjzA/W8PlXMYSljZTrlNDdbcB72hYA==}
     peerDependencies:
       '@tomtom-org/maps-sdk': ^1.0.0-rc.4
       '@tomtom-org/maps-sdk-plugin-map-theme': '>=0.3.0'
@@ -10023,7 +10023,7 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.3.0
 
-  '@tomtom-org/maps-sdk-plugin-agent-toolkit@0.19.1(@tomtom-org/maps-sdk-plugin-map-theme@0.3.9(@tomtom-org/maps-sdk@1.0.0(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(culori@4.0.2))(@tomtom-org/maps-sdk@1.0.0(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(@turf/turf@7.4.0)(ai@7.0.173(zod@4.6.7))(chart.js@4.6.1)(h3-js@4.5.0)(maplibre-gl@6.15.0)(zod@4.6.7)':
+  '@tomtom-org/maps-sdk-plugin-agent-toolkit@0.20.0(@tomtom-org/maps-sdk-plugin-map-theme@0.3.9(@tomtom-org/maps-sdk@1.0.0(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(culori@4.0.2))(@tomtom-org/maps-sdk@1.0.0(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(@turf/turf@7.4.0)(ai@7.0.173(zod@4.6.7))(chart.js@4.6.1)(h3-js@4.5.0)(maplibre-gl@6.15.0)(zod@4.6.7)':
     dependencies:
       '@tomtom-org/maps-sdk': 1.0.0(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7)
       '@tomtom-org/maps-sdk-plugin-map-theme': 0.3.9(@tomtom-org/maps-sdk@1.0.0(@turf/turf@7.4.0)(culori@4.0.2)(lodash-es@4.18.1)(maplibre-gl@6.15.0)(zod@4.6.7))(culori@4.0.2)

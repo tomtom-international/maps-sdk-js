@@ -87,7 +87,12 @@ export default defineConfig(({ mode }) => {
     // environment. `demosProxyMode` (both DEMOS_PROXY_URL + HCAPTCHA_SITEKEY set)
     // gates the bootstrap injection below, and `define` bakes the bootstrap's own
     // `process.env` reads into literals.
-    const { define: exposedEnv, demosProxyMode } = resolveExampleEnv(mode, path.resolve('..'));
+    // The example's directory name selects its own model deployment, when the build env assigns one.
+    const { define: exposedEnv, demosProxyMode } = resolveExampleEnv(
+        mode,
+        path.resolve('..'),
+        path.basename(process.cwd()),
+    );
     // Resolved build root (= the example's ./src), captured in configResolved
     // and used to identify the entry module for the bootstrap injection below.
     let entryRoot = '';

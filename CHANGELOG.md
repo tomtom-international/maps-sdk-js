@@ -2,7 +2,22 @@
 
 ## Unreleased
 
+### Minor Changes
+
+- **Deprecated:** core: the POI categories `FLYING_CLUB`, `LOCALE`, `MEDICINAL_AND_RECREATIONAL_DISPENSARY`, `PAN` and `PEDESTRIAN_SUBWAY` match nothing, as the POI category tree lacks them, and 2.0.0 removes them
+  - Filter by `CANNABIS_SHOP`, `MEDICINAL_MARIJUANA_DISPENSARY` or `RECREATIONAL_MARIJUANA_DISPENSARY` instead of `MEDICINAL_AND_RECREATIONAL_DISPENSARY`
+  - services: `resolvePOICategories` and `discoverPlaces`' `filters.poiCategoryQuery` report a deprecated code as unmatched, rather than searching by it
+
 ### Patch Changes
+
+- core: `SURINAMESE_RESTAURANT` is a POI category, for the id the POI categories service now lists, so `getPOICategories` no longer reports it as unknown
+
+- map: The delay on a jam marker of `TrafficIncidentDetailsModule` reads on a dark style, in the text colour of the style's own jam markers
+
+- map: A route's traffic sections now place and size their jam and cause markers as `TrafficIncidentDetailsModule` does, with the delay readable on light, dark and satellite styles
+  
+  - `RoutingModule` writes a jam's delay at the incident details' place and size in its pill, in the text colour of the style's own jam markers. Its cause and jam icons scale with the zoom as the incident details' do. The delay keeps its display units.
+  - In `TrafficIncidentDetailsModule`, a jam with no known delay now shows the collapsed pill a route already showed, instead of an empty one.
 
 - The check that distinct sections of alternative routes stay cheap now finishes under coverage, where the measurement was running out of time
 

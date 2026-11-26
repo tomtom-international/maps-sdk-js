@@ -28,11 +28,21 @@ From app code: `await agent.state.byod.addDataset({ label: 'Depots', data: featu
 it renders nothing until `await agent.state.byod.showDataset(id)`, which draws it with those `layers`.
 `agent.state.byod.getDatasetLayers(id)` returns the dataset's current layers, which `setByodLayers` replaces.
 
+Mirroring a live feed: call `await agent.state.byod.upsertDataset({ id: 'vehicles', label, data, timestamp? })` on every
+update instead of `findById(id) ? replaceDatasetData(…) : addDataset(…)`. A new `id` adds the dataset (`'added'`); a
+known one replaces its data and timestamp (`'replaced'`), redrawing it and re-running its event rules and monitored analyses,
+and keeps its `label` and the layers the agent set; it takes a `producedFrom` you pass, and keeps the old one otherwise.
+A slice's upserts and `removeDataset` calls run in call order, so the last one wins: a dataset removed right after an
+upsert stays removed, with no queue of your own. The removed dataset leaves `datasets` only then, so await
+`removeDataset` before adding another under its id (else the new one gets a `-2` suffix).
+
 ## Profile
 
 Every ingest path infers a `DatasetProfile` locally, in one pass: `featureCount`, `geometryTypes`, and per property
-`name`, JSON `types`, `coverage` and capped `examples` (`propertiesOmitted` when capped). `addByodSource` returns it;
-`recallState({ slice: 'byod' })` lists `propertyNames`, and `{ slice: 'byod', id }` returns the profile.
+`name`, JSON `types`, `coverage` and capped `examples` (`propertiesOmitted` when capped). `addByodSource` returns it,
+and so does a `deriveDatasets` run that writes or revises a BYOD dataset (`profile` beside `byodDatasetId` /
+`byodFeatureCount`, the `deriveDatasets` function's result included); `recallState({ slice: 'byod' })` lists
+`propertyNames`, and `{ slice: 'byod', id }` returns the profile.
 
 ## Untrusted data
 

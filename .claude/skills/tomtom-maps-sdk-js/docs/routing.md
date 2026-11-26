@@ -774,7 +774,11 @@ the route line to the other at runtime.
 Not every type answers to every knob, and the config type says so: `traffic` colours its line by
 `magnitudeOfDelay` and takes its icons from the incident data, so `sections.traffic.color` is a
 compile error, not a setting that draws nothing. The delay colours follow the incident colour
-styling knobs live (`map-styling.md` § Borrowed looks). `speedLimit` draws no line at all, so it takes
+styling knobs live (`map-styling.md` § Borrowed looks). Its cause icon and jam pill are placed and sized as
+`TrafficIncidentDetailsModule` places them, the delay in the jam marker text colour of the traffic incidents part
+the style loads, not of the map's theme (`streetSatellite` is dark but loads the light part, so dark text);
+`layers.sections.traffic.routeIncidentJamSymbol.paint['text-color']` overrides it.
+`speedLimit` draws no line at all, so it takes
 only `visible` and `sign`. `sectionSupportsKnob(type, knob)` reports the same
 at runtime, for a panel that builds its controls from the type, and narrows `type` to
 `SectionTypeWithKnob<knob>`, so `` knobEntryOf(routingKnobCatalogue, `sections.${type}.sign.minZoom`) `` compiles. `sectionDrawsByDefault(type)` says

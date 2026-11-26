@@ -4,7 +4,7 @@ import { createClarifyIntentTool, createMapAgent } from '@tomtom-org/maps-sdk-pl
 import type { ChatTransport } from 'ai';
 import { useEffect, useState } from 'react';
 import { TRAFFIC_MANAGER_PROMPT_OVERRIDES } from '../agent/system-prompt';
-import { API_KEY, createDemoAzure } from '../config';
+import { API_KEY, createDemoModel } from '../config';
 import { AgentUIMessage, createAgentTelemetry } from '../telemetry';
 
 export type AgentInstance = ReturnType<typeof createMapAgent>;
@@ -52,7 +52,7 @@ export function useAgentBootstrap({ deploymentId }: BootstrapOptions) {
         const conversationId = crypto.randomUUID();
         const telemetry = createAgentTelemetry(conversationId);
         const created = createMapAgent(map, {
-            model: createDemoAzure().chat(deploymentId),
+            model: createDemoModel(deploymentId),
             maxSteps: 10,
             // Layer the persona onto the toolkit's base prompt via section overrides — see agent/system-prompt.ts.
             systemPrompt: TRAFFIC_MANAGER_PROMPT_OVERRIDES,

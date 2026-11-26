@@ -1,5 +1,6 @@
 import { loadEnv } from 'vite';
 import { DEMOS_PROXY_SERVER_SECRETS } from './src/demos-proxy/demosProxyEnv.ts';
+import { EXAMPLE_DEPLOYMENT_IDS_VAR, exampleEnvValue } from './src/exampleDeploymentEnv.ts';
 
 /**
  * Shared build-time env handling for every example build config:
@@ -26,6 +27,8 @@ export const EXAMPLE_ENV_VARS = [
     'AZURE_GATEWAY_BASE_URL',
     'AZURE_DEPLOYMENT_ID',
     'AZURE_MODEL_IDS',
+    // Per-example deployment overrides for the two vars above (see src/exampleDeploymentEnv.ts).
+    EXAMPLE_DEPLOYMENT_IDS_VAR,
     'APPLICATIONINSIGHTS_CONNECTION_STRING',
     'DEMOS_PROXY_URL',
     'HCAPTCHA_SITEKEY',
@@ -44,14 +47,24 @@ export interface ResolvedExampleEnv {
     demosProxyMode: boolean;
 }
 
-export const resolveExampleEnv = (mode: string, envDir: string): ResolvedExampleEnv => {
+/**
+ * @param exampleDirectory Set by the builds of a single example: that example's entry in
+ *   `AZURE_EXAMPLE_DEPLOYMENT_IDS` then replaces the shared deployment vars, and the mapping itself
+ *   is left out of the bundle. The live-editor build serves every example from one bundle, so it
+ *   omits this and resolves the mapping per example at runtime (`substituteEnvVars`).
+ */
+export const resolveExampleEnv = (mode: string, envDir: string, exampleDirectory?: string): ResolvedExampleEnv => {
     // loadEnv is typed Record<string, string>, but an unset var is actually
     // `undefined` at runtime — widen so the filter below genuinely narrows.
     const env = loadEnv(mode, envDir, '') as Record<string, string | undefined>;
     const demosProxyMode = !!(env.DEMOS_PROXY_URL && env.HCAPTCHA_SITEKEY);
     const define: Record<string, string> = Object.fromEntries(
         EXAMPLE_ENV_VARS.filter((name) => !(demosProxyMode && DEMOS_PROXY_SERVER_SECRETS.has(name)))
-            .map((name): readonly [string, string | undefined] => [name, env[name]])
+            .filter((name) => !(exampleDirectory && name === EXAMPLE_DEPLOYMENT_IDS_VAR))
+            .map((name): readonly [string, string | undefined] => [
+                name,
+                exampleDirectory ? exampleEnvValue(env, name, exampleDirectory) : env[name],
+            ])
             .filter((entry): entry is readonly [string, string] => entry[1] !== undefined),
     );
     return { define, demosProxyMode };

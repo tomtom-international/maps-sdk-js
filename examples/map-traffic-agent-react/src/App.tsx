@@ -8,7 +8,7 @@ import { FocusChip } from './ui/FocusChip';
 import { IncidentDetailsPanel } from './ui/IncidentDetailsPanel';
 import { NetworkKPIStrip } from './ui/NetworkKPIStrip';
 import { OperationsPanel } from './ui/OperationsPanel';
-import { TrackerToasts } from './ui/TrackerToasts';
+import { RuleEventToasts } from './ui/RuleEventToasts';
 import { TriagePanel } from './ui/TriagePanel';
 import { useMapAgent } from './useMapAgent';
 
@@ -54,17 +54,17 @@ export function App() {
         monitoredRoutes,
         stopRoute,
         focusRoute,
-        trackers,
-        trackerAreas,
-        ungroupedTrackers,
-        trackerEvents,
-        trackerToasts,
+        eventRules,
+        eventRuleAreas,
+        ungroupedEventRules,
+        ruleEvents,
+        ruleEventToasts,
         dismissToast,
-        trackerLastSeenAt,
-        markTrackersSeen,
-        setTrackerEnabled,
-        clearTracker,
-        focusTrackerArea,
+        ruleEventsLastSeenAt,
+        markRuleEventsSeen,
+        setEventRuleEnabled,
+        clearEventRule,
+        focusEventRuleArea,
     } = useMapAgent({ deploymentId: defaultDeploymentId });
 
     // Drag-resizable chat width (desktop only). Capped at half the viewport — "to the middle".
@@ -134,18 +134,18 @@ export function App() {
                             snapshotCount={snapshotCount}
                         />
                         <OperationsPanel
-                            areas={trackerAreas}
-                            ungrouped={ungroupedTrackers}
+                            areas={eventRuleAreas}
+                            ungrouped={ungroupedEventRules}
                             routes={monitoredRoutes}
-                            trackerCount={trackers.length}
-                            events={trackerEvents}
-                            lastSeenAt={trackerLastSeenAt}
-                            onToggle={setTrackerEnabled}
-                            onClear={clearTracker}
-                            onFocusArea={focusTrackerArea}
+                            eventRuleCount={eventRules.length}
+                            events={ruleEvents}
+                            lastSeenAt={ruleEventsLastSeenAt}
+                            onToggle={setEventRuleEnabled}
+                            onClear={clearEventRule}
+                            onFocusArea={focusEventRuleArea}
                             onFocusRoute={focusRoute}
                             onStopRoute={stopRoute}
-                            onSeen={markTrackersSeen}
+                            onSeen={markRuleEventsSeen}
                         />
                         {panelIncidents.items.length > 0 && (
                             <TriagePanel
@@ -200,7 +200,7 @@ export function App() {
                         )}
                     </div>
                 </div>
-                <TrackerToasts toasts={trackerToasts} onDismiss={dismissToast} />
+                <RuleEventToasts toasts={ruleEventToasts} onDismiss={dismissToast} />
             </div>
             {/* Chat column — fixed-but-resizable width on desktop, full width on mobile. */}
             <div className="relative flex shrink-0 max-sm:w-full" style={isMobile ? undefined : { width: chatWidth }}>

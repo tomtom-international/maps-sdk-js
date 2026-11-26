@@ -1,5 +1,5 @@
-// Minimal inline glyphs for the tracker rail (24px type-icon box). Currentcolor so FeedRow's
-// `iconColor` drives them. Kept local + small — the generic tracker has no incident-type vocabulary,
+// Minimal inline glyphs for the event rule rail (24px type-icon box). Currentcolor so FeedRow's
+// `iconColor` drives them. Kept local + small — the generic event rule has no incident-type vocabulary,
 // so a fired alert uses a warning glyph and a cleared one a check.
 const SVG = (props: { children: React.ReactNode }) => (
     <svg
@@ -33,7 +33,7 @@ export const ResolvedGlyph = () => (
     </SVG>
 );
 
-/** Locate / focus the tracker's members on the map. */
+/** Locate / focus the event rule's members on the map. */
 export const LocateGlyph = () => (
     <SVG>
         <circle cx="12" cy="12" r="3" />

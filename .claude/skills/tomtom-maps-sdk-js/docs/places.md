@@ -131,7 +131,9 @@ const places = await discoverPlaces({
 await placesModule.show(places);
 ```
 
-`filters.poiCategories` accepts `POICategory` enum values (e.g. `'ITALIAN_RESTAURANT'`). Discover codes by keyword:
+`filters.poiCategories` accepts `POICategory` enum values (e.g. `'ITALIAN_RESTAURANT'`). Never pick a deprecated one
+(`FLYING_CLUB`, `LOCALE`, `MEDICINAL_AND_RECREATIONAL_DISPENSARY`, `PAN`, `PEDESTRIAN_SUBWAY`): the category tree lacks
+them, so a search filtered by one finds nothing. For the dispensary, use `CANNABIS_SHOP`. Discover codes by keyword:
 
 ```ts
 // Get codes matching a keyword — pass directly to search
@@ -164,6 +166,7 @@ const { poiCategories, unmatched } = await resolvePOICategories({ filters: ['caf
   beside `poiCategories` (a type error).
 - `resolvePOICategories` keeps each word's best three codes, merged round-robin and capped at the 10 a search takes,
   and returns the words nothing matched in `unmatched`. A code stays itself, and codes alone skip the catalog request and come back as given, never folded into a parent, with duplicates dropped.
+  A deprecated code lands in `unmatched`, so a `poiCategoryQuery` of deprecated codes alone rejects.
   For a picker listing every close match, use `getPOICategoryCodes` instead.
 - In a search, a word nothing matches is left out; when none matches, it rejects with `SDKError` and sends no search.
   Resolve first when the caller must hear about unmatched words, or catch and retry as `query`.

@@ -1,12 +1,12 @@
 import { formatDuration } from '@tomtom-org/maps-sdk/core';
-import type { Tracker, TrackerEvent } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+import type { EventRule, RuleEvent } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import { useEffect, useState } from 'react';
 import type { MonitoredRoute } from '../agent/monitoredRoutes';
-import type { WatchedArea } from '../hooks/useTrackers';
+import type { WatchedArea } from '../hooks/useEventRules';
 import { FeedRow, IconButton, PanelCard, Switcher, Toggle } from './components';
+import { AlertGlyph, LocateGlyph, ResolvedGlyph, RouteGlyph, StopGlyph, TrashGlyph } from './eventRuleIcons';
 import { playbook } from './lib/playbook-tokens';
 import { relativeAge } from './lib/time';
-import { AlertGlyph, LocateGlyph, ResolvedGlyph, RouteGlyph, StopGlyph, TrashGlyph } from './trackerIcons';
 
 /**
  * Re-render the panel once a second (while `active`) so relative-age lines ("Paused 5m ago", feed
@@ -23,13 +23,13 @@ function useNowTick(active: boolean) {
 
 export type OperationsPanelProps = {
     areas: readonly WatchedArea[];
-    ungrouped: readonly Tracker[];
+    ungrouped: readonly EventRule[];
     routes: readonly MonitoredRoute[];
-    trackerCount: number;
-    events: readonly TrackerEvent[];
+    eventRuleCount: number;
+    events: readonly RuleEvent[];
     lastSeenAt: number;
-    onToggle: (trackerId: string, enabled: boolean) => void;
-    onClear: (trackerId: string) => void;
+    onToggle: (ruleId: string, enabled: boolean) => void;
+    onClear: (ruleId: string) => void;
     onFocusArea: (datasetId: string) => void;
     onFocusRoute: (datasetId: string) => void;
     onStopRoute: (datasetId: string) => void;
@@ -38,7 +38,7 @@ export type OperationsPanelProps = {
 
 type Tab = 'watching' | 'activity';
 
-const KIND_ACCENT: Record<TrackerEvent['kind'], string> = {
+const KIND_ACCENT: Record<RuleEvent['kind'], string> = {
     opened: playbook.status.error,
     resolved: playbook.text.lowEm,
 };
@@ -46,14 +46,14 @@ const KIND_ACCENT: Record<TrackerEvent['kind'], string> = {
 /**
  * The "Monitoring" panel: a plain titled card with a Watching / Activity switcher. Watching is
  * everything live right now — one card per watched incident area (named, click to frame it) with its
- * trackers nested inside, one card per monitored route corridor (live alternatives), and an "Other"
- * card for trackers spanning several areas or none. Activity is the alert feed.
+ * event rules nested inside, one card per monitored route corridor (live alternatives), and an "Other"
+ * card for event rules spanning several areas or none. Activity is the alert feed.
  */
 export function OperationsPanel({
     areas,
     ungrouped,
     routes,
-    trackerCount,
+    eventRuleCount,
     events,
     lastSeenAt,
     onToggle,
@@ -65,12 +65,12 @@ export function OperationsPanel({
 }: OperationsPanelProps) {
     const [tab, setTab] = useState<Tab>('watching');
     const unread = events.reduce((n, e) => (e.at > lastSeenAt ? n + 1 : n), 0);
-    const active = trackerCount > 0 || areas.length > 0 || routes.length > 0 || events.length > 0;
+    const active = eventRuleCount > 0 || areas.length > 0 || routes.length > 0 || events.length > 0;
     useNowTick(active);
 
     const hasWatching = areas.length > 0 || ungrouped.length > 0 || routes.length > 0;
-    // Trackers + routes are the explicit monitors an operator sets up; the count badges them together.
-    const watchingCount = trackerCount + routes.length;
+    // Event rules + routes are the explicit monitors an operator sets up; the count badges them together.
+    const watchingCount = eventRuleCount + routes.length;
 
     const select = (next: Tab) => {
         setTab(next);
@@ -98,8 +98,8 @@ export function OperationsPanel({
                     <div className="flex max-h-[52vh] flex-col gap-2 overflow-y-auto">
                         {!hasWatching ? (
                             <Empty>
-                                Nothing watched yet — ask the agent to look at an area, monitor a route, or set up a
-                                tracker.
+                                Nothing watched yet — ask the agent to look at an area, monitor a route, or set up an
+                                event rule.
                             </Empty>
                         ) : (
                             <>
@@ -121,7 +121,7 @@ export function OperationsPanel({
                                     />
                                 ))}
                                 {ungrouped.length > 0 && (
-                                    <OtherCard trackers={ungrouped} onToggle={onToggle} onClear={onClear} />
+                                    <OtherCard eventRules={ungrouped} onToggle={onToggle} onClear={onClear} />
                                 )}
                             </>
                         )}
@@ -129,7 +129,7 @@ export function OperationsPanel({
                 ) : (
                     <div className="relative min-h-0">
                         {events.length === 0 ? (
-                            <Empty>No alerts yet. Trackers log here when a condition opens or clears.</Empty>
+                            <Empty>No alerts yet. Event rules log here when a condition opens or clears.</Empty>
                         ) : (
                             <>
                                 <ul className="flex max-h-[52vh] flex-col divide-y divide-(--ui-border-low-em) overflow-y-auto">
@@ -138,7 +138,7 @@ export function OperationsPanel({
                                             <FeedRow
                                                 icon={e.kind === 'opened' ? <AlertGlyph /> : <ResolvedGlyph />}
                                                 iconColor={KIND_ACCENT[e.kind]}
-                                                title={e.trackerName}
+                                                title={e.ruleName}
                                                 description={e.summary}
                                                 tag={{ label: e.kind, accent: KIND_ACCENT[e.kind] }}
                                                 at={e.at}
@@ -158,8 +158,8 @@ export function OperationsPanel({
 }
 
 /**
- * A watched-area card: the area name (click to frame it on the map), with the trackers watching
- * it nested below as divider-separated rows. Areas with no trackers show just the header — loading an
+ * A watched-area card: the area name (click to frame it on the map), with the event rules watching
+ * it nested below as divider-separated rows. Areas with no event rules show just the header — loading an
  * area is already "watching" it.
  */
 function AreaCard({
@@ -190,12 +190,12 @@ function AreaCard({
                     </span>
                 </button>
             </div>
-            {area.trackers.length > 0 && (
+            {area.eventRules.length > 0 && (
                 <div className="flex flex-col divide-y divide-(--ui-border-low-em) border-t border-(--ui-border-low-em)">
-                    {area.trackers.map((tracker) => (
-                        <TrackerRow
-                            key={tracker.id}
-                            tracker={tracker}
+                    {area.eventRules.map((eventRule) => (
+                        <EventRuleRow
+                            key={eventRule.id}
+                            eventRule={eventRule}
                             onToggle={onToggle}
                             onClear={onClear}
                             onFocus={() => onFocusArea(area.datasetId)}
@@ -306,14 +306,14 @@ function RouteCard({
     );
 }
 
-/** The "Other" bucket: trackers that span several areas, or watch none — they have no single area to
+/** The "Other" bucket: event rules that span several areas, or watch none — they have no single area to
  *  nest under. Same card chrome as an area, minus the KPI chips. */
 function OtherCard({
-    trackers,
+    eventRules,
     onToggle,
     onClear,
 }: {
-    trackers: readonly Tracker[];
+    eventRules: readonly EventRule[];
     onToggle: (id: string, enabled: boolean) => void;
     onClear: (id: string) => void;
 }) {
@@ -321,62 +321,62 @@ function OtherCard({
         <div className="flex flex-col rounded-(--ui-rounded-10) border border-(--ui-border-low-em) bg-(--ui-surface-0)">
             <div className="p-3 text-[15px] font-bold leading-snug text-(--ui-text-high-em)">Other</div>
             <div className="flex flex-col divide-y divide-(--ui-border-low-em) border-t border-(--ui-border-low-em)">
-                {trackers.map((tracker) => (
-                    <TrackerRow key={tracker.id} tracker={tracker} onToggle={onToggle} onClear={onClear} />
+                {eventRules.map((eventRule) => (
+                    <EventRuleRow key={eventRule.id} eventRule={eventRule} onToggle={onToggle} onClear={onClear} />
                 ))}
             </div>
         </div>
     );
 }
 
-/** A single tracker as a borderless row inside an area / "Other" card: name, rule (2 lines), a status
+/** A single event rule as a borderless row inside an area / "Other" card: name, condition (2 lines), a status
  *  line, and an action row (optional focus + clear, with an enable toggle). */
-function TrackerRow({
-    tracker,
+function EventRuleRow({
+    eventRule,
     onToggle,
     onClear,
     onFocus,
 }: {
-    tracker: Tracker;
+    eventRule: EventRule;
     onToggle: (id: string, enabled: boolean) => void;
     onClear: (id: string) => void;
     onFocus?: () => void;
 }) {
-    const firing = tracker.enabled && tracker.wasActive;
-    const statusText = !tracker.enabled
-        ? tracker.openedAt != null
-            ? `Paused · ${relativeAge(tracker.openedAt)}`
+    const firing = eventRule.enabled && eventRule.wasActive;
+    const statusText = !eventRule.enabled
+        ? eventRule.openedAt != null
+            ? `Paused · ${relativeAge(eventRule.openedAt)}`
             : 'Paused'
         : firing
-          ? tracker.openedAt != null
-              ? `Firing · since ${relativeAge(tracker.openedAt)}`
+          ? eventRule.openedAt != null
+              ? `Firing · since ${relativeAge(eventRule.openedAt)}`
               : 'Firing'
           : 'Watching';
     const statusColor = firing ? playbook.status.error : playbook.text.lowEm;
 
     return (
         <div className="flex flex-col gap-2 p-3">
-            <div className="text-[14px] font-bold leading-snug text-(--ui-text-high-em)">{tracker.name}</div>
-            <div className="line-clamp-2 text-[13px] leading-snug text-(--ui-text-med-em)">{tracker.rule}</div>
+            <div className="text-[14px] font-bold leading-snug text-(--ui-text-high-em)">{eventRule.name}</div>
+            <div className="line-clamp-2 text-[13px] leading-snug text-(--ui-text-med-em)">{eventRule.condition}</div>
             <div className="text-[12px]" style={{ color: statusColor }}>
                 {statusText}
             </div>
             <div className="flex items-center gap-1">
                 {onFocus && (
-                    <IconButton label={`Focus ${tracker.name} on the map`} onClick={onFocus} size="sm">
+                    <IconButton label={`Focus ${eventRule.name} on the map`} onClick={onFocus} size="sm">
                         <LocateGlyph />
                     </IconButton>
                 )}
-                <IconButton label={`Clear ${tracker.name}`} onClick={() => onClear(tracker.id)} size="sm">
+                <IconButton label={`Clear ${eventRule.name}`} onClick={() => onClear(eventRule.id)} size="sm">
                     <TrashGlyph />
                 </IconButton>
                 <div className="ml-auto">
                     <Toggle
-                        checked={tracker.enabled}
-                        onChange={(next) => onToggle(tracker.id, next)}
+                        checked={eventRule.enabled}
+                        onChange={(next) => onToggle(eventRule.id, next)}
                         size="md"
                         tone="success"
-                        title={tracker.enabled ? 'Pause tracker' : 'Resume tracker'}
+                        title={eventRule.enabled ? 'Pause event rule' : 'Resume event rule'}
                         labelClassName={null}
                     />
                 </div>

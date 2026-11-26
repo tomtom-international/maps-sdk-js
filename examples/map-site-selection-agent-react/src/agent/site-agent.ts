@@ -248,6 +248,9 @@ export const buildSiteTools = (): Record<string, ToolEntry | ToolEntryBuilder> =
  */
 export type SiteAgentFlags = Record<string, never>;
 
+/** The shipped classifier: the default one, with the meta-tools kept active. */
+export const buildSiteClassifier = (model: LanguageModel) => keepGenericToolsActive(createDefaultClassifier({ model }));
+
 /**
  * Builds the full {@link MapAgentOptions} for the Site Selection agent from a bare model. The React
  * bootstrap layers `onClassify` on top; the scenario tests override `tools` with mocked executes.
@@ -263,7 +266,7 @@ export const buildSiteAgentOptions = (
         maxSteps: SITE_AGENT_MAX_STEPS,
         systemPrompt: siteSystemPromptSections,
         systemPromptSuffix: buildSiteSystemPromptSuffix(),
-        classifier: keepGenericToolsActive(createDefaultClassifier({ model })),
+        classifier: buildSiteClassifier(model),
         includeDefaultTools: false,
         tools: buildSiteTools(),
         // No route, incidents or area-analytics data here, so the built-ins don't offer those slices.

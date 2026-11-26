@@ -118,12 +118,12 @@ The plugin ships a `DEFAULT_TOOLS` registry that covers search, routing, traffic
 | `focusIncidents` | Highlight a subset of incidents by id (`analyseDatasets` can pick them by category or severity) on the map and dim the rest |
 | `getTrafficAreaAnalytics` | Fetch historical traffic analytics (speed, congestion, travel time) for an area |
 
-### Trackers
+### Event rules
 
 | Tool | Description |
 |---|---|
-| `createTracker` | Watch loaded datasets with generated code and log an alert when its condition turns true (e.g. an incident near a hospital) |
-| `clearTracker` | Stop a tracker. The datasets it watched stay |
+| `createEventRule` | Watch loaded datasets with generated code and log an alert when its condition turns true (e.g. an incident near a hospital) |
+| `clearEventRule` | Stop an event rule. The datasets it watched stay |
 
 ### Bring-your-own-data (BYOD)
 
@@ -141,12 +141,13 @@ The plugin ships a `DEFAULT_TOOLS` registry that covers search, routing, traffic
 | `analyseDatasets` | Aggregate or chart datasets (`places`, `routes`, `incidents`, `geometries`, `trafficAreaAnalytics`, `byod`) with dynamic JS. The scope the classifier emits narrows the schema each turn |
 | `deriveDatasets` | Transform datasets, with dynamic JS, into new `places`, `placeConnections`, `geometries`, `byod` or a `fitOnMap` camera move |
 | `monitorAnalysis` | Start or stop recomputing an `analyseDatasets` analysis whenever its source datasets change |
+| `monitorDerivedDataset` | Start or stop deriving a `deriveDatasets` dataset again whenever a monitored source dataset refreshes |
 
 `executeMaplibreCode` runs arbitrary MapLibre JS against the live `Map` instance, an escape hatch for custom layers, animations and raster overlays. Its code runs in your page with no sandbox, so it's not in `DEFAULT_TOOLS`. Add it with `tools: { executeMaplibreCode: createExecuteMaplibreCodeTool() }` only where you trust the model.
 
 > See [Code generation](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/code-generation) for the injected identifiers, output contracts and threat model, and [Scope-aware data tools](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/scope-aware-data-tools) for how the per-turn classifier scope keeps the prompt small.
 
-`analyseDatasets`, `deriveDatasets`, `createTracker` and `clusterIncidents` code is **isolated in the browser, or not run**, unless you opt into `codeExecution.allowMainThreadFallback`. It runs in a Web Worker inside a sandboxed, opaque-origin iframe with no DOM or network access, terminable on timeout. The SDK lazily loads its own bundled turf and h3 for the worker, so a page without a Content Security Policy needs no configuration. A page with one must allow what the sandbox needs, which the code-generation guide lists. The environment decides where the code runs. The browser isolates it, while Node and SSR always run it on the main thread. That boundary has no equivalent there, so the protection is defense-in-depth only. The optional `codeExecution` tunes the browser run:
+`analyseDatasets`, `deriveDatasets`, `createEventRule` and `clusterIncidents` code is **isolated in the browser, or not run**, unless you opt into `codeExecution.allowMainThreadFallback`. It runs in a Web Worker inside a sandboxed, opaque-origin iframe with no DOM or network access, terminable on timeout. The SDK lazily loads its own bundled turf and h3 for the worker, so a page without a Content Security Policy needs no configuration. A page with one must allow what the sandbox needs, which the code-generation guide lists. The environment decides where the code runs. The browser isolates it, while Node and SSR always run it on the main thread. That boundary has no equivalent there, so the protection is defense-in-depth only. The optional `codeExecution` tunes the browser run:
 
 ```typescript
 const agent = createMapAgent(map, {
@@ -183,7 +184,7 @@ const agent = createMapAgent(map, {
 
 | Tool | Description |
 |---|---|
-| `recallState` | Read session state: a snapshot of the places, routes and ranges datasets with the map style and layer configs, one slice's datasets (`places`, `routing` with its staged waypoints, `ranges`, `geometries`, `byod`, …), one dataset by `{ slice, id }`, or the trackers and the alerts they fired |
+| `recallState` | Read session state: a snapshot of the places, routes and ranges datasets with the map style and layer configs, one slice's datasets (`places`, `routing` with its staged waypoints, `ranges`, `geometries`, `byod`, …), one dataset by `{ slice, id }`, or the event rules and the alerts they fired |
 | `setDatasetMode` | Switch a slice between `multiple` (default) and `single` dataset modes |
 | `resetState` | Reset every state slice and the map style to their defaults |
 
@@ -384,7 +385,7 @@ agent.state.places;  // PlacesState — append-only history of place datasets
 
 > See the [What the agent sends, and where](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/what-the-agent-sends) guide for the full list.
 
-- **What reaches your model provider**: every message and the system prompt, plus the classifier's copy of earlier messages. By default, that copy holds up to eight messages of 300 characters each, and `classifier: false` turns it off. Tool results go too, including addresses, coordinates, the viewport, the device location, `analyseDatasets` and `deriveDatasets` output over your BYOD data, and up to 200 events per tracker.
+- **What reaches your model provider**: every message and the system prompt, plus the classifier's copy of earlier messages. By default, that copy holds up to eight messages of 300 characters each, and `classifier: false` turns it off. Tool results go too, including addresses, coordinates, the viewport, the device location, `analyseDatasets` and `deriveDatasets` output over your BYOD data, and up to 200 events per event rule.
 - **The provider is your processor**: sign a DPA with it and pick an EEA region where it offers one.
 - **What stays in memory**: `agent.state`, until the `resetState` tool or `agent.destroy()` clears it. Nothing goes to browser storage. Chat history is yours, so erasing a user's data means clearing it and calling `agent.destroy()`.
 - **To send less**: remove tools (`getCurrentLocation: false`), turn off the classifier or replace a tool with one that returns less.
@@ -418,7 +419,7 @@ The plugin builds the classifier prompt on the fly from each tool's `classificat
 
 The built-in `BASE_SYSTEM_PROMPT` covers identity, a capability summary, scope/rejection rules, response formatting, data-confidence rules, tool-execution guidance and session-state conventions. Per-tool mechanics (coordinate order, location-reference routing, etc.) live in the tool descriptions and the classifier prompt, not here.
 
-`systemPrompt` accepts **either** a full replacement string **or** a section-overrides object (`Partial<Record<SystemPromptSection, string>>`). Sections you omit keep their defaults. For a section you override, you supply only its body, and the plugin adds the heading:
+`systemPrompt` accepts a full replacement string, a section-overrides object (`Partial<Record<SystemPromptSection, string>>`) or a function returning one of them. Sections you omit keep their defaults. For a section you override, you supply only its body, and the plugin adds the heading:
 
 ```typescript
 import {
@@ -463,6 +464,15 @@ const agentWithExtraRule = createMapAgent(map, {
 const agent = createMapAgent(map, {
     model,
     systemPrompt: BASE_SYSTEM_PROMPT + '\n\nYou are a delivery fleet dispatcher...',
+});
+```
+
+To change the prompt between turns, pass a function that returns either form. The agent calls it at the start of every turn and composes the result the same way, prefix and suffix included. Return the same text until something changes, so the provider's prompt cache stays warm:
+
+```typescript
+const agent = createMapAgent(map, {
+    model,
+    systemPrompt: () => ({ identity: `You are ${persona.name}. ${persona.policy}` }),
 });
 ```
 
@@ -558,7 +568,7 @@ For the complete, always-current list of exports, including factories, tool-regi
     - [Tools](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/tools) — per-tool reference
     - [State](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/state) — per-slice reference, dataset modes, custom slices
     - [Customizing tools](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/customizing-tools) — add, replace, remove or start from a blank slate
-    - [Code generation](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/code-generation) — `analyseDatasets` / `deriveDatasets` / `createTracker` / `clusterIncidents` / `executeMaplibreCode` (threat model included)
+    - [Code generation](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/code-generation) — `analyseDatasets` / `deriveDatasets` / `createEventRule` / `clusterIncidents` / `executeMaplibreCode` (threat model included)
     - [Scope-aware data tools](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/scope-aware-data-tools) — per-turn scope mechanism
     - [Bring your own data](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/byod) — ingest customer GeoJSON layers
 - [AI SDK v7 documentation](https://ai-sdk.dev/)

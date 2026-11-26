@@ -1,4 +1,5 @@
 import { createAzure } from '@ai-sdk/azure';
+import { type LanguageModelMiddleware, wrapLanguageModel } from 'ai';
 
 export const API_KEY = process.env.API_KEY_EXAMPLES;
 
@@ -34,10 +35,26 @@ const createDemoAzure = () => {
     return createAzure({ resourceName, apiKey: azureApiKey });
 };
 
+// @ai-sdk/azure sends the deployment name as the model id, and the AI SDK spots a reasoning model by that name
+// alone, so a reasoning model deployed under another name would get max_tokens, which Azure rejects.
+const reasoningModelMiddleware: LanguageModelMiddleware = {
+    transformParams: async ({ params }) => ({
+        ...params,
+        providerOptions: {
+            ...params.providerOptions,
+            openai: { ...params.providerOptions?.openai, forceReasoning: true },
+        },
+    }),
+};
+
+/** The chat model of a deployment, flagged as a reasoning model. */
+export const createDemoModel = (deploymentId: string) =>
+    wrapLanguageModel({ model: createDemoAzure().chat(deploymentId), middleware: reasoningModelMiddleware });
+
 /** The chat model the agent runs on. Throws when `examples/.env` lacks the Azure settings. */
 export const createModel = () => {
     if (!deploymentId) {
         throw new Error('AZURE_DEPLOYMENT_ID is required. Set it in examples/.env');
     }
-    return createDemoAzure().chat(deploymentId);
+    return createDemoModel(deploymentId);
 };

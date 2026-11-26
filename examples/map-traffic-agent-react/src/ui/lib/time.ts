@@ -1,7 +1,7 @@
 /**
  * Ops-vocabulary relative age for a past epoch-ms moment: "just now" (<10s),
  * "Ns ago" (<60s), "Nm ago" (<60m), then "Nh ago". `null` → an em-dash.
- * The shared source for monitor-chip freshness and tracker status lines —
+ * The shared source for monitor-chip freshness and event rule status lines —
  * one phrasing, computed at render time (callers tick their own re-render).
  */
 export function relativeAge(ms: number | null): string {
@@ -21,7 +21,7 @@ export const shortClock = (epochMs: number): string =>
 /**
  * Terse delay label for an AGGREGATE or compact figure: "5m" / "1h 5m". The one source for every
  * grouped/rolled-up delay — the "Delay ∑" KPI cells (area rail, viewport card, pocket chips), a
- * cluster's total and peak, a map-pin badge, a road's summed delay, the tracker live-state line
+ * cluster's total and peak, a map-pin badge, a road's summed delay, the event rule live-state line
  * ("N incidents · 5h 5m delay"), and the delay-sparkline footer. Sub-minute values round to "0m".
  *
  * The register rule (pairs with `utils/format.formatDelay`): a SINGLE incident's own delay reads

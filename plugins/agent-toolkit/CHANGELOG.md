@@ -1,5 +1,116 @@
 # Changelog
 
+## 0.20.0
+
+### Minor Changes
+
+- **Breaking:** the Agent Toolkit's trackers are event rules, each a condition the agent watches and the alerts it logs, and a custom tool can create one with the `createEventRule(state, parameters)` function
+  
+  - **Breaking:** the `createTracker` and `clearTracker` tools are `createEventRule` and `clearEventRule`. Rename them where your app names a tool: a `tools` override, a `ToolName`, or a tool part your chat UI renders.
+  - **Breaking:** `state.trackers` is `state.eventRules`. Its `trackers` list is `rules`, `trackersForDataset` is `rulesForDataset`, and its `tracker-event` and `trackers-change` events are `rule-event` and `event-rules-change`.
+  - **Breaking:** `recallState({ slice: 'trackers' })` is `recallState({ slice: 'eventRules' })`, which returns `eventRules`, or `eventRule` for one id, in place of `trackers` and `tracker`.
+  - **Breaking:** a conversation you saved before this release fails `validateUIMessages` while it holds a `recallState` call with `slice: 'trackers'`. Change that input's `slice` to `'eventRules'` before you load it.
+  - **Breaking:** the `Tracker`, `TrackerEvent`, `TrackerEventType`, `TrackerEventStatus` and `TrackerStateEvents` types are `EventRule`, `RuleEvent`, `RuleEventType`, `RuleEventStatus` and `EventsStateEvents`.
+  - **Breaking:** `trackerId` and `trackerName` are `ruleId` and `ruleName`, on an event, in `log()`'s options and in the tools' inputs and outputs. An event rule's `rule` is `condition`.
+  - The `createEventRule` function does what the tool does, so an app gives the model a compact tool for a watch it already knows instead of the tool's long schema and the code the model writes. It returns what the tool returns, typed `CreateEventRuleResult`. `CreateEventRuleParams` takes the datasets' `*DatasetIDs`, at least one of them (`SomeMultiInputIds`), with the event rule's `name`, `condition` and `code`. Remove the event rule with `state.eventRules.unregister(ruleId)`.
+
+- **Breaking:** the Agent Toolkit's `deriveDatasets` decides on every call whether a derived dataset follows the datasets it came from, so a filtered or computed layer stays current as its sources refresh
+  
+  - **Breaking:** the required `persist` says what happens to the new dataset. `'none'` writes it once, as a call did before. `'monitor'` also derives it again in place whenever one of its source datasets refreshes in place, such as monitored incidents or a route kept updated with live traffic. The camera stays where it is, a re-derive that returns nothing empties the dataset, and the result reports `monitoring: true`.
+  - **Breaking:** a conversation you saved before this release fails `validateUIMessages` while an earlier successful `deriveDatasets` call in it has no `persist`. Add `persist: 'none'` to those calls' inputs before you load it.
+  - The new `monitorDerivedDataset({ datasetId, enabled })` tool stops or resumes that by the dataset's own id.
+
+- **Breaking:** the Agent Toolkit's `analyseDatasets` decides on every call whether to keep its result, so a one-off answer leaves no analysis behind
+  
+  - **Breaking:** the required `persist` replaces the optional `monitor`. `'none'` only returns the result, with no `analysisId`, for a count, a percentage or an average the model states in chat or feeds into another tool. `'attach'` keeps it on every contributing dataset, as a call without `monitor` did. `'monitor'` keeps it and recomputes it on every source change, as `monitor: true` did, for a live chart or metric. A chart needs `'attach'` or `'monitor'`.
+  - **Breaking:** a conversation you saved before this release fails `validateUIMessages` while an earlier successful `analyseDatasets` call in it has no `persist`. Add `persist: 'attach'` to those calls' inputs before you load it, or `persist: 'monitor'` where they set `monitor: true`.
+  - A built-in tool that names a dataset an earlier call in the same step is still creating waits for that call and looks again, so *"find hospitals in Las Vegas and chart the jams near them"* no longer fails with `No places dataset with id …`.
+  - When code in `analyseDatasets`, `deriveDatasets` or `createEventRule` reads a dataset by an id its call doesn't list, such as `placesByDataset['vegas-hospitals']`, the call fails before running and names the id and the `*DatasetIDs` input to add it to.
+  - When code in those tools or `clusterIncidents` reads a dataset record its call left empty in any other way, the error names the missing input, rather than pointing the model at a `reduce` callback.
+  - When `deriveDatasets` code keeps nothing, such as no hospital within 150 m of a jam, the error says no feature passed its filter rather than calling `turf.bbox` of the empty result a malformed `fitOnMap`, so the model can say none matched.
+  - `createDefaultClassifier` takes a `temperature`, such as 0 so the same request picks the same tools, and a plain camera move goes to `moveCamera` rather than `executeMaplibreCode`.
+
+### Patch Changes
+
+- A long-running agent can keep its history short with `compactMessages`, which folds every turn but the latest few into a running summary with one model call and returns that summary, the kept messages and the call's token usage
+  
+  - It cuts only where a user message starts a turn, so a tool call always stays with its result, and makes no call when there is nothing to fold.
+  - By default the summary keeps commitments, decisions and facts later turns can't recover. Replace `instructions` to give it your agent's point of view, or extend `COMPACT_MESSAGES_INSTRUCTIONS`.
+
+- A custom tool can derive a dataset with the `deriveDatasets(state, parameters)` function, which does what the `deriveDatasets` tool does, so an app gives the model a compact tool for a derivation it already knows instead of code the model writes
+  
+  - The function returns what the tool returns, typed `DeriveDatasetsResult`. `DeriveDatasetsParams` takes the datasets' `*DatasetIDs`, at least one, with the `code`, `persist` and the tool's optional fields; with `persist: 'monitor'`, `state.derivedDatasets.remove(datasetId)` stops it.
+  - `CreateEventRuleParams` shares the at-least-one rule through the new `SomeMultiInputIds`, so a call that reads no dataset doesn't compile.
+
+- A dataset that `deriveDatasets` keeps live can now start empty: set `keepEmpty: true` with `persist: 'monitor'` for a watch that matches nothing yet
+  
+  - The run writes its places, custom-geometries or BYOD dataset empty and keeps it live, and the dataset fills as its sources change. Without it, a first run that keeps nothing still writes nothing and returns an error.
+  - With `keepHistory`, the history starts at a sample of zero, so a rule watching it sees the first match arrive.
+  - Drift is measured against the first run that writes features, and a run that empties again is no drift.
+
+- A BYOD dataset that `deriveDatasets` writes now comes back with its data profile, so the agent styles or analyses what its code returned in its next step
+  
+  - The result carries `profile` beside `byodDatasetId` and `byodFeatureCount`: the geometry types, plus each property's types, coverage and numeric and boolean examples, as `addByodSource` returns.
+  - String examples stay out of it, as in every BYOD result the model sees.
+  - A run that revises a monitored BYOD dataset in place returns the profile of the new data, and the `deriveDatasets` function returns it to your app too.
+
+- A live derived dataset in the Agent Toolkit says when a re-run still writes but breaks what reads it: its run record carries a `drift` naming what changed from the result its code was written for
+  
+  - A run drifts when it returns no feature from source datasets that have some, or when a property at least half of its first result's features carried is now missing, on fewer than half of the features, or of a type it never had.
+  - The baseline is what `deriveDatasets` wrote when it armed the dataset with `persist: 'monitor'`, or when a call with its `datasetId` revised it.
+  - The model reads it in `derivation.lastRun` of the dataset's `recallState` detail, and your app in `state.derivedDatasets.lastRun(datasetId)` or the `derived-dataset-run` event.
+
+- A dataset that `deriveDatasets` keeps live can now keep a history of its runs: set `keepHistory: true` with `persist: 'monitor'`, and the agent reads trends and peaks without keeping notes
+  
+  - Each run adds a sample to the BYOD dataset `<datasetId>_history`, which `historyDatasetId` in the result names: when it ran, how many features it kept and the total of each numeric property.
+  - The history holds six hours of samples in the data's own time, at most 360, and takes runs within 20 seconds of each other as one.
+  - The agent reads it with `analyseDatasets`, and `createEventRule` can watch it. `recallState` names it on the live dataset, and `state.derivedDatasets.historyIdOf` gives it to your app.
+  - It goes when the dataset stops being kept live. A revision keeps it under the same id, so the rules watching it carry on, and starts its samples afresh.
+  - It never touches your own BYOD data: it isn't kept while the BYOD slice holds a single dataset, nor when one of yours already has its id.
+
+- `createMapAgent` takes a function as `systemPrompt`, so instructions that change while the agent runs, such as a persona's policy or a user's preferences, apply from the next turn
+  
+  - The agent calls it at the start of every turn and composes what it returns like the static forms, with the prefix, suffix and section overrides, for every step of that turn.
+  - A host `prepareStep` receives the turn's prompt as `initialInstructions`.
+  - `CustomSystemPrompt` names what the function returns: a full string or section overrides.
+
+- The Agent Toolkit sends the model about a fifth fewer tokens for its default tools, with the same tools and arguments
+  
+  - The code-writing tools (`analyseDatasets`, `deriveDatasets`, `createEventRule` and `clusterIncidents`) state each sandbox rule and input shape once, and the dataset schema docs drop repeated fields and padding. `PLACES_SCHEMA_DOC`, `ROUTES_SCHEMA_DOC`, `INCIDENTS_SCHEMA_DOC`, `TRAFFIC_AREA_ANALYTICS_SCHEMA_DOC`, `GEOMETRIES_SCHEMA_DOC`, `GEOMETRIES_PROPS_DOC`, `BY_DATASET_VIEWS_DOC` and `FIT_ON_MAP_DOC` change their text accordingly, and so do the field descriptions of the shared schemas, such as `geometriesIdSchema`, `routeStretchSchema` and `locationInputSchema`.
+  - The `set` description of `setMapStyling` writes a long value list several knobs share, such as the label fonts, once as `$name = …`.
+  - The data tools' scope hints no longer tell the intent classifier to omit a scope its prompt makes mandatory, and the classification prompts of `setRoute`, `setLayerProperties` and `setDatasetMode` are shorter.
+
+- The intent classifier works with a reasoning model behind an Azure deployment whose name does not start with the model name, such as `chat-agent-gpt-5.1-prod`
+
+- A slice's `removeDataset` waits for the `upsertDataset` calls you made before it, so a dataset you remove right after an upsert stays removed
+  
+  - It drops the dataset from `datasets` once those upserts are done, not when you call it. Await it before you add a dataset under the same id, or the new one takes a suffixed id.
+
+- The Agent Toolkit's model can check a live derived dataset and correct its code: `recallState` shows the code behind a dataset `deriveDatasets` keeps live and what its latest run did, and a new `deriveDatasets` call with that dataset's id rewrites it in place
+  
+  - A dataset's `recallState` detail carries a `derivation` when `deriveDatasets` keeps it live with `persist: 'monitor'`: its `code`, `sourceDatasetIds`, whether it's `monitoring`, and a `lastRun` with the features it wrote or the error that kept the dataset as it was.
+  - A `deriveDatasets` call whose `datasetId` names such a dataset, and whose code returns the same kind, replaces its data under the same id, label and display, reports `revised: true`, and re-derives with the new code from then on. With `persist: 'none'`, it stops following its sources.
+  - A re-derive that throws, or returns another kind, still keeps the dataset as it was, and now says why. Your app reads it with `state.derivedDatasets.lastRun(datasetId)` or the `derived-dataset-run` event on `state.derivedDatasets.events`, typed `DerivedDatasetRun` and `DerivedDatasetsEvents`.
+
+- An event rule over a flickering feed stays open through a brief dip: set `resolveAfterMs` when your app calls the `createEventRule` function
+  
+  - The rule resolves at the first refresh after its condition has stayed false that long, measured in the data's own timestamps, so a traffic jam that drops out of one minute's refresh no longer resolves and fires again.
+  - A condition that comes back meanwhile keeps the open alert, with no new one.
+  - `eventRuleParamsOf` gives it back, so a saved rule keeps its hold when you create it again.
+
+- Save the event rules and live derived datasets an agent sets up, and bring them back in a later session with no model call
+  
+  - `eventRuleParamsOf(state, ruleId)` gives back what a live event rule was created with, and `derivedDatasetParamsOf(state, datasetId)` what a dataset kept live with `persist: 'monitor'` was derived with, its latest revision included. Pass either to the `createEventRule` or `deriveDatasets` function to create it again. A paused rule or dataset, or one that's gone, gives back nothing.
+  - `state.derivedDatasets.datasetIds` lists the monitored derived datasets in every slice, each after the derived ones it reads, so restoring them in that order finds every source.
+
+- Your app keeps an Agent Toolkit dataset in step with a live feed in one call: `upsertDataset({ id, label, data })`, on every dataset slice, adds the dataset under a new `id` and replaces its data under a known one
+  
+  - A replace works as `replaceDatasetData` does. It redraws the dataset where it's shown and re-runs the event rules and monitored analyses that read it.
+  - A replace records the `producedFrom` you pass, so a route's or incidents' monitor replays the new request, and keeps the dataset's `label` and what the slice keeps beside it, such as its BYOD layers.
+  - A places replace swaps the connections and boundary polygons you pass along with the places, and keeps the ones you leave out.
+  - A slice's upserts run in the order you call them, so the latest data wins.
+  - It resolves to `'added'` or `'replaced'`, and rejects an empty `id`.
+
 ## 0.19.1
 
 ### Patch Changes
